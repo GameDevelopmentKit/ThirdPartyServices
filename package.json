@@ -1,0 +1,25 @@
+{
+  "name": "com.gdk.3rd",
+  "displayName": "Third Party Services",
+  "description": "Third Party Services",
+  "version": "0.0.1",
+  "unity": "2021.3",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GameDevelopmentKit/ThirdPartyServices.git"
+  },
+  "author": {
+    "name": "Game Development Kit",
+    "email": "ninhnv15@gmail.com"
+  },
+  "gitDependencies": {
+    "com.gdk.core": "https://github.com/GameDevelopmentKit/GameFoundation.git"
+  },
+  "dependencies": {
+  },
+  "keywords": [
+    "Analytics",
+    "Ads"
+  ]
+}
