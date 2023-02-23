@@ -3,7 +3,7 @@ namespace Core.AdsServices
     using System;
     using GameFoundation.Scripts.Utilities.LogService;
 
-    public class DummyAdServiceIml : IAdsServices
+    public class DummyAdServiceIml : IAdServices
     {
         private readonly ILogService logService;
 

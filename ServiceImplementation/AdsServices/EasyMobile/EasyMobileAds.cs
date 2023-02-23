@@ -12,22 +12,20 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using RewardedAdNetwork = global::EasyMobile.RewardedAdNetwork;
     using RewardedInterstitialAdNetwork = global::EasyMobile.RewardedInterstitialAdNetwork;
 
-    public class EasyMobileAdsIml : IAdsServices, IInitializable, IDisposable
+    public class EasyMobileAdIml : IAdServices, IInitializable, IDisposable
     {
         #region inject
 
         private readonly ILogService  logService;
-        private readonly AdModWrapper adModWrapper;
 
         #endregion
 
         private event Action RewardedAdCompletedOneTimeAction;
         private event Action RewardedInterstitialAdCompletedOneTimeAction;
 
-        public EasyMobileAdsIml(ILogService logService, AdModWrapper adModWrapper)
+        public EasyMobileAdIml(ILogService logService)
         {
             this.logService   = logService;
-            this.adModWrapper = adModWrapper;
         }
 
         public void Initialize()

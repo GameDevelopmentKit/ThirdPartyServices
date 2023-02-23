@@ -5,7 +5,7 @@ namespace Core.AdsServices
     /// <summary>
     /// Do not set place default by empty to make sure we have enough data to analize
     /// </summary>
-    public interface IAdsServices
+    public interface IAdServices
     {
         #region consent
 

@@ -9,7 +9,7 @@ namespace ServiceImplementation.AdsServices
         public override void InstallBindings()
         {
 #if EASY_MOBILE_PRO
-            this.Container.Bind<IAdsServices>().To<EasyMobileAdsIml>().AsCached();
+            this.Container.Bind<IAdServices>().To<EasyMobileAdIml>().AsCached();
 #else
             this.Container.Bind<IAdsServices>().To<DummyAdServiceIml>().AsCached();
 #endif
