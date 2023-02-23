@@ -107,12 +107,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void                                                         ShowRewardedAd(string place)                     { Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place)); }
         public void ShowRewardedAd(string place, Action onCompleted)
         {
+            Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place));
+            this.RewardedAdCompletedOneTimeAction += onCompleted;
         }
         public event Action<Core.AdsServices.InterstitialAdNetwork, string> RewardedInterstitialAdCompleted;
         public event Action<Core.AdsServices.InterstitialAdNetwork, string> RewardedInterstitialAdSkipped;
 
-        public bool IsRewardedInterstitialAdReady()          { return Advertising.IsRewardedInterstitialAdReady(); }
-        public void ShowRewardedInterstitialAd(string place) { Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place)); }
+        public bool IsRewardedInterstitialAdReady()                              { return Advertising.IsRewardedInterstitialAdReady(); }
+        public void ShowRewardedInterstitialAd(string place)                     { Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place)); }
+        public void ShowRewardedInterstitialAd(string place, Action onCompleted)
+        {
+            Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place));
+            this.RewardedInterstitialAdCompletedOneTimeAction += onCompleted;
+        }
 
 
         public event Action AdsRemoved;

@@ -29,6 +29,7 @@ namespace Core.AdsServices
         public event Action<InterstitialAdNetwork, string> RewardedInterstitialAdSkipped;
         public bool IsRewardedInterstitialAdReady() { return true; }
         public void ShowRewardedInterstitialAd(string place) { this.logService.Log($"Dummy show Rewarded Interstitial ad at {place}"); }
+        public void ShowRewardedInterstitialAd(string place, Action onCompleted) { this.logService.Log($"Dummy show Rewarded Interstitial ad at {place} then do {onCompleted}"); }
         public event Action AdsRemoved;
         public void RemoveAds(bool revokeConsent = false) { this.logService.Log($"Dummy revoke consent"); }
     }

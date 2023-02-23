@@ -34,7 +34,7 @@ namespace Core.AdsServices
 
         #endregion
 
-        #region MyRegion
+        #region Reward
 
         event Action<InterstitialAdNetwork, string> RewardedAdCompleted;
         event Action<InterstitialAdNetwork, string> RewardedAdSkipped;
@@ -52,6 +52,7 @@ namespace Core.AdsServices
 
         bool IsRewardedInterstitialAdReady();
         void ShowRewardedInterstitialAd(string place);
+        void ShowRewardedInterstitialAd(string place, Action onCompleted);
 
         #endregion
 
