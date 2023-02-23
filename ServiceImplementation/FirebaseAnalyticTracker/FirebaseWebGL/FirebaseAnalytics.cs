@@ -1,4 +1,4 @@
-﻿namespace ExtendModules.FirebaseAnalyticTracker.FirebaseWebGL
+﻿namespace ServiceImplementation.FirebaseAnalyticTracker
 {
     public class FirebaseAnalytics
     {

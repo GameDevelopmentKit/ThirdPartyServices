@@ -1,5 +1,5 @@
 ﻿#if FIREBASE_SDK_EXISTS
-namespace FirebaseTracker
+namespace ServiceImplementation.FirebaseAnalyticTracker
 {
     using System.Collections.Generic;
     using Firebase.Analytics;

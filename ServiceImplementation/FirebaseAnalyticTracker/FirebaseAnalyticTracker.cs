@@ -6,9 +6,6 @@
     using System.Threading.Tasks;
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
-#if FIREBASE_SDK_EXISTS
-    using FirebaseTracker;
-#endif
     using Newtonsoft.Json;
     using UnityEngine;
     using Zenject;
