@@ -1,0 +1,20 @@
+{
+    "name": "3rdCore.Ads",
+    "rootNamespace": "",
+    "references": ["GUID:6b28cbb273055954e86d38c33d8ca853","GUID:3d4daf6696a825240b11d99d0d2865ed"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "Select...",
+            "expression": "",
+            "define": ""
+        }
+    ],
+    "noEngineReferences": false
+}

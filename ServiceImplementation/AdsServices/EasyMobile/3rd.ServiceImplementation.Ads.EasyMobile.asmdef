@@ -1,0 +1,27 @@
+{
+    "name": "3rd.ServiceImplementation.Ads.EasyMobile",
+    "rootNamespace": "",
+    "references": [
+        "3rdCore.Ads",
+        "EasyMobile.Scripts",
+        "3rdCore.Analytic",
+        "GameFoundation.Utilities"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "GoogleMobileAds.Unity.dll",
+        "GoogleMobileAds.Ump.dll",
+        "GoogleMobileAds.Ump.Unity.dll",
+        "GoogleMobileAds.dll",
+        "GoogleMobileAds.Common.dll",
+        "GoogleMobileAds.Core.dll",
+        "Zenject-usage.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
