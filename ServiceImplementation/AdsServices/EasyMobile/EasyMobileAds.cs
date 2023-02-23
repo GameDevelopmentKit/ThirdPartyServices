@@ -1,6 +1,6 @@
-#if EASY_MOBILE_PRO
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
+#if EASY_MOBILE_PRO
     using System;
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
@@ -124,5 +124,5 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             Advertising.RemoveAds(revokeConsent);
         }
     }
-}
 #endif
+}

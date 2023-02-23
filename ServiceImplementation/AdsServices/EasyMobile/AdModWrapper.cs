@@ -1,11 +1,10 @@
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
+#if EM_ADMOB
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
-#if EM_ADMOB
     using System;
     using GoogleMobileAds.Api;
-#endif
     using UnityEngine;
 
     public class AdModWrapper : IAOAAdService
@@ -23,8 +22,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.adModAoaId = adModAOAId;
         }
 
-        #if EM_ADMOB
-        
         public event Action AppOpenOpened;
 
         public AppOpenAd AppOpenAd { get; private set; }
@@ -84,16 +81,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             // Raised when the ad failed to open full screen content.
             ad.OnAdFullScreenContentFailed += (AdError error) => { this.logService.Error("App open ad failed to open full screen content " + "with error : " + error); };
         }
-        #else
-        public bool IsAppOpenAdLoaded()
-        {
-            return true;
-        }
-        
-        public void ShowAppOpenAd()
-        {
-            this.logService.LogWithColor("Dummy open AOA ads", Color.yellow);
-        }
-        #endif
     }
+#endif
 }
