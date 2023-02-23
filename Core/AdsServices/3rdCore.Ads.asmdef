@@ -1,7 +1,7 @@
 {
     "name": "3rdCore.Ads",
     "rootNamespace": "",
-    "references": ["GUID:6b28cbb273055954e86d38c33d8ca853","GUID:3d4daf6696a825240b11d99d0d2865ed"],
+    "references": ["GUID:6b28cbb273055954e86d38c33d8ca853","GUID:3d4daf6696a825240b11d99d0d2865ed","GUID:4d364aeb8f41c2942a00b8ba2492258f"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
