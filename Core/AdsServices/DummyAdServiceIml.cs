@@ -33,5 +33,6 @@ namespace Core.AdsServices
         public event Action AdsRemoved;
         public void RemoveAds(bool revokeConsent = false) { this.logService.Log($"Dummy revoke consent"); }
         public bool IsAdsInitialized() { return true; }
+        public bool IsRemoveAds() { return false; }
     }
 }

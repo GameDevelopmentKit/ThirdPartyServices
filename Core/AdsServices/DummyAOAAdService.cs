@@ -11,15 +11,19 @@ namespace Core.AdsServices
         #endregion
 
         public DummyAOAAdServiceIml(ILogService logService) { this.logService = logService; }
-        
+
+        public void LoadAOAAd()
+        {
+            this.logService.Log("Dummy load app open ad");
+        }
         public bool IsAppOpenAdLoaded()
         {
             return true;
         }
         
-        public void ShowAppOpenAd()
+        public void ShowAdIfAvailable()
         {
-            
+            this.logService.Log("Dummy show app open ad");
         }
     }
 }

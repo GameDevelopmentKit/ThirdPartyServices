@@ -1,9 +1,10 @@
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
 #if EM_ADMOB
+    using System;
+    using System.Collections.Generic;
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
-    using System;
     using GoogleMobileAds.Api;
     using UnityEngine;
 
@@ -11,76 +12,129 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     {
         #region inject
 
-        private readonly ILogService logService;
-        private readonly string      adModAoaId;
+        private readonly ILogService  logService;
+        private readonly List<string> adModAoaIds;
+        private readonly IAdServices  adServices;
 
         #endregion
 
-        public AdModWrapper(ILogService logService, string adModAOAId)
+        public AdModWrapper(ILogService logService, List<string> adModAOAIds, IAdServices adServices)
         {
-            this.logService = logService;
-            this.adModAoaId = adModAOAId;
+            this.logService  = logService;
+            this.adModAoaIds = adModAOAIds;
+            this.adServices  = adServices;
         }
 
         public event Action AppOpenOpened;
 
-        public AppOpenAd AppOpenAd { get; private set; }
-
 
         public bool IsAppOpenAdLoaded() { return this.AppOpenAd != null && this.AppOpenAd.CanShowAd(); }
 
-        public void ShowAppOpenAd() { this.AppOpenAd.Show(); }
+        private AppOpenAd AppOpenAd;
 
-        private void LoadAppOpenAd()
+        private DateTime loadTime;
+
+        private bool isShowingAd = false;
+
+        private bool showFirstOpen = false;
+
+        public static bool ConfigOpenApp   = true;
+        public static bool ConfigResumeApp = true;
+
+        public static bool ResumeFromAds = false;
+
+        private bool IsAdAvailable => this.AppOpenAd != null && (DateTime.UtcNow - this.loadTime).TotalHours < 4;
+
+        private int tierIndex = 1;
+
+        public void LoadAOAAd()
         {
-            // Clean up the old ad before loading a new one.
-            if (this.AppOpenAd != null)
+            if (this.adServices.IsRemoveAds())
             {
-                this.AppOpenAd.Destroy();
-                this.AppOpenAd = null;
+                return;
             }
 
-            this.logService.Log("Loading the app open ad.");
-
-            // Create our request used to load the ad.
-            var adRequest = new AdRequest.Builder().Build();
-
-            // send the request to load the ad.
-            AppOpenAd.Load(this.adModAoaId, ScreenOrientation.Portrait, adRequest, (AppOpenAd ad, LoadAdError error) =>
-                                                                                   {
-                                                                                       // if error is not null, the load request failed.
-                                                                                       if (error != null || ad == null)
-                                                                                       {
-                                                                                           this.logService.Error("app open ad failed to load an ad " + "with error : " + error);
-                                                                                           return;
-                                                                                       }
-
-                                                                                       this.logService.Log("App open ad loaded with response : " + ad.GetResponseInfo());
-
-                                                                                       this.AppOpenAd = ad;
-                                                                                       this.RegisterEventHandlers(ad);
-                                                                                   });
+            this.LoadAppOpenAd();
         }
 
-        private void RegisterEventHandlers(AppOpenAd ad)
+        public void LoadAppOpenAd()
         {
-            // Raised when the ad is estimated to have earned money.
-            ad.OnAdPaid += (AdValue adValue) => { this.logService.Log(String.Format("App open ad paid {0} {1}.", adValue.Value, adValue.CurrencyCode)); };
-            // Raised when an impression is recorded for an ad.
-            ad.OnAdImpressionRecorded += () => { this.logService.Log("App open ad recorded an impression."); };
-            // Raised when a click is recorded for an ad.
-            ad.OnAdClicked += () => { this.logService.Log("App open ad was clicked."); };
-            // Raised when an ad opened full screen content.
-            ad.OnAdFullScreenContentOpened += () =>
-                                              {
-                                                  this.logService.Log("App open ad full screen content opened.");
-                                                  this.AppOpenOpened?.Invoke();
-                                              };
-            // Raised when the ad closed full screen content.
-            ad.OnAdFullScreenContentClosed += () => { this.logService.Log("App open ad full screen content closed."); };
-            // Raised when the ad failed to open full screen content.
-            ad.OnAdFullScreenContentFailed += (AdError error) => { this.logService.Error("App open ad failed to open full screen content " + "with error : " + error); };
+            this.logService.Log("Start request Open App Ads Tier " + this.tierIndex);
+
+            var request = new AdRequest.Builder().Build();
+
+            AppOpenAd.LoadAd(this.adModAoaIds[this.tierIndex - 1], ScreenOrientation.Portrait, request, ((appOpenAd, error) =>
+                                                                                                     {
+                                                                                                         if (error != null)
+                                                                                                         {
+                                                                                                             // Handle the error.
+                                                                                                             this.logService.Log($"Failed to load the ad. (reason: {error.LoadAdError.GetMessage()}), tier {this.tierIndex}");
+                                                                                                             if (this.tierIndex <= 3)
+                                                                                                                 this.LoadAppOpenAd();
+                                                                                                             else
+                                                                                                                 this.tierIndex = 1;
+                                                                                                             return;
+                                                                                                         }
+
+                                                                                                         // App open ad is loaded.
+                                                                                                         this.AppOpenAd = appOpenAd;
+                                                                                                         this.tierIndex = 1;
+                                                                                                         this.loadTime  = DateTime.UtcNow;
+                                                                                                         if (!this.showFirstOpen && ConfigOpenApp)
+                                                                                                         {
+                                                                                                             this.ShowAdIfAvailable();
+                                                                                                             this.showFirstOpen = true;
+                                                                                                         }
+                                                                                                     }));
         }
-    }
+
+        public void ShowAdIfAvailable()
+        {
+            if (this.isShowingAd)
+            {
+                return;
+            }
+
+            if (!this.IsAdAvailable)
+            {
+                this.LoadAOAAd();
+            }
+
+            this.AppOpenAd.OnAdDidDismissFullScreenContent      += this.HandleAppOpenAdDidDismissFullScreenContent;
+            this.AppOpenAd.OnAdFailedToPresentFullScreenContent += this.HandleAppOpenAdFailedToPresentFullScreenContent;
+            this.AppOpenAd.OnAdDidPresentFullScreenContent      += this.HandleAppOpenAdDidPresentFullScreenContent;
+            this.AppOpenAd.OnAdDidRecordImpression              += this.HandleAppOpenAdDidRecordImpression;
+            this.AppOpenAd.OnPaidEvent                          += this.HandlePaidEvent;
+
+            this.AppOpenAd.Show();
+        }
+
+        private void HandleAppOpenAdDidDismissFullScreenContent(object sender, EventArgs args)
+        {
+            this.logService.Log("Closed app open ad");
+            // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
+            this.AppOpenAd   = null;
+            this.isShowingAd = false;
+            this.LoadAOAAd();
+        }
+
+        private void HandleAppOpenAdFailedToPresentFullScreenContent(object sender, AdErrorEventArgs args)
+        {
+            this.logService.Log($"Failed to present the ad (reason: {args.AdError.GetMessage()})");
+            // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
+            this.AppOpenAd = null;
+            this.LoadAOAAd();
+        }
+
+        private void HandleAppOpenAdDidPresentFullScreenContent(object sender, EventArgs args)
+        {
+            this.logService.Log("Displayed app open ad");
+            this.isShowingAd = true;
+        }
+
+        private void HandleAppOpenAdDidRecordImpression(object sender, EventArgs args) { this.logService.Log("Recorded ad impression"); }
+
+        private void HandlePaidEvent(object sender, AdValueEventArgs args) { this.logService.Log($"Received paid event. (currency: {args.AdValue.CurrencyCode}, value: {args.AdValue.Value}"); }
 #endif
+    }
 }

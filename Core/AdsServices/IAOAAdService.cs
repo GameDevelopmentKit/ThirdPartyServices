@@ -5,7 +5,8 @@ namespace Core.AdsServices
     /// </summary>
     public interface IAOAAdService
     {
+        public void LoadAOAAd();
         public bool IsAppOpenAdLoaded();
-        public void ShowAppOpenAd();
+        public void ShowAdIfAvailable();
     }
 }

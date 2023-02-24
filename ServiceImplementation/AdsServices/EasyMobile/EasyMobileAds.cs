@@ -130,6 +130,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         }
 
         public bool IsAdsInitialized() { return Advertising.IsInitialized(); }
+        public bool IsRemoveAds()
+        {
+            return Advertising.IsAdRemoved();
+        }
     }
 #endif
 }

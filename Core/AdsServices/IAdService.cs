@@ -64,5 +64,6 @@ namespace Core.AdsServices
         #endregion
 
         bool IsAdsInitialized();
+        bool IsRemoveAds();
     }
 }
