@@ -16,11 +16,7 @@ namespace Core.AdsServices
         {
             this.logService.Log("Dummy load app open ad");
         }
-        public bool IsAppOpenAdLoaded()
-        {
-            return true;
-        }
-        
+
         public void ShowAdIfAvailable()
         {
             this.logService.Log("Dummy show app open ad");

@@ -14,7 +14,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.Bind<IAdsServices>().To<DummyAdServiceIml>().AsCached();
 #endif
 #if EM_ADMOB
-            this.Container.Bind<IAOAAdService>().To<AdModWrapper>().AsCached();
+            this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached();
 #else
             this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();
 #endif
