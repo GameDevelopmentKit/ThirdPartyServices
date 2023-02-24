@@ -128,6 +128,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             Advertising.RemoveAds(revokeConsent);
         }
+
+        public bool IsAdsInitialized() { return Advertising.IsInitialized(); }
     }
 #endif
 }

@@ -11,9 +11,9 @@ namespace Core.AdsServices
 
         void          GrantDataPrivacyConsent();
         void          RevokeDataPrivacyConsent();
-        void          GrantDataPrivacyConsent(AdNetwork  adNetwork);
+        void          GrantDataPrivacyConsent(AdNetwork adNetwork);
         void          RevokeDataPrivacyConsent(AdNetwork adNetwork);
-        ConsentStatus GetDataPrivacyConsent(AdNetwork    adNetwork);
+        ConsentStatus GetDataPrivacyConsent(AdNetwork adNetwork);
 
         #endregion
 
@@ -59,8 +59,10 @@ namespace Core.AdsServices
         #region RemoveAds
 
         event Action AdsRemoved;
-        void RemoveAds(bool revokeConsent = false);
+        void         RemoveAds(bool revokeConsent = false);
 
         #endregion
+
+        bool IsAdsInitialized();
     }
 }
