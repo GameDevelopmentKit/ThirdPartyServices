@@ -7,5 +7,6 @@ namespace Core.AdsServices
     {
         public void LoadAOAAd();
         public void ShowAdIfAvailable();
+        public void OpenInterstitialAdHandler();
     }
 }

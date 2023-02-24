@@ -16,16 +16,18 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     {
         #region inject
 
-        private readonly ILogService  logService;
+        private readonly ILogService   logService;
+        private readonly IAOAAdService aoaAdService;
 
         #endregion
 
         private event Action RewardedAdCompletedOneTimeAction;
         private event Action RewardedInterstitialAdCompletedOneTimeAction;
 
-        public EasyMobileAdIml(ILogService logService)
+        public EasyMobileAdIml(ILogService logService, IAOAAdService aoaAdService)
         {
             this.logService   = logService;
+            this.aoaAdService = aoaAdService;
         }
 
         public void Initialize()
@@ -96,7 +98,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public event Action<Core.AdsServices.InterstitialAdNetwork, string> InterstitialAdCompleted;
         public bool                                                         IsInterstitialAdReady()          { return Advertising.IsInterstitialAdReady(); }
-        public void                                                         ShowInterstitialAd(string place) { Advertising.ShowInterstitialAd(AdPlacement.PlacementWithName(place)); }
+        public void ShowInterstitialAd(string place)
+        {
+            this.aoaAdService.OpenInterstitialAdHandler();
+            Advertising.ShowInterstitialAd(AdPlacement.PlacementWithName(place));
+        }
 
         #endregion
 
@@ -104,11 +110,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public event Action<Core.AdsServices.InterstitialAdNetwork, string> RewardedAdCompleted;
         public event Action<Core.AdsServices.InterstitialAdNetwork, string> RewardedAdSkipped;
         public bool                                                         IsRewardedAdReady()                              { return Advertising.IsRewardedAdReady(); }
-        public void                                                         ShowRewardedAd(string place)                     { Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place)); }
+        public void ShowRewardedAd(string place)
+        {
+            this.aoaAdService.OpenInterstitialAdHandler();
+            Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place)); 
+        }
         public void ShowRewardedAd(string place, Action onCompleted)
         {
-            Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place));
+            this.aoaAdService.OpenInterstitialAdHandler();
             this.RewardedAdCompletedOneTimeAction += onCompleted;
+            Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place));
         }
         public event Action<Core.AdsServices.InterstitialAdNetwork, string> RewardedInterstitialAdCompleted;
         public event Action<Core.AdsServices.InterstitialAdNetwork, string> RewardedInterstitialAdSkipped;
@@ -117,8 +128,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void ShowRewardedInterstitialAd(string place)                     { Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place)); }
         public void ShowRewardedInterstitialAd(string place, Action onCompleted)
         {
-            Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place));
+            this.aoaAdService.OpenInterstitialAdHandler();
             this.RewardedInterstitialAdCompletedOneTimeAction += onCompleted;
+            Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place));
         }
 
 

@@ -38,10 +38,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private bool showFirstOpen = false;
 
-        public static bool ConfigOpenApp   = true;
-        public static bool ConfigResumeApp = true;
-
-        public static bool ResumeFromAds = false;
+        private bool ConfigOpenApp   = true;
+        private bool ConfigResumeApp = true;
+        private bool ResumeFromAds = false;
 
         private bool IsAdAvailable => this.AppOpenAd != null && (DateTime.UtcNow - this.loadTime).TotalHours < 4;
 
@@ -52,7 +51,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             MobileAds.Initialize(_ =>
                                  {
                                      this.LoadAOAAd();
-                                     AppStateEventNotifier.AppStateChanged += OnAppStateChanged;
+                                     AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
                                  });
         }
 
@@ -62,8 +61,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             // Display the app open ad when the app is foregrounded.
             this.logService.Log($"App State is {state}");
             if (state != AppState.Foreground) return;
-            if (ConfigResumeApp && !ResumeFromAds)
+            if (this.ConfigResumeApp )
             {
+                if (this.ResumeFromAds)
+                {
+                    this.ResumeFromAds = false;
+                    return;
+                }
                 this.ShowAdIfAvailable();
             }
         }
@@ -102,7 +106,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                                                                                              this.AppOpenAd = appOpenAd;
                                                                                                              this.tierIndex = 1;
                                                                                                              this.loadTime  = DateTime.UtcNow;
-                                                                                                             if (!this.showFirstOpen && ConfigOpenApp)
+                                                                                                             if (!this.showFirstOpen && this.ConfigOpenApp)
                                                                                                              {
                                                                                                                  this.ShowAdIfAvailable();
                                                                                                                  this.showFirstOpen = true;
@@ -129,6 +133,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.AppOpenAd.OnPaidEvent                          += this.HandlePaidEvent;
 
             this.AppOpenAd.Show();
+        }
+        public void OpenInterstitialAdHandler()
+        {
+            this.ResumeFromAds = true;
         }
 
         private void HandleAppOpenAdDidDismissFullScreenContent(object sender, EventArgs args)
