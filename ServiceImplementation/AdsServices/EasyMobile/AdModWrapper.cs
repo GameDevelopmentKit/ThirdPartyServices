@@ -4,6 +4,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System;
     using System.Collections.Generic;
     using Core.AdsServices;
+    using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Api;
     using GoogleMobileAds.Common;
@@ -14,40 +15,49 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     {
         #region inject
 
-        private readonly ILogService  logService;
-        private readonly List<string> adModAoaIds;
-        private readonly IAdServices  adServices;
+        private readonly ILogService logService;
+        private readonly Config      config;
+        private readonly SignalBus   signalBus;
+        private readonly IAdServices adServices;
 
         #endregion
 
-        public AdModWrapper(ILogService logService, List<string> adModAOAIds, IAdServices adServices)
+
+        public class Config
         {
-            this.logService  = logService;
-            this.adModAoaIds = adModAOAIds;
-            this.adServices  = adServices;
+            public List<string> ADModAoaIds;
+            public bool         OpenFirstTimeOpen = true;
+            public bool         OpenAfterResuming = true;
+
+            public Config(List<string> adModAoaIds, bool openFirstTimeOpen = true, bool openAfterResuming = true)
+            {
+                this.ADModAoaIds       = adModAoaIds;
+                this.OpenAfterResuming = openAfterResuming;
+                this.OpenFirstTimeOpen = openFirstTimeOpen;
+            }
         }
 
-        public event Action AppOpenOpened;
-
-
+        private DateTime  loadTime;
         private AppOpenAd AppOpenAd;
+        private bool      isShowedFirstOpen = false;
+        private bool      isShowingAd       = false;
+        private bool      IsResumedFromAds  = false;
 
-        private DateTime loadTime;
-
-        private bool isShowingAd = false;
-
-        private bool showFirstOpen = false;
-
-        private bool ConfigOpenApp   = true;
-        private bool ConfigResumeApp = true;
-        private bool ResumeFromAds = false;
+        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices)
+        {
+            this.logService = logService;
+            this.config     = config;
+            this.signalBus  = signalBus;
+            this.adServices = adServices;
+        }
 
         private bool IsAdAvailable => this.AppOpenAd != null && (DateTime.UtcNow - this.loadTime).TotalHours < 4;
 
-        private int tierIndex = 1;
+        private int CurrentAdIdIndex = 0;
 
         public void Initialize()
         {
+            this.signalBus.Subscribe<ShowInterstitialAdSignal>(this.ShownInterstitialAdHandler);
             MobileAds.Initialize(_ =>
                                  {
                                      this.LoadAOAAd();
@@ -55,21 +65,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                  });
         }
 
+        private void ShownInterstitialAdHandler() { this.IsResumedFromAds = true; }
 
         private void OnAppStateChanged(AppState state)
         {
             // Display the app open ad when the app is foregrounded.
             this.logService.Log($"App State is {state}");
             if (state != AppState.Foreground) return;
-            if (this.ConfigResumeApp )
+            if (!this.config.OpenAfterResuming) return;
+            if (this.IsResumedFromAds)
             {
-                if (this.ResumeFromAds)
-                {
-                    this.ResumeFromAds = false;
-                    return;
-                }
-                this.ShowAdIfAvailable();
+                this.IsResumedFromAds = false;
+                return;
             }
+
+            this.ShowAdIfAvailable();
         }
 
         public void LoadAOAAd()
@@ -84,34 +94,35 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void LoadAppOpenAd()
         {
-            this.logService.Log("Start request Open App Ads Tier " + this.tierIndex);
+            this.logService.Log("Start request Open App Ads Tier " + this.CurrentAdIdIndex);
 
             var request = new AdRequest.Builder().Build();
 
-            AppOpenAd.LoadAd(this.adModAoaIds[this.tierIndex - 1], ScreenOrientation.Portrait, request, ((appOpenAd, error) =>
-                                                                                                         {
-                                                                                                             if (error != null)
-                                                                                                             {
-                                                                                                                 // Handle the error.
-                                                                                                                 this.logService
-                                                                                                                     .Log($"Failed to load the ad. (reason: {error.LoadAdError.GetMessage()}), tier {this.tierIndex}");
-                                                                                                                 if (this.tierIndex <= 3)
-                                                                                                                     this.LoadAppOpenAd();
-                                                                                                                 else
-                                                                                                                     this.tierIndex = 1;
-                                                                                                                 return;
-                                                                                                             }
+            AppOpenAd.LoadAd(this.config.ADModAoaIds[this.CurrentAdIdIndex], ScreenOrientation.Portrait, request, ((appOpenAd, error) =>
+                                                                                                                {
+                                                                                                                    if (error != null)
+                                                                                                                    {
+                                                                                                                        // Handle the error.
+                                                                                                                        this.logService
+                                                                                                                            .Log($"Failed to load the ad. (reason: {error.LoadAdError.GetMessage()}), tier {this.CurrentAdIdIndex}");
+                                                                                                                        this.CurrentAdIdIndex++;
+                                                                                                                        if (this.CurrentAdIdIndex < this.config.ADModAoaIds.Count)
+                                                                                                                            this.LoadAppOpenAd();
+                                                                                                                        else
+                                                                                                                            this.CurrentAdIdIndex = 1;
+                                                                                                                        return;
+                                                                                                                    }
 
-                                                                                                             // App open ad is loaded.
-                                                                                                             this.AppOpenAd = appOpenAd;
-                                                                                                             this.tierIndex = 1;
-                                                                                                             this.loadTime  = DateTime.UtcNow;
-                                                                                                             if (!this.showFirstOpen && this.ConfigOpenApp)
-                                                                                                             {
-                                                                                                                 this.ShowAdIfAvailable();
-                                                                                                                 this.showFirstOpen = true;
-                                                                                                             }
-                                                                                                         }));
+                                                                                                                    // App open ad is loaded.
+                                                                                                                    this.AppOpenAd = appOpenAd;
+                                                                                                                    this.CurrentAdIdIndex = 1;
+                                                                                                                    this.loadTime  = DateTime.UtcNow;
+                                                                                                                    if (!this.isShowedFirstOpen && this.config.OpenFirstTimeOpen)
+                                                                                                                    {
+                                                                                                                        this.ShowAdIfAvailable();
+                                                                                                                        this.isShowedFirstOpen = true;
+                                                                                                                    }
+                                                                                                                }));
         }
 
         public void ShowAdIfAvailable()
@@ -133,10 +144,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.AppOpenAd.OnPaidEvent                          += this.HandlePaidEvent;
 
             this.AppOpenAd.Show();
-        }
-        public void OpenInterstitialAdHandler()
-        {
-            this.ResumeFromAds = true;
         }
 
         private void HandleAppOpenAdDidDismissFullScreenContent(object sender, EventArgs args)
@@ -165,6 +172,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void HandleAppOpenAdDidRecordImpression(object sender, EventArgs args) { this.logService.Log("Recorded ad impression"); }
 
         private void HandlePaidEvent(object sender, AdValueEventArgs args) { this.logService.Log($"Received paid event. (currency: {args.AdValue.CurrencyCode}, value: {args.AdValue.Value}"); }
-#endif
     }
+#endif
 }

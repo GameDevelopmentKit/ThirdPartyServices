@@ -1,6 +1,7 @@
 namespace ServiceImplementation.AdsServices
 {
     using Core.AdsServices;
+    using Core.AdsServices.Signals;
     using ServiceImplementation.AdsServices.EasyMobile;
     using Zenject;
 
@@ -8,6 +9,7 @@ namespace ServiceImplementation.AdsServices
     {
         public override void InstallBindings()
         {
+            this.Container.DeclareSignal<ShowInterstitialAdSignal>();
 #if EASY_MOBILE_PRO
             this.Container.Bind<IAdServices>().To<EasyMobileAdIml>().AsCached();
 #else

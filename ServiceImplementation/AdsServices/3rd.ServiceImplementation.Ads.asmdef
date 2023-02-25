@@ -6,7 +6,8 @@
         "EasyMobile.Scripts",
         "3rdCore.Analytic",
         "GameFoundation.Utilities",
-        "Zenject-Source"
+        "Zenject-Source",
+        "Zenject-Signals"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

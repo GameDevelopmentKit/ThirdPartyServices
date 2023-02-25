@@ -21,9 +21,5 @@ namespace Core.AdsServices
         {
             this.logService.Log("Dummy show app open ad");
         }
-        public void OpenInterstitialAdHandler()
-        {
-            this.logService.Log("Dummy disable app open ad");
-        }
     }
 }
