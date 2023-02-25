@@ -11,7 +11,7 @@ namespace ServiceImplementation.AdsServices
         {
             this.Container.DeclareSignal<ShowInterstitialAdSignal>();
 #if EASY_MOBILE_PRO
-            this.Container.Bind<IAdServices>().To<EasyMobileAdIml>().AsCached();
+            this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
 #else
             this.Container.Bind<IAdsServices>().To<DummyAdServiceIml>().AsCached();
 #endif

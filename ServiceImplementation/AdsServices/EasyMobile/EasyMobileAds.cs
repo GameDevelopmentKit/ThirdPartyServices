@@ -48,6 +48,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             Advertising.RewardedAdSkipped               -= this.OnAdvertisingOnRewardedAdSkipped;
             Advertising.RewardedInterstitialAdCompleted -= this.OnAdvertisingOnRewardedInterstitialAdCompleted;
             Advertising.RewardedInterstitialAdSkipped   -= this.OnAdvertisingOnRewardedInterstitialAdSkipped;
+            Advertising.AdsRemoved                      -= this.OnAdRemoved;
         }
 
         private void OnAdRemoved()
