@@ -13,7 +13,7 @@ namespace ServiceImplementation.AdsServices
 #if EASY_MOBILE_PRO
             this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
 #else
-            this.Container.Bind<IAdsServices>().To<DummyAdServiceIml>().AsCached();
+            this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
 #if EM_ADMOB
             this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached();
