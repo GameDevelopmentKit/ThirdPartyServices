@@ -64,6 +64,7 @@ namespace Core.AnalyticServices.Data
         {
             await this.TrackerSetup();
 
+            //todo need to refactor this
             this.AnalyticServices.UserProperties.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == nameof(UserProperties.UserId))
