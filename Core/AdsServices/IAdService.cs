@@ -11,9 +11,9 @@ namespace Core.AdsServices
 
         void          GrantDataPrivacyConsent();
         void          RevokeDataPrivacyConsent();
-        void          GrantDataPrivacyConsent(AdNetwork adNetwork);
+        void          GrantDataPrivacyConsent(AdNetwork  adNetwork);
         void          RevokeDataPrivacyConsent(AdNetwork adNetwork);
-        ConsentStatus GetDataPrivacyConsent(AdNetwork adNetwork);
+        ConsentStatus GetDataPrivacyConsent(AdNetwork    adNetwork);
 
         #endregion
 
@@ -29,8 +29,8 @@ namespace Core.AdsServices
 
         event Action<InterstitialAdNetwork, string> InterstitialAdCompleted;
 
-        bool IsInterstitialAdReady();
-        void ShowInterstitialAd(string place);
+        bool IsInterstitialAdReady(string place);
+        void ShowInterstitialAd(string    place);
 
         #endregion
 
@@ -39,9 +39,9 @@ namespace Core.AdsServices
         event Action<InterstitialAdNetwork, string> RewardedAdCompleted;
         event Action<InterstitialAdNetwork, string> RewardedAdSkipped;
 
-        bool IsRewardedAdReady();
-        void ShowRewardedAd(string place);
-        void ShowRewardedAd(string place, Action onCompleted);
+        bool IsRewardedAdReady(string place);
+        void ShowRewardedAd(string    place);
+        void ShowRewardedAd(string    place, Action onCompleted);
 
         #endregion
 

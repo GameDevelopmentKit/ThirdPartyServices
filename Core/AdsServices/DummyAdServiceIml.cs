@@ -18,11 +18,11 @@ namespace Core.AdsServices
         public void HideBannedAd() { this.logService.Log($"Dummy hide banner ad"); }
         public void DestroyBannerAd() { this.logService.Log($"Dummy destroy banner ad"); }
         public event Action<InterstitialAdNetwork, string> InterstitialAdCompleted;
-        public bool IsInterstitialAdReady() { return true; }
+        public bool IsInterstitialAdReady(string place) { return true; }
         public void ShowInterstitialAd(string place) { this.logService.Log($"Dummy show Interstitial ad at {place}"); }
         public event Action<InterstitialAdNetwork, string> RewardedAdCompleted;
         public event Action<InterstitialAdNetwork, string> RewardedAdSkipped;
-        public bool IsRewardedAdReady() { return true; }
+        public bool IsRewardedAdReady(string place) { return true; }
         public void ShowRewardedAd(string place) { this.logService.Log($"Dummy show Reward ad at {place}"); }
         public void ShowRewardedAd(string place, Action onCompleted) { this.logService.Log($"Dummy show Reward ad at {place} then do {onCompleted}"); }
         public event Action<InterstitialAdNetwork, string> RewardedInterstitialAdCompleted;
