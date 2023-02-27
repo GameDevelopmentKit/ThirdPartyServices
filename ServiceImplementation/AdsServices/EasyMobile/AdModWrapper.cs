@@ -135,13 +135,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                                                                                                            if (this.CurrentAdIdIndex < this.config.ADModAoaIds.Count)
                                                                                                                                this.LoadAppOpenAd();
                                                                                                                            else
-                                                                                                                               this.CurrentAdIdIndex = 1;
+                                                                                                                               this.CurrentAdIdIndex = 0;
                                                                                                                            return;
                                                                                                                        }
 
                                                                                                                        // App open ad is loaded.
                                                                                                                        this.AppOpenAd        = appOpenAd;
-                                                                                                                       this.CurrentAdIdIndex = 1;
+                                                                                                                       this.CurrentAdIdIndex = 0;
                                                                                                                        this.loadTime         = DateTime.UtcNow;
                                                                                                                        if (!this.isShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
                                                                                                                        {
