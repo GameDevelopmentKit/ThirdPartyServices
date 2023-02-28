@@ -20,8 +20,8 @@ namespace Core.AdsServices
         public event Action<InterstitialAdNetwork, string> InterstitialAdCompleted;
         public bool IsInterstitialAdReady(string place) { return true; }
         public void ShowInterstitialAd(string place) { this.logService.Log($"Dummy show Interstitial ad at {place}"); }
-        public event Action<InterstitialAdNetwork, string> RewardedAdCompleted;
-        public event Action<InterstitialAdNetwork, string> RewardedAdSkipped;
+        public event Action<RewardedAdNetwork, string> RewardedAdCompleted;
+        public event Action<RewardedAdNetwork, string> RewardedAdSkipped;
         public bool IsRewardedAdReady(string place) { return true; }
         public void ShowRewardedAd(string place) { this.logService.Log($"Dummy show Reward ad at {place}"); }
         public void ShowRewardedAd(string place, Action onCompleted) { this.logService.Log($"Dummy show Reward ad at {place} then do {onCompleted}"); }

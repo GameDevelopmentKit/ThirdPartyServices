@@ -62,10 +62,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.RewardedInterstitialAdCompletedOneTimeAction?.Invoke();
             this.RewardedInterstitialAdCompletedOneTimeAction = null;
         }
-        private void OnAdvertisingOnRewardedAdSkipped(RewardedAdNetwork network, AdPlacement place) { this.RewardedAdSkipped?.Invoke((Core.AdsServices.InterstitialAdNetwork)network, place.Name); }
+        private void OnAdvertisingOnRewardedAdSkipped(RewardedAdNetwork network, AdPlacement place) { this.RewardedAdSkipped?.Invoke((Core.AdsServices.RewardedAdNetwork)network, place.Name); }
         private void OnAdvertisingOnRewardedAdCompleted(RewardedAdNetwork network, AdPlacement place)
         {
-            this.RewardedAdCompleted?.Invoke((Core.AdsServices.InterstitialAdNetwork)network, place.Name);
+            this.RewardedAdCompleted?.Invoke((Core.AdsServices.RewardedAdNetwork)network, place.Name);
             this.RewardedAdCompletedOneTimeAction?.Invoke();
             this.RewardedAdCompletedOneTimeAction = null;
         }
@@ -106,9 +106,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #endregion
 
 
-        public event Action<Core.AdsServices.InterstitialAdNetwork, string> RewardedAdCompleted;
-        public event Action<Core.AdsServices.InterstitialAdNetwork, string> RewardedAdSkipped;
-        public bool                                                         IsRewardedAdReady(string place) { return Advertising.IsRewardedAdReady(AdPlacement.PlacementWithName(place)); }
+        public event Action<Core.AdsServices.RewardedAdNetwork, string> RewardedAdCompleted;
+        public event Action<Core.AdsServices.RewardedAdNetwork, string> RewardedAdSkipped;
+        public bool                                                     IsRewardedAdReady(string place) { return Advertising.IsRewardedAdReady(AdPlacement.PlacementWithName(place)); }
         public void ShowRewardedAd(string place)
         {
             this.signalBus.Fire<ShowInterstitialAdSignal>();
