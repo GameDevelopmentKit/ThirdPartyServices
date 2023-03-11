@@ -14,8 +14,6 @@ namespace Core.AnalyticServices.Data
 
     public abstract class BaseTracker
     {
-        protected readonly IAnalyticServices AnalyticServices;
-
         /// <summary>
         /// signal to the base tracker that the "On" events are ready to be invoked
         /// </summary>
@@ -53,25 +51,18 @@ namespace Core.AnalyticServices.Data
         /// <summary>
         /// base constructor for trackers which sets up when/how events and states should be tracked
         /// </summary>
-        public BaseTracker(SignalBus signalBus, IAnalyticServices analyticServices)
+        public BaseTracker(SignalBus signalBus)
         {
-            this.AnalyticServices = analyticServices;
             signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);
+            signalBus.Subscribe<SetUserIdSignal>(signal => this.SetUserId(signal.UserId));
             this.Init();
         }
 
         private async void Init()
         {
             await this.TrackerSetup();
-
-            //todo need to refactor this
-            this.AnalyticServices.UserProperties.PropertyChanged += (sender, args) =>
-            {
-                if (args.PropertyName == nameof(UserProperties.UserId))
-                    this.SetUserId(this.AnalyticServices.UserProperties.UserId);
-            };
         }
-
+        
         private async void EventTracked(EventTrackedSignal trackedData)
         {
             // if the tracker has failed setup we should not forward it any events

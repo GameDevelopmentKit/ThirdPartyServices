@@ -1,5 +1,6 @@
-namespace Core.AnalyticServices.Data
+namespace Core.AnalyticServices.Tools
 {
+    using Core.AnalyticServices.Data;
     using Utilities.Extension;
 
     /// <summary>

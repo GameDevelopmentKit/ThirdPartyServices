@@ -243,10 +243,5 @@ namespace Core.AnalyticServices.Data
         /// 
         /// </summary>
         public double InstallTimestamp { get => this.get<double>(); internal set => this.set(value); }
-
-        /// <summary>
-        /// todo - move to correct package
-        /// </summary>
-        public string AppsflyerId { get => this.get<string>(); set => this.set(value); }
     }
 }

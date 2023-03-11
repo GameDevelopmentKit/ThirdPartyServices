@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
     using Newtonsoft.Json;
     using UnityEngine;
@@ -15,7 +14,7 @@
         protected override TaskCompletionSource<bool>      TrackerReady         { get; } = new TaskCompletionSource<bool>();
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates { get; }
 
-        public FirebaseAnalyticTracker(SignalBus signalBus, IAnalyticServices analyticServices) : base(signalBus, analyticServices) { }
+        public FirebaseAnalyticTracker(SignalBus signalBus) : base(signalBus) { }
 
 
         protected override Task TrackerSetup()
