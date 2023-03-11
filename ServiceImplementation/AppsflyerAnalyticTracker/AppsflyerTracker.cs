@@ -2,10 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
     using AppsFlyerSDK;
     using Core.AnalyticServices;
+    using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
     using GameFoundation.Scripts.Utilities.Extension;
     using UnityEngine;
@@ -13,39 +15,42 @@
 
     public class AppsflyerTracker : BaseTracker
     {
-        protected override TaskCompletionSource<bool>      TrackerReady         { get; } = new();
-        protected override Dictionary<Type, EventDelegate> CustomEventDelegates { get; }
+        private readonly   AnalyticConfig             analyticConfig;
+        protected override TaskCompletionSource<bool> TrackerReady { get; } = new();
 
-        public AppsflyerTracker(SignalBus signalBus, IAnalyticServices analyticServices) : base(signalBus, analyticServices) { }
+        protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
+        {
+            { typeof(IapTransactionDidSucceed), TrackIAP }
+        };
+
+        public AppsflyerTracker(SignalBus signalBus, AnalyticConfig analyticConfig) : base(signalBus) { this.analyticConfig = analyticConfig; }
 
 
         protected override Task TrackerSetup()
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
-            
-            
+
             Debug.Log($"setting up appsflyer tracker");
 
-            var apiId = "appId";
-            var devKey = "devKey";
-            
-            if (string.IsNullOrEmpty(apiId)) {
+            var apiId  = this.analyticConfig.AppsflyerAppId;
+            var devKey = this.analyticConfig.AppsflyerDevKey;
+
+#if UNITY_IOS || UNITY_STANDALONE_OSX
+            if (string.IsNullOrEmpty(apiId))
+            {
                 Debug.LogError("Appsflyer can't be initialized, Appsflyer ApiKey not found");
                 this.TrackerReady.SetResult(false);
+                return this.TrackerReady.Task;
             }
-            else {
-                AppsFlyer.initSDK(devKey, apiId);
-                AppsFlyer.startSDK();
+#endif
+            AppsFlyer.setIsDebug(this.analyticConfig.AppsflyerIsDebug);
+            AppsFlyer.initSDK(devKey, apiId);
+            AppsFlyer.startSDK();
 
-                this.TrackerReady.SetResult(true);
-            }
-            
+            this.TrackerReady.SetResult(true);
             return this.TrackerReady.Task;
         }
-        protected override void SetUserId(string userId)
-        {
-            AppsFlyer.setCustomerUserId(userId);
-        }
+        protected override void SetUserId(string userId) { AppsFlyer.setCustomerUserId(userId); }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
         {
@@ -57,7 +62,22 @@
             var convertedData = data.ToDictionary(pair => pair.Key, pair => pair.Value.ToJson());
             AppsFlyer.sendEvent(name, convertedData);
         }
-        
-        //todo track IAP event
+
+        private void TrackIAP(IEvent trackedEvent, Dictionary<string, object> data)
+        {
+            if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
+            {
+                Debug.LogError("trackedEvent in TrackIAP is not of correct type");
+                return;
+            }
+
+            var eventValues = new Dictionary<string, string>
+            {
+                { AFInAppEvents.CURRENCY, iapTransaction.CurrencyCode },
+                { AFInAppEvents.REVENUE, iapTransaction.Price.ToString(CultureInfo.InvariantCulture) },
+                { AFInAppEvents.PRICE, iapTransaction.PriceSku }
+            };
+            AppsFlyer.sendEvent(AFInAppEvents.PURCHASE, eventValues);
+        }
     }
 }
