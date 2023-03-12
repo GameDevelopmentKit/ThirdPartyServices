@@ -47,6 +47,8 @@ namespace Core.AnalyticServices
             this.UserProperties     = new UserProperties(this);
             this.eventTrackedSignal = new EventTrackedSignal();
             this.started            = new TaskCompletionSource<bool>();
+            //todo need to refactor this
+           
         }
 
 
@@ -62,6 +64,12 @@ namespace Core.AnalyticServices
 
             this.deviceInfo.ScrapeDeviceData();
             this.SetupUserProperties();
+            
+            this.UserProperties.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(UserProperties.UserId))
+                    this.signalBus.Fire(new SetUserIdSignal(){UserId = this.UserProperties.UserId});
+            };
             this.started.SetResult(true);
         }
 

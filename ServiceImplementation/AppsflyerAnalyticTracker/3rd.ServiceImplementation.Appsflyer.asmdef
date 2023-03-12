@@ -1,11 +1,11 @@
 {
-    "name": "3rdCore.Analytic",
+    "name": "3rd.ServiceImplementation.Appsflyer",
     "rootNamespace": "",
     "references": [
+        "3rdCore.Analytic",
         "Zenject-Signals",
-        "Zenject-Source",
-        "GameFoundation.Utilities",
-        "GameFoundation.Models"
+        "AppsFlyer",
+        "GameFoundation.Utilities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

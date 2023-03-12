@@ -1,13 +1,14 @@
 {
-    "name": "3rdCore.Analytic",
+    "name": "3rdCore.Analytic.Editor",
     "rootNamespace": "",
     "references": [
-        "Zenject-Signals",
-        "Zenject-Source",
-        "GameFoundation.Utilities",
-        "GameFoundation.Models"
+        "GameFoundation.Editor",
+        "GameFoundation.Models",
+        "3rdCore.Analytic"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
