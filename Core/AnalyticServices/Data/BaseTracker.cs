@@ -14,6 +14,12 @@ namespace Core.AnalyticServices.Data
 
     public abstract class BaseTracker
     {
+        #region inject
+
+        protected readonly AnalyticConfig analyticConfig;
+
+        #endregion
+
         /// <summary>
         /// signal to the base tracker that the "On" events are ready to be invoked
         /// </summary>
@@ -51,8 +57,9 @@ namespace Core.AnalyticServices.Data
         /// <summary>
         /// base constructor for trackers which sets up when/how events and states should be tracked
         /// </summary>
-        public BaseTracker(SignalBus signalBus)
+        public BaseTracker(SignalBus signalBus, AnalyticConfig analyticConfig)
         {
+            this.analyticConfig = analyticConfig;
             signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);
             signalBus.Subscribe<SetUserIdSignal>(signal => this.SetUserId(signal.UserId));
             this.Init();

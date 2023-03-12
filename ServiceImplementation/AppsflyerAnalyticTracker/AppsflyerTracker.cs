@@ -16,7 +16,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
     public class AppsflyerTracker : BaseTracker
     {
-        private readonly   AnalyticConfig             analyticConfig;
         protected override TaskCompletionSource<bool> TrackerReady { get; } = new();
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
@@ -24,7 +23,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             { typeof(IapTransactionDidSucceed), TrackIAP }
         };
 
-        public AppsflyerTracker(SignalBus signalBus, AnalyticConfig analyticConfig) : base(signalBus) { this.analyticConfig = analyticConfig; }
+        public AppsflyerTracker(SignalBus signalBus, AnalyticConfig analyticConfig) : base(signalBus, analyticConfig) { }
 
 
         protected override Task TrackerSetup()
