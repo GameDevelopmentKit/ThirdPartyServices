@@ -1,4 +1,5 @@
-﻿namespace ServiceImplementation.AppsflyerAnalyticTracker
+﻿#if APPSFLYER
+namespace ServiceImplementation.AppsflyerAnalyticTracker
 {
     using System;
     using System.Collections.Generic;
@@ -80,4 +81,6 @@
             AppsFlyer.sendEvent(AFInAppEvents.PURCHASE, eventValues);
         }
     }
+
 }
+#endif
