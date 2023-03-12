@@ -1,5 +1,6 @@
 namespace Core.AnalyticServices
 {
+    using System;
     using UnityEngine;
 
     /// <summary>
