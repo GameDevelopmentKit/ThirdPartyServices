@@ -5,6 +5,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
+    using Core.AnalyticServices;
+    using Core.AnalyticServices.CommonEvents;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Api;
     using GoogleMobileAds.Common;
@@ -15,10 +17,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     {
         #region inject
 
-        private readonly ILogService logService;
-        public readonly  Config      config;
-        private readonly SignalBus   signalBus;
-        private readonly IAdServices adServices;
+        private readonly ILogService       logService;
+        public readonly  Config            config;
+        private readonly SignalBus         signalBus;
+        private readonly IAdServices       adServices;
+        private readonly IAnalyticServices analyticServices;
 
         #endregion
 
@@ -41,12 +44,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private bool      isShowedFirstOpen = false;
         private bool      IsResumedFromAds  = false;
 
-        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices)
+        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticServices)
         {
-            this.logService = logService;
-            this.config     = config;
-            this.signalBus  = signalBus;
-            this.adServices = adServices;
+            this.logService       = logService;
+            this.config           = config;
+            this.signalBus        = signalBus;
+            this.adServices       = adServices;
+            this.analyticServices = analyticServices;
         }
 
         private bool IsAdAvailable => this.AppOpenAd != null && (DateTime.UtcNow - this.loadTime).TotalHours < 4;
@@ -64,7 +68,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             });
         }
 
-        private void ShownInterstitialAdHandler() { this.IsResumedFromAds = true; }
+        private void ShownInterstitialAdHandler()
+        {
+            this.IsResumedFromAds = true;
+        }
 
         private void OnAppStateChanged(AppState state)
         {
@@ -186,9 +193,20 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.IsShowingAd = true;
         }
 
-        private void HandleAppOpenAdDidRecordImpression(object sender, EventArgs args) { this.logService.Log("Recorded ad impression"); }
+        private void HandleAppOpenAdDidRecordImpression(object sender, EventArgs args)
+        {
+            this.logService.Log("Recorded ad impression");
+        }
 
-        private void HandlePaidEvent(object sender, AdValueEventArgs args) { this.logService.Log($"Received paid event. (currency: {args.AdValue.CurrencyCode}, value: {args.AdValue.Value}"); }
+        private void HandlePaidEvent(object sender, AdValueEventArgs args)
+        {
+            this.analyticServices.Track(new AdsRevenueEvent()
+            {
+                Currency = args.AdValue.CurrencyCode,
+                Revenue  = args.AdValue.Value / 1e5
+            });
+            this.logService.Log($"Received paid event. (currency: {args.AdValue.CurrencyCode}, value: {args.AdValue.Value}");
+        }
     }
 #endif
 }
