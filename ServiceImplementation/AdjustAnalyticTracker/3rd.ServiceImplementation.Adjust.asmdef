@@ -4,7 +4,6 @@
   "references": [
     "3rdCore.Analytic",
     "Zenject-Signals",
-    "AppsFlyer",
     "GameFoundation.Utilities",
     "AdjustSDK"
   ],
