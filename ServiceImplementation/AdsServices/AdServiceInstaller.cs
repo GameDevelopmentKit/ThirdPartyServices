@@ -1,5 +1,6 @@
 namespace ServiceImplementation.AdsServices
 {
+    using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using ServiceImplementation.AdsServices.EasyMobile;
@@ -23,6 +24,7 @@ namespace ServiceImplementation.AdsServices
 
 #if EM_APPLOVIN
             this.Container.BindInterfacesAndSelfTo<MaxSDKWrapper>().AsCached();
+            this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<MaxSDKWrapper>();
 #elif EM_IRONSOURCE
             this.Container.BindInterfacesAndSelfTo<IronSourceWrapper>().AsCached();
 #else
