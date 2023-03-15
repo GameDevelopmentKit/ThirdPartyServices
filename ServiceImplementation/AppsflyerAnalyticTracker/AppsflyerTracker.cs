@@ -1,4 +1,5 @@
-﻿// #if APPSFLYER
+﻿#if APPSFLYER
+
 namespace ServiceImplementation.AppsflyerAnalyticTracker
 {
     using System;
@@ -48,7 +49,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             AppsFlyer.initSDK(devKey, apiId);
             AppsFlyer.startSDK();
             AppsFlyerAdRevenue.start();
-            
+
             this.TrackerReady.SetResult(true);
             return this.TrackerReady.Task;
         }
@@ -81,8 +82,8 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             };
             AppsFlyer.sendEvent(AFInAppEvents.PURCHASE, eventValues);
         }
-        
-        
+
+
         private void TrackAdsRevenue(IEvent trackedEvent, Dictionary<string, object> data)
         {
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
@@ -90,20 +91,21 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
                 return;
             }
-        
-            // var adjustRevenue = new AdjustAdRevenue(adsRevenueEvent.AdsRevenueSourceId);
-            // adjustRevenue.setRevenue(adsRevenueEvent.Revenue, adsRevenueEvent.Currency);
-            // adjustRevenue.setAdRevenueNetwork(adsRevenueEvent.AdNetwork);
-            // adjustRevenue.setAdRevenueUnit(adsRevenueEvent.AdUnit);
-            // adjustRevenue.setAdRevenuePlacement(adsRevenueEvent.Placement);
-            // Adjust.trackAdRevenue(adjustRevenue);
-            
+
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add(AFAdRevenueEvent.AD_UNIT, adsRevenueEvent.AdUnit);
             dic.Add(AFAdRevenueEvent.PLACEMENT, adsRevenueEvent.Placement);
-            AppsFlyerAdRevenue.logAdRevenue(adsRevenueEvent.AdNetwork, AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax, adsRevenueEvent.Revenue, adsRevenueEvent.Currency, dic);
+            AppsFlyerAdRevenueMediationNetworkType mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
+            {
+                AdRevenueConstants.ARSourceAppLovinMAX => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax,
+                AdRevenueConstants.ARSourceIronSource => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeIronSource,
+                AdRevenueConstants.ARSourceAdMob => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob,
+                AdRevenueConstants.ARSourceUnity => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeUnity,
+                _ => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeCustomMediation
+            };
+
+            AppsFlyerAdRevenue.logAdRevenue(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Revenue, adsRevenueEvent.Currency, dic);
         }
     }
-
 }
-// #endif
+#endif
