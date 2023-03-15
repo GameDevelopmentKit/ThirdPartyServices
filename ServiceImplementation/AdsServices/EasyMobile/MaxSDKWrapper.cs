@@ -4,6 +4,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System;
     using System.Collections.Generic;
     using Core.AdsServices;
+    using Cysharp.Threading.Tasks;
+    using GameFoundation.Scripts.Utilities.LogService;
     using Zenject;
 
     public class MaxSDKWrapper : IMRECAdService, IInitializable
@@ -11,19 +13,23 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region inject
 
         private readonly Dictionary <AdViewPosition, string> positionToMRECAdUnitId;
+        private readonly ILogService                         logService;
 
         #endregion
 
-        public MaxSDKWrapper(Dictionary<AdViewPosition, string> positionToMRECAdUnitId)
+        public MaxSDKWrapper(Dictionary<AdViewPosition, string> positionToMRECAdUnitId, ILogService logService)
         {
             this.positionToMRECAdUnitId = positionToMRECAdUnitId;
+            this.logService             = logService;
         }
 
-        public void Initialize()
+        public async void Initialize()
         {
             // MRECs are sized to 300x250 on phones and tablets
+            await UniTask.WaitUntil(() => MaxSdk.IsInitialized());
             foreach (var (position, adUnitId) in this.positionToMRECAdUnitId)
             {
+                this.logService.Log($"Check max init {MaxSdk.IsInitialized()}");
                 MaxSdk.CreateMRec(adUnitId, this.ConvertAdViewPosition(position));
             }
 

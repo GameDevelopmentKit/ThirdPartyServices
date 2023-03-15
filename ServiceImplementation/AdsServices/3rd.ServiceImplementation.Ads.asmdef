@@ -8,7 +8,8 @@
         "GameFoundation.Utilities",
         "Zenject-Source",
         "Zenject-Signals",
-        "MaxSdk.Scripts"
+        "MaxSdk.Scripts",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
