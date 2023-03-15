@@ -16,11 +16,36 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region inject
 
         private readonly ILogService logService;
-        public readonly  Config      config;
+        private readonly Config      config;
         private readonly SignalBus   signalBus;
         private readonly IAdServices adServices;
 
         #endregion
+
+        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices)
+        {
+            this.logService = logService;
+            this.config     = config;
+            this.signalBus  = signalBus;
+            this.adServices = adServices;
+        }
+
+        public void Initialize()
+        {
+            this.signalBus.Subscribe<ShowInterstitialAdSignal>(this.ShownInterstitialAdHandler);
+
+            MobileAds.Initialize(_ =>
+            {
+                this.LoadAOAAd();
+                AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
+            });
+        }
+
+        #region AOA
+        
+        private bool IsAOAAdAvailable => this.AppOpenAd != null && (DateTime.UtcNow - this.loadTime).TotalHours < 4;
+
+        private int CurrentAOAAdIdIndex = 0;
 
         public class Config
         {
@@ -40,30 +65,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private AppOpenAd AppOpenAd;
         private bool      isShowedFirstOpen = false;
         private bool      IsResumedFromAds  = false;
-
-        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices)
-        {
-            this.logService = logService;
-            this.config     = config;
-            this.signalBus  = signalBus;
-            this.adServices = adServices;
-        }
-
-        private bool IsAdAvailable => this.AppOpenAd != null && (DateTime.UtcNow - this.loadTime).TotalHours < 4;
-
-        private int CurrentAdIdIndex = 0;
-
-        public void Initialize()
-        {
-            this.signalBus.Subscribe<ShowInterstitialAdSignal>(this.ShownInterstitialAdHandler);
-
-            MobileAds.Initialize(_ =>
-            {
-                this.LoadAOAAd();
-                AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
-            });
-        }
-
+        
         private void ShownInterstitialAdHandler() { this.IsResumedFromAds = true; }
 
         private void OnAppStateChanged(AppState state)
@@ -105,7 +107,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
-            if (!this.IsAdAvailable)
+            if (!this.IsAOAAdAvailable)
             {
                 this.LoadAOAAd();
             }
@@ -128,31 +130,31 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void LoadAppOpenAd()
         {
-            this.logService.Log("Start request Open App Ads Tier " + this.CurrentAdIdIndex);
+            this.logService.Log("Start request Open App Ads Tier " + this.CurrentAOAAdIdIndex);
 
             var request = new AdRequest.Builder().Build();
 
-            AppOpenAd.LoadAd(this.config.ADModAoaIds[this.CurrentAdIdIndex], ScreenOrientation.Portrait, request, ((appOpenAd, error) =>
+            AppOpenAd.LoadAd(this.config.ADModAoaIds[this.CurrentAOAAdIdIndex], ScreenOrientation.Portrait, request, ((appOpenAd, error) =>
             {
                 if (error != null)
                 {
                     // Handle the error.
                     this.logService
-                        .Log($"Failed to load the ad. (reason: {error.LoadAdError.GetMessage()}), tier {this.CurrentAdIdIndex}");
+                        .Log($"Failed to load the ad. (reason: {error.LoadAdError.GetMessage()}), tier {this.CurrentAOAAdIdIndex}");
 
-                    this.CurrentAdIdIndex++;
+                    this.CurrentAOAAdIdIndex++;
 
-                    if (this.CurrentAdIdIndex < this.config.ADModAoaIds.Count)
+                    if (this.CurrentAOAAdIdIndex < this.config.ADModAoaIds.Count)
                         this.LoadAppOpenAd();
                     else
-                        this.CurrentAdIdIndex = 0;
+                        this.CurrentAOAAdIdIndex = 0;
 
                     return;
                 }
 
                 // App open ad is loaded.
                 this.AppOpenAd        = appOpenAd;
-                this.CurrentAdIdIndex = 0;
+                this.CurrentAOAAdIdIndex = 0;
                 this.loadTime         = DateTime.UtcNow;
 
                 if (!this.isShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
@@ -189,6 +191,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void HandleAppOpenAdDidRecordImpression(object sender, EventArgs args) { this.logService.Log("Recorded ad impression"); }
 
         private void HandlePaidEvent(object sender, AdValueEventArgs args) { this.logService.Log($"Received paid event. (currency: {args.AdValue.CurrencyCode}, value: {args.AdValue.Value}"); }
+        
+        #endregion
+        
     }
 #endif
 }
