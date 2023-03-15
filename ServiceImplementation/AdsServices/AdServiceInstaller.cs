@@ -20,6 +20,14 @@ namespace ServiceImplementation.AdsServices
 #else
             this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();
 #endif
+
+#if EM_APPLOVIN
+            this.Container.BindInterfacesAndSelfTo<MaxSDKWrapper>().AsCached();
+#elif EM_IRONSOURCE
+            this.Container.BindInterfacesAndSelfTo<IronSourceWrapper>().AsCached();
+#else
+            this.Container.Bind<IMRECAdService>().To<DummyMRECAdService>().AsCached();
+#endif
         }
     }
 }

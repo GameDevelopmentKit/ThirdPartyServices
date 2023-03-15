@@ -7,7 +7,8 @@
         "3rdCore.Analytic",
         "GameFoundation.Utilities",
         "Zenject-Source",
-        "Zenject-Signals"
+        "Zenject-Signals",
+        "MaxSdk.Scripts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
