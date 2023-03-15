@@ -24,7 +24,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             // MRECs are sized to 300x250 on phones and tablets
             foreach (var (position, adUnitId) in this.positionToMRECAdUnitId)
             {
-                MaxSdkUnityEditor.CreateMRec(adUnitId, this.ConvertAdViewPosition(position));
+                MaxSdk.CreateMRec(adUnitId, this.ConvertAdViewPosition(position));
             }
 
             MaxSdkCallbacks.MRec.OnAdLoadedEvent      += this.OnMRecAdLoadedEvent;
