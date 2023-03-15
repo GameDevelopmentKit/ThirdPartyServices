@@ -3,6 +3,8 @@ namespace ServiceImplementation.AdsServices
     using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
+    using GameFoundation.Scripts.Utilities.Extension;
+    using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.EasyMobile;
     using Zenject;
 
@@ -30,6 +32,7 @@ namespace ServiceImplementation.AdsServices
 #else
             this.Container.Bind<IMRECAdService>().To<DummyMRECAdService>().AsCached();
 #endif
+            this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
         }
     }
 }

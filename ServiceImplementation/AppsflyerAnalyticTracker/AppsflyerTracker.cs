@@ -1,4 +1,5 @@
 ﻿#if APPSFLYER
+
 namespace ServiceImplementation.AppsflyerAnalyticTracker
 {
     using System;
@@ -20,7 +21,8 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
         {
-            { typeof(IapTransactionDidSucceed), TrackIAP }
+            { typeof(IapTransactionDidSucceed), TrackIAP },
+            { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
         };
 
         public AppsflyerTracker(SignalBus signalBus, AnalyticConfig analyticConfig) : base(signalBus, analyticConfig) { }
@@ -46,6 +48,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             AppsFlyer.setIsDebug(this.analyticConfig.AppsflyerIsDebug);
             AppsFlyer.initSDK(devKey, apiId);
             AppsFlyer.startSDK();
+            AppsFlyerAdRevenue.start();
 
             this.TrackerReady.SetResult(true);
             return this.TrackerReady.Task;
@@ -79,7 +82,30 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             };
             AppsFlyer.sendEvent(AFInAppEvents.PURCHASE, eventValues);
         }
-    }
 
+
+        private void TrackAdsRevenue(IEvent trackedEvent, Dictionary<string, object> data)
+        {
+            if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
+            {
+                Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
+                return;
+            }
+
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add(AFAdRevenueEvent.AD_UNIT, adsRevenueEvent.AdUnit);
+            dic.Add(AFAdRevenueEvent.PLACEMENT, adsRevenueEvent.Placement);
+            AppsFlyerAdRevenueMediationNetworkType mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
+            {
+                AdRevenueConstants.ARSourceAppLovinMAX => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax,
+                AdRevenueConstants.ARSourceIronSource => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeIronSource,
+                AdRevenueConstants.ARSourceAdMob => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob,
+                AdRevenueConstants.ARSourceUnity => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeUnity,
+                _ => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeCustomMediation
+            };
+
+            AppsFlyerAdRevenue.logAdRevenue(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Revenue, adsRevenueEvent.Currency, dic);
+        }
+    }
 }
 #endif
