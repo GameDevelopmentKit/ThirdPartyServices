@@ -6,11 +6,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
     public class IronSourceWrapper : IMRECAdService
     {
-        public void                            ShowMREC(string mrecAdUnitId)             { throw new NotImplementedException(); }
-        public void                            HideMREC(string mrecAdUnitId)             { throw new NotImplementedException(); }
-        public void                            StopMRECAutoRefresh(string mrecAdUnitId)  { throw new NotImplementedException(); }
-        public void                            StartMRECAutoRefresh(string mrecAdUnitId) { throw new NotImplementedException(); }
-        public void                            LoadMREC(string mrecAdUnitId)             { throw new NotImplementedException(); }
+        public void                            ShowMREC(AdViewPosition adViewPosition)             { throw new NotImplementedException(); }
+        public void                            HideMREC(AdViewPosition adViewPosition)             { throw new NotImplementedException(); }
+        public void                            StopMRECAutoRefresh(AdViewPosition adViewPosition)  { throw new NotImplementedException(); }
+        public void                            StartMRECAutoRefresh(AdViewPosition adViewPosition) { throw new NotImplementedException(); }
+        public void                            LoadMREC(AdViewPosition adViewPosition)             { throw new NotImplementedException(); }
+        
         public event Action<string, AdInfo>    OnAdLoadedEvent;
         public event Action<string, ErrorInfo> OnAdLoadFailedEvent;
         public event Action<string, AdInfo>    OnAdClickedEvent;
