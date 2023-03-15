@@ -19,7 +19,7 @@ namespace Core.AdsServices
 
         #region Banner
 
-        void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom);
+        void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50);
         void HideBannedAd();
         void DestroyBannerAd();
 

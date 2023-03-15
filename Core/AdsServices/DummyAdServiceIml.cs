@@ -14,7 +14,7 @@ namespace Core.AdsServices
         public void GrantDataPrivacyConsent(AdNetwork adNetwork) { this.logService.Log($"Dummy Grant consent {adNetwork}"); }
         public void RevokeDataPrivacyConsent(AdNetwork adNetwork) { this.logService.Log($"Dummy revoke consent {adNetwork}"); }
         public ConsentStatus GetDataPrivacyConsent(AdNetwork adNetwork) { return ConsentStatus.Granted; }
-        public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom) { this.logService.Log($"Dummy show banner ad ay {bannerAdsPosition}"); }
+        public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50) { this.logService.Log($"Dummy show banner ad ay {bannerAdsPosition}"); }
         public void HideBannedAd() { this.logService.Log($"Dummy hide banner ad"); }
         public void DestroyBannerAd() { this.logService.Log($"Dummy destroy banner ad"); }
         public event Action<InterstitialAdNetwork, string> InterstitialAdCompleted;

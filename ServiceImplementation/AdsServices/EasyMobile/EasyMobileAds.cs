@@ -87,7 +87,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region Banner
 
-        public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom) { Advertising.ShowBannerAd((BannerAdPosition)bannerAdsPosition); }
+        public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50) { Advertising.ShowBannerAd((BannerAdPosition)bannerAdsPosition, new BannerAdSize(320, 50)); }
         public void HideBannedAd()                                                               { Advertising.HideBannerAd(); }
         public void DestroyBannerAd()                                                            { Advertising.DestroyBannerAd(); }
 
