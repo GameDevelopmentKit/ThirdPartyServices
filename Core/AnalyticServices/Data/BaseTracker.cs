@@ -26,6 +26,16 @@ namespace Core.AnalyticServices.Data
         protected abstract TaskCompletionSource<bool> TrackerReady { get; }
 
         /// <summary>
+        /// events are ignored by special require from tracker
+        /// </summary>
+        protected virtual HashSet<Type> IgnoreEvents { get; }
+
+        /// <summary>
+        /// mapping of analytic event name or parameter which require specific mapping to the tracker
+        /// </summary>
+        protected virtual Dictionary<string, string> CustomEventKeys { get; }
+
+        /// <summary>
         /// mapping of analytic events which require specific mapping to the tracker
         /// </summary>
         protected abstract Dictionary<Type, EventDelegate> CustomEventDelegates { get; }
@@ -47,7 +57,7 @@ namespace Core.AnalyticServices.Data
         /// Must control init of the wrapped SDK in derived trackers
         /// </summary>
         protected abstract Task TrackerSetup();
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -65,21 +75,18 @@ namespace Core.AnalyticServices.Data
             this.Init();
         }
 
-        private async void Init()
-        {
-            await this.TrackerSetup();
-        }
-        
+        private async void Init() { await this.TrackerSetup(); }
+
         private async void EventTracked(EventTrackedSignal trackedData)
         {
             // if the tracker has failed setup we should not forward it any events
             if (this.TrackerReady.Task.Status == TaskStatus.Canceled || this.TrackerReady.Task.Status == TaskStatus.Faulted)
                 return;
             await this.TrackerReady.Task;
-            
+
             if (trackedData.ChangedProps != null)
                 this.OnChangedProps(trackedData.ChangedProps);
-            
+
             var trackedEvent = trackedData.TrackedEvent;
             if (this.CustomEventDelegates != null && this.CustomEventDelegates.ContainsKey(trackedEvent.GetType()))
             {
@@ -88,14 +95,16 @@ namespace Core.AnalyticServices.Data
                 {
                     iapEvent.Receipt = this.CheckReceiptFormat(iapEvent.Receipt);
                 }
-            
+
                 eventDelegate?.Invoke(trackedEvent, trackedData.ChangedProps);
             }
             else
             {
                 string                     eventName;
                 Dictionary<string, object> eventData;
-            
+
+                if (this.IgnoreEvents != null && this.IgnoreEvents.Contains(trackedEvent.GetType())) return;
+
                 if (trackedEvent is CustomEvent customEvent)
                 {
                     eventName = customEvent.EventName;
@@ -103,10 +112,10 @@ namespace Core.AnalyticServices.Data
                 }
                 else
                 {
-                    eventName = trackedEvent.GetType().Name.ToSnakeCase();
+                    eventName = this.GetCorrectName(trackedEvent.GetType().Name);
                     eventData = this.ConvertObjectToDic(trackedEvent);
                 }
-            
+
                 this.OnEvent(eventName, eventData);
             }
         }
@@ -119,15 +128,25 @@ namespace Core.AnalyticServices.Data
 
             foreach (var fieldInfo in objectType.GetFields())
             {
-                result.Add(fieldInfo.Name.ToSnakeCase(), fieldInfo.GetValue(obj));
+                result.Add(this.GetCorrectName(fieldInfo.Name), fieldInfo.GetValue(obj));
             }
 
             foreach (var propertyInfo in objectType.GetProperties())
             {
-                result.Add(propertyInfo.Name.ToSnakeCase(), propertyInfo.GetValue(obj));
+                result.Add(this.GetCorrectName(propertyInfo.Name), propertyInfo.GetValue(obj));
             }
 
             return result;
+        }
+
+        private string GetCorrectName(string rawName)
+        {
+            if (this.CustomEventKeys != null && this.CustomEventKeys.TryGetValue(rawName, out var correctName))
+            {
+                return correctName;
+            }
+
+            return rawName.ToSnakeCase();
         }
 
         private string CheckReceiptFormat(string receipt)

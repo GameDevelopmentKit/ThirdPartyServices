@@ -19,6 +19,16 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     {
         protected override TaskCompletionSource<bool> TrackerReady { get; } = new();
 
+        protected override HashSet<Type> IgnoreEvents => new()
+        {
+            typeof(GameStarted)
+        };
+
+        protected override Dictionary<string, string> CustomEventKeys => new()
+        {
+            {nameof(BannerShown), "af_banner_shown"}
+        };
+
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
         {
             { typeof(IapTransactionDidSucceed), TrackIAP },
