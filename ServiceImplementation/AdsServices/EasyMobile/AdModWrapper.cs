@@ -110,6 +110,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (!this.IsAOAAdAvailable)
             {
                 this.LoadAOAAd();
+                return;
             }
 
             if (this.adServices.IsRemoveAds())
