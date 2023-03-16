@@ -116,10 +116,11 @@ namespace Core.AnalyticServices.Data
                     eventData = this.ConvertObjectToDic(trackedEvent);
                 }
 
+                if (string.IsNullOrEmpty(eventName)) return;
+
                 this.OnEvent(eventName, eventData);
             }
         }
-
 
         private Dictionary<string, object> ConvertObjectToDic(object obj)
         {
