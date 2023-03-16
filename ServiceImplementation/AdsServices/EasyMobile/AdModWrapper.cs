@@ -37,15 +37,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.analyticService = analyticService;
         }
 
-        public void Initialize()
-        {
-            this.signalBus.Subscribe<ShowInterstitialAdSignal>(this.ShownInterstitialAdHandler);
+        public void Initialize() { this.signalBus.Subscribe<ShowInterstitialAdSignal>(this.ShownInterstitialAdHandler); }
 
+        public void Init()
+        {
             MobileAds.Initialize(_ =>
-                                 {
-                                     this.IntervalCall(5);
-                                     AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
-                                 });
+            {
+                this.IntervalCall(5);
+                AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
+            });
         }
 
         private async void IntervalCall(int intervalSecond)
@@ -121,7 +121,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             private AppOpenAd appOpenAd;
             private DateTime  loadedTime;
             public  bool      isLoading = false;
-            
+
             public void Init(AppOpenAd appOpenAd)
             {
                 if (this.appOpenAd != null)
@@ -136,13 +136,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 appOpenAd.OnAdDidDismissFullScreenContent      += this.HandleAppOpenAdDidDismissFullScreenContent;
                 appOpenAd.OnAdFailedToPresentFullScreenContent += this.HandleAppOpenAdFailedToPresentFullScreenContent;
             }
-            
+
             private void HandleAppOpenAdFailedToPresentFullScreenContent(object sender, AdErrorEventArgs e)
             {
                 this.appOpenAd.Destroy();
                 this.appOpenAd = null;
             }
-            
+
             private void HandleAppOpenAdDidDismissFullScreenContent(object sender, EventArgs e)
             {
                 this.appOpenAd.Destroy();
@@ -151,10 +151,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             public bool IsAOAAdAvailable => this.appOpenAd != null && this.appOpenAd.CanShowAd() && (DateTime.UtcNow - this.loadedTime).TotalHours < 4; //AppOpenAd is valid for 4 hours
 
-            public void Show()
-            {
-                this.appOpenAd.Show();
-            }
+            public void Show() { this.appOpenAd.Show(); }
         }
 
         private void LoadAppOpenAd()
@@ -171,6 +168,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             //Don't need to load this ad if it's already loaded.
             var loadedAppOpenAd = this.aoaAdIdToLoadedAdInstance.GetOrAdd(adUnitId, () => new LoadedAppOpenAd());
+
             if (loadedAppOpenAd.IsAOAAdAvailable || loadedAppOpenAd.isLoading) return;
 
             loadedAppOpenAd.isLoading = true;
@@ -192,7 +190,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 appOpenAd.OnAdDidPresentFullScreenContent      += this.HandleAppOpenAdDidPresentFullScreenContent;
                 appOpenAd.OnAdDidRecordImpression              += this.HandleAppOpenAdDidRecordImpression;
                 appOpenAd.OnPaidEvent                          += this.HandlePaidEvent;
-                
+
                 loadedAppOpenAd.Init(appOpenAd);
 
                 lock (this)
@@ -201,7 +199,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                     {
                         loadedAppOpenAd.Show();
                         this.isShowedFirstOpen = true;
-                    }  
+                    }
                 }
             }
         }

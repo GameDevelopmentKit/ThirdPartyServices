@@ -19,7 +19,8 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
 #if EM_ADMOB
-            this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached();
+            this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached().NonLazy();
+            this.Container.Bind<AdmobAOAMono>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
 #else
             this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();
 #endif
