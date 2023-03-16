@@ -33,6 +33,20 @@ namespace ServiceImplementation.AdsServices
             this.Container.Bind<IMRECAdService>().To<DummyMRECAdService>().AsCached();
 #endif
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
+
+            #region Ads signal
+
+            this.Container.DeclareSignal<BannerAdLoadedSignal>();
+            this.Container.DeclareSignal<BannerAdLoadFailedSignal>();
+            this.Container.DeclareSignal<BannerAdClickedSignal>();
+            this.Container.DeclareSignal<InterstitialAdLoadedSignal>();
+            this.Container.DeclareSignal<InterstitialAdLoadFailedSignal>();
+            this.Container.DeclareSignal<InterstitialAdClickedSignal>();
+            this.Container.DeclareSignal<RewardedAdLoadedSignal>();
+            this.Container.DeclareSignal<RewardedAdLoadFailedSignal>();
+            this.Container.DeclareSignal<RewardedAdLoadClickedSignal>();
+
+            #endregion
         }
     }
 }
