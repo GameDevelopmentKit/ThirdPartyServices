@@ -3,8 +3,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #if EM_ADMOB
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
+    using Core.AnalyticServices;
+    using Core.AnalyticServices.CommonEvents;
+    using Cysharp.Threading.Tasks;
+    using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Api;
     using GoogleMobileAds.Common;
@@ -15,19 +20,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     {
         #region inject
 
-        private readonly ILogService logService;
-        private readonly Config      config;
-        private readonly SignalBus   signalBus;
-        private readonly IAdServices adServices;
+        private readonly ILogService       logService;
+        private readonly Config            config;
+        private readonly SignalBus         signalBus;
+        private readonly IAdServices       adServices;
+        private readonly IAnalyticServices analyticService;
 
         #endregion
 
-        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices)
+        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService)
         {
-            this.logService = logService;
-            this.config     = config;
-            this.signalBus  = signalBus;
-            this.adServices = adServices;
+            this.logService      = logService;
+            this.config          = config;
+            this.signalBus       = signalBus;
+            this.adServices      = adServices;
+            this.analyticService = analyticService;
         }
 
         public void Initialize()
@@ -35,17 +42,20 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Subscribe<ShowInterstitialAdSignal>(this.ShownInterstitialAdHandler);
 
             MobileAds.Initialize(_ =>
-            {
-                this.LoadAOAAd();
-                AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
-            });
+                                 {
+                                     this.IntervalCall(5);
+                                     AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
+                                 });
+        }
+
+        private async void IntervalCall(int intervalSecond)
+        {
+            this.LoadAppOpenAd();
+            await UniTask.Delay(TimeSpan.FromSeconds(intervalSecond));
+            this.IntervalCall(intervalSecond);
         }
 
         #region AOA
-        
-        private bool IsAOAAdAvailable => this.AppOpenAd != null && (DateTime.UtcNow - this.loadTime).TotalHours < 4;
-
-        private int CurrentAOAAdIdIndex = 0;
 
         public class Config
         {
@@ -61,11 +71,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private DateTime  loadTime;
-        private AppOpenAd AppOpenAd;
-        private bool      isShowedFirstOpen = false;
-        private bool      IsResumedFromAds  = false;
-        
+        private bool isShowedFirstOpen = false;
+        private bool IsResumedFromAds  = false;
+
         private void ShownInterstitialAdHandler() { this.IsResumedFromAds = true; }
 
         private void OnAppStateChanged(AppState state)
@@ -83,22 +91,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
-            this.ShowAdIfAvailable();
+            if (!this.adServices.IsRemoveAds())
+            {
+                this.ShowAdIfAvailable();
+            }
         }
 
         #region IAOAService
 
         public bool IsShowingAd { get; set; } = false;
-
-        public void LoadAOAAd()
-        {
-            if (this.adServices.IsRemoveAds())
-            {
-                return;
-            }
-
-            this.LoadAppOpenAd();
-        }
 
         public void ShowAdIfAvailable()
         {
@@ -107,80 +108,115 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
-            if (!this.IsAOAAdAvailable)
-            {
-                this.LoadAOAAd();
-                return;
-            }
-
-            if (this.adServices.IsRemoveAds())
-            {
-                return;
-            }
-
-            this.AppOpenAd.OnAdDidDismissFullScreenContent      += this.HandleAppOpenAdDidDismissFullScreenContent;
-            this.AppOpenAd.OnAdFailedToPresentFullScreenContent += this.HandleAppOpenAdFailedToPresentFullScreenContent;
-            this.AppOpenAd.OnAdDidPresentFullScreenContent      += this.HandleAppOpenAdDidPresentFullScreenContent;
-            this.AppOpenAd.OnAdDidRecordImpression              += this.HandleAppOpenAdDidRecordImpression;
-            this.AppOpenAd.OnPaidEvent                          += this.HandlePaidEvent;
-
-            this.AppOpenAd.Show();
+            var loadedAppOpenAd = this.aoaAdIdToLoadedAdInstance.Values.FirstOrDefault(openAd => openAd.IsAOAAdAvailable);
+            loadedAppOpenAd?.Show();
         }
 
         #endregion
 
-        public void LoadAppOpenAd()
+        private Dictionary<string, LoadedAppOpenAd> aoaAdIdToLoadedAdInstance = new();
+
+        private class LoadedAppOpenAd
         {
-            this.logService.Log("Start request Open App Ads Tier " + this.CurrentAOAAdIdIndex);
+            private AppOpenAd appOpenAd;
+            private DateTime  loadedTime;
+            public  bool      isLoading = false;
+            
+            public void Init(AppOpenAd appOpenAd)
+            {
+                if (this.appOpenAd != null)
+                {
+                    this.appOpenAd.Destroy();
+                    this.appOpenAd = null;
+                }
 
-            var request = new AdRequest.Builder().Build();
+                this.isLoading                                 =  false;
+                this.appOpenAd                                 =  appOpenAd;
+                this.loadedTime                                =  DateTime.UtcNow;
+                appOpenAd.OnAdDidDismissFullScreenContent      += this.HandleAppOpenAdDidDismissFullScreenContent;
+                appOpenAd.OnAdFailedToPresentFullScreenContent += this.HandleAppOpenAdFailedToPresentFullScreenContent;
+            }
+            
+            private void HandleAppOpenAdFailedToPresentFullScreenContent(object sender, AdErrorEventArgs e)
+            {
+                this.appOpenAd.Destroy();
+                this.appOpenAd = null;
+            }
+            
+            private void HandleAppOpenAdDidDismissFullScreenContent(object sender, EventArgs e)
+            {
+                this.appOpenAd.Destroy();
+                this.appOpenAd = null;
+            }
 
-            AppOpenAd.LoadAd(this.config.ADModAoaIds[this.CurrentAOAAdIdIndex], ScreenOrientation.Portrait, request, ((appOpenAd, error) =>
+            public bool IsAOAAdAvailable => this.appOpenAd != null && this.appOpenAd.CanShowAd() && (DateTime.UtcNow - this.loadedTime).TotalHours < 4; //AppOpenAd is valid for 4 hours
+
+            public void Show()
+            {
+                this.appOpenAd.Show();
+            }
+        }
+
+        private void LoadAppOpenAd()
+        {
+            foreach (var configADModAoaId in this.config.ADModAoaIds)
+            {
+                this.LoadAppOpenAdWithId(configADModAoaId);
+            }
+        }
+
+        private void LoadAppOpenAdWithId(string adUnitId)
+        {
+            this.logService.Log($"Start request Open App Ads Tier {adUnitId}");
+
+            //Don't need to load this ad if it's already loaded.
+            var loadedAppOpenAd = this.aoaAdIdToLoadedAdInstance.GetOrAdd(adUnitId, () => new LoadedAppOpenAd());
+            if (loadedAppOpenAd.IsAOAAdAvailable || loadedAppOpenAd.isLoading) return;
+
+            loadedAppOpenAd.isLoading = true;
+            AppOpenAd.LoadAd(adUnitId, ScreenOrientation.Portrait, new AdRequest.Builder().Build(), LoadAOACompletedHandler);
+
+            void LoadAOACompletedHandler(AppOpenAd appOpenAd, AdFailedToLoadEventArgs error)
             {
                 if (error != null)
                 {
                     // Handle the error.
-                    this.logService
-                        .Log($"Failed to load the ad. (reason: {error.LoadAdError.GetMessage()}), tier {this.CurrentAOAAdIdIndex}");
-
-                    this.CurrentAOAAdIdIndex++;
-
-                    if (this.CurrentAOAAdIdIndex < this.config.ADModAoaIds.Count)
-                        this.LoadAppOpenAd();
-                    else
-                        this.CurrentAOAAdIdIndex = 0;
+                    this.logService.Log($"Failed to load the ad. (reason: {error.LoadAdError.GetMessage()}), id: {adUnitId}");
 
                     return;
                 }
 
                 // App open ad is loaded.
-                this.AppOpenAd        = appOpenAd;
-                this.CurrentAOAAdIdIndex = 0;
-                this.loadTime         = DateTime.UtcNow;
+                appOpenAd.OnAdDidDismissFullScreenContent      += this.HandleAppOpenAdDidDismissFullScreenContent;
+                appOpenAd.OnAdFailedToPresentFullScreenContent += this.HandleAppOpenAdFailedToPresentFullScreenContent;
+                appOpenAd.OnAdDidPresentFullScreenContent      += this.HandleAppOpenAdDidPresentFullScreenContent;
+                appOpenAd.OnAdDidRecordImpression              += this.HandleAppOpenAdDidRecordImpression;
+                appOpenAd.OnPaidEvent                          += this.HandlePaidEvent;
+                
+                loadedAppOpenAd.Init(appOpenAd);
 
-                if (!this.isShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
+                lock (this)
                 {
-                    this.ShowAdIfAvailable();
-                    this.isShowedFirstOpen = true;
+                    if (!this.isShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
+                    {
+                        loadedAppOpenAd.Show();
+                        this.isShowedFirstOpen = true;
+                    }  
                 }
-            }));
+            }
         }
 
         private void HandleAppOpenAdDidDismissFullScreenContent(object sender, EventArgs args)
         {
             this.logService.Log("Closed app open ad");
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
-            this.AppOpenAd   = null;
             this.IsShowingAd = false;
-            this.LoadAOAAd();
         }
 
         private void HandleAppOpenAdFailedToPresentFullScreenContent(object sender, AdErrorEventArgs args)
         {
             this.logService.Log($"Failed to present the ad (reason: {args.AdError.GetMessage()})");
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
-            this.AppOpenAd = null;
-            this.LoadAOAAd();
         }
 
         private void HandleAppOpenAdDidPresentFullScreenContent(object sender, EventArgs args)
@@ -191,10 +227,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void HandleAppOpenAdDidRecordImpression(object sender, EventArgs args) { this.logService.Log("Recorded ad impression"); }
 
-        private void HandlePaidEvent(object sender, AdValueEventArgs args) { this.logService.Log($"Received paid event. (currency: {args.AdValue.CurrencyCode}, value: {args.AdValue.Value}"); }
-        
+        private void HandlePaidEvent(object sender, AdValueEventArgs args)
+        {
+            this.analyticService.Track(new AdsRevenueEvent() { Currency = args.AdValue.CurrencyCode, Revenue = args.AdValue.Value / 1e5 });
+            this.logService.Log($"Received paid event. (currency: {args.AdValue.CurrencyCode}, value: {args.AdValue.Value}");
+        }
+
         #endregion
-        
     }
+
 #endif
 }

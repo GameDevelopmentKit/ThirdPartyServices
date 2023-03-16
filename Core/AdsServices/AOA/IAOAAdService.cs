@@ -6,7 +6,6 @@ namespace Core.AdsServices
     public interface IAOAAdService
     {
         bool        IsShowingAd { get; }
-        public void LoadAOAAd();
         public void ShowAdIfAvailable();
     }
 }
