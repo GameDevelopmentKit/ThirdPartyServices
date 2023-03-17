@@ -149,7 +149,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.appOpenAd = null;
             }
 
-            public bool IsAOAAdAvailable => this.appOpenAd != null && this.appOpenAd.CanShowAd() && (DateTime.UtcNow - this.loadedTime).TotalHours < 4; //AppOpenAd is valid for 4 hours
+            public bool IsAOAAdAvailable => this.appOpenAd != null && (DateTime.UtcNow - this.loadedTime).TotalHours < 4; //AppOpenAd is valid for 4 hours
 
             public void Show() { this.appOpenAd.Show(); }
         }
