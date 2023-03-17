@@ -22,7 +22,11 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override HashSet<Type> IgnoreEvents => new()
         {
-            typeof(GameStarted)
+            typeof(GameStarted),
+            typeof(AdInterClick),
+            typeof(AdInterFail),
+            typeof(AdsRewardFail),
+            typeof(AdsRewardOffer),
         };
 
         protected override Dictionary<string, string> CustomEventKeys => new()
@@ -33,7 +37,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             { nameof(AdInterShow), "af_inters_displayed" },
             { nameof(AdInterRequest), "af_inters_ad_eligible" },
             { nameof(AdsRewardClick), "af_rewarded_ad_eligible" },
-            { nameof(AdsRewardOffer), "af_rewarded_api_called" },
+            { nameof(AdsRewardedLoaded), "af_rewarded_api_called" },
             { nameof(AdsRewardShow), "af_rewarded_displayed" },
             { nameof(AdsRewardComplete), "af_rewarded_ad_completed" },
         };
@@ -51,9 +55,9 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
             Debug.Log($"setting up appsflyer tracker");
-            
+
             var apiId = string.Empty;
-            
+
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             var apiId = this.analyticConfig.AppsflyerAppId;
 #endif
