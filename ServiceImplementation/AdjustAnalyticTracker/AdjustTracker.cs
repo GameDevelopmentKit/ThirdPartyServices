@@ -13,9 +13,13 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
     public class AdjustTracker : BaseTracker
     {
-        public AdjustTracker(SignalBus signalBus, AnalyticConfig analyticConfig) : base(signalBus, analyticConfig) { }
+        private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
-        protected override TaskCompletionSource<bool> TrackerReady { get; } = new();
+        public AdjustTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig) { this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig; }
+
+        protected override HashSet<Type>              IgnoreEvents    => this.analyticsEventCustomizationConfig.IgnoreEvents;
+        protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
+        protected override TaskCompletionSource<bool> TrackerReady    { get; } = new();
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
         {
@@ -28,6 +32,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
             var adjustEvent = new AdjustEvent(name);
+
             foreach (var (key, value) in data)
             {
                 adjustEvent.addCallbackParameter(key, value.ToString());
@@ -42,7 +47,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
             Debug.Log("setting up adjust tracker");
 
-            var appToken = this.analyticConfig.AdjustAppToken;
+            var appToken    = this.analyticConfig.AdjustAppToken;
             var environment = this.analyticConfig.AdjustIsDebug ? AdjustEnvironment.Sandbox : AdjustEnvironment.Production;
 
 #if UNITY_IOS || UNITY_STANDALONE_OSX
@@ -58,6 +63,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             adjustConfig.setSendInBackground(true);
             Adjust.start(adjustConfig);
             this.TrackerReady.SetResult(true);
+
             return this.TrackerReady.Task;
         }
 
@@ -68,6 +74,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             if (trackedevent is not IapTransactionDidSucceed iapTransaction)
             {
                 Debug.LogError("trackedEvent in TrackIAP is not of correct type");
+
                 return;
             }
 
@@ -82,6 +89,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
                 Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
+
                 return;
             }
 
