@@ -172,7 +172,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (loadedAppOpenAd.IsAOAAdAvailable || loadedAppOpenAd.isLoading) return;
 
             loadedAppOpenAd.isLoading = true;
-            AppOpenAd.LoadAd(adUnitId, ScreenOrientation.Portrait, new AdRequest.Builder().Build(), LoadAOACompletedHandler);
+            AppOpenAd.LoadAd(adUnitId, Screen.orientation, new AdRequest.Builder().Build(), LoadAOACompletedHandler);
 
             void LoadAOACompletedHandler(AppOpenAd appOpenAd, AdFailedToLoadEventArgs error)
             {
