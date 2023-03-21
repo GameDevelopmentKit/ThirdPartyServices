@@ -10,7 +10,8 @@
         "Zenject-Signals",
         "MaxSdk.Scripts",
         "UniTask",
-        "IronSource.Scripts"
+        "IronSource.Scripts",
+        "AdjustSDK"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
