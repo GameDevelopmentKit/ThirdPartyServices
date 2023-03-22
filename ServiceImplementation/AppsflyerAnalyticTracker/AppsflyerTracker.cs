@@ -12,35 +12,13 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
     using GameFoundation.Scripts.Utilities.Extension;
-    using TheOneStudio.UITemplate.UITemplate.ThirdPartyServices.AnalyticEvents.ABI;
     using UnityEngine;
     using Zenject;
 
     public class AppsflyerTracker : BaseTracker
     {
-        protected override TaskCompletionSource<bool> TrackerReady { get; } = new();
-
-        protected override HashSet<Type> IgnoreEvents => new()
-        {
-            typeof(GameStarted),
-            typeof(AdInterClick),
-            typeof(AdInterFail),
-            typeof(AdsRewardFail),
-            typeof(AdsRewardOffer),
-        };
-
-        protected override Dictionary<string, string> CustomEventKeys => new()
-        {
-            { nameof(BannerShown), "af_banner_shown" },
-            { nameof(LevelComplete), "af_level_achieved" },
-            { nameof(AdInterLoad), "af_inters_api_called" },
-            { nameof(AdInterShow), "af_inters_displayed" },
-            { nameof(AdInterRequest), "af_inters_ad_eligible" },
-            { nameof(AdsRewardClick), "af_rewarded_ad_eligible" },
-            { nameof(AdsRewardedLoaded), "af_rewarded_api_called" },
-            { nameof(AdsRewardShow), "af_rewarded_displayed" },
-            { nameof(AdsRewardComplete), "af_rewarded_ad_completed" },
-        };
+        private readonly   AnalyticsEventCustomizationConfig customizationConfig;
+        protected override TaskCompletionSource<bool>        TrackerReady { get; } = new();
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
         {
@@ -48,7 +26,13 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
         };
 
-        public AppsflyerTracker(SignalBus signalBus, AnalyticConfig analyticConfig) : base(signalBus, analyticConfig) { }
+        public AppsflyerTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
+        {
+            this.customizationConfig = customizationConfig;
+        }
+
+        protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
+        protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
 
         protected override Task TrackerSetup()
         {
@@ -112,6 +96,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 { AFInAppEvents.REVENUE, iapTransaction.Price.ToString(CultureInfo.InvariantCulture) },
                 { AFInAppEvents.PRICE, iapTransaction.PriceSku }
             };
+
             AppsFlyer.sendEvent(AFInAppEvents.PURCHASE, eventValues);
         }
 
@@ -127,6 +112,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add(AFAdRevenueEvent.AD_UNIT, adsRevenueEvent.AdUnit);
             dic.Add(AFAdRevenueEvent.PLACEMENT, adsRevenueEvent.Placement);
+
             AppsFlyerAdRevenueMediationNetworkType mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
             {
                 AdRevenueConstants.ARSourceAppLovinMAX => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax,
