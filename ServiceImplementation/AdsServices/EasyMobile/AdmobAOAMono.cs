@@ -1,5 +1,6 @@
 ﻿namespace ServiceImplementation.AdsServices.EasyMobile
 {
+    using Cysharp.Threading.Tasks;
     using UnityEngine;
     using Zenject;
 
@@ -10,9 +11,11 @@
         private AdModWrapper adModWrapper;
 
         [Inject]
-        public void Init(AdModWrapper adModWrapper)
+        public void Init(AdModWrapper adModWrapper) { this.adModWrapper = adModWrapper; }
+
+        private async void Start()
         {
-            this.adModWrapper = adModWrapper;
+            await UniTask.WaitUntil(() => this.adModWrapper != null);
             this.adModWrapper.Init();
         }
 #endif
