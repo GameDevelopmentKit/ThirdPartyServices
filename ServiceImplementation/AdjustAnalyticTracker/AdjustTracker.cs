@@ -8,14 +8,24 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
+    using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using Zenject;
 
     public class AdjustTracker : BaseTracker
     {
+        private readonly   ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
-        public AdjustTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig) { this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig; }
+        public AdjustTracker(ILogService logger,SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig) 
+        {
+            this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
+            this.logger              = logger;
+            if (analyticsEventCustomizationConfig.CustomEventKeys.Count == 0)
+            {
+                this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
+            }
+        }
 
         protected override HashSet<Type>              IgnoreEvents    => this.analyticsEventCustomizationConfig.IgnoreEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;

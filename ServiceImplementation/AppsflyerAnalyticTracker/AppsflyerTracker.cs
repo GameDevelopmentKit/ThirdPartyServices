@@ -12,11 +12,13 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
     using GameFoundation.Scripts.Utilities.Extension;
+    using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using Zenject;
 
     public class AppsflyerTracker : BaseTracker
     {
+        private readonly   ILogService                       logger;
         private readonly   AnalyticsEventCustomizationConfig customizationConfig;
         protected override TaskCompletionSource<bool>        TrackerReady { get; } = new();
 
@@ -26,9 +28,15 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
         };
 
-        public AppsflyerTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
+        public AppsflyerTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
+            this.logger              = logger;
             this.customizationConfig = customizationConfig;
+
+            if (customizationConfig.CustomEventKeys.Count == 0)
+            {
+                this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
+            }
         }
 
         protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
