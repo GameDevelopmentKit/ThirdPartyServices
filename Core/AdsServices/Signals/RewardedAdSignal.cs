@@ -22,4 +22,11 @@
         {
         }
     }
+
+    public class RewardedAdDisplayedSignal : BaseAdsSignal
+    {
+        public RewardedAdDisplayedSignal(string placement) : base(placement)
+        {
+        }
+    }
 }
