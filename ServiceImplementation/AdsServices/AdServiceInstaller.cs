@@ -40,12 +40,14 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<BannerAdLoadedSignal>();
             this.Container.DeclareSignal<BannerAdLoadFailedSignal>();
             this.Container.DeclareSignal<BannerAdClickedSignal>();
-            this.Container.DeclareSignal<InterstitialAdLoadedSignal>();
+            this.Container.DeclareSignal<InterstitialAdDownloadedSignal>();
             this.Container.DeclareSignal<InterstitialAdLoadFailedSignal>();
             this.Container.DeclareSignal<InterstitialAdClickedSignal>();
+            this.Container.DeclareSignal<InterstitialAdDisplayedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadFailedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadClickedSignal>();
+            this.Container.DeclareSignal<RewardedAdDisplayedSignal>();
 
             #endregion
         }

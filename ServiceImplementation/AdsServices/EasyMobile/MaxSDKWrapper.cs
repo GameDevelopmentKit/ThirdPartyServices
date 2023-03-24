@@ -44,12 +44,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             MaxSdkCallbacks.MRec.OnAdCollapsedEvent   += this.OnMRecAdCollapsedEvent;
             
             MaxSdkCallbacks.Interstitial.OnAdLoadedEvent     += this.OnInterstitialAdLoadedHandler;
+            MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent  += this.InterstitialAdDisplayedSignal;
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent += this.OnInterstitialAdLoadFailedHandler;
             MaxSdkCallbacks.Interstitial.OnAdClickedEvent    += this.OnInterstitialAdClickedHandler;
             
             MaxSdkCallbacks.Rewarded.OnAdLoadedEvent     += this.OnRewardedAdLoadedHandler;
             MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent += this.OnRewardedAdLoadFailedHandler;
             MaxSdkCallbacks.Rewarded.OnAdClickedEvent    += this.OnRewardedAdClickedHandler;
+            MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent  += this.OnRewardedAdDisplayedHandler;
             
             MaxSdkCallbacks.Banner.OnAdLoadedEvent     += this.OnBannerAdLoadedHandler;
             MaxSdkCallbacks.Banner.OnAdLoadFailedEvent += this.OnBannerAdLoadFailedHandler;
@@ -72,6 +74,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.signalBus.Fire(new RewardedAdLoadClickedSignal(arg2.Placement));
         }
+
+        private void OnRewardedAdDisplayedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+            this.signalBus.Fire(new RewardedAdDisplayedSignal(arg2.Placement));
+        }
         private void OnRewardedAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2)
         {
             this.signalBus.Fire(new RewardedAdLoadFailedSignal("empty", arg2.Message));
@@ -88,9 +95,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.signalBus.Fire(new InterstitialAdLoadFailedSignal("empty", arg2.Message));
         }
+
+        private void InterstitialAdDisplayedSignal(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+            this.signalBus.Fire(new InterstitialAdDisplayedSignal(arg2.Placement));
+        }
         private void OnInterstitialAdLoadedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.signalBus.Fire(new InterstitialAdLoadedSignal(arg2.Placement));
+            this.signalBus.Fire(new InterstitialAdDownloadedSignal(arg2.Placement));
         }
 
         private void OnMRecAdLoadedEvent(string      adUnitId, MaxSdkBase.AdInfo    adInfo) { this.OnAdLoadedEvent?.Invoke(adUnitId, this.ConvertAdInfo(adInfo)); }
