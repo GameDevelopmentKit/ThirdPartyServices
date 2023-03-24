@@ -169,27 +169,32 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             //Don't need to load this ad if it's already loaded.
             var loadedAppOpenAd = this.aoaAdIdToLoadedAdInstance.GetOrAdd(adUnitId, () => new LoadedAppOpenAd());
 
-            if (loadedAppOpenAd.IsAOAAdAvailable || loadedAppOpenAd.isLoading) return;
+            if (loadedAppOpenAd.IsAOAAdAvailable || loadedAppOpenAd.isLoading)
+            {
+                this.logService.Log($"Ad Status is available {loadedAppOpenAd.IsAOAAdAvailable} and loading {loadedAppOpenAd.isLoading}");
+
+                return;
+            }
 
             loadedAppOpenAd.isLoading = true;
-            AppOpenAd.LoadAd(adUnitId, Screen.orientation, new AdRequest.Builder().Build(), LoadAOACompletedHandler);
+            AppOpenAd.Load(adUnitId, Screen.orientation, new AdRequest.Builder().Build(), LoadAoaCompletedHandler);
 
-            void LoadAOACompletedHandler(AppOpenAd appOpenAd, AdFailedToLoadEventArgs error)
+            void LoadAoaCompletedHandler(AppOpenAd appOpenAd, LoadAdError error)
             {
                 if (error != null)
                 {
                     // Handle the error.
-                    this.logService.Log($"Failed to load the ad. (reason: {error.LoadAdError.GetMessage()}), id: {adUnitId}");
+                    this.logService.Log($"Failed to load the ad. (reason: {error.GetMessage()}), id: {adUnitId}");
 
                     return;
                 }
 
                 // App open ad is loaded.
-                appOpenAd.OnAdDidDismissFullScreenContent      += this.HandleAppOpenAdDidDismissFullScreenContent;
-                appOpenAd.OnAdFailedToPresentFullScreenContent += this.HandleAppOpenAdFailedToPresentFullScreenContent;
-                appOpenAd.OnAdDidPresentFullScreenContent      += this.HandleAppOpenAdDidPresentFullScreenContent;
-                appOpenAd.OnAdDidRecordImpression              += this.HandleAppOpenAdDidRecordImpression;
-                appOpenAd.OnPaidEvent                          += this.HandlePaidEvent;
+                appOpenAd.OnAdFullScreenContentClosed += this.HandleAdFullScreenContentClosed;
+                appOpenAd.OnAdFullScreenContentFailed += this.HandleAdFullScreenContentFailed;
+                appOpenAd.OnAdFullScreenContentOpened += this.HandleAdFullScreenContentOpened;
+                appOpenAd.OnAdImpressionRecorded      += this.HandleAdImpressionRecorded;
+                appOpenAd.OnAdPaid                    += this.HandlePaidEvent;
 
                 loadedAppOpenAd.Init(appOpenAd);
 
@@ -204,31 +209,31 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private void HandleAppOpenAdDidDismissFullScreenContent(object sender, EventArgs args)
+        private void HandleAdFullScreenContentClosed()
         {
             this.logService.Log("Closed app open ad");
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
             this.IsShowingAd = false;
         }
 
-        private void HandleAppOpenAdFailedToPresentFullScreenContent(object sender, AdErrorEventArgs args)
+        private void HandleAdFullScreenContentFailed(AdError args)
         {
-            this.logService.Log($"Failed to present the ad (reason: {args.AdError.GetMessage()})");
+            this.logService.Log($"Failed to present the ad (reason: {args.GetMessage()})");
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
         }
 
-        private void HandleAppOpenAdDidPresentFullScreenContent(object sender, EventArgs args)
+        private void HandleAdFullScreenContentOpened()
         {
             this.logService.Log("Displayed app open ad");
             this.IsShowingAd = true;
         }
 
-        private void HandleAppOpenAdDidRecordImpression(object sender, EventArgs args) { this.logService.Log("Recorded ad impression"); }
+        private void HandleAdImpressionRecorded() { this.logService.Log("Recorded ad impression"); }
 
-        private void HandlePaidEvent(object sender, AdValueEventArgs args)
+        private void HandlePaidEvent(AdValue args)
         {
-            this.analyticService.Track(new AdsRevenueEvent() { Currency = args.AdValue.CurrencyCode, Revenue = args.AdValue.Value / 1e5 });
-            this.logService.Log($"Received paid event. (currency: {args.AdValue.CurrencyCode}, value: {args.AdValue.Value}");
+            this.analyticService.Track(new AdsRevenueEvent() { Currency = args.CurrencyCode, Revenue = args.Value / 1e5 });
+            this.logService.Log($"Received paid event. (currency: {args.CurrencyCode}, value: {args.Value}");
         }
 
         #endregion
