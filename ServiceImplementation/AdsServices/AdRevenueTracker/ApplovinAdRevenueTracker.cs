@@ -3,14 +3,18 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
 {
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
+    using Core.AnalyticServices.Signal;
+    using Zenject;
 
     public class ApplovinAdRevenueTracker : IAdRevenueTracker
     {
         private readonly IAnalyticServices analyticServices;
+        private readonly SignalBus         signalBus;
 
-        public ApplovinAdRevenueTracker(IAnalyticServices analyticServices)
+        public ApplovinAdRevenueTracker(IAnalyticServices analyticServices, SignalBus signalBus)
         {
             this.analyticServices = analyticServices;
+            this.signalBus        = signalBus;
             this.SubscribeAdPaidEvent();
         }
 
@@ -27,7 +31,9 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
 
         private void OnOnAdRevenuePaidEvent(string adUnitIdentify, MaxSdkBase.AdInfo adInfo)
         {
-            this.analyticServices.Track(new AdsRevenueEvent()
+            if (adInfo == null) return;
+
+            var adsRevenueEvent = new AdsRevenueEvent()
             {
                 AdsRevenueSourceId = AdRevenueConstants.ARSourceAppLovinMAX,
                 AdUnit             = adUnitIdentify,
@@ -35,7 +41,11 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
                 Currency           = "USD",
                 Placement          = adInfo.Placement,
                 AdNetwork          = adInfo.NetworkName
-            });
+            };
+
+            this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
+
+            this.analyticServices.Track(adsRevenueEvent);
         }
     }
 }
