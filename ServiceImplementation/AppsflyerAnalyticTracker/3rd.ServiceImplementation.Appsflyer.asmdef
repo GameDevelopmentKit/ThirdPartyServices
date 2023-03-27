@@ -5,8 +5,7 @@
         "3rdCore.Analytic",
         "Zenject-Signals",
         "AppsFlyer",
-        "GameFoundation.Utilities",
-        "UITemplate.Scripts"
+        "GameFoundation.Utilities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
