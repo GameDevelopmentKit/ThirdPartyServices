@@ -39,8 +39,6 @@
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
-            Debug.Log($"OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
-
             if (!name.IsNameValid().Equals("Valid"))
             {
                 Debug.LogError($"Event name error: {name} {name.IsNameValid()}");
