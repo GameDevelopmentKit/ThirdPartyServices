@@ -8,12 +8,19 @@ namespace Core.AnalyticServices
     /// </summary>
     public partial class AnalyticConfig
     {
-        public string AdjustAppToken      => this.adjustAppToken;
-        public string AdjustPurchaseToken => this.adjustPurchaseToken;
+#if UNITY_ANDROID
+        public string AdjustAppToken      => this.adjustAndroidAppToken;
+        public string AdjustPurchaseToken => this.adjustAndroidPurchaseToken;
+#elif UNITY_IOS
+        public string AdjustAppToken      => this.adjustIOSAppToken;
+        public string AdjustPurchaseToken => this.adjustIOSPurchaseToken;
+#endif
         public bool   AdjustIsDebug       => this.adjustIsDebug;
 
-        [SerializeField] private string adjustAppToken;
-        [SerializeField] private string adjustPurchaseToken;
+        [SerializeField] private string adjustAndroidAppToken;
+        [SerializeField] private string adjustIOSAppToken;
+        [SerializeField] private string adjustAndroidPurchaseToken;
+        [SerializeField] private string adjustIOSPurchaseToken;
         [SerializeField] private bool   adjustIsDebug;
     }
 }
