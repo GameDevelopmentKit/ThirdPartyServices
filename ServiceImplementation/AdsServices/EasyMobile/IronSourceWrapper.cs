@@ -5,6 +5,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AdsServices;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
+    using Core.AnalyticServices.Signal;
     using Zenject;
 
     public class IronSourceWrapper : IMRECAdService, IInitializable
@@ -28,18 +29,22 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public event Action<string, AdInfo>    OnAdExpandedEvent;
         public event Action<string, AdInfo>    OnAdCollapsedEvent;
 
-        private void ImpressionDataReadyEvent(IronSourceImpressionData obj)
+        private void ImpressionDataReadyEvent(IronSourceImpressionData impressionData)
         {
-            if (obj.revenue == null) return;
+            if (impressionData.revenue == null) return;
 
-            this.analyticServices.Track(new AdsRevenueEvent()
+            var adsRevenueEvent = new AdsRevenueEvent()
             {
-                Currency  = "USD",
-                Revenue   = (double)obj.revenue,
-                Placement = obj.placement,
-                AdNetwork = obj.adNetwork,
-                AdUnit    = obj.adUnit
-            });
+                AdsRevenueSourceId = AdRevenueConstants.ARSourceAppLovinMAX,
+                AdUnit             = impressionData.adUnit,
+                Revenue            = impressionData.revenue.Value,
+                Currency           = "USD",
+                Placement          = impressionData.placement,
+                AdNetwork          = impressionData.adNetwork
+            };
+
+            this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
+            this.analyticServices.Track(adsRevenueEvent);
         }
     }
 }
