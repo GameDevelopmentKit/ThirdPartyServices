@@ -34,10 +34,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void Initialize()
         {
             Advertising.InterstitialAdCompleted         += this.OnAdvertisingOnInterstitialAdCompleted;
+            
             Advertising.RewardedAdCompleted             += this.OnAdvertisingOnRewardedAdCompleted;
             Advertising.RewardedAdSkipped               += this.OnAdvertisingOnRewardedAdSkipped;
             Advertising.RewardedInterstitialAdCompleted += this.OnAdvertisingOnRewardedInterstitialAdCompleted;
             Advertising.RewardedInterstitialAdSkipped   += this.OnAdvertisingOnRewardedInterstitialAdSkipped;
+            
             Advertising.AdsRemoved                      += this.OnAdRemoved;
         }
 
