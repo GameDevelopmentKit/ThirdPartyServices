@@ -14,7 +14,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private readonly IAnalyticServices analyticServices;
         private readonly SignalBus         signalBus;
 
-        public IronSourceWrapper(IAnalyticServices analyticServices) { this.analyticServices = analyticServices; }
+        public IronSourceWrapper(IAnalyticServices analyticServices,SignalBus signalBus)
+        {
+            this.analyticServices = analyticServices;
+            this.signalBus        = signalBus;
+        }
 
         public void Initialize()
         {
