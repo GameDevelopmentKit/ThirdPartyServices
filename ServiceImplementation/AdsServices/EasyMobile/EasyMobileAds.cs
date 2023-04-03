@@ -128,12 +128,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public bool                                                     IsRewardedAdReady(string place) { return Advertising.IsRewardedAdReady(AdPlacement.PlacementWithName(place)); }
         public void ShowRewardedAd(string place)
         {
-            this.signalBus.Fire<RewardedAdDisplayedSignal>();
+            this.signalBus.Fire(new RewardedAdDisplayedSignal(place));
             Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place));
         }
         public void ShowRewardedAd(string place, Action onCompleted)
         {
-            this.signalBus.Fire<RewardedAdDisplayedSignal>();
+            this.signalBus.Fire(new RewardedAdDisplayedSignal(place));
             this.RewardedAdCompletedOneTimeAction += onCompleted;
             Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place));
         }
