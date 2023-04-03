@@ -113,12 +113,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public bool                                                     IsRewardedAdReady(string place) { return Advertising.IsRewardedAdReady(AdPlacement.PlacementWithName(place)); }
         public void ShowRewardedAd(string place)
         {
-            this.signalBus.Fire<ShowInterstitialAdSignal>();
+            this.signalBus.Fire<RewardedAdDisplayedSignal>();
             Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place));
         }
         public void ShowRewardedAd(string place, Action onCompleted)
         {
-            this.signalBus.Fire<ShowInterstitialAdSignal>();
+            this.signalBus.Fire<RewardedAdDisplayedSignal>();
             this.RewardedAdCompletedOneTimeAction += onCompleted;
             Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place));
         }
@@ -126,10 +126,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public event Action<Core.AdsServices.InterstitialAdNetwork, string> RewardedInterstitialAdSkipped;
 
         public bool IsRewardedInterstitialAdReady()          { return Advertising.IsRewardedInterstitialAdReady(); }
-        public void ShowRewardedInterstitialAd(string place) { Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place)); }
+
+        public void ShowRewardedInterstitialAd(string place)
+        {
+            this.signalBus.Fire<RewardedAdDisplayedSignal>();
+            Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place));
+        }
         public void ShowRewardedInterstitialAd(string place, Action onCompleted)
         {
-            this.signalBus.Fire<ShowInterstitialAdSignal>();
+            this.signalBus.Fire<RewardedAdDisplayedSignal>();
             this.RewardedInterstitialAdCompletedOneTimeAction += onCompleted;
             Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place));
         }
