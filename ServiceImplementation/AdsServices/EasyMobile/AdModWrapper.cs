@@ -76,8 +76,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void ShownInterstitialAdHandler() { this.isResumedFromAds = true; }
 
-        private void OnAppStateChanged(AppState state)
+        private async void OnAppStateChanged(AppState state)
         {
+            await UniTask.SwitchToMainThread();
             // Display the app open ad when the app is foregrounded.
             this.logService.Log($"App State is {state}");
 
@@ -133,18 +134,20 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.IsLoading                        =  false;
                 this.appOpenAd                        =  appOpenAd;
                 this.loadedTime                       =  DateTime.UtcNow;
-                appOpenAd.OnAdFullScreenContentClosed += this.HandleAppOpenAdDidDismissFullScreenContent;
-                appOpenAd.OnAdFullScreenContentFailed += this.HandleAppOpenAdFailedToPresentFullScreenContent;
+                appOpenAd.OnAdFullScreenContentClosed += this.AOAHandleAppOpenAdDidDismissFullScreenContent;
+                appOpenAd.OnAdFullScreenContentFailed += this.AOAHandleAppOpenAdFailedToPresentFullScreenContent;
             }
 
-            private void HandleAppOpenAdFailedToPresentFullScreenContent(AdError agError)
+            private async void AOAHandleAppOpenAdFailedToPresentFullScreenContent(AdError agError)
             {
+                await UniTask.SwitchToMainThread();
                 this.appOpenAd.Destroy();
                 this.appOpenAd = null;
             }
 
-            private void HandleAppOpenAdDidDismissFullScreenContent()
+            private async void AOAHandleAppOpenAdDidDismissFullScreenContent()
             {
+                await UniTask.SwitchToMainThread();
                 this.appOpenAd.Destroy();
                 this.appOpenAd = null;
             }
@@ -191,11 +194,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 }
 
                 // App open ad is loaded.
-                appOpenAd.OnAdFullScreenContentClosed += this.HandleAdFullScreenContentClosed;
-                appOpenAd.OnAdFullScreenContentFailed += this.HandleAdFullScreenContentFailed;
-                appOpenAd.OnAdFullScreenContentOpened += this.HandleAdFullScreenContentOpened;
-                appOpenAd.OnAdImpressionRecorded      += this.HandleAdImpressionRecorded;
-                appOpenAd.OnAdPaid                    += this.HandlePaidEvent;
+                appOpenAd.OnAdFullScreenContentClosed += this.AOAHandleAdFullScreenContentClosed;
+                appOpenAd.OnAdFullScreenContentFailed += this.AOAHandleAdFullScreenContentFailed;
+                appOpenAd.OnAdFullScreenContentOpened += this.AOAHandleAdFullScreenContentOpened;
+                appOpenAd.OnAdImpressionRecorded      += this.AOAHandleAdImpressionRecorded;
+                appOpenAd.OnAdPaid                    += this.AOAHandlePaidEvent;
 
                 loadedAppOpenAd.Init(appOpenAd);
 
@@ -210,30 +213,45 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private void HandleAdFullScreenContentClosed()
+        private async void AOAHandleAdFullScreenContentClosed()
         {
+            await UniTask.SwitchToMainThread();
             this.logService.Log("Closed app open ad");
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
             this.IsShowingAd = false;
         }
 
-        private void HandleAdFullScreenContentFailed(AdError args)
+        private async void AOAHandleAdFullScreenContentFailed(AdError args)
         {
+            await UniTask.SwitchToMainThread();
             this.logService.Log($"Failed to present the ad (reason: {args.GetMessage()})");
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
         }
 
-        private void HandleAdFullScreenContentOpened()
+        private async void AOAHandleAdFullScreenContentOpened()
         {
+            await UniTask.SwitchToMainThread();
             this.logService.Log("Displayed app open ad");
             this.IsShowingAd = true;
         }
 
-        private void HandleAdImpressionRecorded() { this.logService.Log("Recorded ad impression"); }
+        private async void AOAHandleAdImpressionRecorded()
+        { 
+            await UniTask.SwitchToMainThread();
+            this.logService.Log("Recorded ad impression");
+        }
 
-        private void HandlePaidEvent(AdValue args)
+        private async void AOAHandlePaidEvent(AdValue args)
         {
-            this.analyticService.Track(new AdsRevenueEvent() { Currency = args.CurrencyCode, Revenue = args.Value / 1e5 });
+            await UniTask.SwitchToMainThread();
+            this.analyticService.Track(new AdsRevenueEvent()
+                                       {
+                                           AdsRevenueSourceId = "AdMob",
+                                           Revenue            = args.Value / 1e5,
+                                           Currency           = "USD",
+                                           Placement          = "AOA",
+                                           AdNetwork          = "AdMob"
+                                       });
             this.logService.Log($"Received paid event. (currency: {args.CurrencyCode}, value: {args.Value}");
         }
 

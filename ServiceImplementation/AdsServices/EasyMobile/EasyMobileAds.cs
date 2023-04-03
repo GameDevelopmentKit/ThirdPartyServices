@@ -4,6 +4,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using global::EasyMobile;
     using Zenject;
@@ -46,33 +47,47 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void Dispose()
         {
             Advertising.InterstitialAdCompleted         -= this.OnAdvertisingOnInterstitialAdCompleted;
+            
             Advertising.RewardedAdCompleted             -= this.OnAdvertisingOnRewardedAdCompleted;
             Advertising.RewardedAdSkipped               -= this.OnAdvertisingOnRewardedAdSkipped;
             Advertising.RewardedInterstitialAdCompleted -= this.OnAdvertisingOnRewardedInterstitialAdCompleted;
             Advertising.RewardedInterstitialAdSkipped   -= this.OnAdvertisingOnRewardedInterstitialAdSkipped;
+            
             Advertising.AdsRemoved                      -= this.OnAdRemoved;
         }
 
-        private void OnAdRemoved() { this.AdsRemoved?.Invoke(); }
-        private void OnAdvertisingOnRewardedInterstitialAdSkipped(RewardedInterstitialAdNetwork network, AdPlacement place)
+        private async void OnAdRemoved()
         {
+            await UniTask.SwitchToMainThread();
+            this.AdsRemoved?.Invoke();
+        }
+        private async void OnAdvertisingOnRewardedInterstitialAdSkipped(RewardedInterstitialAdNetwork network, AdPlacement place)
+        {
+            await UniTask.SwitchToMainThread();
             this.RewardedInterstitialAdSkipped?.Invoke((Core.AdsServices.InterstitialAdNetwork)network, place.Name);
         }
-        private void OnAdvertisingOnRewardedInterstitialAdCompleted(RewardedInterstitialAdNetwork network, AdPlacement place)
+        private async void OnAdvertisingOnRewardedInterstitialAdCompleted(RewardedInterstitialAdNetwork network, AdPlacement place)
         {
+            await UniTask.SwitchToMainThread();
             this.RewardedInterstitialAdCompleted?.Invoke((Core.AdsServices.InterstitialAdNetwork)network, place.Name);
             this.RewardedInterstitialAdCompletedOneTimeAction?.Invoke();
             this.RewardedInterstitialAdCompletedOneTimeAction = null;
         }
-        private void OnAdvertisingOnRewardedAdSkipped(RewardedAdNetwork network, AdPlacement place) { this.RewardedAdSkipped?.Invoke((Core.AdsServices.RewardedAdNetwork)network, place.Name); }
-        private void OnAdvertisingOnRewardedAdCompleted(RewardedAdNetwork network, AdPlacement place)
+        private async void OnAdvertisingOnRewardedAdSkipped(RewardedAdNetwork network, AdPlacement place)
         {
+            await UniTask.SwitchToMainThread();
+            this.RewardedAdSkipped?.Invoke((Core.AdsServices.RewardedAdNetwork)network, place.Name);
+        }
+        private async void OnAdvertisingOnRewardedAdCompleted(RewardedAdNetwork network, AdPlacement place)
+        {
+            await UniTask.SwitchToMainThread();
             this.RewardedAdCompleted?.Invoke((Core.AdsServices.RewardedAdNetwork)network, place.Name);
             this.RewardedAdCompletedOneTimeAction?.Invoke();
             this.RewardedAdCompletedOneTimeAction = null;
         }
-        private void OnAdvertisingOnInterstitialAdCompleted(InterstitialAdNetwork network, AdPlacement place)
+        private async void OnAdvertisingOnInterstitialAdCompleted(InterstitialAdNetwork network, AdPlacement place)
         {
+            await UniTask.SwitchToMainThread();
             this.InterstitialAdCompleted?.Invoke((Core.AdsServices.InterstitialAdNetwork)network, place.Name);
         }
 

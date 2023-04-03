@@ -7,14 +7,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
+    using Cysharp.Threading.Tasks;
     using Zenject;
 
-    public class IronSourceWrapper : IMRECAdService, IInitializable
+    public class IronSourceWrapper : IMRECAdService, IInitializable, IDisposable
     {
         private readonly IAnalyticServices analyticServices;
         private readonly SignalBus         signalBus;
 
-        public IronSourceWrapper(IAnalyticServices analyticServices,SignalBus signalBus)
+        public IronSourceWrapper(IAnalyticServices analyticServices, SignalBus signalBus)
         {
             this.analyticServices = analyticServices;
             this.signalBus        = signalBus;
@@ -24,49 +25,113 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             IronSourceEvents.onImpressionDataReadyEvent += this.ImpressionDataReadyEvent;
 
-            IronSourceEvents.onBannerAdClickedEvent         += this.OnBannerClicked;
-            IronSourceEvents.onBannerAdLoadedEvent          += this.OnBannerLoaded;
-            IronSourceEvents.onBannerAdLoadFailedEvent      += this.OnBannerLoadFailed;
+            IronSourceEvents.onBannerAdClickedEvent    += this.OnBannerClicked;
+            IronSourceEvents.onBannerAdLoadedEvent     += this.OnBannerLoaded;
+            IronSourceEvents.onBannerAdLoadFailedEvent += this.OnBannerLoadFailed;
 
             IronSourceEvents.onInterstitialAdClickedEvent    += this.OnInterstitialClicked;
             IronSourceEvents.onInterstitialAdOpenedEvent     += this.OnInterstitialOpened;
             IronSourceEvents.onInterstitialAdReadyEvent      += this.OnInterstitialReady;
             IronSourceEvents.onInterstitialAdLoadFailedEvent += this.OnInterstitialLoadFailed;
 
-            IronSourceEvents.onRewardedVideoAdClickedEvent    += this.OnRewardedVideoClicked;
-            
+            IronSourceEvents.onRewardedVideoAdClickedEvent += this.OnRewardedVideoClicked;
+
             IronSourceEvents.onRewardedVideoAdOpenedEvent     += this.OnRewardedVideoOpened;
             IronSourceEvents.onRewardedVideoAdReadyEvent      += this.OnRewardedVideoReady;
             IronSourceEvents.onRewardedVideoAdLoadFailedEvent += this.OnRewardedVideoLoadFailed;
         }
 
-        private void OnRewardedVideoLoadFailed(IronSourceError obj) { this.signalBus.Fire(new RewardedAdLoadFailedSignal("", obj.getDescription())); }
+        public void Dispose()
+        {
+            IronSourceEvents.onImpressionDataReadyEvent -= this.ImpressionDataReadyEvent;
 
-        private void OnRewardedVideoReady() { this.signalBus.Fire(new RewardedAdLoadedSignal("")); }
+            IronSourceEvents.onBannerAdClickedEvent    -= this.OnBannerClicked;
+            IronSourceEvents.onBannerAdLoadedEvent     -= this.OnBannerLoaded;
+            IronSourceEvents.onBannerAdLoadFailedEvent -= this.OnBannerLoadFailed;
 
-        private void OnRewardedVideoClicked(IronSourcePlacement obj) { this.signalBus.Fire(new RewardedAdLoadClickedSignal(obj.getPlacementName())); }
+            IronSourceEvents.onInterstitialAdClickedEvent    -= this.OnInterstitialClicked;
+            IronSourceEvents.onInterstitialAdOpenedEvent     -= this.OnInterstitialOpened;
+            IronSourceEvents.onInterstitialAdReadyEvent      -= this.OnInterstitialReady;
+            IronSourceEvents.onInterstitialAdLoadFailedEvent -= this.OnInterstitialLoadFailed;
 
-        private void OnRewardedVideoOpened() { this.signalBus.Fire(new RewardedAdDisplayedSignal("")); }
+            IronSourceEvents.onRewardedVideoAdClickedEvent -= this.OnRewardedVideoClicked;
 
-        private void OnInterstitialLoadFailed(IronSourceError obj) { this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription())); }
+            IronSourceEvents.onRewardedVideoAdOpenedEvent     -= this.OnRewardedVideoOpened;
+            IronSourceEvents.onRewardedVideoAdReadyEvent      -= this.OnRewardedVideoReady;
+            IronSourceEvents.onRewardedVideoAdLoadFailedEvent -= this.OnRewardedVideoLoadFailed;
+        }
 
-        private void OnInterstitialReady() { this.signalBus.Fire(new InterstitialAdDownloadedSignal("")); }
+        private async void OnRewardedVideoLoadFailed(IronSourceError obj)
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new RewardedAdLoadFailedSignal("", obj.getDescription()));
+        }
 
-        private void OnInterstitialOpened() { this.signalBus.Fire(new InterstitialAdDisplayedSignal("")); }
+        private async void OnRewardedVideoReady()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new RewardedAdLoadedSignal(""));
+        }
 
-        private void OnInterstitialClicked() { this.signalBus.Fire(new InterstitialAdClickedSignal("")); }
+        private async void OnRewardedVideoClicked(IronSourcePlacement obj)
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new RewardedAdLoadClickedSignal(obj.getPlacementName()));
+        }
 
-        private void OnBannerLoadFailed(IronSourceError obj) { this.signalBus.Fire(new BannerAdLoadFailedSignal("", $"{obj.getDescription()}")); }
+        private async void OnRewardedVideoOpened()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new RewardedAdDisplayedSignal(""));
+        }
 
-        private void OnBannerLoaded() { this.signalBus.Fire(new BannerAdLoadedSignal("")); }
+        private async void OnInterstitialLoadFailed(IronSourceError obj)
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription()));
+        }
 
-        private void OnBannerClicked() { this.signalBus.Fire(new BannerAdClickedSignal("")); }
+        private async void OnInterstitialReady()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new InterstitialAdDownloadedSignal(""));
+        }
 
-        public void ShowMREC(AdViewPosition adViewPosition)             { }
-        public void HideMREC(AdViewPosition adViewPosition)             { }
-        public void StopMRECAutoRefresh(AdViewPosition adViewPosition)  { }
+        private async void OnInterstitialOpened()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new InterstitialAdDisplayedSignal(""));
+        }
+
+        private async void OnInterstitialClicked()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new InterstitialAdClickedSignal(""));
+        }
+
+        private async void OnBannerLoadFailed(IronSourceError obj)
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new BannerAdLoadFailedSignal("", $"{obj.getDescription()}"));
+        }
+
+        private async void OnBannerLoaded()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new BannerAdLoadedSignal(""));
+        }
+
+        private async void OnBannerClicked()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new BannerAdClickedSignal(""));
+        }
+
+        public void ShowMREC(AdViewPosition             adViewPosition) { }
+        public void HideMREC(AdViewPosition             adViewPosition) { }
+        public void StopMRECAutoRefresh(AdViewPosition  adViewPosition) { }
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
-        public void LoadMREC(AdViewPosition adViewPosition)             { }
+        public void LoadMREC(AdViewPosition             adViewPosition) { }
 
         public event Action<string, AdInfo>    OnAdLoadedEvent;
         public event Action<string, ErrorInfo> OnAdLoadFailedEvent;
@@ -80,14 +145,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (impressionData.revenue == null) return;
 
             var adsRevenueEvent = new AdsRevenueEvent()
-            {
-                AdsRevenueSourceId = AdRevenueConstants.ARSourceIronSource,
-                AdUnit             = impressionData.adUnit,
-                Revenue            = impressionData.revenue.Value,
-                Currency           = "USD",
-                Placement          = impressionData.placement,
-                AdNetwork          = impressionData.adNetwork
-            };
+                                  {
+                                      AdsRevenueSourceId = AdRevenueConstants.ARSourceIronSource,
+                                      AdUnit             = impressionData.adUnit,
+                                      Revenue            = impressionData.revenue.Value,
+                                      Currency           = "USD",
+                                      Placement          = impressionData.placement,
+                                      AdNetwork          = impressionData.adNetwork
+                                  };
 
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
             this.analyticServices.Track(adsRevenueEvent);
