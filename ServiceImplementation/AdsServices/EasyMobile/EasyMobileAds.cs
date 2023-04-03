@@ -129,12 +129,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void ShowRewardedInterstitialAd(string place)
         {
-            this.signalBus.Fire<RewardedAdDisplayedSignal>();
+            this.signalBus.Fire<RewardedInterstitialAdDisplayedSignal>();
             Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place));
         }
         public void ShowRewardedInterstitialAd(string place, Action onCompleted)
         {
-            this.signalBus.Fire<RewardedAdDisplayedSignal>();
+            this.signalBus.Fire<RewardedInterstitialAdDisplayedSignal>();
             this.RewardedInterstitialAdCompletedOneTimeAction += onCompleted;
             Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place));
         }
