@@ -37,7 +37,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.analyticService = analyticService;
         }
 
-        public void Initialize() { this.signalBus.Subscribe<ShowInterstitialAdSignal>(this.ShownInterstitialAdHandler); }
+        public void Initialize()
+        {
+            this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
+            this.signalBus.Subscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
+
+        }
 
         public void Init()
         {
@@ -74,7 +79,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private bool isShowedFirstOpen = false;
         private bool isResumedFromAds  = false;
 
-        private void ShownInterstitialAdHandler() { this.isResumedFromAds = true; }
+        private void ShownAdInDifferentProcessHandler() { this.isResumedFromAds = true; }
 
         private async void OnAppStateChanged(AppState state)
         {

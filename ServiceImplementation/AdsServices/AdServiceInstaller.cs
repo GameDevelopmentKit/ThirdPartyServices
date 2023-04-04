@@ -12,7 +12,6 @@ namespace ServiceImplementation.AdsServices
     {
         public override void InstallBindings()
         {
-            this.Container.DeclareSignal<ShowInterstitialAdSignal>();
 #if EASY_MOBILE_PRO && (!UNITY_EDITOR || (UNITY_EDITOR && !EM_IRONSOURCE))
             this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
 #else

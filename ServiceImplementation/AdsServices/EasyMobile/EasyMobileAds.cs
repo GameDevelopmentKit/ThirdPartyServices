@@ -116,7 +116,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public bool                                                         IsInterstitialAdReady(string place) { return Advertising.IsInterstitialAdReady(AdPlacement.PlacementWithName(place)); }
         public void ShowInterstitialAd(string place)
         {
-            this.signalBus.Fire<ShowInterstitialAdSignal>();
+            this.signalBus.Fire<InterstitialAdDisplayedSignal>();
             Advertising.ShowInterstitialAd(AdPlacement.PlacementWithName(place));
         }
 
