@@ -37,6 +37,8 @@ namespace ServiceImplementation.AdsServices
 
             #region Ads signal
 
+            this.Container.DeclareSignal<BannerAdPresentedSignal>();
+            this.Container.DeclareSignal<BannerAdDismissedSignal>();
             this.Container.DeclareSignal<BannerAdLoadedSignal>();
             this.Container.DeclareSignal<BannerAdLoadFailedSignal>();
             this.Container.DeclareSignal<BannerAdClickedSignal>();

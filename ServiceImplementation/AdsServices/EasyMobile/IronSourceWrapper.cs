@@ -25,9 +25,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             IronSourceEvents.onImpressionDataReadyEvent += this.ImpressionDataReadyEvent;
 
-            IronSourceEvents.onBannerAdClickedEvent    += this.OnBannerClicked;
-            IronSourceEvents.onBannerAdLoadedEvent     += this.OnBannerLoaded;
-            IronSourceEvents.onBannerAdLoadFailedEvent += this.OnBannerLoadFailed;
+            IronSourceEvents.onBannerAdClickedEvent         += this.OnBannerClicked;
+            IronSourceEvents.onBannerAdLoadedEvent          += this.OnBannerLoaded;
+            IronSourceEvents.onBannerAdLoadFailedEvent      += this.OnBannerLoadFailed;
+            IronSourceEvents.onBannerAdScreenPresentedEvent += this.OnBannerScreenPresented;
+            IronSourceEvents.onBannerAdScreenDismissedEvent += this.OnBannerScreenDismissed;
 
             IronSourceEvents.onInterstitialAdClickedEvent    += this.OnInterstitialClicked;
             IronSourceEvents.onInterstitialAdOpenedEvent     += this.OnInterstitialOpened;
@@ -113,6 +115,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdLoadFailedSignal("", $"{obj.getDescription()}"));
+        }
+
+        private async void OnBannerScreenDismissed()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new BannerAdDismissedSignal(""));
+        }
+        private async void OnBannerScreenPresented()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new BannerAdDismissedSignal(""));
         }
 
         private async void OnBannerLoaded()
