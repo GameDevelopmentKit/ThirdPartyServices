@@ -1,5 +1,19 @@
 ﻿namespace Core.AdsServices.Signals
 {
+    public class BannerAdPresentedSignal : BaseAdsSignal
+    {
+        public BannerAdPresentedSignal(string placement) : base(placement)
+        {
+        }
+    }
+    
+    public class BannerAdDismissedSignal : BaseAdsSignal
+    {
+        public BannerAdDismissedSignal(string placement) : base(placement)
+        {
+        }
+    }
+    
     public class BannerAdLoadedSignal : BaseAdsSignal
     {
         public BannerAdLoadedSignal(string placement) : base(placement)
