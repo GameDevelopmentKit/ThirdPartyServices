@@ -1,4 +1,4 @@
-#if TEMPLATE_IAP
+#if ENABLE_IAP
 namespace ServiceImplementation.IAPServices
 {
     using System;
@@ -10,49 +10,42 @@ namespace ServiceImplementation.IAPServices
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
-    using Zenject;
 
-    public class IapServices : IIapServices, IStoreListener, IInitializable
+    public class UnityIapServices : IUnityIapServices, IStoreListener
     {
-        private        Action<string>     onPurchaseComplete, onPurchaseFailed;
-        private static IStoreController   mStoreController;
-        private static IExtensionProvider mStoreExtensionProvider;
+        private Action<string>     onPurchaseComplete, onPurchaseFailed;
+        private IStoreController   mStoreController;
+        private IExtensionProvider mStoreExtensionProvider;
 
         private readonly ILogService                  logger;
-        private readonly Dictionary<string, IAPModel> iapPacks;
         private readonly IAdServices                  adServices;
-        public static    string                       Environment = "production";
-        public static    string                       RemoveAds   = "RemoveAds";
+        private          Dictionary<string, IAPModel> iapPacks;
 
-        public IapServices(ILogService log, Dictionary<string, IAPModel> iapPack, IAdServices adServices)
-        {
-            this.logger     = log;
-            this.iapPacks   = iapPack;
-            this.adServices = adServices;
-        }
+        public UnityIapServices(ILogService log) { this.logger = log; }
 
-        public async void Initialize()
+        public async void InitIapServices(Dictionary<string, IAPModel> iapPack, string environment = "production")
         {
-            if (mStoreController != null) return;
+            if (this.mStoreController != null) return;
+            this.iapPacks = iapPack;
 
             // Begin to configure our connection to Purchasing
             try
             {
                 var options = new InitializationOptions()
-                    .SetEnvironmentName(Environment);
+                    .SetEnvironmentName(environment);
 
                 await UnityServices.InitializeAsync(options);
             }
             catch (Exception exception)
             {
                 // An error occurred during services initialization.
-                Debug.Log($"init failed {exception.Message}");
+                this.logger.Log($"init failed {exception.Message}");
             }
 
             this.InitializePurchasing();
         }
 
-        private bool IsInitialized => mStoreController != null && mStoreExtensionProvider != null;
+        private bool IsInitialized => this.mStoreController != null && this.mStoreExtensionProvider != null;
 
         private void InitializePurchasing()
         {
@@ -75,18 +68,15 @@ namespace ServiceImplementation.IAPServices
             }
         }
 
-        private ProductType ConvertToUnityProductType(string productType)
+        private UnityEngine.Purchasing.ProductType ConvertToUnityProductType(ProductType productType)
         {
-            var type = productType switch
+            return productType switch
             {
-                "Consumable" => ProductType.Consumable,
-                "Subscription" => ProductType.Subscription,
-                "NonConsumable" => ProductType.NonConsumable,
-                "RemoveAds" => ProductType.NonConsumable,
-                _ => ProductType.Consumable
+                ProductType.Consumable => UnityEngine.Purchasing.ProductType.Consumable,
+                ProductType.Subscription => UnityEngine.Purchasing.ProductType.Subscription,
+                ProductType.NonConsumable => UnityEngine.Purchasing.ProductType.NonConsumable,
+                _ => UnityEngine.Purchasing.ProductType.Consumable
             };
-
-            return type;
         }
 
         public string GetPriceById(string id)
@@ -97,7 +87,7 @@ namespace ServiceImplementation.IAPServices
 
             try
             {
-                s = mStoreController.products.WithID(id).metadata.localizedPriceString;
+                s = this.mStoreController.products.WithID(id).metadata.localizedPriceString;
             }
             catch (Exception e)
             {
@@ -107,39 +97,18 @@ namespace ServiceImplementation.IAPServices
             return s;
         }
 
-        public void BuyRemoveAds(Action completed = null, Action<string> onFailed = null)
-        {
-            if (Application.internetReachability == NetworkReachability.NotReachable)
-            {
-                //todo show no internet connection
-            }
-            else
-            {
-                if (mStoreController == null)
-                {
-                    // Begin to configure our connection to Purchasing
-                    this.InitializePurchasing();
-                }
-                else
-                {
-                    this.BuyProductID(this.iapPacks.ElementAt(0).Key, (x) => { completed?.Invoke(); },
-                        onFailed);
-                }
-            }
-        }
-
         public void BuyProductID(string productId, Action<string> onComplete = null, Action<string> onFailed = null)
         {
             if (this.IsInitialized)
             {
-                var product = mStoreController.products.WithID(productId);
+                var product = this.mStoreController.products.WithID(productId);
 
                 if (product is { availableToPurchase: true })
                 {
                     this.logger.Log($"Purchasing product asychronously: '{product.definition.id}'");
 
                     this.onPurchaseComplete = onComplete;
-                    mStoreController.InitiatePurchase(product);
+                    this.mStoreController.InitiatePurchase(product);
                 }
                 else
                 {
@@ -174,11 +143,11 @@ namespace ServiceImplementation.IAPServices
                 this.logger.Log("RestorePurchases started ...");
 
                 // Fetch the Apple store-specific subsystem.
-                var apple = mStoreExtensionProvider.GetExtension<IAppleExtensions>();
+                var apple = this.mStoreExtensionProvider.GetExtension<IAppleExtensions>();
 
                 // Begin the asynchronous process of restoring purchases. Expect a confirmation response in 
                 // the Action<bool> below, and ProcessPurchase if there are previously purchased products to restore.
-                apple.RestoreTransactions((result, message) =>
+                apple.RestoreTransactions((result, _) =>
                 {
                     // The first phase of restoration. If no more responses are received on ProcessPurchase then 
                     // no purchases are available to be restored.
@@ -196,8 +165,8 @@ namespace ServiceImplementation.IAPServices
         public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
         {
             this.logger.Log("OnInitialized: PASS");
-            mStoreController        = controller;
-            mStoreExtensionProvider = extensions;
+            this.mStoreController        = controller;
+            this.mStoreExtensionProvider = extensions;
         }
 
         public void OnInitializeFailed(InitializationFailureReason error, string message) { }
@@ -210,14 +179,6 @@ namespace ServiceImplementation.IAPServices
 
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
-            foreach (var iapPackRecord in this.iapPacks.Values.Where(iapPackRecord => string.Equals(args.purchasedProduct.definition.id, iapPackRecord.Id, StringComparison.Ordinal)))
-            {
-                if (iapPackRecord.ProductType == RemoveAds)
-                {
-                    this.adServices.RemoveAds();
-                }
-            }
-
             this.onPurchaseComplete?.Invoke(args.purchasedProduct.definition.id);
             this.onPurchaseComplete = null;
 
