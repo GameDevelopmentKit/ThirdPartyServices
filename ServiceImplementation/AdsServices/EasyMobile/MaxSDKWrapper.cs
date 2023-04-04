@@ -56,6 +56,20 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             MaxSdkCallbacks.Banner.OnAdLoadedEvent     += this.OnBannerAdLoadedHandler;
             MaxSdkCallbacks.Banner.OnAdLoadFailedEvent += this.OnBannerAdLoadFailedHandler;
             MaxSdkCallbacks.Banner.OnAdClickedEvent    += this.OnBannerAdClickedHandler;
+            MaxSdkCallbacks.Banner.OnAdExpandedEvent   += this.OnBannerAdExpandedHandler;
+            MaxSdkCallbacks.Banner.OnAdCollapsedEvent  += this.OnBannerAdCollapsedHandler;
+        }
+        
+        private async void OnBannerAdCollapsedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new BannerAdDismissedSignal(arg2.Placement));
+        }
+
+        private async void OnBannerAdExpandedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new BannerAdPresentedSignal(arg2.Placement));
         }
 
         private async void OnBannerAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2)
