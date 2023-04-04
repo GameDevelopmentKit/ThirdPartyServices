@@ -1,0 +1,22 @@
+{
+    "name": "3rd.IAP",
+    "rootNamespace": "",
+    "references": [
+        "UnityEngine.Purchasing",
+        "Unity.Services.Core",
+        "UnityEngine.Purchasing.Stores",
+        "Unity.Services.Core.Environments",
+        "GameFoundation.Utilities",
+        "3rdCore.Ads",
+        "Zenject-Source"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

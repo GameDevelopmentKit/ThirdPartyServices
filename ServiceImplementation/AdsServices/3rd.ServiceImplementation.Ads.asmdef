@@ -12,6 +12,7 @@
         "UniTask",
         "IronSource.Scripts",
         "AdjustSDK"
+        
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
