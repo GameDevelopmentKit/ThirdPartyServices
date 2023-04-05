@@ -27,11 +27,12 @@ namespace ServiceImplementation.AdsServices
 #if EM_APPLOVIN
             this.Container.BindInterfacesAndSelfTo<MaxSDKWrapper>().AsCached();
             this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<MaxSDKWrapper>();
-#elif EM_IRONSOURCE
-            this.Container.BindInterfacesAndSelfTo<IronSourceWrapper>().AsCached();
-#else
-            this.Container.Bind<IMRECAdService>().To<DummyMRECAdService>().AsCached();
 #endif
+
+#if EM_IRONSOURCE
+            this.Container.BindInterfacesAndSelfTo<IronSourceWrapper>().AsCached();
+#endif
+            
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
 
             #region Ads signal
@@ -41,10 +42,18 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<BannerAdLoadedSignal>();
             this.Container.DeclareSignal<BannerAdLoadFailedSignal>();
             this.Container.DeclareSignal<BannerAdClickedSignal>();
+
+            this.Container.DeclareSignal<MRecAdLoadedSignal>();
+            this.Container.DeclareSignal<MRecAdLoadFailedSignal>();
+            this.Container.DeclareSignal<MRecAdClickedSignal>();
+            this.Container.DeclareSignal<MRecAdDisplayedSignal>();
+            this.Container.DeclareSignal<MRecAdDismissedSignal>();
+            
             this.Container.DeclareSignal<InterstitialAdDownloadedSignal>();
             this.Container.DeclareSignal<InterstitialAdLoadFailedSignal>();
             this.Container.DeclareSignal<InterstitialAdClickedSignal>();
             this.Container.DeclareSignal<InterstitialAdDisplayedSignal>();
+            
             this.Container.DeclareSignal<RewardedInterstitialAdDisplayedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadFailedSignal>();

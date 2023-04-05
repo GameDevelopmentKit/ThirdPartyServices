@@ -16,7 +16,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using UnityEngine;
     using Zenject;
 
-    public class AdModWrapper : IAOAAdService, IInitializable
+    public class AdModWrapper : IAOAAdService, IMRECAdService
     {
         #region inject
 
@@ -37,25 +37,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.analyticService = analyticService;
         }
 
-        public void Initialize()
+        public void Init()
         {
             this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
-
-        }
-
-        public void Init()
-        {
             MobileAds.Initialize(_ =>
-            {
-                this.IntervalCall(5);
-                AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
-            });
+                                 {
+                                     this.IntervalCall(5);
+                                     AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
+                                 });
         }
 
         private async void IntervalCall(int intervalSecond)
         {
             this.LoadAppOpenAd();
+            this.LoadAllMRec();
             await UniTask.Delay(TimeSpan.FromSeconds(intervalSecond));
             this.IntervalCall(intervalSecond);
         }
@@ -64,15 +60,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public class Config
         {
-            public List<string> ADModAoaIds;
-            public bool         IsShowAOAAtOpenApp = true;
-            public bool         OpenAfterResuming  = true;
+            public List<string>                       ADModAoaIds;
+            public Dictionary<AdViewPosition, string> ADModMRecIds;
 
-            public Config(List<string> adModAoaIds, bool isShowAoaAtOpenApp = true, bool openAfterResuming = true)
+            public readonly bool IsShowAOAAtOpenApp   = true;
+            public readonly bool OpenAOAAfterResuming = true;
+
+            public Config(List<string> adModAoaIds, bool isShowAoaAtOpenApp = true, bool openAoaAfterResuming = true)
             {
-                this.ADModAoaIds        = adModAoaIds;
-                this.OpenAfterResuming  = openAfterResuming;
-                this.IsShowAOAAtOpenApp = isShowAoaAtOpenApp;
+                this.ADModAoaIds          = adModAoaIds;
+                this.OpenAOAAfterResuming = openAoaAfterResuming;
+                this.IsShowAOAAtOpenApp   = isShowAoaAtOpenApp;
             }
         }
 
@@ -88,7 +86,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log($"App State is {state}");
 
             if (state != AppState.Foreground) return;
-            if (!this.config.OpenAfterResuming) return;
+            if (!this.config.OpenAOAAfterResuming) return;
 
             if (this.isResumedFromAds)
             {
@@ -203,7 +201,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 appOpenAd.OnAdFullScreenContentFailed += this.AOAHandleAdFullScreenContentFailed;
                 appOpenAd.OnAdFullScreenContentOpened += this.AOAHandleAdFullScreenContentOpened;
                 appOpenAd.OnAdImpressionRecorded      += this.AOAHandleAdImpressionRecorded;
-                appOpenAd.OnAdPaid                    += this.AOAHandlePaidEvent;
+                appOpenAd.OnAdPaid                    += this.AdMobHandlePaidEvent;
 
                 loadedAppOpenAd.Init(appOpenAd);
 
@@ -241,12 +239,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         }
 
         private async void AOAHandleAdImpressionRecorded()
-        { 
+        {
             await UniTask.SwitchToMainThread();
             this.logService.Log("Recorded ad impression");
         }
 
-        private async void AOAHandlePaidEvent(AdValue args)
+        private async void AdMobHandlePaidEvent(AdValue args)
         {
             await UniTask.SwitchToMainThread();
             this.analyticService.Track(new AdsRevenueEvent()
@@ -259,6 +257,89 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                        });
             this.logService.Log($"Received paid event. (currency: {args.CurrencyCode}, value: {args.Value}");
         }
+
+        #endregion
+
+        #region MREC
+
+        private Dictionary<AdViewPosition, BannerView> positionToMRECBannerView  = new();
+        private Dictionary<AdViewPosition, bool>       positionToMRECToIsLoading = new();
+
+
+        public void ShowMREC(AdViewPosition             adViewPosition) { this.positionToMRECBannerView[adViewPosition].Show(); }
+        public void HideMREC(AdViewPosition             adViewPosition) { this.positionToMRECBannerView[adViewPosition].Hide(); }
+        public void StopMRECAutoRefresh(AdViewPosition  adViewPosition) { }
+        public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
+        public void LoadMREC(AdViewPosition adViewPosition)
+        {
+            if (this.positionToMRECBannerView.ContainsKey(adViewPosition) || this.positionToMRECToIsLoading.GetOrAdd(adViewPosition, () => false))
+            {
+                return;
+            }
+
+            var bannerView = new BannerView(this.config.ADModMRecIds[adViewPosition], AdSize.MediumRectangle, AdPosition.Center);
+
+
+            var adRequest = new AdRequest.Builder().AddKeyword("car-climber-game").Build();
+
+            // send the request to load the ad.
+            bannerView.LoadAd(adRequest);
+            this.positionToMRECToIsLoading[adViewPosition] =  true;
+            bannerView.OnBannerAdLoaded                    += () => { this.positionToMRECBannerView.Add(adViewPosition, bannerView); };
+            bannerView.OnBannerAdLoadFailed                += _ => { this.positionToMRECToIsLoading[adViewPosition] = false; };
+
+            bannerView.OnBannerAdLoaded            += this.BannerViewOnAdLoaded;
+            bannerView.OnBannerAdLoadFailed        += this.BannerViewOnAdLoadFailed;
+            bannerView.OnAdClicked                 += this.BannerViewOnAdClicked;
+            bannerView.OnAdPaid                    += this.AdMobHandlePaidEvent;
+            bannerView.OnAdFullScreenContentOpened += this.BannerViewOnAdFullScreenContentOpened;
+            bannerView.OnAdFullScreenContentClosed += this.BannerViewOnAdFullScreenContentClosed;
+        }
+        public bool IsReady(AdViewPosition adViewPosition) { return this.positionToMRECBannerView.ContainsKey(adViewPosition); }
+
+        private void LoadAllMRec()
+        {
+            foreach (var (position, _) in this.config.ADModMRecIds)
+            {
+                this.LoadMREC(position);
+            }
+        }
+
+        private async void BannerViewOnAdFullScreenContentClosed()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new MRecAdDismissedSignal(""));
+        }
+        private async void BannerViewOnAdFullScreenContentOpened()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new MRecAdDisplayedSignal(""));
+        }
+
+        private async void BannerViewOnAdClicked()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new MRecAdClickedSignal(""));
+        }
+
+        private async void BannerViewOnAdLoadFailed(LoadAdError obj)
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new MRecAdLoadFailedSignal(""));
+        }
+
+        private async void BannerViewOnAdLoaded()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new MRecAdLoadedSignal(""));
+        }
+
+        public event Action<string, AdInfo>    OnAdLoadedEvent;
+        public event Action<string, ErrorInfo> OnAdLoadFailedEvent;
+        public event Action<string, AdInfo>    OnAdClickedEvent;
+        public event Action<string, AdInfo>    OnAdRevenuePaidEvent;
+        public event Action<string, AdInfo>    OnAdExpandedEvent;
+        public event Action<string, AdInfo>    OnAdCollapsedEvent;
 
         #endregion
     }
