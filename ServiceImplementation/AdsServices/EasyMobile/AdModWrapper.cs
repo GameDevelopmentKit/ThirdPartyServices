@@ -419,6 +419,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             // Get Texture2D for icon asset of native ad.
             var iconTexture = nativeAd.GetIconTexture();
             nativeAdsView.icon                                               = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            nativeAdsView.icon.transform.parent                              = nativeAdsView.originalIcon.transform.parent;
             nativeAdsView.icon.transform.localPosition                       = nativeAdsView.originalIcon.transform.localPosition;
             nativeAdsView.icon.transform.localScale                          = nativeAdsView.originalIcon.transform.localScale;
             nativeAdsView.icon.transform.localRotation                       = nativeAdsView.originalIcon.transform.localRotation;
