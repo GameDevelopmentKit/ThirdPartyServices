@@ -5,6 +5,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System.Collections.Generic;
     using System.Linq;
     using Core.AdsServices;
+    using Core.AdsServices.Native;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -16,7 +17,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using UnityEngine;
     using Zenject;
 
-    public class AdModWrapper : IAOAAdService, IMRECAdService
+    public class AdModWrapper : IAOAAdService, IMRECAdService, INativeAdsService
     {
         #region inject
 
@@ -52,6 +53,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.LoadAppOpenAd();
             this.LoadAllMRec();
+            this.LoadAllNativeAds();
             await UniTask.Delay(TimeSpan.FromSeconds(intervalSecond));
             this.IntervalCall(intervalSecond);
         }
@@ -62,6 +64,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             public List<string>                       ADModAoaIds;
             public Dictionary<AdViewPosition, string> ADModMRecIds;
+            public List<string>                       NativeAdIds;
 
             public bool IsShowAOAAtOpenApp   = true;
             public bool OpenAOAAfterResuming = true;
@@ -288,7 +291,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #if UNITY_EDITOR
             OnBannerViewOnOnBannerAdLoaded();
 #endif
-            bannerView.OnBannerAdLoaded += OnBannerViewOnOnBannerAdLoaded;
+            bannerView.OnBannerAdLoaded     += OnBannerViewOnOnBannerAdLoaded;
             bannerView.OnBannerAdLoadFailed += _ => { this.positionToMRECToIsLoading[adViewPosition] = false; };
 
             bannerView.OnBannerAdLoaded            += this.BannerViewOnAdLoaded;
@@ -297,7 +300,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             bannerView.OnAdPaid                    += this.AdMobHandlePaidEvent;
             bannerView.OnAdFullScreenContentOpened += this.BannerViewOnAdFullScreenContentOpened;
             bannerView.OnAdFullScreenContentClosed += this.BannerViewOnAdFullScreenContentClosed;
-            
+
             void OnBannerViewOnOnBannerAdLoaded()
             {
                 bannerView.Hide();
@@ -365,6 +368,87 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 AdViewPosition.BottomRight  => AdPosition.BottomRight,
                 _                           => AdPosition.Center
             };
+
+        #endregion
+
+        #region Native Ads
+
+        private Dictionary<string, NativeAd>        nativeAdsIdToNativeAd   { get; } = new();
+        private HashSet<string>                     loadingNativeAdsIds     { get; } = new();
+        private Dictionary<NativeAdsView, NativeAd> nativeAdsViewToNativeAd { get; } = new();
+
+        public void LoadNativeAds(string adsId)
+        {
+            if (this.loadingNativeAdsIds.Contains(adsId) || this.nativeAdsIdToNativeAd.ContainsKey(adsId)) return;
+            
+            var adLoader = new AdLoader.Builder(adsId).ForNativeAd().Build();
+            this.loadingNativeAdsIds.Add(adsId);
+            adLoader.OnNativeAdLoaded += (_, arg) =>
+                                         {
+                                             this.nativeAdsIdToNativeAd.Add(adsId, arg.nativeAd);
+                                             this.loadingNativeAdsIds.Remove(adsId);
+                                         };
+            adLoader.OnAdFailedToLoad += (_, _) =>
+                                         {
+                                             this.loadingNativeAdsIds.Remove(adsId);
+                                         };
+            
+            adLoader.OnNativeAdLoaded += this.HandleNativeAdLoaded;
+            adLoader.OnAdFailedToLoad += this.HandleAdFailedToLoad;
+            adLoader.LoadAd(new AdRequest.Builder().Build());
+        }
+
+        public void DrawNativeAds(NativeAdsView nativeAdsView)
+        {
+            if (this.nativeAdsIdToNativeAd.Count == 0) return;
+            var nativeAd = this.nativeAdsViewToNativeAd.GetOrAdd(nativeAdsView, () =>
+                                                                                {
+                                                                                    var nativeAdPair = this.nativeAdsIdToNativeAd.First();
+                                                                                    this.nativeAdsIdToNativeAd.Remove(nativeAdPair.Key);
+                                                                                    return nativeAdPair.Value;
+                                                                                });
+
+            // Get Texture2D for icon asset of native ad.
+            var iconTexture = nativeAd.GetIconTexture();
+            var icon        = nativeAdsView.icon;
+            nativeAdsView.icon                                               = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            nativeAdsView.icon.transform.localPosition                       = nativeAdsView.originalIcon.transform.localPosition;
+            nativeAdsView.icon.transform.localScale                          = nativeAdsView.originalIcon.transform.localScale;
+            nativeAdsView.icon.transform.localRotation                       = nativeAdsView.originalIcon.transform.localRotation;
+            nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture = iconTexture;
+
+            // Register GameObject that will display icon asset of native ad.
+            if (!nativeAd.RegisterIconImageGameObject(icon))
+            {
+                // Handle failure to register ad asset.
+                this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
+            }
+        }
+
+        private async void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
+        {
+            await UniTask.SwitchToMainThread();
+            this.logService.Log($"Native ad failed to load: {e.LoadAdError.GetMessage()}");
+        }
+
+        private async void HandleNativeAdLoaded(object sender, NativeAdEventArgs e)
+        {
+            await UniTask.SwitchToMainThread();
+            e.nativeAd.OnPaidEvent += this.AdMobNativePaidHandler;
+            this.logService.Log($"Native ad loaded successfully");
+        }
+        private void AdMobNativePaidHandler(object sender, AdValueEventArgs e)
+        {
+            this.AdMobHandlePaidEvent(e.AdValue);
+        }
+
+        private void LoadAllNativeAds()
+        {
+            foreach (var configNativeAdId in this.config.NativeAdIds)
+            {
+                this.LoadNativeAds(configNativeAdId);
+            }
+        }
 
         #endregion
     }
