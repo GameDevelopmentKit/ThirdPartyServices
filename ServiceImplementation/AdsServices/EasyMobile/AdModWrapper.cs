@@ -408,7 +408,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void DrawNativeAds(NativeAdsView nativeAdsView)
         {
-            if (this.nativeAdsIdToNativeAd.Count == 0) return;
+            if (this.nativeAdsIdToNativeAd.Count == 0 || !this.nativeAdsViewToNativeAd.ContainsKey(nativeAdsView)) return;
             var nativeAd = this.nativeAdsViewToNativeAd.GetOrAdd(nativeAdsView, () =>
                                                                                 {
                                                                                     var nativeAdPair = this.nativeAdsIdToNativeAd.First();
@@ -418,15 +418,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             // Get Texture2D for icon asset of native ad.
             var iconTexture = nativeAd.GetIconTexture();
-            var icon = nativeAdsView.icon;
-            nativeAdsView.icon = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            nativeAdsView.icon.transform.localPosition = nativeAdsView.originalIcon.transform.localPosition;
-            nativeAdsView.icon.transform.localScale = nativeAdsView.originalIcon.transform.localScale;
-            nativeAdsView.icon.transform.localRotation = nativeAdsView.originalIcon.transform.localRotation;
+            nativeAdsView.icon                                               = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            nativeAdsView.icon.transform.localPosition                       = nativeAdsView.originalIcon.transform.localPosition;
+            nativeAdsView.icon.transform.localScale                          = nativeAdsView.originalIcon.transform.localScale;
+            nativeAdsView.icon.transform.localRotation                       = nativeAdsView.originalIcon.transform.localRotation;
             nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture = iconTexture;
 
             // Register GameObject that will display icon asset of native ad.
-            if (!nativeAd.RegisterIconImageGameObject(icon))
+            if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.icon))
             {
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
