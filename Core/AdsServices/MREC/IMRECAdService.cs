@@ -9,7 +9,7 @@ namespace Core.AdsServices
         void StopMRECAutoRefresh(AdViewPosition  adViewPosition);
         void StartMRECAutoRefresh(AdViewPosition adViewPosition);
         void LoadMREC(AdViewPosition             adViewPosition);
-        bool IsReady(AdViewPosition              adViewPosition);
+        bool IsMRECReady(AdViewPosition              adViewPosition);
         
         event Action<string, AdInfo>    OnAdLoadedEvent;
         event Action<string, ErrorInfo> OnAdLoadFailedEvent;

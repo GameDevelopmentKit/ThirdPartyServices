@@ -63,8 +63,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             public List<string>                       ADModAoaIds;
             public Dictionary<AdViewPosition, string> ADModMRecIds;
 
-            public readonly bool IsShowAOAAtOpenApp   = true;
-            public readonly bool OpenAOAAfterResuming = true;
+            public bool IsShowAOAAtOpenApp   = true;
+            public bool OpenAOAAfterResuming = true;
 
             public Config(List<string> adModAoaIds, bool isShowAoaAtOpenApp = true, bool openAoaAfterResuming = true)
             {
@@ -277,16 +277,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
-            var bannerView = new BannerView(this.config.ADModMRecIds[adViewPosition], AdSize.MediumRectangle, AdPosition.Center);
+            var bannerView = new BannerView(this.config.ADModMRecIds[adViewPosition], AdSize.MediumRectangle, this.ConvertAdViewPosition(adViewPosition));
 
 
             var adRequest = new AdRequest.Builder().AddKeyword("car-climber-game").Build();
 
             // send the request to load the ad.
             bannerView.LoadAd(adRequest);
-            this.positionToMRECToIsLoading[adViewPosition] =  true;
-            bannerView.OnBannerAdLoaded                    += () => { this.positionToMRECBannerView.Add(adViewPosition, bannerView); };
-            bannerView.OnBannerAdLoadFailed                += _ => { this.positionToMRECToIsLoading[adViewPosition] = false; };
+            this.positionToMRECToIsLoading[adViewPosition] = true;
+#if UNITY_EDITOR
+            OnBannerViewOnOnBannerAdLoaded();
+#endif
+            bannerView.OnBannerAdLoaded += OnBannerViewOnOnBannerAdLoaded;
+            bannerView.OnBannerAdLoadFailed += _ => { this.positionToMRECToIsLoading[adViewPosition] = false; };
 
             bannerView.OnBannerAdLoaded            += this.BannerViewOnAdLoaded;
             bannerView.OnBannerAdLoadFailed        += this.BannerViewOnAdLoadFailed;
@@ -294,8 +297,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             bannerView.OnAdPaid                    += this.AdMobHandlePaidEvent;
             bannerView.OnAdFullScreenContentOpened += this.BannerViewOnAdFullScreenContentOpened;
             bannerView.OnAdFullScreenContentClosed += this.BannerViewOnAdFullScreenContentClosed;
+            
+            void OnBannerViewOnOnBannerAdLoaded()
+            {
+                bannerView.Hide();
+                this.positionToMRECToIsLoading[adViewPosition] = false;
+                this.positionToMRECBannerView.Add(adViewPosition, bannerView);
+            }
         }
-        public bool IsReady(AdViewPosition adViewPosition) { return this.positionToMRECBannerView.ContainsKey(adViewPosition); }
+        public bool IsMRECReady(AdViewPosition adViewPosition) { return this.positionToMRECBannerView.ContainsKey(adViewPosition); }
 
         private void LoadAllMRec()
         {
@@ -340,6 +350,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public event Action<string, AdInfo>    OnAdRevenuePaidEvent;
         public event Action<string, AdInfo>    OnAdExpandedEvent;
         public event Action<string, AdInfo>    OnAdCollapsedEvent;
+
+        private AdPosition ConvertAdViewPosition(AdViewPosition adViewPosition) =>
+            adViewPosition switch
+            {
+                AdViewPosition.TopLeft      => AdPosition.TopLeft,
+                AdViewPosition.TopCenter    => AdPosition.Top,
+                AdViewPosition.TopRight     => AdPosition.TopRight,
+                AdViewPosition.CenterLeft   => AdPosition.Center,
+                AdViewPosition.Centered     => AdPosition.Center,
+                AdViewPosition.CenterRight  => AdPosition.Center,
+                AdViewPosition.BottomLeft   => AdPosition.BottomLeft,
+                AdViewPosition.BottomCenter => AdPosition.Bottom,
+                AdViewPosition.BottomRight  => AdPosition.BottomRight,
+                _                           => AdPosition.Center
+            };
 
         #endregion
     }
