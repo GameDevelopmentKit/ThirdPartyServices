@@ -5,7 +5,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System.Collections.Generic;
     using System.Linq;
     using Core.AdsServices;
-    using Core.AdsServices.Native;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -16,8 +15,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using GoogleMobileAds.Common;
     using UnityEngine;
     using Zenject;
+#if ADMOB_NATIVE_ADS
+    using Core.AdsServices.Native;
+#endif
 
-    public class AdModWrapper : IAOAAdService, IMRECAdService, INativeAdsService
+    public class AdModWrapper : IAOAAdService, IMRECAdService
+#if ADMOB_NATIVE_ADS
+      , INativeAdsService
+#endif
     {
         #region inject
 
@@ -53,7 +58,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.LoadAppOpenAd();
             this.LoadAllMRec();
+#if ADMOB_NATIVE_ADS
             this.LoadAllNativeAds();
+#endif
             await UniTask.Delay(TimeSpan.FromSeconds(intervalSecond));
             this.IntervalCall(intervalSecond);
         }
@@ -371,6 +378,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
+#if ADMOB_NATIVE_ADS
         #region Native Ads
 
         private Dictionary<string, NativeAd>        nativeAdsIdToNativeAd   { get; } = new();
@@ -410,11 +418,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             // Get Texture2D for icon asset of native ad.
             var iconTexture = nativeAd.GetIconTexture();
-            var icon        = nativeAdsView.icon;
-            nativeAdsView.icon                                               = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            nativeAdsView.icon.transform.localPosition                       = nativeAdsView.originalIcon.transform.localPosition;
-            nativeAdsView.icon.transform.localScale                          = nativeAdsView.originalIcon.transform.localScale;
-            nativeAdsView.icon.transform.localRotation                       = nativeAdsView.originalIcon.transform.localRotation;
+            var icon = nativeAdsView.icon;
+            nativeAdsView.icon = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            nativeAdsView.icon.transform.localPosition = nativeAdsView.originalIcon.transform.localPosition;
+            nativeAdsView.icon.transform.localScale = nativeAdsView.originalIcon.transform.localScale;
+            nativeAdsView.icon.transform.localRotation = nativeAdsView.originalIcon.transform.localRotation;
             nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture = iconTexture;
 
             // Register GameObject that will display icon asset of native ad.
@@ -451,6 +459,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         }
 
         #endregion
+#endif
     }
 
 #endif
