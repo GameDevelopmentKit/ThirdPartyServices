@@ -140,11 +140,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Fire(new BannerAdClickedSignal(""));
         }
 
+        #region MREC
+
         public void ShowMREC(AdViewPosition             adViewPosition) { }
         public void HideMREC(AdViewPosition             adViewPosition) { }
         public void StopMRECAutoRefresh(AdViewPosition  adViewPosition) { }
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
         public void LoadMREC(AdViewPosition             adViewPosition) { }
+        public bool IsReady(AdViewPosition              adViewPosition) { return false; }
 
         public event Action<string, AdInfo>    OnAdLoadedEvent;
         public event Action<string, ErrorInfo> OnAdLoadFailedEvent;
@@ -152,6 +155,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public event Action<string, AdInfo>    OnAdRevenuePaidEvent;
         public event Action<string, AdInfo>    OnAdExpandedEvent;
         public event Action<string, AdInfo>    OnAdCollapsedEvent;
+
+        #endregion
 
         private void ImpressionDataReadyEvent(IronSourceImpressionData impressionData)
         {
