@@ -1,7 +1,6 @@
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
 #if EM_ADMOB
-#if ADMOB_NATIVE_ADS
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -17,7 +16,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using GoogleMobileAds.Common;
     using UnityEngine;
     using Zenject;
-#endif
 
     public class AdModWrapper : IAOAAdService, IMRECAdService
 #if ADMOB_NATIVE_ADS
@@ -418,7 +416,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             var iconTexture = nativeAd.GetIconTexture();
             nativeAdsView.icon                                               = nativeAdsView.icon;
             nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture = iconTexture;
-
             // Register GameObject that will display icon asset of native ad.
             if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.icon))
             {
