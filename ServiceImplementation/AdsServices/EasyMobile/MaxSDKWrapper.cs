@@ -218,6 +218,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             MaxSdk.LoadMRec(this.positionToMRECAdUnitId[adViewPosition]);
         }
 
+        public bool IsMRECReady(AdViewPosition adViewPosition)
+        {
+            return this.positionToMRECAdUnitId.ContainsKey(adViewPosition);
+        }
+
         public event Action<string, AdInfo>    OnAdLoadedEvent;
         public event Action<string, ErrorInfo> OnAdLoadFailedEvent;
         public event Action<string, AdInfo>    OnAdClickedEvent;
