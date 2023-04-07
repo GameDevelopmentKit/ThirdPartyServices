@@ -6,6 +6,7 @@ namespace ServiceImplementation.AdsServices
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.EasyMobile;
+    using ServiceImplementation.AdsServices.Signal;
     using Zenject;
 
     public class AdServiceInstaller : Installer<AdServiceInstaller>
@@ -32,7 +33,7 @@ namespace ServiceImplementation.AdsServices
 #if EM_IRONSOURCE
             this.Container.BindInterfacesAndSelfTo<IronSourceWrapper>().AsCached();
 #endif
-            
+
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
 
             #region Ads signal
@@ -48,17 +49,19 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<MRecAdClickedSignal>();
             this.Container.DeclareSignal<MRecAdDisplayedSignal>();
             this.Container.DeclareSignal<MRecAdDismissedSignal>();
-            
+
             this.Container.DeclareSignal<InterstitialAdDownloadedSignal>();
             this.Container.DeclareSignal<InterstitialAdLoadFailedSignal>();
             this.Container.DeclareSignal<InterstitialAdClickedSignal>();
             this.Container.DeclareSignal<InterstitialAdDisplayedSignal>();
-            
+
             this.Container.DeclareSignal<RewardedInterstitialAdDisplayedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadFailedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadClickedSignal>();
             this.Container.DeclareSignal<RewardedAdDisplayedSignal>();
+
+            this.Container.DeclareSignal<AppStateChangeSignal>();
 
             #endregion
         }

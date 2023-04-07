@@ -14,6 +14,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Api;
     using GoogleMobileAds.Common;
+    using ServiceImplementation.AdsServices.Signal;
     using UnityEngine;
     using Zenject;
 
@@ -45,11 +46,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
+
             MobileAds.Initialize(_ =>
-                                 {
-                                     this.IntervalCall(5);
-                                     AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
-                                 });
+            {
+                this.IntervalCall(5);
+                AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
+            });
         }
 
         private async void IntervalCall(int intervalSecond)
@@ -92,6 +94,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             await UniTask.SwitchToMainThread();
             // Display the app open ad when the app is foregrounded.
             this.logService.Log($"App State is {state}");
+            this.signalBus.Fire(new AppStateChangeSignal(state == AppState.Background));
 
             if (state != AppState.Foreground) return;
             if (!this.config.OpenAOAAfterResuming) return;
@@ -255,14 +258,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private async void AdMobHandlePaidEvent(AdValue args)
         {
             await UniTask.SwitchToMainThread();
+
             this.analyticService.Track(new AdsRevenueEvent()
-                                       {
-                                           AdsRevenueSourceId = "AdMob",
-                                           Revenue            = args.Value / 1e5,
-                                           Currency           = "USD",
-                                           Placement          = "AOA",
-                                           AdNetwork          = "AdMob"
-                                       });
+            {
+                AdsRevenueSourceId = "AdMob",
+                Revenue            = args.Value / 1e5,
+                Currency           = "USD",
+                Placement          = "AOA",
+                AdNetwork          = "AdMob"
+            });
+
             this.logService.Log($"Received paid event. (currency: {args.CurrencyCode}, value: {args.Value}");
         }
 
@@ -273,11 +278,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private Dictionary<AdViewPosition, BannerView> positionToMRECBannerView  = new();
         private Dictionary<AdViewPosition, bool>       positionToMRECToIsLoading = new();
 
-
-        public void ShowMREC(AdViewPosition             adViewPosition) { this.positionToMRECBannerView[adViewPosition].Show(); }
-        public void HideMREC(AdViewPosition             adViewPosition) { this.positionToMRECBannerView[adViewPosition].Hide(); }
-        public void StopMRECAutoRefresh(AdViewPosition  adViewPosition) { }
+        public void ShowMREC(AdViewPosition adViewPosition)             { this.positionToMRECBannerView[adViewPosition].Show(); }
+        public void HideMREC(AdViewPosition adViewPosition)             { this.positionToMRECBannerView[adViewPosition].Hide(); }
+        public void StopMRECAutoRefresh(AdViewPosition adViewPosition)  { }
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
+
         public void LoadMREC(AdViewPosition adViewPosition)
         {
             if (this.positionToMRECBannerView.ContainsKey(adViewPosition) || this.positionToMRECToIsLoading.GetOrAdd(adViewPosition, () => false))
@@ -286,7 +291,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
 
             var bannerView = new BannerView(this.config.ADModMRecIds[adViewPosition], AdSize.MediumRectangle, this.ConvertAdViewPosition(adViewPosition));
-
 
             var adRequest = new AdRequest.Builder().AddKeyword("car-climber-game").Build();
 
@@ -313,6 +317,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.positionToMRECBannerView.Add(adViewPosition, bannerView);
             }
         }
+
         public bool IsMRECReady(AdViewPosition adViewPosition) { return this.positionToMRECBannerView.ContainsKey(adViewPosition); }
 
         private void LoadAllMRec()
@@ -328,6 +333,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new MRecAdDismissedSignal(""));
         }
+
         private async void BannerViewOnAdFullScreenContentOpened()
         {
             await UniTask.SwitchToMainThread();
@@ -362,22 +368,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private AdPosition ConvertAdViewPosition(AdViewPosition adViewPosition) =>
             adViewPosition switch
             {
-                AdViewPosition.TopLeft      => AdPosition.TopLeft,
-                AdViewPosition.TopCenter    => AdPosition.Top,
-                AdViewPosition.TopRight     => AdPosition.TopRight,
-                AdViewPosition.CenterLeft   => AdPosition.Center,
-                AdViewPosition.Centered     => AdPosition.Center,
-                AdViewPosition.CenterRight  => AdPosition.Center,
-                AdViewPosition.BottomLeft   => AdPosition.BottomLeft,
+                AdViewPosition.TopLeft => AdPosition.TopLeft,
+                AdViewPosition.TopCenter => AdPosition.Top,
+                AdViewPosition.TopRight => AdPosition.TopRight,
+                AdViewPosition.CenterLeft => AdPosition.Center,
+                AdViewPosition.Centered => AdPosition.Center,
+                AdViewPosition.CenterRight => AdPosition.Center,
+                AdViewPosition.BottomLeft => AdPosition.BottomLeft,
                 AdViewPosition.BottomCenter => AdPosition.Bottom,
-                AdViewPosition.BottomRight  => AdPosition.BottomRight,
-                _                           => AdPosition.Center
+                AdViewPosition.BottomRight => AdPosition.BottomRight,
+                _ => AdPosition.Center
             };
 
         #endregion
 
 #if ADMOB_NATIVE_ADS
-
         #region Native Ads
 
         private Dictionary<string, NativeAd>        nativeAdsIdToNativeAd   { get; } = new();
@@ -414,7 +419,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             // Get Texture2D for icon asset of native ad.
             var iconTexture = nativeAd.GetIconTexture();
-            nativeAdsView.icon                                               = nativeAdsView.icon;
+            nativeAdsView.icon = nativeAdsView.icon;
             nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture = iconTexture;
             // Register GameObject that will display icon asset of native ad.
             if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.icon))
