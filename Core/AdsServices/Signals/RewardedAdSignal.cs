@@ -29,4 +29,10 @@
         {
         }
     }
+    public class RewardAdCloseSignal : BaseAdsSignal
+    {
+        public RewardAdCloseSignal(string placement) : base(placement)
+        {
+        }
+    }
 }

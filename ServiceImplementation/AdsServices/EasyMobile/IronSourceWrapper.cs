@@ -36,8 +36,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceEvents.onInterstitialAdReadyEvent      += this.OnInterstitialReady;
             IronSourceEvents.onInterstitialAdLoadFailedEvent += this.OnInterstitialLoadFailed;
 
-            IronSourceEvents.onRewardedVideoAdClickedEvent += this.OnRewardedVideoClicked;
-
+            IronSourceEvents.onRewardedVideoAdClickedEvent    += this.OnRewardedVideoClicked;
+            IronSourceEvents.onRewardedVideoAdClosedEvent     += this.OnRewardedVideoClosed;
             IronSourceEvents.onRewardedVideoAdOpenedEvent     += this.OnRewardedVideoOpened;
             IronSourceEvents.onRewardedVideoAdReadyEvent      += this.OnRewardedVideoReady;
             IronSourceEvents.onRewardedVideoAdLoadFailedEvent += this.OnRewardedVideoLoadFailed;
@@ -56,8 +56,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceEvents.onInterstitialAdReadyEvent      -= this.OnInterstitialReady;
             IronSourceEvents.onInterstitialAdLoadFailedEvent -= this.OnInterstitialLoadFailed;
 
-            IronSourceEvents.onRewardedVideoAdClickedEvent -= this.OnRewardedVideoClicked;
-
+            IronSourceEvents.onRewardedVideoAdClickedEvent    -= this.OnRewardedVideoClicked;
+            IronSourceEvents.onRewardedVideoAdClosedEvent     -= this.OnRewardedVideoClosed;
             IronSourceEvents.onRewardedVideoAdOpenedEvent     -= this.OnRewardedVideoOpened;
             IronSourceEvents.onRewardedVideoAdReadyEvent      -= this.OnRewardedVideoReady;
             IronSourceEvents.onRewardedVideoAdLoadFailedEvent -= this.OnRewardedVideoLoadFailed;
@@ -79,6 +79,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardedAdLoadClickedSignal(obj.getPlacementName()));
+        }
+
+        private async void OnRewardedVideoClosed()
+        {
+            await UniTask.SwitchToMainThread();
+            this.signalBus.Fire(new RewardAdCloseSignal(""));
         }
 
         private async void OnRewardedVideoOpened()
@@ -122,6 +128,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdDismissedSignal(""));
         }
+
         private async void OnBannerScreenPresented()
         {
             await UniTask.SwitchToMainThread();
@@ -142,12 +149,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region MREC
 
-        public void ShowMREC(AdViewPosition             adViewPosition) { }
-        public void HideMREC(AdViewPosition             adViewPosition) { }
-        public void StopMRECAutoRefresh(AdViewPosition  adViewPosition) { }
+        public void ShowMREC(AdViewPosition adViewPosition)             { }
+        public void HideMREC(AdViewPosition adViewPosition)             { }
+        public void StopMRECAutoRefresh(AdViewPosition adViewPosition)  { }
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
-        public void LoadMREC(AdViewPosition             adViewPosition) { }
-        public bool IsMRECReady(AdViewPosition              adViewPosition) { return false; }
+        public void LoadMREC(AdViewPosition adViewPosition)             { }
+        public bool IsMRECReady(AdViewPosition adViewPosition)          { return false; }
 
         public event Action<string, AdInfo>    OnAdLoadedEvent;
         public event Action<string, ErrorInfo> OnAdLoadFailedEvent;
@@ -163,14 +170,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (impressionData.revenue == null) return;
 
             var adsRevenueEvent = new AdsRevenueEvent()
-                                  {
-                                      AdsRevenueSourceId = AdRevenueConstants.ARSourceIronSource,
-                                      AdUnit             = impressionData.adUnit,
-                                      Revenue            = impressionData.revenue.Value,
-                                      Currency           = "USD",
-                                      Placement          = impressionData.placement,
-                                      AdNetwork          = impressionData.adNetwork
-                                  };
+            {
+                AdsRevenueSourceId = AdRevenueConstants.ARSourceIronSource,
+                AdUnit             = impressionData.adUnit,
+                Revenue            = impressionData.revenue.Value,
+                Currency           = "USD",
+                Placement          = impressionData.placement,
+                AdNetwork          = impressionData.adNetwork
+            };
 
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
             this.analyticServices.Track(adsRevenueEvent);

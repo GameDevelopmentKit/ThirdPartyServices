@@ -56,14 +56,16 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<InterstitialAdDisplayedSignal>();
 
             this.Container.DeclareSignal<RewardedInterstitialAdDisplayedSignal>();
+            this.Container.DeclareSignal<RewardInterstitialAdCloseSignal>();
             this.Container.DeclareSignal<RewardedAdLoadedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadFailedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadClickedSignal>();
             this.Container.DeclareSignal<RewardedAdDisplayedSignal>();
+            this.Container.DeclareSignal<RewardAdCloseSignal>();
 
             this.Container.DeclareSignal<AppOpenFullScreenContentOpenedSignal>();
             this.Container.DeclareSignal<AppOpenFullScreenContentClosedSignal>();
-            
+
             this.Container.DeclareSignal<AppStateChangeSignal>();
 
             #endregion

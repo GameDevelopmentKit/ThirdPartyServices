@@ -26,4 +26,9 @@
     {
         public RewardedInterstitialAdDisplayedSignal(string placement) : base(placement) { }
     }
+
+    public class RewardInterstitialAdCloseSignal : BaseAdsSignal
+    {
+        public RewardInterstitialAdCloseSignal(string placement) : base(placement) { }
+    }
 }
