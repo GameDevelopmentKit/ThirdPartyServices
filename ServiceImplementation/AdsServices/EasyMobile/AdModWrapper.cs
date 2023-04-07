@@ -1,27 +1,27 @@
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
 #if EM_ADMOB
+#if ADMOB_NATIVE_ADS
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Core.AdsServices;
+    using GameFoundation.Scripts.Utilities.Extension;
+    using Core.AdsServices.Native;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Cysharp.Threading.Tasks;
-    using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Api;
     using GoogleMobileAds.Common;
     using UnityEngine;
     using Zenject;
-#if ADMOB_NATIVE_ADS
-    using Core.AdsServices.Native;
 #endif
 
     public class AdModWrapper : IAOAAdService, IMRECAdService
 #if ADMOB_NATIVE_ADS
-      , INativeAdsService
+                              , INativeAdsService
 #endif
     {
         #region inject
@@ -379,6 +379,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #endregion
 
 #if ADMOB_NATIVE_ADS
+
         #region Native Ads
 
         private Dictionary<string, NativeAd>        nativeAdsIdToNativeAd   { get; } = new();
@@ -388,7 +389,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void LoadNativeAds(string adsId)
         {
             if (this.loadingNativeAdsIds.Contains(adsId) || this.nativeAdsIdToNativeAd.ContainsKey(adsId)) return;
-            
+
             var adLoader = new AdLoader.Builder(adsId).ForNativeAd().Build();
             this.loadingNativeAdsIds.Add(adsId);
             adLoader.OnNativeAdLoaded += (_, arg) =>
@@ -396,11 +397,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                              this.nativeAdsIdToNativeAd.Add(adsId, arg.nativeAd);
                                              this.loadingNativeAdsIds.Remove(adsId);
                                          };
-            adLoader.OnAdFailedToLoad += (_, _) =>
-                                         {
-                                             this.loadingNativeAdsIds.Remove(adsId);
-                                         };
-            
+            adLoader.OnAdFailedToLoad += (_, _) => { this.loadingNativeAdsIds.Remove(adsId); };
+
             adLoader.OnNativeAdLoaded += this.HandleNativeAdLoaded;
             adLoader.OnAdFailedToLoad += this.HandleAdFailedToLoad;
             adLoader.LoadAd(new AdRequest.Builder().Build());
@@ -418,11 +416,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             // Get Texture2D for icon asset of native ad.
             var iconTexture = nativeAd.GetIconTexture();
-            nativeAdsView.icon                                               = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            nativeAdsView.icon.transform.parent                              = nativeAdsView.originalIcon.transform.parent;
-            nativeAdsView.icon.transform.localPosition                       = nativeAdsView.originalIcon.transform.localPosition;
-            nativeAdsView.icon.transform.localScale                          = nativeAdsView.originalIcon.transform.localScale;
-            nativeAdsView.icon.transform.localRotation                       = nativeAdsView.originalIcon.transform.localRotation;
+            nativeAdsView.icon                                               = nativeAdsView.icon;
             nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture = iconTexture;
 
             // Register GameObject that will display icon asset of native ad.
@@ -445,10 +439,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             e.nativeAd.OnPaidEvent += this.AdMobNativePaidHandler;
             this.logService.Log($"Native ad loaded successfully");
         }
-        private void AdMobNativePaidHandler(object sender, AdValueEventArgs e)
-        {
-            this.AdMobHandlePaidEvent(e.AdValue);
-        }
+        private void AdMobNativePaidHandler(object sender, AdValueEventArgs e) { this.AdMobHandlePaidEvent(e.AdValue); }
 
         private void LoadAllNativeAds()
         {
@@ -459,6 +450,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         }
 
         #endregion
+
 #endif
     }
 
