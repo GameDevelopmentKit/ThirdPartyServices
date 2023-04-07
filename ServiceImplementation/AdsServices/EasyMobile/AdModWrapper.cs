@@ -231,6 +231,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             await UniTask.SwitchToMainThread();
             this.logService.Log("Closed app open ad");
+            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
             this.IsShowingAd = false;
         }
@@ -246,6 +247,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             await UniTask.SwitchToMainThread();
             this.logService.Log("Displayed app open ad");
+            this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(""));
             this.IsShowingAd = true;
         }
 
