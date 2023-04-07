@@ -4,6 +4,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.Extension;
     using Core.AdsServices.Native;
@@ -46,12 +47,25 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
+            this.adServices.InterstitialAdCompleted += this.OnInterstitialAdCompleted;
+            this.adServices.RewardedAdCompleted += this.OnRewardedAdCompleted;
+
 
             MobileAds.Initialize(_ =>
             {
                 this.IntervalCall(5);
                 AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
             });
+        }
+        
+        private void OnRewardedAdCompleted(RewardedAdNetwork arg1, string arg2)
+        {
+            this.isResumedFromAds = false;
+        }
+        
+        private void OnInterstitialAdCompleted(InterstitialAdNetwork arg1, string arg2)
+        {
+            this.isResumedFromAds = false;
         }
 
         private async void IntervalCall(int intervalSecond)
@@ -101,8 +115,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (this.isResumedFromAds)
             {
-                this.isResumedFromAds = false;
-
                 return;
             }
 
