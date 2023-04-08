@@ -453,7 +453,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
 
             // Register GameObject that will display icon asset of native ad.
-            if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.iconImage.gameObject))
+            if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.icon))
             {
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
