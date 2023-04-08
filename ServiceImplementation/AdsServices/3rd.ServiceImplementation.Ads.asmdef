@@ -11,7 +11,8 @@
         "MaxSdk.Scripts",
         "UniTask",
         "IronSource.Scripts",
-        "AdjustSDK"
+        "AdjustSDK",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
