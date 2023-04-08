@@ -432,17 +432,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture = nativeAd.GetIconTexture();
             nativeAdsView.headlineText.text                                  = nativeAd.GetHeadlineText();
 
-            if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.icon))
+            if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
             {
                 // Handle failure to register ad asset.
-                this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
+                this.logService.Log($"Failed to register Headline text for native ad: {nativeAdsView.name}");
             }
 
-            if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.icon))
-            {
-                // Handle failure to register ad asset.
-                this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
-            }
+            // if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.headlineText.gameObject))
+            // {
+            //     // Handle failure to register ad asset.
+            //     this.logService.Log($"Failed to register text for native ad: {nativeAdsView.name}");
+            // }
 
             // Register GameObject that will display icon asset of native ad.
             if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.icon))
@@ -451,11 +451,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
             }
 
-            if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.icon))
-            {
-                // Handle failure to register ad asset.
-                this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
-            }
+            // if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.icon))
+            // {
+            //     // Handle failure to register ad asset.
+            //     this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
+            // }
         }
 
         private async void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)

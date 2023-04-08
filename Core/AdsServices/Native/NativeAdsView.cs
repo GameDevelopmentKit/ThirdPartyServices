@@ -1,5 +1,7 @@
 namespace Core.AdsServices.Native
 {
+    using System;
+    using Cysharp.Threading.Tasks;
     using TMPro;
     using UnityEngine;
 
@@ -11,8 +13,16 @@ namespace Core.AdsServices.Native
 
         private INativeAdsService nativeAdsService;
 
-        public void Init(INativeAdsService nativeAdsService) { this.nativeAdsService = nativeAdsService; }
-
-        private void Update() { this.nativeAdsService?.DrawNativeAds(this); }
+        public void Init(INativeAdsService nativeAdsService)
+        {
+            this.nativeAdsService = nativeAdsService;
+            this.IntervalCall();
+        }
+        private async void IntervalCall()
+        {
+            this.nativeAdsService?.DrawNativeAds(this);
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
+            this.IntervalCall();
+        }
     }
 }

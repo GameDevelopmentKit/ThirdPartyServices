@@ -5,7 +5,8 @@
         "3rdCore.Analytic",
         "GameFoundation.Utilities",
         "Zenject-Source",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
