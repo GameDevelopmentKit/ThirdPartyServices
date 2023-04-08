@@ -462,10 +462,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                
             if (nativeAd.GetIconTexture() != null)
             {
-                nativeAdsView.icon.SetActive(true);
-                nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture = nativeAd.GetIconTexture();
+                nativeAdsView.iconImage.gameObject.SetActive(true);
+                nativeAdsView.iconImage.texture = nativeAd.GetIconTexture();
                 // Register GameObject that will display icon asset of native ad.
-                if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.icon))
+                if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.iconImage.gameObject))
                 {
                     // Handle failure to register ad asset.
                     this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
@@ -474,9 +474,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (nativeAd.GetAdChoicesLogoTexture() != null)
             {
-                nativeAdsView.adChoices.SetActive(true);
-                nativeAdsView.adChoices.GetComponent<Renderer>().material.mainTexture = nativeAd.GetAdChoicesLogoTexture();
-                if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoices))
+                nativeAdsView.adChoicesImage.gameObject.SetActive(true);
+                nativeAdsView.adChoicesImage.texture = nativeAd.GetAdChoicesLogoTexture();
+                if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoicesImage.gameObject))
                 {
                     // Handle failure to register ad asset.
                     this.logService.Log($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
@@ -484,9 +484,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
             else
             {
-                nativeAdsView.icon.transform.position = nativeAdsView.adChoices.transform.position;
-                nativeAdsView.icon.transform.rotation = nativeAdsView.adChoices.transform.rotation;
-                nativeAdsView.icon.transform.localScale = nativeAdsView.adChoices.transform.localScale;
+                // These four properties are to be copied
+                var iconImageRectTransform = nativeAdsView.iconImage.rectTransform;
+                var adChoiceRectTransform  = nativeAdsView.adChoicesImage.rectTransform;
+                iconImageRectTransform.anchorMin        = adChoiceRectTransform.anchorMin;
+                iconImageRectTransform.anchorMax        = adChoiceRectTransform.anchorMax;
+                iconImageRectTransform.anchoredPosition = adChoiceRectTransform.anchoredPosition;
+                iconImageRectTransform.sizeDelta        = adChoiceRectTransform.sizeDelta;
             }
             
         }
