@@ -435,12 +435,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             var nativeAd = this.nativeAdsViewToNativeAd.GetOrAdd(nativeAdsView, this.GetAvailableNativeAd);
 
             this.logService.Log($"Start set native ad: {nativeAdsView.name}");
-            // Get Texture2D for icon asset of native ad.
-            nativeAdsView.headlineText.text                                       = nativeAd.GetHeadlineText();
-            nativeAdsView.advertiserText.text                                     = nativeAd.GetAdvertiserText();
-            nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture      = nativeAd.GetIconTexture() ?? nativeAd.GetAdChoicesLogoTexture();
-            nativeAdsView.adChoices.GetComponent<Renderer>().material.mainTexture = nativeAd.GetAdChoicesLogoTexture() ?? nativeAd.GetIconTexture();
-
+            
             this.logService.Log($"native star rating : {nativeAd.GetStarRating()}");
             this.logService.Log($"native store: {nativeAd.GetStore()}");
             this.logService.Log($"native Price: {nativeAd.GetPrice()}");
@@ -449,31 +444,51 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             
             this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
             this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
-
+            
+            // Get Texture2D for icon asset of native ad.
+            nativeAdsView.headlineText.text                                       = nativeAd.GetHeadlineText();
             if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
             {
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register Headline text for native ad: {nativeAdsView.name}");
             }
-
+            
+            nativeAdsView.advertiserText.text                                     = nativeAd.GetAdvertiserText();
             if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.advertiserText.gameObject))
             {
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register advertiser text for native ad: {nativeAdsView.name}");
             }
-
-            // Register GameObject that will display icon asset of native ad.
-            if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.icon))
+               
+            if (nativeAd.GetIconTexture() != null)
             {
-                // Handle failure to register ad asset.
-                this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
+                nativeAdsView.icon.SetActive(true);
+                nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture = nativeAd.GetIconTexture();
+                // Register GameObject that will display icon asset of native ad.
+                if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.icon))
+                {
+                    // Handle failure to register ad asset.
+                    this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
+                }
             }
 
-            if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoices))
+            if (nativeAd.GetAdChoicesLogoTexture() != null)
             {
-                // Handle failure to register ad asset.
-                this.logService.Log($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
+                nativeAdsView.adChoices.SetActive(true);
+                nativeAdsView.adChoices.GetComponent<Renderer>().material.mainTexture = nativeAd.GetAdChoicesLogoTexture();
+                if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoices))
+                {
+                    // Handle failure to register ad asset.
+                    this.logService.Log($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
+                }
             }
+            else
+            {
+                nativeAdsView.icon.transform.position = nativeAdsView.adChoices.transform.position;
+                nativeAdsView.icon.transform.rotation = nativeAdsView.adChoices.transform.rotation;
+                nativeAdsView.icon.transform.localScale = nativeAdsView.adChoices.transform.localScale;
+            }
+            
         }
 
         private async void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)

@@ -17,6 +17,8 @@ namespace Core.AdsServices.Native
 
         public void Init(INativeAdsService nativeAdsService)
         {
+            this.icon.gameObject.SetActive(false);
+            this.adChoices.gameObject.SetActive(false);
             this.nativeAdsService = nativeAdsService;
             this.IntervalCall();
         }
