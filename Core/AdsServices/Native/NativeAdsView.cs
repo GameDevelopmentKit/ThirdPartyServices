@@ -22,6 +22,7 @@ namespace Core.AdsServices.Native
         }
         private async void IntervalCall()
         {
+            await UniTask.SwitchToMainThread();
             this.nativeAdsService?.DrawNativeAds(this);
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             this.IntervalCall();
