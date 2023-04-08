@@ -438,8 +438,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             // Get Texture2D for icon asset of native ad.
             nativeAdsView.headlineText.text                                       = nativeAd.GetHeadlineText();
             nativeAdsView.advertiserText.text                                     = nativeAd.GetAdvertiserText();
-            nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture      = nativeAd.GetIconTexture();
-            nativeAdsView.adChoices.GetComponent<Renderer>().material.mainTexture = nativeAd.GetAdChoicesLogoTexture();
+            nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture      = nativeAd.GetIconTexture() ?? nativeAd.GetAdChoicesLogoTexture();
+            nativeAdsView.adChoices.GetComponent<Renderer>().material.mainTexture = nativeAd.GetAdChoicesLogoTexture() ?? nativeAd.GetIconTexture();
 
             this.logService.Log($"native star rating : {nativeAd.GetStarRating()}");
             this.logService.Log($"native store: {nativeAd.GetStore()}");
