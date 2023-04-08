@@ -75,7 +75,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region AOA
 
         private DateTime StartLoadingAOATime;
-        
+
         public class Config
         {
             public List<string>                       ADModAoaIds;
@@ -232,6 +232,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                         {
                             loadedAppOpenAd.Show();
                         }
+
                         this.isShowedFirstOpen = true;
                     }
                 }
@@ -403,7 +404,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private HashSet<string>                     loadingNativeAdsIds     { get; } = new();
         private Dictionary<NativeAdsView, NativeAd> nativeAdsViewToNativeAd { get; } = new();
 
-        public void LoadNativeAds(string adsId)
+        private void LoadNativeAds(string adsId)
         {
             if (this.loadingNativeAdsIds.Contains(adsId) || this.nativeAdsIdToNativeAd.ContainsKey(adsId)) return;
 
@@ -435,16 +436,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             this.logService.Log($"Start set native ad: {nativeAdsView.name}");
             // Get Texture2D for icon asset of native ad.
-            nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture = nativeAd.GetIconTexture();
-            nativeAdsView.iconImage.texture                                  = nativeAd.GetIconTexture();
-            nativeAdsView.adChoicesImage.texture                             = nativeAd.GetAdChoicesLogoTexture();
-            nativeAdsView.headlineText.text                                  = nativeAd.GetHeadlineText();
-            nativeAdsView.advertiserText.text                                = nativeAd.GetAdvertiserText();
+            nativeAdsView.headlineText.text                                       = nativeAd.GetHeadlineText();
+            nativeAdsView.advertiserText.text                                     = nativeAd.GetAdvertiserText();
+            nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture      = nativeAd.GetIconTexture();
+            nativeAdsView.adChoices.GetComponent<Renderer>().material.mainTexture = nativeAd.GetAdChoicesLogoTexture();
 
-            this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
+            this.logService.Log($"native star rating : {nativeAd.GetStarRating()}");
+            this.logService.Log($"native store: {nativeAd.GetStore()}");
+            this.logService.Log($"native Price: {nativeAd.GetPrice()}");
             this.logService.Log($"native advertiser text: {nativeAd.GetAdvertiserText()}");
             this.logService.Log($"native icon: {nativeAd.GetIconTexture().texelSize}");
-            this.logService.Log($"native headline: {nativeAd.GetAdChoicesLogoTexture().texelSize}");
+            
+            this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
+            this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()} - {nativeAd.GetAdChoicesLogoTexture().width}:{nativeAd.GetAdChoicesLogoTexture().height}");
 
             if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
             {
@@ -465,7 +469,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
             }
 
-            if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoicesImage.gameObject))
+            if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoices))
             {
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
