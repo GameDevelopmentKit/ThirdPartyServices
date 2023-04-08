@@ -430,7 +430,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log($"Start set native ad: {nativeAdsView.name}");
             // Get Texture2D for icon asset of native ad.
             nativeAdsView.icon.GetComponent<Renderer>().material.mainTexture = nativeAd.GetIconTexture();
+            nativeAdsView.iconImage.texture                                  = nativeAd.GetIconTexture();
+            nativeAdsView.adChoicesImage.texture                             = nativeAd.GetAdChoicesLogoTexture();
             nativeAdsView.headlineText.text                                  = nativeAd.GetHeadlineText();
+            nativeAdsView.advertiserText.text                                = nativeAd.GetAdvertiserText();
+
+            this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
+            this.logService.Log($"native advertiser text: {nativeAd.GetAdvertiserText()}");
+            this.logService.Log($"native icon: {nativeAd.GetIconTexture().texelSize}");
+            this.logService.Log($"native headline: {nativeAd.GetAdChoicesLogoTexture().texelSize}");
 
             if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
             {
@@ -438,24 +446,24 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.logService.Log($"Failed to register Headline text for native ad: {nativeAdsView.name}");
             }
 
-            // if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.headlineText.gameObject))
-            // {
-            //     // Handle failure to register ad asset.
-            //     this.logService.Log($"Failed to register text for native ad: {nativeAdsView.name}");
-            // }
+            if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.advertiserText.gameObject))
+            {
+                // Handle failure to register ad asset.
+                this.logService.Log($"Failed to register advertiser text for native ad: {nativeAdsView.name}");
+            }
 
             // Register GameObject that will display icon asset of native ad.
-            if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.icon))
+            if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.iconImage.gameObject))
             {
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
             }
 
-            // if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.icon))
-            // {
-            //     // Handle failure to register ad asset.
-            //     this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
-            // }
+            if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoicesImage.gameObject))
+            {
+                // Handle failure to register ad asset.
+                this.logService.Log($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
+            }
         }
 
         private async void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
