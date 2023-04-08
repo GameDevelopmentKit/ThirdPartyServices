@@ -49,7 +49,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.adServices.InterstitialAdCompleted += this.OnInterstitialAdCompleted;
             this.adServices.RewardedAdCompleted     += this.OnRewardedAdCompleted;
 
-
+            this.StartLoadingAOATime = DateTime.Now;
             MobileAds.Initialize(_ =>
                                  {
                                      this.IntervalCall(5);
@@ -74,9 +74,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region AOA
 
+        private DateTime StartLoadingAOATime;
+        
         public class Config
         {
             public List<string>                       ADModAoaIds;
+            public int                                AOAOpenAppThreshHold = 5; //after this number of seconds, AOA will not be shown
             public Dictionary<AdViewPosition, string> ADModMRecIds;
             public List<string>                       NativeAdIds;
 
@@ -225,7 +228,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 {
                     if (!this.isShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
                     {
-                        loadedAppOpenAd.Show();
+                        if (DateTime.Now - this.StartLoadingAOATime <= TimeSpan.FromSeconds(this.config.AOAOpenAppThreshHold))
+                        {
+                            loadedAppOpenAd.Show();
+                        }
                         this.isShowedFirstOpen = true;
                     }
                 }
