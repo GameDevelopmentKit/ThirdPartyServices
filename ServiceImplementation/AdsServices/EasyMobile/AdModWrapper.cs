@@ -445,10 +445,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log($"native store: {nativeAd.GetStore()}");
             this.logService.Log($"native Price: {nativeAd.GetPrice()}");
             this.logService.Log($"native advertiser text: {nativeAd.GetAdvertiserText()}");
-            this.logService.Log($"native icon: {nativeAd.GetIconTexture().texelSize}");
+            this.logService.Log($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
             
             this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
-            this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()} - {nativeAd.GetAdChoicesLogoTexture().width}:{nativeAd.GetAdChoicesLogoTexture().height}");
+            this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
 
             if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
             {
