@@ -43,7 +43,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             MaxSdkCallbacks.MRec.OnAdExpandedEvent    += this.OnMRecAdExpandedEvent;
             MaxSdkCallbacks.MRec.OnAdCollapsedEvent   += this.OnMRecAdCollapsedEvent;
 
-            MaxSdkCallbacks.Interstitial.OnAdLoadedEvent     += this.OnInterstitialAdLoadedHandler;
             MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent  += this.InterstitialAdDisplayedSignal;
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent += this.OnInterstitialAdLoadFailedHandler;
             MaxSdkCallbacks.Interstitial.OnAdClickedEvent    += this.OnInterstitialAdClickedHandler;
@@ -52,7 +51,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent += this.OnRewardedAdLoadFailedHandler;
             MaxSdkCallbacks.Rewarded.OnAdClickedEvent    += this.OnRewardedAdClickedHandler;
             MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent  += this.OnRewardedAdDisplayedHandler;
-            MaxSdkCallbacks.Rewarded.OnAdHiddenEvent     += this.OnRewardedAdHiddenHandler;
 
             MaxSdkCallbacks.Banner.OnAdLoadedEvent     += this.OnBannerAdLoadedHandler;
             MaxSdkCallbacks.Banner.OnAdLoadFailedEvent += this.OnBannerAdLoadFailedHandler;
@@ -115,12 +113,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Fire(new RewardedAdLoadedSignal(arg2.Placement));
         }
 
-        private async void OnRewardedAdHiddenHandler(string arg1, MaxSdkBase.AdInfo arg2)
-        {
-            await UniTask.SwitchToMainThread();
-            this.signalBus.Fire(new RewardAdCloseSignal(arg2.Placement));
-        }
-
         private async void OnInterstitialAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
             await UniTask.SwitchToMainThread();
@@ -137,12 +129,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new InterstitialAdDisplayedSignal(arg2.Placement));
-        }
-
-        private async void OnInterstitialAdLoadedHandler(string arg1, MaxSdkBase.AdInfo arg2)
-        {
-            await UniTask.SwitchToMainThread();
-            this.signalBus.Fire(new InterstitialAdDownloadedSignal(arg2.Placement));
         }
 
         private async void OnMRecAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)

@@ -27,13 +27,13 @@
         public InterstitialAdClosedSignal(string placement) : base(placement) { }
     }
 
-    public class RewardedInterstitialAdDisplayedSignal : BaseAdsSignal
+    public class RewardedInterstitialAdCompletedSignal : BaseAdsSignal
     {
-        public RewardedInterstitialAdDisplayedSignal(string placement) : base(placement) { }
+        public RewardedInterstitialAdCompletedSignal(string placement) : base(placement) { }
     }
 
-    public class RewardInterstitialAdCloseSignal : BaseAdsSignal
+    public class RewardInterstitialAdSkippedSignal : BaseAdsSignal
     {
-        public RewardInterstitialAdCloseSignal(string placement) : base(placement) { }
+        public RewardInterstitialAdSkippedSignal(string placement) : base(placement) { }
     }
 }

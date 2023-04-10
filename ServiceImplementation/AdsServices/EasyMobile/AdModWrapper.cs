@@ -46,20 +46,20 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
-            this.adServices.InterstitialAdCompleted += this.OnInterstitialAdCompleted;
-            this.adServices.RewardedAdCompleted     += this.OnRewardedAdCompleted;
+            this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.OnInterstitialAdClosed);
+            this.signalBus.Subscribe<RewardedAdCloseSignal>(this.OnRewardedAdClosed);
 
             this.StartLoadingAOATime = DateTime.Now;
             MobileAds.Initialize(_ =>
-                                 {
-                                     this.IntervalCall(5);
-                                     AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
-                                 });
+            {
+                this.IntervalCall(5);
+                AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
+            });
         }
 
-        private void OnRewardedAdCompleted(RewardedAdNetwork arg1, string arg2) { this.isResumedFromAds = false; }
+        private void OnRewardedAdClosed(RewardedAdCloseSignal obj) { this.isResumedFromAds = false; }
 
-        private void OnInterstitialAdCompleted(InterstitialAdNetwork arg1, string arg2) { this.isResumedFromAds = false; }
+        private void OnInterstitialAdClosed(InterstitialAdClosedSignal obj) { this.isResumedFromAds = false; }
 
         private async void IntervalCall(int intervalSecond)
         {
@@ -274,13 +274,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             await UniTask.SwitchToMainThread();
 
             this.analyticService.Track(new AdsRevenueEvent()
-                                       {
-                                           AdsRevenueSourceId = "AdMob",
-                                           Revenue            = args.Value / 1e5,
-                                           Currency           = "USD",
-                                           Placement          = "AOA",
-                                           AdNetwork          = "AdMob"
-                                       });
+            {
+                AdsRevenueSourceId = "AdMob",
+                Revenue            = args.Value / 1e5,
+                Currency           = "USD",
+                Placement          = "AOA",
+                AdNetwork          = "AdMob"
+            });
 
             this.logService.Log($"Received paid event. (currency: {args.CurrencyCode}, value: {args.Value}");
         }
@@ -292,9 +292,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private Dictionary<AdViewPosition, BannerView> positionToMRECBannerView  = new();
         private Dictionary<AdViewPosition, bool>       positionToMRECToIsLoading = new();
 
-        public void ShowMREC(AdViewPosition             adViewPosition) { this.positionToMRECBannerView[adViewPosition].Show(); }
-        public void HideMREC(AdViewPosition             adViewPosition) { this.positionToMRECBannerView[adViewPosition].Hide(); }
-        public void StopMRECAutoRefresh(AdViewPosition  adViewPosition) { }
+        public void ShowMREC(AdViewPosition adViewPosition) { this.positionToMRECBannerView[adViewPosition].Show(); }
+
+        public void HideMREC(AdViewPosition adViewPosition) { this.positionToMRECBannerView[adViewPosition].Hide(); }
+
+        public void StopMRECAutoRefresh(AdViewPosition adViewPosition) { }
+
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
 
         public void LoadMREC(AdViewPosition adViewPosition)
@@ -382,22 +385,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private AdPosition ConvertAdViewPosition(AdViewPosition adViewPosition) =>
             adViewPosition switch
             {
-                AdViewPosition.TopLeft      => AdPosition.TopLeft,
-                AdViewPosition.TopCenter    => AdPosition.Top,
-                AdViewPosition.TopRight     => AdPosition.TopRight,
-                AdViewPosition.CenterLeft   => AdPosition.Center,
-                AdViewPosition.Centered     => AdPosition.Center,
-                AdViewPosition.CenterRight  => AdPosition.Center,
-                AdViewPosition.BottomLeft   => AdPosition.BottomLeft,
+                AdViewPosition.TopLeft => AdPosition.TopLeft,
+                AdViewPosition.TopCenter => AdPosition.Top,
+                AdViewPosition.TopRight => AdPosition.TopRight,
+                AdViewPosition.CenterLeft => AdPosition.Center,
+                AdViewPosition.Centered => AdPosition.Center,
+                AdViewPosition.CenterRight => AdPosition.Center,
+                AdViewPosition.BottomLeft => AdPosition.BottomLeft,
                 AdViewPosition.BottomCenter => AdPosition.Bottom,
-                AdViewPosition.BottomRight  => AdPosition.BottomRight,
-                _                           => AdPosition.Center
+                AdViewPosition.BottomRight => AdPosition.BottomRight,
+                _ => AdPosition.Center
             };
 
         #endregion
 
 #if ADMOB_NATIVE_ADS
-
         #region Native Ads
 
         private Dictionary<string, NativeAd>        nativeAdsIdToNativeAd   { get; } = new();
@@ -446,14 +448,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
             
             // Get Texture2D for icon asset of native ad.
-            nativeAdsView.headlineText.text                                       = nativeAd.GetHeadlineText();
+            nativeAdsView.headlineText.text = nativeAd.GetHeadlineText();
             if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
             {
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register Headline text for native ad: {nativeAdsView.name}");
             }
             
-            nativeAdsView.advertiserText.text                                     = nativeAd.GetAdvertiserText();
+            nativeAdsView.advertiserText.text = nativeAd.GetAdvertiserText();
             if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.advertiserText.gameObject))
             {
                 // Handle failure to register ad asset.
@@ -486,11 +488,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             {
                 // These four properties are to be copied
                 var iconImageRectTransform = nativeAdsView.iconImage.rectTransform;
-                var adChoiceRectTransform  = nativeAdsView.adChoicesImage.rectTransform;
-                iconImageRectTransform.anchorMin        = adChoiceRectTransform.anchorMin;
-                iconImageRectTransform.anchorMax        = adChoiceRectTransform.anchorMax;
+                var adChoiceRectTransform = nativeAdsView.adChoicesImage.rectTransform;
+                iconImageRectTransform.anchorMin = adChoiceRectTransform.anchorMin;
+                iconImageRectTransform.anchorMax = adChoiceRectTransform.anchorMax;
                 iconImageRectTransform.anchoredPosition = adChoiceRectTransform.anchoredPosition;
-                iconImageRectTransform.sizeDelta        = adChoiceRectTransform.sizeDelta;
+                iconImageRectTransform.sizeDelta = adChoiceRectTransform.sizeDelta;
             }
             
         }

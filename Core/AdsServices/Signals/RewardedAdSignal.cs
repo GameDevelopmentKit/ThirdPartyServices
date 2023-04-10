@@ -29,9 +29,17 @@
         {
         }
     }
-    public class RewardAdCloseSignal : BaseAdsSignal
+    
+    public class RewardedAdCloseSignal : BaseAdsSignal
     {
-        public RewardAdCloseSignal(string placement) : base(placement)
+        public RewardedAdCloseSignal(string placement) : base(placement)
+        {
+        }
+    }
+
+    public class RewardedSkippedSignal : BaseAdsSignal
+    {
+        public RewardedSkippedSignal(string placement) : base(placement)
         {
         }
     }
