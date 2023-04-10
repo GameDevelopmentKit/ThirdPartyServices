@@ -22,13 +22,18 @@
         public InterstitialAdDisplayedSignal(string placement) : base(placement) { }
     }
 
-    public class RewardedInterstitialAdDisplayedSignal : BaseAdsSignal
+    public class InterstitialAdClosedSignal : BaseAdsSignal
     {
-        public RewardedInterstitialAdDisplayedSignal(string placement) : base(placement) { }
+        public InterstitialAdClosedSignal(string placement) : base(placement) { }
     }
 
-    public class RewardInterstitialAdCloseSignal : BaseAdsSignal
+    public class RewardedInterstitialAdCompletedSignal : BaseAdsSignal
     {
-        public RewardInterstitialAdCloseSignal(string placement) : base(placement) { }
+        public RewardedInterstitialAdCompletedSignal(string placement) : base(placement) { }
+    }
+
+    public class RewardInterstitialAdSkippedSignal : BaseAdsSignal
+    {
+        public RewardInterstitialAdSkippedSignal(string placement) : base(placement) { }
     }
 }
