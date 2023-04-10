@@ -3,7 +3,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #if EASY_MOBILE_PRO
     using System;
     using Core.AdsServices;
-    using Core.AdsServices.Signals;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using global::EasyMobile;
@@ -19,17 +18,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region inject
 
         private readonly ILogService logService;
-        private readonly SignalBus   signalBus;
 
         #endregion
 
         private event Action RewardedAdCompletedOneTimeAction;
         private event Action RewardedInterstitialAdCompletedOneTimeAction;
 
-        public EasyMobileAdIml(ILogService logService, SignalBus signalBus)
+        public EasyMobileAdIml(ILogService logService)
         {
             this.logService = logService;
-            this.signalBus  = signalBus;
         }
 
         public void Initialize()
@@ -116,7 +113,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public bool                                                         IsInterstitialAdReady(string place) { return Advertising.IsInterstitialAdReady(AdPlacement.PlacementWithName(place)); }
         public void ShowInterstitialAd(string place)
         {
-            this.signalBus.Fire(new InterstitialAdDisplayedSignal(place));
             Advertising.ShowInterstitialAd(AdPlacement.PlacementWithName(place));
         }
 
@@ -128,12 +124,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public bool                                                     IsRewardedAdReady(string place) { return Advertising.IsRewardedAdReady(AdPlacement.PlacementWithName(place)); }
         public void ShowRewardedAd(string place)
         {
-            this.signalBus.Fire(new RewardedAdDisplayedSignal(place));
             Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place));
         }
         public void ShowRewardedAd(string place, Action onCompleted)
         {
-            this.signalBus.Fire(new RewardedAdDisplayedSignal(place));
             this.RewardedAdCompletedOneTimeAction += onCompleted;
             Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place));
         }
@@ -144,12 +138,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void ShowRewardedInterstitialAd(string place)
         {
-            this.signalBus.Fire(new RewardedInterstitialAdDisplayedSignal(place));
             Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place));
         }
         public void ShowRewardedInterstitialAd(string place, Action onCompleted)
         {
-            this.signalBus.Fire(new RewardedInterstitialAdDisplayedSignal(place));
             this.RewardedInterstitialAdCompletedOneTimeAction += onCompleted;
             Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place));
         }
