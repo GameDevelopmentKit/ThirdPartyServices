@@ -3,6 +3,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #if EASY_MOBILE_PRO
     using System;
     using Core.AdsServices;
+    using Core.AdsServices.Signals;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using global::EasyMobile;
@@ -18,15 +19,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region inject
 
         private readonly ILogService logService;
+        private readonly SignalBus   signalBus;
 
         #endregion
 
         private event Action RewardedAdCompletedOneTimeAction;
         private event Action RewardedInterstitialAdCompletedOneTimeAction;
 
-        public EasyMobileAdIml(ILogService logService)
+        public EasyMobileAdIml(ILogService logService, SignalBus signalBus)
         {
             this.logService = logService;
+            this.signalBus  = signalBus;
         }
 
         public void Initialize()
@@ -86,6 +89,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             await UniTask.SwitchToMainThread();
             this.InterstitialAdCompleted?.Invoke((Core.AdsServices.InterstitialAdNetwork)network, place.Name);
+            this.signalBus.Fire(new InterstitialAdClosedSignal(place.Name));
         }
 
 

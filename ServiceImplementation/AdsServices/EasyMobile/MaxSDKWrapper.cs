@@ -47,7 +47,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent  += this.InterstitialAdDisplayedSignal;
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent += this.OnInterstitialAdLoadFailedHandler;
             MaxSdkCallbacks.Interstitial.OnAdClickedEvent    += this.OnInterstitialAdClickedHandler;
-            MaxSdkCallbacks.Interstitial.OnAdHiddenEvent     += this.OnInterstitialAdHiddenHandler;
 
             MaxSdkCallbacks.Rewarded.OnAdLoadedEvent     += this.OnRewardedAdLoadedHandler;
             MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent += this.OnRewardedAdLoadFailedHandler;
@@ -126,12 +125,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new InterstitialAdClickedSignal(arg2.Placement));
-        }
-
-        private async void OnInterstitialAdHiddenHandler(string arg1, MaxSdkBase.AdInfo arg2)
-        {
-            await UniTask.SwitchToMainThread();
-            this.signalBus.Fire(new RewardInterstitialAdCloseSignal(arg2.Placement));
         }
 
         private async void OnInterstitialAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2)
