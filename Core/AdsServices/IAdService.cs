@@ -27,17 +27,12 @@ namespace Core.AdsServices
 
         #region Interstitial
 
-        event Action<InterstitialAdNetwork, string> InterstitialAdCompleted;
-
         bool IsInterstitialAdReady(string place);
         void ShowInterstitialAd(string    place);
 
         #endregion
 
         #region Reward
-
-        event Action<RewardedAdNetwork, string> RewardedAdCompleted;
-        event Action<RewardedAdNetwork, string> RewardedAdSkipped;
 
         bool IsRewardedAdReady(string place);
         void ShowRewardedAd(string    place);
@@ -47,9 +42,6 @@ namespace Core.AdsServices
 
         #region RewardedInterstitialAd
 
-        event Action<InterstitialAdNetwork, string> RewardedInterstitialAdCompleted;
-        event Action<InterstitialAdNetwork, string> RewardedInterstitialAdSkipped;
-
         bool IsRewardedInterstitialAdReady();
         void ShowRewardedInterstitialAd(string place);
         void ShowRewardedInterstitialAd(string place, Action onCompleted);
@@ -58,7 +50,6 @@ namespace Core.AdsServices
 
         #region RemoveAds
 
-        event Action AdsRemoved;
         void         RemoveAds(bool revokeConsent = false);
 
         #endregion
