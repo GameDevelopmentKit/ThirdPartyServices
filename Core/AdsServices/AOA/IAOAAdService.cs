@@ -5,7 +5,8 @@ namespace Core.AdsServices
     /// </summary>
     public interface IAOAAdService
     {
-        bool        IsShowingAd { get; }
+        bool        IsShowingAd      { get; }
+        bool        IsResumedFromAds { get; set; }
         public void ShowAdIfAvailable();
     }
 }

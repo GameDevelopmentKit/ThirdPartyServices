@@ -93,17 +93,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         }
 
         private bool isShowedFirstOpen = false;
-        private bool isResumedFromAds  = false;
 
         private void ShownAdInDifferentProcessHandler()
         {
             this.logService.Log("ShownAdInDifferentProcessHandler");
-            this.isResumedFromAds = true;
+            this.IsResumedFromAds = true;
         }
         private void CloseAdInDifferentProcessHandler()
         {
+            
             this.logService.Log("CloseAdInDifferentProcessHandler");
-            this.isResumedFromAds = false;
+            this.IsResumedFromAds = false;
         }
 
         private async void OnAppStateChanged(AppState state)
@@ -116,7 +116,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (state != AppState.Foreground) return;
             if (!this.config.OpenAOAAfterResuming) return;
 
-            if (this.isResumedFromAds)
+            if (this.IsResumedFromAds)
             {
                 return;
             }
@@ -129,7 +129,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region IAOAService
 
-        public bool IsShowingAd { get; set; } = false;
+        public bool IsShowingAd      { get; set; } = false;
+        public bool IsResumedFromAds { get; set; } = false;
 
         public void ShowAdIfAvailable()
         {
