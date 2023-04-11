@@ -46,8 +46,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
-            this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.OnInterstitialAdClosed);
-            this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.OnRewardedAdClosed);
+            this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.CloseAdInDifferentProcessHandler);
+            this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.CloseAdInDifferentProcessHandler);
+            this.signalBus.Subscribe<RewardedSkippedSignal>(this.CloseAdInDifferentProcessHandler);
+
 
             this.StartLoadingAOATime = DateTime.Now;
             MobileAds.Initialize(_ =>
@@ -56,10 +58,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
             });
         }
-
-        private void OnRewardedAdClosed(RewardedAdCompletedSignal obj) { this.isResumedFromAds = false; }
-
-        private void OnInterstitialAdClosed(InterstitialAdClosedSignal obj) { this.isResumedFromAds = false; }
 
         private async void IntervalCall(int intervalSecond)
         {
@@ -97,7 +95,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private bool isShowedFirstOpen = false;
         private bool isResumedFromAds  = false;
 
-        private void ShownAdInDifferentProcessHandler() { this.isResumedFromAds = true; }
+        private void ShownAdInDifferentProcessHandler()
+        {
+            this.logService.Log("ShownAdInDifferentProcessHandler");
+            this.isResumedFromAds = true;
+        }
+        private void CloseAdInDifferentProcessHandler()
+        {
+            this.logService.Log("CloseAdInDifferentProcessHandler");
+            this.isResumedFromAds = false;
+        }
 
         private async void OnAppStateChanged(AppState state)
         {
