@@ -37,7 +37,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceEvents.onInterstitialAdLoadFailedEvent += this.OnInterstitialLoadFailed;
 
             IronSourceEvents.onRewardedVideoAdClickedEvent    += this.OnRewardedVideoClicked;
-            IronSourceEvents.onRewardedVideoAdClosedEvent     += this.OnRewardedVideoClosed;
             IronSourceEvents.onRewardedVideoAdOpenedEvent     += this.OnRewardedVideoOpened;
             IronSourceEvents.onRewardedVideoAdReadyEvent      += this.OnRewardedVideoReady;
             IronSourceEvents.onRewardedVideoAdLoadFailedEvent += this.OnRewardedVideoLoadFailed;
@@ -57,7 +56,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceEvents.onInterstitialAdLoadFailedEvent -= this.OnInterstitialLoadFailed;
 
             IronSourceEvents.onRewardedVideoAdClickedEvent    -= this.OnRewardedVideoClicked;
-            IronSourceEvents.onRewardedVideoAdClosedEvent     -= this.OnRewardedVideoClosed;
             IronSourceEvents.onRewardedVideoAdOpenedEvent     -= this.OnRewardedVideoOpened;
             IronSourceEvents.onRewardedVideoAdReadyEvent      -= this.OnRewardedVideoReady;
             IronSourceEvents.onRewardedVideoAdLoadFailedEvent -= this.OnRewardedVideoLoadFailed;
@@ -79,12 +77,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardedAdLoadClickedSignal(obj.getPlacementName()));
-        }
-
-        private async void OnRewardedVideoClosed()
-        {
-            await UniTask.SwitchToMainThread();
-            this.signalBus.Fire(new RewardAdCloseSignal(""));
         }
 
         private async void OnRewardedVideoOpened()

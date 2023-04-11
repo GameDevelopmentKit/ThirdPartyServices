@@ -62,7 +62,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<RewardedAdLoadFailedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadClickedSignal>();
             this.Container.DeclareSignal<RewardedAdDisplayedSignal>();
-            this.Container.DeclareSignal<RewardedAdCloseSignal>();
+            this.Container.DeclareSignal<RewardedAdCompletedSignal>();
             this.Container.DeclareSignal<RewardedSkippedSignal>();
 
             this.Container.DeclareSignal<AppOpenFullScreenContentOpenedSignal>();

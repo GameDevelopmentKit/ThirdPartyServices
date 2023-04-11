@@ -38,6 +38,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             Advertising.RewardedAdCompleted             += this.OnAdvertisingOnRewardedAdCompleted;
             Advertising.RewardedAdSkipped               += this.OnAdvertisingOnRewardedAdSkipped;
+            
             Advertising.RewardedInterstitialAdCompleted += this.OnAdvertisingOnRewardedInterstitialAdCompleted;
             Advertising.RewardedInterstitialAdSkipped   += this.OnAdvertisingOnRewardedInterstitialAdSkipped;
 
@@ -91,7 +92,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.RewardedAdCompleted?.Invoke((Core.AdsServices.RewardedAdNetwork)network, place.Name);
             this.RewardedAdCompletedOneTimeAction?.Invoke();
             this.RewardedAdCompletedOneTimeAction = null;
-            this.signalBus.Fire(new RewardedAdCloseSignal(place.Name));
+            this.signalBus.Fire(new RewardedAdCompletedSignal(place.Name));
         }
 
         private async void OnAdvertisingOnInterstitialAdCompleted(InterstitialAdNetwork network, AdPlacement place)

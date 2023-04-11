@@ -47,7 +47,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
             this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.OnInterstitialAdClosed);
-            this.signalBus.Subscribe<RewardedAdCloseSignal>(this.OnRewardedAdClosed);
+            this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.OnRewardedAdClosed);
 
             this.StartLoadingAOATime = DateTime.Now;
             MobileAds.Initialize(_ =>
@@ -57,7 +57,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             });
         }
 
-        private void OnRewardedAdClosed(RewardedAdCloseSignal obj) { this.isResumedFromAds = false; }
+        private void OnRewardedAdClosed(RewardedAdCompletedSignal obj) { this.isResumedFromAds = false; }
 
         private void OnInterstitialAdClosed(InterstitialAdClosedSignal obj) { this.isResumedFromAds = false; }
 

@@ -30,9 +30,9 @@
         }
     }
     
-    public class RewardedAdCloseSignal : BaseAdsSignal
+    public class RewardedAdCompletedSignal : BaseAdsSignal
     {
-        public RewardedAdCloseSignal(string placement) : base(placement)
+        public RewardedAdCompletedSignal(string placement) : base(placement)
         {
         }
     }
