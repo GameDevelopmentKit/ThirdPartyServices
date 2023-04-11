@@ -6,7 +6,9 @@
         "GameFoundation.Utilities",
         "Zenject-Source",
         "Unity.TextMeshPro",
-        "UniTask"
+        "UniTask",
+        "Zenject-Signals",
+        "GameFoundation.UIModule"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
