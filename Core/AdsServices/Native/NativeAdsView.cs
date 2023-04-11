@@ -39,10 +39,8 @@ namespace Core.AdsServices.Native
         private void OnScreenShowHandler(ScreenShowSignal obj)
         {
             var isAdsActive = this.activeScreenList.Contains(obj.ScreenPresenter.GetType());
-            this.iconImage.gameObject.SetActive(isAdsActive);
-            this.adChoicesImage.gameObject.SetActive(isAdsActive);
-            this.headlineText.gameObject.SetActive(isAdsActive);
-            this.advertiserText.gameObject.SetActive(isAdsActive);
+            //TODO change to set active for ads elements
+            this.gameObject.SetActive(isAdsActive);
         }
 
         private async void IntervalCall()
