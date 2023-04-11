@@ -33,7 +33,6 @@ namespace Core.AdsServices.Native
             this.adChoicesImage.gameObject.SetActive(false);
             this.IntervalCall();
             this.signalBus.Subscribe<ScreenShowSignal>(this.OnScreenShowHandler);
-            this.colliders = this.GetComponentsInChildren<Collider>(true).ToList();
         }
 
         private void OnDestroy() { this.signalBus.Unsubscribe<ScreenShowSignal>(this.OnScreenShowHandler); }
@@ -51,6 +50,7 @@ namespace Core.AdsServices.Native
         {
             await UniTask.SwitchToMainThread();
             this.nativeAdsService?.DrawNativeAds(this);
+            this.colliders = this.GetComponentsInChildren<Collider>(true).ToList();
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             this.IntervalCall();
         }
