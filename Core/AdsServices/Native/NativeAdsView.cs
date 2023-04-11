@@ -21,7 +21,6 @@ namespace Core.AdsServices.Native
         private SignalBus         signalBus;
         private INativeAdsService nativeAdsService;
         private List<Type>        activeScreenList;
-        private List<Collider>    colliders;
 
         public void Init(INativeAdsService nativeAdsService, SignalBus signalBus, List<Type> activeScreenList)
         {
@@ -40,17 +39,16 @@ namespace Core.AdsServices.Native
         private void OnScreenShowHandler(ScreenShowSignal obj)
         {
             var isAdsActive = this.activeScreenList.Contains(obj.ScreenPresenter.GetType());
-            foreach (var collider in this.colliders)
-            {
-                collider.enabled = isAdsActive;
-            }
+            this.iconImage.gameObject.SetActive(isAdsActive);
+            this.adChoicesImage.gameObject.SetActive(isAdsActive);
+            this.headlineText.gameObject.SetActive(isAdsActive);
+            this.advertiserText.gameObject.SetActive(isAdsActive);
         }
 
         private async void IntervalCall()
         {
             await UniTask.SwitchToMainThread();
             this.nativeAdsService?.DrawNativeAds(this);
-            this.colliders = this.GetComponentsInChildren<Collider>(true).ToList();
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             this.IntervalCall();
         }
