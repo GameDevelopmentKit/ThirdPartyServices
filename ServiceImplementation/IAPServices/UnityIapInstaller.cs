@@ -16,7 +16,10 @@
             this.Container.Bind<IUnityRemoveAdsServices>().To<UnityRemoveAdsIapServices>().AsCached().NonLazy();
             this.Container.Resolve<ILogService>().Error("IAP Enable, don't forget to call IUnityIapServices.InitIapServices in your game,ignore if already done!!");
 #endif
-            this.Container.Bind<List<string>>().FromInstance(new List<string>() { "RemoveAds" }).WhenInjectedInto<IUnityRemoveAdsServices>();
+            this.Container.Bind<RemoveAdData>().FromInstance(new RemoveAdData()
+            {
+                listIdRemoveAds = new List<string>() { "RemoveAds" }
+            }).AsCached().NonLazy();
         }
     }
 }

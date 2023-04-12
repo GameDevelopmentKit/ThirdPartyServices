@@ -10,18 +10,18 @@
 
         public void BuyProductID(string productId, Action<string> onComplete = null, Action<string> onFailed = null) { onComplete?.Invoke(productId); }
 
-        public string GetPriceById(string productId) { return $"0.0"; }
-        public void   RestorePurchases()             { }
+        public string GetPriceById(string productId)      { return $"0.0"; }
+        public void   RestorePurchases(Action onComplete) { onComplete?.Invoke(); }
     }
 
     public class DummyUnityRemoveAdsIapServices : IUnityRemoveAdsServices
     {
-        private readonly List<string> listRemoveAds;
+        private readonly RemoveAdData removeAdData;
         private readonly IAdServices  adServices;
 
-        public DummyUnityRemoveAdsIapServices(List<string> listRemoveAds, IAdServices adServices)
+        public DummyUnityRemoveAdsIapServices(RemoveAdData removeAdData, IAdServices adServices)
         {
-            this.listRemoveAds = listRemoveAds;
+            this.removeAdData  = removeAdData;
             this.adServices    = adServices;
         }
 

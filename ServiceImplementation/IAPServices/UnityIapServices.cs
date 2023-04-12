@@ -125,7 +125,7 @@ namespace ServiceImplementation.IAPServices
 
         // Restore purchases previously made by this customer. Some platforms automatically restore purchases, like Google. 
         // Apple currently requires explicit purchase restoration for IAP, conditionally displaying a password prompt.
-        public void RestorePurchases()
+        public void RestorePurchases(Action onComplete = null)
         {
             // If Purchasing has not yet been set up ...
             if (!this.IsInitialized)
@@ -152,6 +152,11 @@ namespace ServiceImplementation.IAPServices
                     // The first phase of restoration. If no more responses are received on ProcessPurchase then 
                     // no purchases are available to be restored.
                     this.logger.Log("RestorePurchases continuing: " + result + ". If no further messages, no purchases available to restore.");
+
+                    if (result)
+                    {
+                        onComplete?.Invoke();
+                    }
                 });
             }
             // Otherwise ...
