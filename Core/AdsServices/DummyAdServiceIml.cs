@@ -29,7 +29,7 @@ namespace Core.AdsServices
         public bool IsRewardedInterstitialAdReady() { return true; }
         public void ShowRewardedInterstitialAd(string place) { this.logService.Log($"Dummy show Rewarded Interstitial ad at {place}"); }
         public void ShowRewardedInterstitialAd(string place, Action onCompleted) { this.logService.Log($"Dummy show Rewarded Interstitial ad at {place} then do {onCompleted}"); }
-        public void RemoveAds(bool revokeConsent = false) { this.logService.Log($"Dummy revoke consent"); }
+        public void RemoveAds(bool revokeConsent = false) { this.logService.Log($"Dummy remove Ads"); }
         public bool IsAdsInitialized() { return true; }
         public bool IsRemoveAds() { return false; }
     }
