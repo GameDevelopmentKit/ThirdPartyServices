@@ -10,6 +10,7 @@ namespace ServiceImplementation.IAPServices
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
+    using Zenject;
 
     public class UnityIapServices : IUnityIapServices, IStoreListener
     {
@@ -18,10 +19,15 @@ namespace ServiceImplementation.IAPServices
         private IExtensionProvider mStoreExtensionProvider;
 
         private readonly ILogService                  logger;
+        private readonly SignalBus                    signalBus;
         private readonly IAdServices                  adServices;
         private          Dictionary<string, IAPModel> iapPacks;
 
-        public UnityIapServices(ILogService log) { this.logger = log; }
+        public UnityIapServices(ILogService log, SignalBus signalBus)
+        {
+            this.logger    = log;
+            this.signalBus = signalBus;
+        }
 
         public async void InitIapServices(Dictionary<string, IAPModel> iapPack, string environment = "production")
         {
@@ -97,7 +103,7 @@ namespace ServiceImplementation.IAPServices
             return s;
         }
 
-        public void BuyProductID(string productId, Action<string> onComplete = null, Action<string> onFailed = null)
+        public void BuyProductID(string productId, Action<string> onComplete, Action<string> onFailed = null)
         {
             if (this.IsInitialized)
             {
@@ -184,6 +190,11 @@ namespace ServiceImplementation.IAPServices
 
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
+            if (this.onPurchaseComplete == null)
+            {
+                this.signalBus.Fire(new UnityIAPOnPurchaseCompleteSignal(args.purchasedProduct.definition.id));
+            }
+
             this.onPurchaseComplete?.Invoke(args.purchasedProduct.definition.id);
             this.onPurchaseComplete = null;
 

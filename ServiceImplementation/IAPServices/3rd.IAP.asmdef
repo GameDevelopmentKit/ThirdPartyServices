@@ -8,7 +8,8 @@
         "Unity.Services.Core.Environments",
         "GameFoundation.Utilities",
         "3rdCore.Ads",
-        "Zenject-Source"
+        "Zenject-Source",
+        "Zenject-Signals"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
