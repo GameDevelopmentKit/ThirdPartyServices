@@ -13,6 +13,8 @@ namespace ServiceImplementation.AdsServices
     {
         public override void InstallBindings()
         {
+            //config
+            this.Container.Bind<AdServicesConfig>().AsCached().NonLazy();
 #if EASY_MOBILE_PRO && (!UNITY_EDITOR || (UNITY_EDITOR && !EM_IRONSOURCE))
             this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
 #else

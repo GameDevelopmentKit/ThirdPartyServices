@@ -18,27 +18,29 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     {
         #region inject
 
-        private readonly ILogService logService;
-        private readonly SignalBus   signalBus;
+        private readonly ILogService      logService;
+        private readonly SignalBus        signalBus;
+        private readonly AdServicesConfig adServicesConfig;
 
         #endregion
 
         private event Action RewardedAdCompletedOneTimeAction;
         private event Action RewardedInterstitialAdCompletedOneTimeAction;
 
-        public EasyMobileAdIml(ILogService logService, SignalBus signalBus)
+        public EasyMobileAdIml(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig)
         {
-            this.logService = logService;
-            this.signalBus  = signalBus;
+            this.logService       = logService;
+            this.signalBus        = signalBus;
+            this.adServicesConfig = adServicesConfig;
         }
 
         public void Initialize()
         {
             Advertising.InterstitialAdCompleted += this.OnAdvertisingOnInterstitialAdCompleted;
 
-            Advertising.RewardedAdCompleted             += this.OnAdvertisingOnRewardedAdCompleted;
-            Advertising.RewardedAdSkipped               += this.OnAdvertisingOnRewardedAdSkipped;
-            
+            Advertising.RewardedAdCompleted += this.OnAdvertisingOnRewardedAdCompleted;
+            Advertising.RewardedAdSkipped   += this.OnAdvertisingOnRewardedAdSkipped;
+
             Advertising.RewardedInterstitialAdCompleted += this.OnAdvertisingOnRewardedInterstitialAdCompleted;
             Advertising.RewardedInterstitialAdSkipped   += this.OnAdvertisingOnRewardedInterstitialAdSkipped;
 
@@ -57,10 +59,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             Advertising.AdsRemoved -= this.OnAdRemoved;
         }
 
-        private async void OnAdRemoved()
-        {
-            await UniTask.SwitchToMainThread();
-        }
+        private async void OnAdRemoved() { await UniTask.SwitchToMainThread(); }
 
         private async void OnAdvertisingOnRewardedInterstitialAdSkipped(RewardedInterstitialAdNetwork network, AdPlacement place)
         {
@@ -115,6 +114,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
+            if (!this.adServicesConfig.EnableBannerAd)
+            {
+                return;
+            }
+
             Advertising.ShowBannerAd((BannerAdPosition)bannerAdsPosition, new BannerAdSize(320, 50));
         }
 
@@ -130,26 +134,60 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public bool IsInterstitialAdReady(string place) { return Advertising.IsInterstitialAdReady(AdPlacement.PlacementWithName(place)); }
 
-        public void ShowInterstitialAd(string place) { Advertising.ShowInterstitialAd(AdPlacement.PlacementWithName(place)); }
+        public void ShowInterstitialAd(string place)
+        {
+            if (!this.adServicesConfig.EnableInterstitialAd)
+            {
+                return;
+            }
+
+            Advertising.ShowInterstitialAd(AdPlacement.PlacementWithName(place));
+        }
 
         #endregion
 
         public bool IsRewardedAdReady(string place) { return Advertising.IsRewardedAdReady(AdPlacement.PlacementWithName(place)); }
 
-        public void ShowRewardedAd(string place) { Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place)); }
+        public void ShowRewardedAd(string place)
+        {
+            if (!this.adServicesConfig.EnableRewardedAd)
+            {
+                return;
+            }
+
+            Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place));
+        }
 
         public void ShowRewardedAd(string place, Action onCompleted)
         {
+            if (!this.adServicesConfig.EnableRewardedAd)
+            {
+                return;
+            }
+
             this.RewardedAdCompletedOneTimeAction += onCompleted;
             Advertising.ShowRewardedAd(AdPlacement.PlacementWithName(place));
         }
 
         public bool IsRewardedInterstitialAdReady() { return Advertising.IsRewardedInterstitialAdReady(); }
 
-        public void ShowRewardedInterstitialAd(string place) { Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place)); }
+        public void ShowRewardedInterstitialAd(string place)
+        {
+            if (!this.adServicesConfig.EnableRewardedInterstitialAd)
+            {
+                return;
+            }
+
+            Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place));
+        }
 
         public void ShowRewardedInterstitialAd(string place, Action onCompleted)
         {
+            if (!this.adServicesConfig.EnableRewardedInterstitialAd)
+            {
+                return;
+            }
+
             this.RewardedInterstitialAdCompletedOneTimeAction += onCompleted;
             Advertising.ShowRewardedInterstitialAd(AdPlacement.PlacementWithName(place));
         }

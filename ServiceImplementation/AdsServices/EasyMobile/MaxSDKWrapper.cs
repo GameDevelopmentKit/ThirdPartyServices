@@ -14,14 +14,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region inject
 
         private readonly Dictionary<AdViewPosition, string> positionToMRECAdUnitId;
+        private readonly AdServicesConfig                   adServicesConfig;
         private readonly ILogService                        logService;
         private readonly SignalBus                          signalBus;
 
         #endregion
 
-        public MaxSDKWrapper(Dictionary<AdViewPosition, string> positionToMRECAdUnitId, ILogService logService, SignalBus signalBus)
+        public MaxSDKWrapper(Dictionary<AdViewPosition, string> positionToMRECAdUnitId,AdServicesConfig adServicesConfig, ILogService logService, SignalBus signalBus)
         {
             this.positionToMRECAdUnitId = positionToMRECAdUnitId;
+            this.adServicesConfig       = adServicesConfig;
             this.logService             = logService;
             this.signalBus              = signalBus;
         }
@@ -169,6 +171,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public async void ShowMREC(AdViewPosition adViewPosition)
         {
+            if (!this.adServicesConfig.EnableMRECAd)
+            {
+                return;
+            }
+
             await UniTask.SwitchToMainThread();
             MaxSdk.ShowMRec(this.positionToMRECAdUnitId[adViewPosition]);
         }

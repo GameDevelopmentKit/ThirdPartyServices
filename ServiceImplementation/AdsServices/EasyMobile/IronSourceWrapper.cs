@@ -13,11 +13,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     public class IronSourceWrapper : IMRECAdService, IInitializable, IDisposable
     {
         private readonly IAnalyticServices analyticServices;
+        private readonly AdServicesConfig  adServicesConfig;
         private readonly SignalBus         signalBus;
 
-        public IronSourceWrapper(IAnalyticServices analyticServices, SignalBus signalBus)
+        public IronSourceWrapper(IAnalyticServices analyticServices,AdServicesConfig adServicesConfig, SignalBus signalBus)
         {
             this.analyticServices = analyticServices;
+            this.adServicesConfig = adServicesConfig;
             this.signalBus        = signalBus;
         }
 
@@ -141,7 +143,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region MREC
 
-        public void ShowMREC(AdViewPosition adViewPosition)             { }
+        public void ShowMREC(AdViewPosition adViewPosition)
+        {
+            if(!this.adServicesConfig.EnableMRECAd)return;
+        }
         public void HideMREC(AdViewPosition adViewPosition)             { }
         public void StopMRECAutoRefresh(AdViewPosition adViewPosition)  { }
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }

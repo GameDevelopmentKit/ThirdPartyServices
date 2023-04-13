@@ -20,7 +20,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
     public class AdModWrapper : IAOAAdService, IMRECAdService
 #if ADMOB_NATIVE_ADS
-                              , INativeAdsService
+        , INativeAdsService
 #endif
     {
         #region inject
@@ -30,16 +30,18 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private readonly SignalBus         signalBus;
         private readonly IAdServices       adServices;
         private readonly IAnalyticServices analyticService;
+        private readonly AdServicesConfig  adServicesConfig;
 
         #endregion
 
-        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService)
+        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService, AdServicesConfig adServicesConfig)
         {
-            this.logService      = logService;
-            this.config          = config;
-            this.signalBus       = signalBus;
-            this.adServices      = adServices;
-            this.analyticService = analyticService;
+            this.logService       = logService;
+            this.config           = config;
+            this.signalBus        = signalBus;
+            this.adServices       = adServices;
+            this.analyticService  = analyticService;
+            this.adServicesConfig = adServicesConfig;
         }
 
         public void Init()
@@ -50,8 +52,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.CloseAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedSkippedSignal>(this.CloseAdInDifferentProcessHandler);
 
-
             this.StartLoadingAOATime = DateTime.Now;
+
             MobileAds.Initialize(_ =>
             {
                 this.IntervalCall(5);
@@ -99,9 +101,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log("ShownAdInDifferentProcessHandler");
             this.IsResumedFromAds = true;
         }
+
         private void CloseAdInDifferentProcessHandler()
         {
-            
             this.logService.Log("CloseAdInDifferentProcessHandler");
             this.IsResumedFromAds = false;
         }
@@ -120,6 +122,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             {
                 return;
             }
+
+            if (!this.adServicesConfig.EnableAOAAd) return;
 
             if (!this.adServices.IsRemoveAds())
             {
@@ -408,6 +412,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #endregion
 
 #if ADMOB_NATIVE_ADS
+
         #region Native Ads
 
         private Dictionary<string, NativeAd>        nativeAdsIdToNativeAd   { get; } = new();
@@ -420,11 +425,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             var adLoader = new AdLoader.Builder(adsId).ForNativeAd().Build();
             this.loadingNativeAdsIds.Add(adsId);
+
             adLoader.OnNativeAdLoaded += (_, arg) =>
-                                         {
-                                             this.nativeAdsIdToNativeAd.Add(adsId, arg.nativeAd);
-                                             this.loadingNativeAdsIds.Remove(adsId);
-                                         };
+            {
+                this.nativeAdsIdToNativeAd.Add(adsId, arg.nativeAd);
+                this.loadingNativeAdsIds.Remove(adsId);
+            };
+
             adLoader.OnAdFailedToLoad += (_, _) => { this.loadingNativeAdsIds.Remove(adsId); };
 
             adLoader.OnNativeAdLoaded += this.HandleNativeAdLoaded;
@@ -436,44 +443,50 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             var nativeAdPair = this.nativeAdsIdToNativeAd.First();
             this.nativeAdsIdToNativeAd.Remove(nativeAdPair.Key);
+
             return nativeAdPair.Value;
         }
 
         public void DrawNativeAds(NativeAdsView nativeAdsView)
         {
+            if (!this.adServicesConfig.EnableNativeAd) return;
+
             if (this.nativeAdsIdToNativeAd.Count == 0 || this.nativeAdsViewToNativeAd.ContainsKey(nativeAdsView)) return;
             var nativeAd = this.nativeAdsViewToNativeAd.GetOrAdd(nativeAdsView, this.GetAvailableNativeAd);
 
             this.logService.Log($"Start set native ad: {nativeAdsView.name}");
-            
+
             this.logService.Log($"native star rating : {nativeAd.GetStarRating()}");
             this.logService.Log($"native store: {nativeAd.GetStore()}");
             this.logService.Log($"native Price: {nativeAd.GetPrice()}");
             this.logService.Log($"native advertiser text: {nativeAd.GetAdvertiserText()}");
             this.logService.Log($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
-            
+
             this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
             this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
-            
+
             // Get Texture2D for icon asset of native ad.
             nativeAdsView.headlineText.text = nativeAd.GetHeadlineText();
+
             if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
             {
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register Headline text for native ad: {nativeAdsView.name}");
             }
-            
+
             nativeAdsView.advertiserText.text = nativeAd.GetAdvertiserText();
+
             if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.advertiserText.gameObject))
             {
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register advertiser text for native ad: {nativeAdsView.name}");
             }
-               
+
             if (nativeAd.GetIconTexture() != null)
             {
                 nativeAdsView.iconImage.gameObject.SetActive(true);
                 nativeAdsView.iconImage.texture = nativeAd.GetIconTexture();
+
                 // Register GameObject that will display icon asset of native ad.
                 if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.iconImage.gameObject))
                 {
@@ -486,6 +499,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             {
                 nativeAdsView.adChoicesImage.gameObject.SetActive(true);
                 nativeAdsView.adChoicesImage.texture = nativeAd.GetAdChoicesLogoTexture();
+
                 if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoicesImage.gameObject))
                 {
                     // Handle failure to register ad asset.
@@ -506,6 +520,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             e.nativeAd.OnPaidEvent += this.AdMobNativePaidHandler;
             this.logService.Log($"Native ad loaded successfully");
         }
+
         private void AdMobNativePaidHandler(object sender, AdValueEventArgs e) { this.AdMobHandlePaidEvent(e.AdValue); }
 
         private void LoadAllNativeAds()
