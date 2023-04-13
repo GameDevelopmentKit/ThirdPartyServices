@@ -492,17 +492,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                     this.logService.Log($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
                 }
             }
-            else
-            {
-                // These four properties are to be copied
-                var iconImageRectTransform = nativeAdsView.iconImage.rectTransform;
-                var adChoiceRectTransform = nativeAdsView.adChoicesImage.rectTransform;
-                iconImageRectTransform.anchorMin = adChoiceRectTransform.anchorMin;
-                iconImageRectTransform.anchorMax = adChoiceRectTransform.anchorMax;
-                iconImageRectTransform.anchoredPosition = adChoiceRectTransform.anchoredPosition;
-                iconImageRectTransform.sizeDelta = adChoiceRectTransform.sizeDelta;
-            }
-            
         }
 
         private async void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
