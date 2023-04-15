@@ -92,15 +92,19 @@ namespace ServiceImplementation.IAPServices
             };
         }
 
-        public string GetPriceById(string id)
+        public string GetPriceById(string id, string defaultPrice = "")
         {
-            var s = "";
+            var s = defaultPrice;
 
             if (!this.IsInitialized) return s;
 
             try
             {
                 s = this.mStoreController.products.WithID(id).metadata.localizedPriceString;
+                if (string.IsNullOrWhiteSpace(s))
+                {
+                    s = defaultPrice;
+                }
             }
             catch (Exception e)
             {

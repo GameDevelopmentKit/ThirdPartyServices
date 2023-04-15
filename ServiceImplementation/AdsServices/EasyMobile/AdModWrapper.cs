@@ -75,6 +75,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region AOA
 
         private DateTime StartLoadingAOATime;
+        private DateTime StartForceGroundTime;
 
         public class Config
         {
@@ -82,6 +83,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             public int                                AOAOpenAppThreshHold = 5; //after this number of seconds, AOA will not be shown
             public Dictionary<AdViewPosition, string> ADModMRecIds;
             public List<string>                       NativeAdIds;
+            public int                                MinPauseTimeToShowAOA = 0; //in seconds
 
             public bool IsShowAOAAtOpenApp   = true;
             public bool OpenAOAAfterResuming = true;
@@ -115,7 +117,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log($"App State is {state}");
             this.signalBus.Fire(new AppStateChangeSignal(state == AppState.Background));
 
-            if (state != AppState.Foreground) return;
+            if (state != AppState.Foreground)
+            {
+                this.StartForceGroundTime = DateTime.Now;
+                return;
+            }
+            
+            if ((DateTime.Now - this.StartLoadingAOATime).TotalSeconds < this.config.MinPauseTimeToShowAOA)
+            {
+                return;
+            }
+            
             if (!this.config.OpenAOAAfterResuming) return;
 
             if (this.IsResumedFromAdsOrIAP)

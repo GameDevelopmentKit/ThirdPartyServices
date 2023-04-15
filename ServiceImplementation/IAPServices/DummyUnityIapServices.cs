@@ -10,7 +10,7 @@
 
         public void BuyProductID(string productId, Action<string> onComplete = null, Action<string> onFailed = null) { onComplete?.Invoke(productId); }
 
-        public string GetPriceById(string productId)      { return $"$2.99"; }
+        public string GetPriceById(string     productId, string defaultPrice) { return $"$2.99"; }
         public void   RestorePurchases(Action onComplete) { onComplete?.Invoke(); }
     }
 
