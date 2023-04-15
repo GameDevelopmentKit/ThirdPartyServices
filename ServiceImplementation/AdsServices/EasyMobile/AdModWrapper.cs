@@ -83,7 +83,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             public int                                AOAOpenAppThreshHold = 5; //after this number of seconds, AOA will not be shown
             public Dictionary<AdViewPosition, string> ADModMRecIds;
             public List<string>                       NativeAdIds;
-            public int                                MinPauseTimeToShowAOA = 0; //in seconds
 
             public bool IsShowAOAAtOpenApp   = true;
             public bool OpenAOAAfterResuming = true;
@@ -120,14 +119,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (state != AppState.Foreground)
             {
                 this.StartForceGroundTime = DateTime.Now;
+
                 return;
             }
-            
-            if ((DateTime.Now - this.StartLoadingAOATime).TotalSeconds < this.config.MinPauseTimeToShowAOA)
+
+            if ((DateTime.Now - this.StartLoadingAOATime).TotalSeconds < this.adServicesConfig.MinPauseSecondToShowAoaAd)
             {
                 return;
             }
-            
+
             if (!this.config.OpenAOAAfterResuming) return;
 
             if (this.IsResumedFromAdsOrIAP)
@@ -145,7 +145,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region IAOAService
 
-        public bool IsShowingAd      { get; set; } = false;
+        public bool IsShowingAd           { get; set; } = false;
         public bool IsResumedFromAdsOrIAP { get; set; } = false;
 
         public void ShowAdIfAvailable()
