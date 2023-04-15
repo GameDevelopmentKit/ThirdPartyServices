@@ -18,15 +18,22 @@ namespace ServiceImplementation.IAPServices
         private IStoreController   mStoreController;
         private IExtensionProvider mStoreExtensionProvider;
 
+        #region inject
+
         private readonly ILogService                  logger;
         private readonly SignalBus                    signalBus;
+        private readonly IAOAAdService                aoaAdService;
         private readonly IAdServices                  adServices;
         private          Dictionary<string, IAPModel> iapPacks;
 
-        public UnityIapServices(ILogService log, SignalBus signalBus)
+        #endregion
+        
+
+        public UnityIapServices(ILogService log, SignalBus signalBus, IAOAAdService aoaAdService)
         {
-            this.logger    = log;
-            this.signalBus = signalBus;
+            this.logger       = log;
+            this.signalBus    = signalBus;
+            this.aoaAdService = aoaAdService;
         }
 
         public async void InitIapServices(Dictionary<string, IAPModel> iapPack, string environment = "production")
@@ -107,6 +114,7 @@ namespace ServiceImplementation.IAPServices
         {
             if (this.IsInitialized)
             {
+                this.aoaAdService.IsResumedFromAdsOrIAP = true;
                 var product = this.mStoreController.products.WithID(productId);
 
                 if (product is { availableToPurchase: true })
@@ -145,6 +153,7 @@ namespace ServiceImplementation.IAPServices
             // If we are running on an Apple device ... 
             if (Application.platform is RuntimePlatform.IPhonePlayer or RuntimePlatform.OSXPlayer)
             {
+                this.aoaAdService.IsResumedFromAdsOrIAP = true;
                 // ... begin restoring purchases
                 this.logger.Log("RestorePurchases started ...");
 

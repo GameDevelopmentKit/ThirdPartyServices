@@ -13,7 +13,7 @@ namespace Core.AdsServices
         public DummyAOAAdServiceIml(ILogService logService) { this.logService = logService; }
 
         public bool IsShowingAd      => false;
-        public bool IsResumedFromAds { get; set; }
+        public bool IsResumedFromAdsOrIAP { get; set; }
         public void LoadAOAAd()      { this.logService.Log("Dummy load app open ad"); }
 
         public void ShowAdIfAvailable() { this.logService.Log("Dummy show app open ad"); }
