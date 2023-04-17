@@ -60,6 +60,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
             });
         }
+        
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+        private static void InitAdmob()
+        {
+            MobileAds.Initialize(_ => { });
+        }
 
         private async void IntervalCall(int intervalSecond)
         {
