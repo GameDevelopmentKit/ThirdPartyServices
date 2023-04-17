@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using GameFoundation.Scripts.Utilities.LogService;
+    using UnityEngine;
     using Zenject;
 
     public class UnityIapInstaller : Installer<UnityIapInstaller>
@@ -14,7 +15,7 @@
 #else
             this.Container.Bind<IUnityIapServices>().To<UnityIapServices>().AsCached().NonLazy();
             this.Container.Bind<IUnityRemoveAdsServices>().To<UnityRemoveAdsIapServices>().AsCached().NonLazy();
-            this.Container.Resolve<ILogService>().Error("IAP Enable, don't forget to call IUnityIapServices.InitIapServices in your game,ignore if already done!!");
+            this.Container.Resolve<ILogService>().LogWithColor("IAP Enable, don't forget to call IUnityIapServices.InitIapServices in your game,ignore if already done!!", Color.red);
 #endif
             this.Container.Bind<RemoveAdData>().FromInstance(new RemoveAdData()
             {
