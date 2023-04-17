@@ -2,7 +2,6 @@ namespace Core.AdsServices.Native
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Signals;
     using TMPro;
@@ -17,15 +16,15 @@ namespace Core.AdsServices.Native
         public TMP_Text headlineText;
         public TMP_Text advertiserText;
 
-
         private SignalBus         signalBus;
         private INativeAdsService nativeAdsService;
         private List<Type>        activeScreenList;
 
+#if ADMOB_NATIVE_ADS
         public void Init(INativeAdsService nativeAdsService, SignalBus signalBus, List<Type> activeScreenList)
         {
             this.nativeAdsService = nativeAdsService;
-            this.signalBus        = signalBus;
+            this.signalBus = signalBus;
             this.activeScreenList = activeScreenList;
 
             this.iconImage.gameObject.SetActive(false);
@@ -50,5 +49,6 @@ namespace Core.AdsServices.Native
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             this.IntervalCall();
         }
+#endif
     }
 }
