@@ -59,39 +59,34 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             Advertising.AdsRemoved -= this.OnAdRemoved;
         }
 
-        private async void OnAdRemoved() { await UniTask.SwitchToMainThread(); }
+        private void OnAdRemoved() { }
 
-        private async void OnAdvertisingOnRewardedInterstitialAdSkipped(RewardedInterstitialAdNetwork network, AdPlacement place)
+        private void OnAdvertisingOnRewardedInterstitialAdSkipped(RewardedInterstitialAdNetwork network, AdPlacement place)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardInterstitialAdSkippedSignal(place.Name));
         }
 
-        private async void OnAdvertisingOnRewardedInterstitialAdCompleted(RewardedInterstitialAdNetwork network, AdPlacement place)
+        private void OnAdvertisingOnRewardedInterstitialAdCompleted(RewardedInterstitialAdNetwork network, AdPlacement place)
         {
-            await UniTask.SwitchToMainThread();
             this.RewardedInterstitialAdCompletedOneTimeAction?.Invoke();
             this.RewardedInterstitialAdCompletedOneTimeAction = null;
             this.signalBus.Fire(new RewardedInterstitialAdCompletedSignal(place.Name));
         }
 
-        private async void OnAdvertisingOnRewardedAdSkipped(RewardedAdNetwork network, AdPlacement place)
+        private void OnAdvertisingOnRewardedAdSkipped(RewardedAdNetwork network, AdPlacement place)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardedSkippedSignal(place.Name));
         }
 
-        private async void OnAdvertisingOnRewardedAdCompleted(RewardedAdNetwork network, AdPlacement place)
+        private void OnAdvertisingOnRewardedAdCompleted(RewardedAdNetwork network, AdPlacement place)
         {
-            await UniTask.SwitchToMainThread();
             this.RewardedAdCompletedOneTimeAction?.Invoke();
             this.RewardedAdCompletedOneTimeAction = null;
             this.signalBus.Fire(new RewardedAdCompletedSignal(place.Name));
         }
 
-        private async void OnAdvertisingOnInterstitialAdCompleted(InterstitialAdNetwork network, AdPlacement place)
+        private void OnAdvertisingOnInterstitialAdCompleted(InterstitialAdNetwork network, AdPlacement place)
         {
-            await UniTask.SwitchToMainThread();
             this.InterstitialAdCompleted?.Invoke((Core.AdsServices.InterstitialAdNetwork)network, place.Name);
             this.signalBus.Fire(new InterstitialAdClosedSignal(place.Name));
         }

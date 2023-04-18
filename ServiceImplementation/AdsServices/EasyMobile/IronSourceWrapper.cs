@@ -63,81 +63,68 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceEvents.onRewardedVideoAdLoadFailedEvent -= this.OnRewardedVideoLoadFailed;
         }
 
-        private async void OnRewardedVideoLoadFailed(IronSourceError obj)
+        private void OnRewardedVideoLoadFailed(IronSourceError obj)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardedAdLoadFailedSignal("", obj.getDescription()));
         }
 
-        private async void OnRewardedVideoReady()
+        private void OnRewardedVideoReady()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardedAdLoadedSignal(""));
         }
 
-        private async void OnRewardedVideoClicked(IronSourcePlacement obj)
+        private void OnRewardedVideoClicked(IronSourcePlacement obj)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardedAdLoadClickedSignal(obj.getPlacementName()));
         }
 
-        private async void OnRewardedVideoOpened()
+        private void OnRewardedVideoOpened()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardedAdDisplayedSignal(""));
         }
 
-        private async void OnInterstitialLoadFailed(IronSourceError obj)
+        private void OnInterstitialLoadFailed(IronSourceError obj)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription()));
         }
 
-        private async void OnInterstitialReady()
+        private void OnInterstitialReady()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new InterstitialAdDownloadedSignal(""));
         }
 
-        private async void OnInterstitialOpened()
+        private void OnInterstitialOpened()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new InterstitialAdDisplayedSignal(""));
         }
 
-        private async void OnInterstitialClicked()
+        private void OnInterstitialClicked()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new InterstitialAdClickedSignal(""));
         }
 
-        private async void OnBannerLoadFailed(IronSourceError obj)
+        private void OnBannerLoadFailed(IronSourceError obj)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdLoadFailedSignal("", $"{obj.getDescription()}"));
         }
 
-        private async void OnBannerScreenDismissed()
+        private void OnBannerScreenDismissed()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdDismissedSignal(""));
         }
 
-        private async void OnBannerScreenPresented()
+        private void OnBannerScreenPresented()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdDismissedSignal(""));
         }
 
-        private async void OnBannerLoaded()
+        private void OnBannerLoaded()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdLoadedSignal(""));
         }
 
-        private async void OnBannerClicked()
+        private void OnBannerClicked()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdClickedSignal(""));
         }
 

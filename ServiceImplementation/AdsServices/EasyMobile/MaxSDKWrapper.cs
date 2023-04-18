@@ -61,146 +61,123 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             MaxSdkCallbacks.Banner.OnAdCollapsedEvent  += this.OnBannerAdCollapsedHandler;
         }
 
-        private async void OnBannerAdCollapsedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        private void OnBannerAdCollapsedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdDismissedSignal(arg2.Placement));
         }
 
-        private async void OnBannerAdExpandedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        private void OnBannerAdExpandedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdPresentedSignal(arg2.Placement));
         }
 
-        private async void OnBannerAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        private void OnBannerAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdClickedSignal(arg2.Placement));
         }
 
-        private async void OnBannerAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2)
+        private void OnBannerAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdLoadFailedSignal("empty", arg2.Message));
         }
 
-        private async void OnBannerAdLoadedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        private void OnBannerAdLoadedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new BannerAdLoadedSignal(arg2.Placement));
         }
 
-        private async void OnRewardedAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        private void OnRewardedAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardedAdLoadClickedSignal(arg2.Placement));
         }
 
-        private async void OnRewardedAdDisplayedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        private void OnRewardedAdDisplayedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardedAdDisplayedSignal(arg2.Placement));
         }
 
-        private async void OnRewardedAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2)
+        private void OnRewardedAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardedAdLoadFailedSignal("empty", arg2.Message));
         }
 
-        private async void OnRewardedAdLoadedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        private void OnRewardedAdLoadedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new RewardedAdLoadedSignal(arg2.Placement));
         }
 
-        private async void OnInterstitialAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        private void OnInterstitialAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new InterstitialAdClickedSignal(arg2.Placement));
         }
 
-        private async void OnInterstitialAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2)
+        private void OnInterstitialAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new InterstitialAdLoadFailedSignal("empty", arg2.Message));
         }
 
-        private async void InterstitialAdDisplayedSignal(string arg1, MaxSdkBase.AdInfo arg2)
+        private void InterstitialAdDisplayedSignal(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new InterstitialAdDisplayedSignal(arg2.Placement));
         }
 
-        private async void OnMRecAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        private void OnMRecAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-            await UniTask.SwitchToMainThread();
             this.OnAdLoadedEvent?.Invoke(adUnitId, this.ConvertAdInfo(adInfo));
         }
 
-        private async void OnMRecAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo error)
+        private void OnMRecAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo error)
         {
-            await UniTask.SwitchToMainThread();
             this.OnAdLoadFailedEvent?.Invoke(adUnitId, new ErrorInfo((int)error.Code, error.Message));
         }
 
-        private async void OnMRecAdClickedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        private void OnMRecAdClickedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-            await UniTask.SwitchToMainThread();
             this.OnAdClickedEvent?.Invoke(adUnitId, this.ConvertAdInfo(adInfo));
         }
 
-        private async void OnMRecAdRevenuePaidEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        private void OnMRecAdRevenuePaidEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-            await UniTask.SwitchToMainThread();
             this.OnAdRevenuePaidEvent?.Invoke(adUnitId, this.ConvertAdInfo(adInfo));
         }
 
-        private async void OnMRecAdExpandedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        private void OnMRecAdExpandedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-            await UniTask.SwitchToMainThread();
             this.OnAdExpandedEvent?.Invoke(adUnitId, this.ConvertAdInfo(adInfo));
         }
 
-        private async void OnMRecAdCollapsedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        private void OnMRecAdCollapsedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-            await UniTask.SwitchToMainThread();
             this.OnAdCollapsedEvent?.Invoke(adUnitId, this.ConvertAdInfo(adInfo));
         }
 
-        public async void ShowMREC(AdViewPosition adViewPosition)
+        public void ShowMREC(AdViewPosition adViewPosition)
         {
             if (!this.adServicesConfig.EnableMRECAd)
             {
                 return;
             }
 
-            await UniTask.SwitchToMainThread();
             MaxSdk.ShowMRec(this.positionToMRECAdUnitId[adViewPosition]);
         }
 
-        public async void HideMREC(AdViewPosition adViewPosition)
+        public void HideMREC(AdViewPosition adViewPosition)
         {
-            await UniTask.SwitchToMainThread();
             MaxSdk.HideMRec(this.positionToMRECAdUnitId[adViewPosition]);
         }
 
-        public async void StopMRECAutoRefresh(AdViewPosition adViewPosition)
+        public void StopMRECAutoRefresh(AdViewPosition adViewPosition)
         {
-            await UniTask.SwitchToMainThread();
             MaxSdk.StopMRecAutoRefresh(this.positionToMRECAdUnitId[adViewPosition]);
         }
 
-        public async void StartMRECAutoRefresh(AdViewPosition adViewPosition)
+        public void StartMRECAutoRefresh(AdViewPosition adViewPosition)
         {
-            await UniTask.SwitchToMainThread();
             MaxSdk.StartMRecAutoRefresh(this.positionToMRECAdUnitId[adViewPosition]);
         }
 
-        public async void LoadMREC(AdViewPosition adViewPosition)
+        public void LoadMREC(AdViewPosition adViewPosition)
         {
-            await UniTask.SwitchToMainThread();
             MaxSdk.LoadMRec(this.positionToMRECAdUnitId[adViewPosition]);
         }
 
