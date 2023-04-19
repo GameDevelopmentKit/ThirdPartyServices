@@ -193,7 +193,7 @@ namespace ServiceImplementation.IAPServices
             }
         }
 
-        private bool IsProductOwned(string productId)
+        public bool IsProductOwned(string productId)
         {
             if (!this.IsInitialized)
                 return false;
