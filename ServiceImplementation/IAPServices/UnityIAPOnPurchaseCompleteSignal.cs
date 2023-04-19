@@ -1,8 +1,8 @@
 namespace ServiceImplementation.IAPServices
 {
-    public class UnityIAPOnPurchaseCompleteSignal
+    public class UnityIAPOnRestorePurchaseCompleteSignal
     {
         public string ProductID { get; }
-        public UnityIAPOnPurchaseCompleteSignal(string productID) { this.ProductID = productID; }
+        public UnityIAPOnRestorePurchaseCompleteSignal(string productID) { this.ProductID = productID; }
     }
 }

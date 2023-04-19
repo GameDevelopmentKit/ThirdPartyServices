@@ -3,6 +3,7 @@ namespace ServiceImplementation.IAPServices
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
@@ -10,6 +11,7 @@ namespace ServiceImplementation.IAPServices
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
+    using UnityEngine.Purchasing.Security;
     using Zenject;
 
     public class UnityIapServices : IUnityIapServices, IStoreListener
@@ -27,7 +29,6 @@ namespace ServiceImplementation.IAPServices
         private          Dictionary<string, IAPModel> iapPacks;
 
         #endregion
-        
 
         public UnityIapServices(ILogService log, SignalBus signalBus, IAOAAdService aoaAdService)
         {
@@ -101,6 +102,7 @@ namespace ServiceImplementation.IAPServices
             try
             {
                 s = this.mStoreController.products.WithID(id).metadata.localizedPriceString;
+
                 if (string.IsNullOrWhiteSpace(s))
                 {
                     s = defaultPrice;
@@ -172,10 +174,15 @@ namespace ServiceImplementation.IAPServices
                     // no purchases are available to be restored.
                     this.logger.Log("RestorePurchases continuing: " + result + ". If no further messages, no purchases available to restore.");
 
-                    if (result)
+                    if (!result) return;
+
+                    foreach (var iapPack in this.iapPacks)
                     {
-                        onComplete?.Invoke();
+                        if (!this.IsProductOwned(iapPack.Value.Id)) continue;
+                        this.signalBus.Fire(new UnityIAPOnRestorePurchaseCompleteSignal(iapPack.Value.Id));
                     }
+
+                    onComplete?.Invoke();
                 });
             }
             // Otherwise ...
@@ -184,6 +191,99 @@ namespace ServiceImplementation.IAPServices
                 // We are not running on an Apple device. No work is necessary to restore purchases.
                 this.logger.Log("RestorePurchases FAIL. Not supported on this platform. Current = " + Application.platform);
             }
+        }
+
+        private bool IsProductOwned(string productId)
+        {
+            if (!this.IsInitialized)
+                return false;
+
+            if (string.IsNullOrEmpty(productId))
+                return false;
+
+            var pd = this.mStoreController.products.WithID(productId);
+
+            if (!pd.hasReceipt) return false;
+            // presume validity if not validate receipt.
+
+            var isValid = this.ValidateReceipt(pd.receipt, out var purchaseReceipts);
+
+            return isValid;
+        }
+
+        //check Valid product
+        private bool ValidateReceipt(string receipt, out IPurchaseReceipt[] purchaseReceipts, bool logReceiptContent = true)
+        {
+            // default the out parameter to an empty array 
+            purchaseReceipts = Array.Empty<IPurchaseReceipt>();
+
+            // Does the receipt has some content?
+            if (string.IsNullOrEmpty(receipt))
+            {
+                this.logger.Log("Receipt Validation: receipt is null or empty.");
+
+                return false;
+            }
+
+            var isValidReceipt = true; // presume validity for platforms with no receipt validation.
+            // Unity IAP's receipt validation is only available for Apple app stores and Google Play store.   
+#if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS
+
+            byte[] googlePlayTangleData = null;
+            byte[] appleTangleData      = null;
+
+            // Here we populate the secret keys for each platform.
+            // Note that the code is disabled in the editor for it to not stop the EM editor code (due to ClassNotFound error)
+            // from recreating the dummy AppleTangle and GoogleTangle classes if they were inadvertently removed.
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+            googlePlayTangleData = GooglePlayTangle.Data();
+#endif
+
+#if (UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS) && !UNITY_EDITOR
+            appleTangleData = AppleTangle.Data();
+#endif
+
+            // Prepare the validator with the secrets we prepared in the Editor obfuscation window.
+            var validator = new CrossPlatformValidator(googlePlayTangleData, appleTangleData, Application.identifier);
+
+            try
+            {
+                // On Google Play, result has a single product ID.
+                // On Apple stores, receipts contain multiple products.
+                var result = validator.Validate(receipt);
+
+                // If the validation is successful, the result won't be null.
+                if (result == null)
+                {
+                    isValidReceipt = false;
+                }
+                else
+                {
+                    purchaseReceipts = result;
+
+                    // For informational purposes, we list the receipt(s)
+                    if (logReceiptContent)
+                    {
+                        this.logger.Log("Receipt contents:");
+
+                        foreach (var productReceipt in result)
+                        {
+                            if (productReceipt == null) continue;
+                            this.logger.Log(productReceipt.productID);
+                            this.logger.Log(productReceipt.purchaseDate.ToString(CultureInfo.InvariantCulture));
+                            this.logger.Log(productReceipt.transactionID);
+                        }
+                    }
+                }
+            }
+            catch (IAPSecurityException)
+            {
+                isValidReceipt = false;
+            }
+#endif
+
+            return isValidReceipt;
         }
 
         public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
@@ -205,7 +305,7 @@ namespace ServiceImplementation.IAPServices
         {
             if (this.onPurchaseComplete == null)
             {
-                this.signalBus.Fire(new UnityIAPOnPurchaseCompleteSignal(args.purchasedProduct.definition.id));
+                this.signalBus.Fire(new UnityIAPOnRestorePurchaseCompleteSignal(args.purchasedProduct.definition.id));
             }
 
             this.onPurchaseComplete?.Invoke(args.purchasedProduct.definition.id);

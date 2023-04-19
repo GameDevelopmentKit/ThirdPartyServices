@@ -22,7 +22,7 @@
                 listIdRemoveAds = new List<string>() { "RemoveAds" }
             }).AsCached().NonLazy();
 
-            this.Container.DeclareSignal<UnityIAPOnPurchaseCompleteSignal>();
+            this.Container.DeclareSignal<UnityIAPOnRestorePurchaseCompleteSignal>();
         }
     }
 }
