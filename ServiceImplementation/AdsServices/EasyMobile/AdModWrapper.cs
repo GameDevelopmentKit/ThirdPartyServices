@@ -69,6 +69,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private async void IntervalCall(int intervalSecond)
         {
+            if (this.adServices.IsRemoveAds()) return;
             this.LoadAppOpenAd();
             this.LoadAllMRec();
 #if ADMOB_NATIVE_ADS
