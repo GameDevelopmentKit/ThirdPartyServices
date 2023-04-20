@@ -147,6 +147,18 @@ namespace ServiceImplementation.IAPServices
         // Apple currently requires explicit purchase restoration for IAP, conditionally displaying a password prompt.
         public void RestorePurchases(Action onComplete = null)
         {
+#if FAKE_RESTORE_PURCHASE
+            foreach (var iapPack in this.iapPacks)
+            {
+                this.signalBus.Fire(new UnityIAPOnRestorePurchaseCompleteSignal(iapPack.Value.Id));
+            }
+
+            onComplete?.Invoke();
+
+            return;
+
+#endif
+
             // If Purchasing has not yet been set up ...
             if (!this.IsInitialized)
             {
@@ -205,10 +217,12 @@ namespace ServiceImplementation.IAPServices
 
             if (!pd.hasReceipt) return false;
             // presume validity if not validate receipt.
-
+#if !UNITY_EDITOR
             var isValid = this.ValidateReceipt(pd.receipt, out var purchaseReceipts);
 
             return isValid;
+#endif
+            return true;
         }
 
         //check Valid product
