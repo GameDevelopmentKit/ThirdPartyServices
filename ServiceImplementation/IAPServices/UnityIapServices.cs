@@ -110,7 +110,7 @@ namespace ServiceImplementation.IAPServices
             }
             catch (Exception e)
             {
-                throw new Exception(e.Message);
+               this.logger.Log($"GetPriceById {e.Message}");
             }
 
             return s;
