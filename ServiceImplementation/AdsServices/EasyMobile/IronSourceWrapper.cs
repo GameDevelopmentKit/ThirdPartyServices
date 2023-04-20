@@ -115,7 +115,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void OnBannerScreenPresented()
         {
-            this.signalBus.Fire(new BannerAdDismissedSignal(""));
+            this.signalBus.Fire(new BannerAdPresentedSignal(""));
         }
 
         private void OnBannerLoaded()
