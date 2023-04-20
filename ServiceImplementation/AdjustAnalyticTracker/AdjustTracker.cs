@@ -43,9 +43,12 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             var adjustEvent = new AdjustEvent(name);
 
-            foreach (var (key, value) in data)
+            if (data != null)
             {
-                adjustEvent.addCallbackParameter(key, value.ToString());
+                foreach (var (key, value) in data)
+                {
+                    adjustEvent.addCallbackParameter(key, value.ToString());
+                } 
             }
 
             Adjust.trackEvent(adjustEvent);
