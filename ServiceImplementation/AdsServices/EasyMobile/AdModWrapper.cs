@@ -259,7 +259,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 {
                     if (!this.isShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
                     {
-                        if (DateTime.Now - this.StartLoadingAOATime <= TimeSpan.FromSeconds(this.config.AOAOpenAppThreshHold))
+                        if ((DateTime.Now - this.StartLoadingAOATime).TotalSeconds <= this.config.AOAOpenAppThreshHold)
                         {
                             loadedAppOpenAd.Show();
                         }
