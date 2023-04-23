@@ -14,6 +14,9 @@ namespace Core.AnalyticServices
 #elif UNITY_IOS
         public string AdjustAppToken      => this.adjustIOSAppToken;
         public string AdjustPurchaseToken => this.adjustIOSPurchaseToken;
+#else
+        public string AdjustAppToken      => this.adjustAndroidAppToken;
+        public string AdjustPurchaseToken => this.adjustAndroidPurchaseToken;
 #endif
         public bool   AdjustIsDebug       => this.adjustIsDebug;
 
