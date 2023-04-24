@@ -39,6 +39,9 @@ namespace Core.AdsServices.Native
         {
             var isAdsActive = this.activeScreenList.Contains(obj.ScreenPresenter.GetType());
             //TODO change to set active for ads elements
+#if CREATIVE
+            isAdsActive = false;
+#endif
             this.gameObject.SetActive(isAdsActive);
         }
 
