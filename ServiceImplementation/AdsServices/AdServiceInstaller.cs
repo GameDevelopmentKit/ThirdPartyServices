@@ -36,6 +36,10 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInterfacesAndSelfTo<IronSourceWrapper>().AsCached();
 #endif
 
+#if FB_INSTANT
+            this.Container.BindInterfacesAndSelfTo<FacebookAdsWrapper>().AsCached().NonLazy();
+            
+#endif
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
 
             #region Ads signal
