@@ -20,7 +20,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
     public class AdModWrapper : IAOAAdService, IMRECAdService
 #if ADMOB_NATIVE_ADS
-        , INativeAdsService
+                              , INativeAdsService
 #endif
     {
         #region inject
@@ -56,6 +56,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             MobileAds.Initialize(_ =>
             {
+                this.LoadAppOpenAd();
                 this.IntervalCall(5);
                 AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
             });
@@ -70,7 +71,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private async void IntervalCall(int intervalSecond)
         {
             if (this.adServices.IsRemoveAds()) return;
-            this.LoadAppOpenAd();
             this.LoadAllMRec();
 #if ADMOB_NATIVE_ADS
             this.LoadAllNativeAds();
@@ -118,9 +118,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private async void OnAppStateChanged(AppState state)
         {
+            this.logService.Log($"App State is {state}");
             await UniTask.SwitchToMainThread();
             // Display the app open ad when the app is foregrounded.
-            this.logService.Log($"App State is {state}");
             this.signalBus.Fire(new AppStateChangeSignal(state == AppState.Background));
 
             if (state != AppState.Foreground)
@@ -162,13 +162,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
-            var loadedAppOpenAd = this.aoaAdIdToLoadedAdInstance.Values.FirstOrDefault(openAd => openAd.IsAoaAdAvailable);
-            loadedAppOpenAd?.Show();
+            if (this.aoaAdLoadedInstance.IsAoaAdAvailable)
+            {
+                this.aoaAdLoadedInstance.Show();
+            }
         }
 
         #endregion
 
-        private Dictionary<string, LoadedAppOpenAd> aoaAdIdToLoadedAdInstance = new();
+        private LoadedAppOpenAd aoaAdLoadedInstance = new();
 
         private class LoadedAppOpenAd
         {
@@ -187,64 +189,68 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.IsLoading                        =  false;
                 this.appOpenAd                        =  appOpenAd;
                 this.loadedTime                       =  DateTime.UtcNow;
-                appOpenAd.OnAdFullScreenContentClosed += this.AOAHandleAppOpenAdDidDismissFullScreenContent;
-                appOpenAd.OnAdFullScreenContentFailed += this.AOAHandleAppOpenAdFailedToPresentFullScreenContent;
             }
 
-            private async void AOAHandleAppOpenAdFailedToPresentFullScreenContent(AdError agError)
+            public void OnCloseAOA()
             {
-                await UniTask.SwitchToMainThread();
                 this.appOpenAd.Destroy();
                 this.appOpenAd = null;
             }
-
-            private async void AOAHandleAppOpenAdDidDismissFullScreenContent()
-            {
-                await UniTask.SwitchToMainThread();
-                this.appOpenAd.Destroy();
-                this.appOpenAd = null;
-            }
-
+            
             public bool IsAoaAdAvailable => this.appOpenAd != null && (DateTime.UtcNow - this.loadedTime).TotalHours < 4; //AppOpenAd is valid for 4 hours
 
             public void Show() { this.appOpenAd.Show(); }
         }
+        
+        private int currentAoaAdIndex      = 0;
+        private int minAOASleepLoadingTime = 8;
+        private int currentAOASleepLoadingTime = 8;
+        private int maxAOASleepLoadingTime = 64;
 
         private void LoadAppOpenAd()
         {
-            foreach (var configADModAoaId in this.config.ADModAoaIds)
-            {
-                this.LoadAppOpenAdWithId(configADModAoaId);
-            }
-        }
+            if (this.adServices.IsRemoveAds()) return;
 
-        private void LoadAppOpenAdWithId(string adUnitId)
-        {
-            this.logService.Log($"Start request Open App Ads Tier {adUnitId}");
+            var adUnitId = this.config.ADModAoaIds[this.currentAoaAdIndex];
+            this.logService.Log($"Start request Open App Ads Tier {this.currentAoaAdIndex} - {adUnitId}");
+            
 
             //Don't need to load this ad if it's already loaded.
-            var loadedAppOpenAd = this.aoaAdIdToLoadedAdInstance.GetOrAdd(adUnitId, () => new LoadedAppOpenAd());
 
-            if (loadedAppOpenAd.IsAoaAdAvailable || loadedAppOpenAd.IsLoading)
+            if (this.aoaAdLoadedInstance is { IsAoaAdAvailable: true })
             {
-                this.logService.Log($"Ad Status is available {loadedAppOpenAd.IsAoaAdAvailable} and loading {loadedAppOpenAd.IsLoading}");
-
+                this.logService.Log($"AOA ads was already loaded");
                 return;
             }
 
-            loadedAppOpenAd.IsLoading = true;
+            this.aoaAdLoadedInstance.IsLoading = true;
             AppOpenAd.Load(adUnitId, Screen.orientation, new AdRequest.Builder().Build(), LoadAoaCompletedHandler);
 
-            void LoadAoaCompletedHandler(AppOpenAd appOpenAd, LoadAdError error)
+            async void LoadAoaCompletedHandler(AppOpenAd appOpenAd, LoadAdError error)
             {
+                await UniTask.SwitchToMainThread();
                 if (error != null)
                 {
                     // Handle the error.
                     this.logService.Log($"Failed to load the ad. (reason: {error.GetMessage()}), id: {adUnitId}");
-                    loadedAppOpenAd.IsLoading = false;
+                    this.aoaAdLoadedInstance.IsLoading = false;
 
+                    this.currentAoaAdIndex = (this.currentAoaAdIndex + 1) % this.config.ADModAoaIds.Count;
+                    if (this.currentAoaAdIndex != 0)
+                    {
+                        this.LoadAppOpenAd();
+                    }
+                    else
+                    {
+                        await UniTask.Delay(TimeSpan.FromSeconds(this.currentAOASleepLoadingTime));
+                        this.currentAOASleepLoadingTime = Math.Min(this.currentAOASleepLoadingTime * 2, this.maxAOASleepLoadingTime);
+                        this.LoadAppOpenAd();
+                    }
                     return;
                 }
+
+                this.currentAoaAdIndex          = 0;
+                this.currentAOASleepLoadingTime = this.minAOASleepLoadingTime;
 
                 // App open ad is loaded.
                 appOpenAd.OnAdFullScreenContentClosed += this.AOAHandleAdFullScreenContentClosed;
@@ -253,7 +259,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 appOpenAd.OnAdImpressionRecorded      += this.AOAHandleAdImpressionRecorded;
                 appOpenAd.OnAdPaid                    += this.AdMobHandlePaidEvent;
 
-                loadedAppOpenAd.Init(appOpenAd);
+                this.aoaAdLoadedInstance.Init(appOpenAd);
 
                 lock (this)
                 {
@@ -261,7 +267,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                     {
                         if ((DateTime.Now - this.StartLoadingAOATime).TotalSeconds <= this.config.AOAOpenAppThreshHold)
                         {
-                            loadedAppOpenAd.Show();
+                            this.aoaAdLoadedInstance.Show();
                         }
 
                         this.isShowedFirstOpen = true;
@@ -277,6 +283,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
             this.IsShowingAd = false;
+            this.aoaAdLoadedInstance.OnCloseAOA();
+            this.LoadAppOpenAd();
         }
 
         private async void AOAHandleAdFullScreenContentFailed(AdError args)
@@ -340,7 +348,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             var bannerView = new BannerView(this.config.ADModMRecIds[adViewPosition], AdSize.MediumRectangle, this.ConvertAdViewPosition(adViewPosition));
 
-            var adRequest = new AdRequest.Builder().AddKeyword("car-climber-game").Build();
+            var adRequest = new AdRequest.Builder().Build();
 
             // send the request to load the ad.
             bannerView.LoadAd(adRequest);
