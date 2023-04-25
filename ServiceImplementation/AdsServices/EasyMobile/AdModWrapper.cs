@@ -55,18 +55,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.StartLoadingAOATime = DateTime.Now;
 
             MobileAds.Initialize(_ =>
-            {
-                this.LoadAppOpenAd();
-                this.IntervalCall(5);
-                AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
-            });
+                                 {
+                                     this.LoadAppOpenAd();
+                                     this.IntervalCall(5);
+                                     AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
+                                 });
         }
-        
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
-        private static void InitAdmob()
-        {
-            MobileAds.Initialize(_ => { });
-        }
+        private static void InitAdmob() { MobileAds.Initialize(_ => { }); }
 
         private async void IntervalCall(int intervalSecond)
         {
@@ -82,7 +79,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region AOA
 
         private DateTime StartLoadingAOATime;
-        private DateTime StartForceGroundTime;
+        private DateTime StartBackgroundTime;
 
         public class Config
         {
@@ -118,20 +115,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private async void OnAppStateChanged(AppState state)
         {
-            this.logService.Log($"App State is {state}");
             await UniTask.SwitchToMainThread();
+            this.logService.Log($"AOA App State is {state}");
             // Display the app open ad when the app is foregrounded.
             this.signalBus.Fire(new AppStateChangeSignal(state == AppState.Background));
 
             if (state != AppState.Foreground)
             {
-                this.StartForceGroundTime = DateTime.Now;
-
+                this.StartBackgroundTime = DateTime.Now;
                 return;
             }
 
-            if ((DateTime.Now - this.StartLoadingAOATime).TotalSeconds < this.adServicesConfig.MinPauseSecondToShowAoaAd)
+            var totalBackgroundSeconds = (DateTime.Now - this.StartBackgroundTime).TotalSeconds;
+            if (totalBackgroundSeconds < this.adServicesConfig.MinPauseSecondToShowAoaAd)
             {
+                this.logService.Log($"AOA background time: {totalBackgroundSeconds}");
                 return;
             }
 
@@ -186,9 +184,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                     this.appOpenAd = null;
                 }
 
-                this.IsLoading                        =  false;
-                this.appOpenAd                        =  appOpenAd;
-                this.loadedTime                       =  DateTime.UtcNow;
+                this.IsLoading  = false;
+                this.appOpenAd  = appOpenAd;
+                this.loadedTime = DateTime.UtcNow;
             }
 
             public void OnCloseAOA()
@@ -196,16 +194,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.appOpenAd.Destroy();
                 this.appOpenAd = null;
             }
-            
+
             public bool IsAoaAdAvailable => this.appOpenAd != null && (DateTime.UtcNow - this.loadedTime).TotalHours < 4; //AppOpenAd is valid for 4 hours
 
             public void Show() { this.appOpenAd.Show(); }
         }
-        
-        private int currentAoaAdIndex      = 0;
-        private int minAOASleepLoadingTime = 8;
+
+        private int currentAoaAdIndex          = 0;
+        private int minAOASleepLoadingTime     = 8;
         private int currentAOASleepLoadingTime = 8;
-        private int maxAOASleepLoadingTime = 64;
+        private int maxAOASleepLoadingTime     = 64;
 
         private void LoadAppOpenAd()
         {
@@ -213,7 +211,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             var adUnitId = this.config.ADModAoaIds[this.currentAoaAdIndex];
             this.logService.Log($"Start request Open App Ads Tier {this.currentAoaAdIndex} - {adUnitId}");
-            
+
 
             //Don't need to load this ad if it's already loaded.
 
@@ -246,6 +244,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                         this.currentAOASleepLoadingTime = Math.Min(this.currentAOASleepLoadingTime * 2, this.maxAOASleepLoadingTime);
                         this.LoadAppOpenAd();
                     }
+
                     return;
                 }
 
@@ -313,13 +312,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             await UniTask.SwitchToMainThread();
 
             this.analyticService.Track(new AdsRevenueEvent()
-            {
-                AdsRevenueSourceId = "AdMob",
-                Revenue            = args.Value / 1e5,
-                Currency           = "USD",
-                Placement          = "AOA",
-                AdNetwork          = "AdMob"
-            });
+                                       {
+                                           AdsRevenueSourceId = "AdMob",
+                                           Revenue            = args.Value / 1e5,
+                                           Currency           = "USD",
+                                           Placement          = "AOA",
+                                           AdNetwork          = "AdMob"
+                                       });
 
             this.logService.Log($"Received paid event. (currency: {args.CurrencyCode}, value: {args.Value}");
         }
@@ -424,16 +423,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private AdPosition ConvertAdViewPosition(AdViewPosition adViewPosition) =>
             adViewPosition switch
             {
-                AdViewPosition.TopLeft => AdPosition.TopLeft,
-                AdViewPosition.TopCenter => AdPosition.Top,
-                AdViewPosition.TopRight => AdPosition.TopRight,
-                AdViewPosition.CenterLeft => AdPosition.Center,
-                AdViewPosition.Centered => AdPosition.Center,
-                AdViewPosition.CenterRight => AdPosition.Center,
-                AdViewPosition.BottomLeft => AdPosition.BottomLeft,
+                AdViewPosition.TopLeft      => AdPosition.TopLeft,
+                AdViewPosition.TopCenter    => AdPosition.Top,
+                AdViewPosition.TopRight     => AdPosition.TopRight,
+                AdViewPosition.CenterLeft   => AdPosition.Center,
+                AdViewPosition.Centered     => AdPosition.Center,
+                AdViewPosition.CenterRight  => AdPosition.Center,
+                AdViewPosition.BottomLeft   => AdPosition.BottomLeft,
                 AdViewPosition.BottomCenter => AdPosition.Bottom,
-                AdViewPosition.BottomRight => AdPosition.BottomRight,
-                _ => AdPosition.Center
+                AdViewPosition.BottomRight  => AdPosition.BottomRight,
+                _                           => AdPosition.Center
             };
 
         #endregion
@@ -454,10 +453,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.loadingNativeAdsIds.Add(adsId);
 
             adLoader.OnNativeAdLoaded += (_, arg) =>
-            {
-                this.nativeAdsIdToNativeAd.Add(adsId, arg.nativeAd);
-                this.loadingNativeAdsIds.Remove(adsId);
-            };
+                                         {
+                                             this.nativeAdsIdToNativeAd.Add(adsId, arg.nativeAd);
+                                             this.loadingNativeAdsIds.Remove(adsId);
+                                         };
 
             adLoader.OnAdFailedToLoad += (_, _) => { this.loadingNativeAdsIds.Remove(adsId); };
 
