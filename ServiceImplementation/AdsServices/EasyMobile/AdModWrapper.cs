@@ -113,9 +113,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.IsResumedFromAdsOrIAP = false;
         }
 
-        private async void OnAppStateChanged(AppState state)
+        private void OnAppStateChanged(AppState state)
         {
-            await UniTask.SwitchToMainThread();
             this.logService.Log($"AOA App State is {state}");
             // Display the app open ad when the app is foregrounded.
             this.signalBus.Fire(new AppStateChangeSignal(state == AppState.Background));
@@ -226,7 +225,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             async void LoadAoaCompletedHandler(AppOpenAd appOpenAd, LoadAdError error)
             {
-                await UniTask.SwitchToMainThread();
                 if (error != null)
                 {
                     // Handle the error.
@@ -278,9 +276,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private async void AOAHandleAdFullScreenContentClosed()
+        private void AOAHandleAdFullScreenContentClosed()
         {
-            await UniTask.SwitchToMainThread();
             this.logService.Log("Closed app open ad");
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
@@ -289,31 +286,26 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.LoadAppOpenAd();
         }
 
-        private async void AOAHandleAdFullScreenContentFailed(AdError args)
+        private void AOAHandleAdFullScreenContentFailed(AdError args)
         {
-            await UniTask.SwitchToMainThread();
             this.logService.Log($"Failed to present the ad (reason: {args.GetMessage()})");
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
         }
 
-        private async void AOAHandleAdFullScreenContentOpened()
+        private void AOAHandleAdFullScreenContentOpened()
         {
-            await UniTask.SwitchToMainThread();
             this.logService.Log("Displayed app open ad");
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(""));
             this.IsShowingAd = true;
         }
 
-        private async void AOAHandleAdImpressionRecorded()
+        private void AOAHandleAdImpressionRecorded()
         {
-            await UniTask.SwitchToMainThread();
             this.logService.Log("Recorded ad impression");
         }
 
-        private async void AdMobHandlePaidEvent(AdValue args)
+        private void AdMobHandlePaidEvent(AdValue args)
         {
-            await UniTask.SwitchToMainThread();
-
             this.analyticService.Track(new AdsRevenueEvent()
                                        {
                                            AdsRevenueSourceId = "AdMob",
@@ -386,33 +378,28 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private async void BannerViewOnAdFullScreenContentClosed()
+        private void BannerViewOnAdFullScreenContentClosed()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new MRecAdDismissedSignal(""));
         }
 
-        private async void BannerViewOnAdFullScreenContentOpened()
+        private void BannerViewOnAdFullScreenContentOpened()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new MRecAdDisplayedSignal(""));
         }
 
-        private async void BannerViewOnAdClicked()
+        private void BannerViewOnAdClicked()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new MRecAdClickedSignal(""));
         }
 
-        private async void BannerViewOnAdLoadFailed(LoadAdError obj)
+        private void BannerViewOnAdLoadFailed(LoadAdError obj)
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new MRecAdLoadFailedSignal(""));
         }
 
-        private async void BannerViewOnAdLoaded()
+        private void BannerViewOnAdLoaded()
         {
-            await UniTask.SwitchToMainThread();
             this.signalBus.Fire(new MRecAdLoadedSignal(""));
         }
 
@@ -537,15 +524,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private async void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
+        private void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
         {
-            await UniTask.SwitchToMainThread();
             this.logService.Log($"Native ad failed to load: {e.LoadAdError.GetMessage()}");
         }
 
-        private async void HandleNativeAdLoaded(object sender, NativeAdEventArgs e)
+        private void HandleNativeAdLoaded(object sender, NativeAdEventArgs e)
         {
-            await UniTask.SwitchToMainThread();
             e.nativeAd.OnPaidEvent += this.AdMobNativePaidHandler;
             this.logService.Log($"Native ad loaded successfully");
         }
