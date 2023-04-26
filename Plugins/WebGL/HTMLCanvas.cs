@@ -1,4 +1,4 @@
-﻿namespace Packages.com.gdk._3rd.Plugins.WebGL
+﻿namespace Plugins.WebGL
 {
     using System.Runtime.InteropServices;
     using UnityEngine;

@@ -1,7 +1,8 @@
-﻿namespace Packages.com.gdk._3rd.Plugins.WebGL
+﻿namespace Plugins.WebGL
 {
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
+    using Newtonsoft.Json;
 
     public class FBLeaderboard
     {
@@ -40,9 +41,9 @@
 
         public void setScoreAsync(string keyName, long score, Dictionary<string, object> extraData, System.Action cb)
         {
-            // setScoreAsync_Callback = cb;
-            // string extraDataJsonStr = extraData.Count > 0 ? SimpleJson.SimpleJson.SerializeObject(extraData) : "";
-            leaderboard_setScoreAsync(keyName, /*extraDataJsonStr*/"", score);
+            setScoreAsync_Callback = cb;
+            string extraDataJsonStr = extraData.Count > 0 ? JsonConvert.SerializeObject(extraData) : "";
+            leaderboard_setScoreAsync(keyName, extraDataJsonStr, score);
         }
 
         public void getPlayerEntryAsync(string keyName, System.Action<FBLeaderboardEntry> cb)

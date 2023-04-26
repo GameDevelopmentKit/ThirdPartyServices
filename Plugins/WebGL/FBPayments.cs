@@ -1,6 +1,7 @@
-﻿namespace Packages.com.gdk._3rd.Plugins.WebGL
+﻿namespace Plugins.WebGL
 {
     using System.Runtime.InteropServices;
+    using Newtonsoft.Json;
 
     public class FBPayments
     {
@@ -9,7 +10,7 @@
 
         public bool isSupportPayments()
         {
-            return FBInstant.getSupportedAPIs().Contains("payments.purchaseAsync") && isOnReadyOk;
+            return FBAds.getSupportedAPIs().Contains("payments.purchaseAsync") && isOnReadyOk;
         }
 
         /// <summary>
@@ -68,7 +69,7 @@
         public void purchaseAsync(PurchaseConfig purchaseConfig, System.Action<FBError, Purchase> cb)
         {
             purchaseAsync_Callback = cb;
-            payments_purchaseAsync(/*SimpleJson.SimpleJson.SerializeObject(purchaseConfig)*/"");
+            payments_purchaseAsync(JsonConvert.SerializeObject(purchaseConfig));
         }
 
         public void getPurchasesAsync(System.Action<FBError, Purchase[]> cb)

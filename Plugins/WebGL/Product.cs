@@ -1,4 +1,4 @@
-﻿namespace Packages.com.gdk._3rd.Plugins.WebGL
+﻿namespace Plugins.WebGL
 {
     /// <summary>
     /// Represents a game's product information.

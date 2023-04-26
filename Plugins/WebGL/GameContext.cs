@@ -1,7 +1,8 @@
-﻿namespace Packages.com.gdk._3rd.Plugins.WebGL
+﻿namespace Plugins.WebGL
 {
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
+    using Newtonsoft.Json;
 
     public class GameContext
     {
@@ -31,7 +32,7 @@
         public void chooseAsync(Dictionary<string, object> p, System.Action cb)
         {
             chooseAsync_Callback = cb;
-            context_chooseAsync(/*SimpleJson.SimpleJson.SerializeObject(p)*/"");
+            context_chooseAsync(JsonConvert.SerializeObject(p));
         }
 
         public void getPlayersAsync(System.Action<ContextPlayerEntry[]> cb)

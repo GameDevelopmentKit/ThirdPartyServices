@@ -1,4 +1,4 @@
-﻿namespace Packages.com.gdk._3rd.Plugins.WebGL
+﻿namespace Plugins.WebGL
 {
     /// <summary>
     /// The configuration of a purchase request for a product registered to the game.

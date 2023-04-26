@@ -1,7 +1,8 @@
-﻿namespace Packages.com.gdk._3rd.Plugins.WebGL
+﻿namespace Plugins.WebGL
 {
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
+    using Newtonsoft.Json;
 
     public class ContextPlayer
     {
@@ -61,7 +62,7 @@
         public void getDataAsync(List<string> keys, System.Action<Dictionary<string, object>> cb)
         {
             getDataAsync_Callback = cb;
-            player_getDataAsync(/*SimpleJson.SimpleJson.SerializeObject(keys)*/null);
+            player_getDataAsync(JsonConvert.SerializeObject(keys));
         }
 
         /// <summary>
@@ -70,7 +71,7 @@
         public void setDataAsync(Dictionary<string, object> gameData, System.Action cb)
         {
             setDataAsync_Callback = cb;
-            player_setDataAsync( /*SimpleJson.SimpleJson.SerializeObject(gameData)*/null);
+            player_setDataAsync(JsonConvert.SerializeObject(gameData));
         }
 
         public void canSubscribeBotAsync(System.Action<bool> cb)

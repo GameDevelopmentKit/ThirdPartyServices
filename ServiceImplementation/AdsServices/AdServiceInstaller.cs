@@ -6,11 +6,14 @@ namespace ServiceImplementation.AdsServices
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.EasyMobile;
+    using ServiceImplementation.AdsServices.FacebookInstant;
     using ServiceImplementation.AdsServices.Signal;
+    using UnityEngine;
     using Zenject;
 
     public class AdServiceInstaller : Installer<AdServiceInstaller>
     {
+        [SerializeField] private GameObject facebookAdWrapperGameObject;
         public override void InstallBindings()
         {
             //config
@@ -37,8 +40,7 @@ namespace ServiceImplementation.AdsServices
 #endif
 
 #if FB_INSTANT
-            this.Container.BindInterfacesAndSelfTo<FacebookAdsWrapper>().AsCached().NonLazy();
-            
+            this.Container.Bind<FacebookAdsWrapper>().FromNewComponentOnNewPrefab(this.facebookAdWrapperGameObject).AsCached().NonLazy();
 #endif
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
 

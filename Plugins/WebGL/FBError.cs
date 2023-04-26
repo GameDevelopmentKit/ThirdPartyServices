@@ -1,4 +1,4 @@
-﻿namespace Packages.com.gdk._3rd.Plugins.WebGL
+﻿namespace Plugins.WebGL
 {
     public class FBError
     {
@@ -10,6 +10,8 @@
         {
             return "FBError: code=" + this.code + ",message=" + this.message;
         }
+
+
     }
 
 }
