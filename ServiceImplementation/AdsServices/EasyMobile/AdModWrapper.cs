@@ -226,6 +226,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             async void LoadAoaCompletedHandler(AppOpenAd appOpenAd, LoadAdError error)
             {
+                await UniTask.SwitchToMainThread();
                 if (error != null)
                 {
                     // Handle the error.
