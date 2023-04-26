@@ -226,7 +226,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             async void LoadAoaCompletedHandler(AppOpenAd appOpenAd, LoadAdError error)
             {
-                await UniTask.SwitchToMainThread();
                 if (error != null)
                 {
                     // Handle the error.
@@ -248,6 +247,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                     return;
                 }
 
+                this.logService.Log($"Load Open App Ads Tier {this.currentAoaAdIndex} - {adUnitId} successfully!!");
                 this.currentAoaAdIndex          = 0;
                 this.currentAOASleepLoadingTime = this.minAOASleepLoadingTime;
 
@@ -260,17 +260,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
                 this.aoaAdLoadedInstance.Init(appOpenAd);
 
-                lock (this)
+                if (!this.isShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
                 {
-                    if (!this.isShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
+                    var totalLoadingTime = (DateTime.Now - this.StartLoadingAOATime).TotalSeconds;
+                    if (totalLoadingTime <= this.config.AOAOpenAppThreshHold)
                     {
-                        if ((DateTime.Now - this.StartLoadingAOATime).TotalSeconds <= this.config.AOAOpenAppThreshHold)
-                        {
-                            this.aoaAdLoadedInstance.Show();
-                        }
-
-                        this.isShowedFirstOpen = true;
+                        this.aoaAdLoadedInstance.Show();
                     }
+                    else
+                    {
+                        this.logService.Log($"AOA loading time for first open over the threshold {totalLoadingTime} > {this.config.AOAOpenAppThreshHold}!");
+                    }
+
+                    this.isShowedFirstOpen = true;
                 }
             }
         }
