@@ -23,7 +23,6 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
 
         public static void LogEvent(string eventName, Dictionary<string, object> paramenter)
         {
-            Debug.Log($"OnEvent - {eventName} - {JsonConvert.SerializeObject(paramenter)}");
             var parameterArray = new Parameter[paramenter.Count];
             var index          = 0;
             foreach (var (paramName, paramValue) in paramenter)

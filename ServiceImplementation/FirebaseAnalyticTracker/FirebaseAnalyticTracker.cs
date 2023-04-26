@@ -49,6 +49,7 @@
             if (data == null)
             {
                 FirebaseAnalytics.LogEvent(name);
+                Debug.Log($"OnEvent - {name}");
 
                 return;
             }
@@ -56,6 +57,7 @@
             if (!this.CheckConventions(data))
                 return;
 
+            Debug.Log($"OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
             switch (data.Count)
             {
                 case > 1:
