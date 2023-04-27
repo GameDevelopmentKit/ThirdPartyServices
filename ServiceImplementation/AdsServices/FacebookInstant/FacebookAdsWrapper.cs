@@ -52,13 +52,16 @@
             FBAds.ShowBannerAd("");
         }
         public void HideBannedAd()    { FBAds.HideBannerAd(); }
-        public void DestroyBannerAd() { this.logService.Log("Use hide banner ad method instead!", LogLevel.EXCEPTION); }
+        public void DestroyBannerAd() { this.logService.Log("Use HideBannerAd method instead!", LogLevel.EXCEPTION); }
 
         #endregion
 
         #region interstitial
 
-        public bool IsInterstitialAdReady(string place) { return FBAds.IsInterstitialAdReady(place); }
+        public bool IsInterstitialAdReady(string place)
+        {
+            return FBAds.IsInterstitialAdReady(place);
+        }
         public void ShowInterstitialAd(string place)
         {
             if (!this.adServicesConfig.EnableInterstitialAd)
@@ -108,6 +111,6 @@
         {
             return true;
         }
-        public bool IsRemoveAds()                                                { throw new NotImplementedException(); }
+        public bool IsRemoveAds() { return false; }
     }
 }

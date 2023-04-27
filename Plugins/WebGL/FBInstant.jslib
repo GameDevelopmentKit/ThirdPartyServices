@@ -4,7 +4,7 @@ var LibraryMyFBPlugin = {
 		interstitialAd:null,
 		rewardedAd:null,
 	},
-  fbinstant_showBannerAd : function(adId){
+  fbinstant_showBannerAdAsync : function(adId){
     adId = UTF8ToString(adId);
 
     FBInstant.loadBannerAdAsync(adId).then(function(){
@@ -13,7 +13,7 @@ var LibraryMyFBPlugin = {
         console.error(e.message);
     })
   },
-  fbinstant_hideBannerAd: function(){
+  fbinstant_hideBannerAdAsync: function(){
     FBInstant.hideBannerAdAsync().then(function(){
         console.log('Banner ad hide OK.');
     }).catch(function(e){
@@ -22,23 +22,23 @@ var LibraryMyFBPlugin = {
   },
   fbinstant_isInterstitialAdReady: function(adId){
 	  if (MyAdInstance.interstitialAd){
-          return;
+          return false;
       }
 
       MyAdInstance.interstitialAd = null;
       adId = UTF8ToString(adId);
 
-      FBInstant.getInterstitialAdAsync(adId).then(function(interstitial) {
+      const loadInter = FBInstant.getInterstitialAdAsync(adId).then(function(interstitial) {
           MyAdInstance.interstitialAd = interstitial
-          return MyAdInstance.interstitialAd.loadAsync();
+          MyAdInstance.interstitialAd.loadAsync();
       }).then(function(){
           console.log("fbinstant_getInterstitialAdAsync|preload|ok");
-          return true;
       }).catch(function(err){
           FBInstant.logEvent(err.code, 1, FBInstant.getEntryPointData());
           console.error("fbinstant_getInterstitialAdAsync|Ad failed to preload:" + JSON.stringify(err));
           return false;
       });
+      return true;
   },
   
   fbinstant_showInterstitialAdAsync: function(){
@@ -77,10 +77,10 @@ var LibraryMyFBPlugin = {
         return MyAdInstance.rewardedAd.loadAsync();
     }).then(function() {
         console.log('fbinstant_getRewardedVideoAsync|Rewarded video preloaded|ok');
-		return true;
+		    return true;
     }).catch(function(err){
         console.error('fbinstant_getRewardedVideoAsync|Rewarded video failed to preload: ' + err.message);
-		return false;
+		    return false;
     });
   },
   

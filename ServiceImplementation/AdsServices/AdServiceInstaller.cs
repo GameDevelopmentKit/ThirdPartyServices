@@ -40,7 +40,7 @@ namespace ServiceImplementation.AdsServices
 #endif
 
 #if FB_INSTANT
-            this.Container.Bind<FacebookAdsWrapper>().FromNewComponentOnNewPrefab(this.facebookAdWrapperGameObject).AsCached().NonLazy();
+            this.Container.BindInterfacesAndSelfTo<FacebookAdsWrapper>().FromNewComponentOnNewPrefabResource("FacebookAdsWrapper").AsCached().NonLazy();
 #endif
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
 
