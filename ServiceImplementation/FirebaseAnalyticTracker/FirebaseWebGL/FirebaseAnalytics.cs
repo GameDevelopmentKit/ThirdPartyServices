@@ -1,5 +1,7 @@
 ﻿namespace ServiceImplementation.FirebaseAnalyticTracker
 {
+    using System.Collections.Generic;
+    
     public class FirebaseAnalytics
     {
         public static void SetUserId(string userId) => AnalyticsSetUserIdWeb(userId);
