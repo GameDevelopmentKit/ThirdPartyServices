@@ -1,7 +1,9 @@
 ﻿namespace ServiceImplementation.FirebaseAnalyticTracker
 {
     using System.Collections.Generic;
-    
+    using System.Runtime.InteropServices;
+    using Newtonsoft.Json;
+
     public class FirebaseAnalytics
     {
         public static void SetUserId(string userId) => AnalyticsSetUserIdWeb(userId);
