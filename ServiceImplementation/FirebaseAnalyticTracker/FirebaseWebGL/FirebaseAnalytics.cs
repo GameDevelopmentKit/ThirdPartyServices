@@ -1,4 +1,5 @@
-﻿namespace ServiceImplementation.FirebaseAnalyticTracker
+﻿#if FIREBASE_SDK_EXISTS
+namespace ServiceImplementation.FirebaseAnalyticTracker
 {
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
@@ -45,4 +46,4 @@
         private static extern void AnalyticsLogEventWeb3(string name);
     }
 }
-
+#endif
