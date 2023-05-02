@@ -2,19 +2,14 @@
 {
     using System;
     using Core.AdsServices;
+    using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.LogService;
-    using ServiceImplementation.FBInstant;
     using ServiceImplementation.FBInstant.Adsvertising;
     using UnityEngine;
     using Zenject;
-   
+
     public class FacebookAdsWrapper : MonoBehaviour, IAdServices
     {
-        public Action         OnInterstitialAdCompleted = null;
-        public Action<string> OnInterstitialAdFailed    = null;
-        public Action         OnRewardVideoAdCompleted  = null;
-        public Action<string> OnRewardVideoAdFailed     = null;
-
         private readonly ILogService      logService;
         private readonly SignalBus        signalBus;
         private readonly AdServicesConfig adServicesConfig;
@@ -33,10 +28,22 @@
 
         #region browser callback
 
-        public void RequestShowInterstitialAdSuccessed()          { this.OnInterstitialAdCompleted?.Invoke(); }
-        public void RequestShowInterstitialAdFailed(string error) { this.OnInterstitialAdFailed?.Invoke(error); }
-        public void RequestShowRewardAdSuccessed()                { this.OnRewardVideoAdCompleted?.Invoke(); }
-        public void RequestShowRewardAdFailed(string error)       { this.OnRewardVideoAdFailed?.Invoke(error); }
+        public void RequestShowInterstitialAdSucceed()
+        {
+            this.signalBus.Fire(new InterstitialAdDownloadedSignal(""));
+        }
+        public void RequestShowInterstitialAdFailed(string error)
+        {
+            this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", error));
+        }
+        public void RequestShowRewardAdSucceed()
+        {
+            this.signalBus.Fire(new RewardedAdLoadedSignal(""));
+        }
+        public void RequestShowRewardAdFailed(string error)
+        {
+            this.signalBus.Fire(new RewardedAdLoadFailedSignal("", error));
+        }
 
         #endregion
 
@@ -59,16 +66,14 @@
 
         #region interstitial
 
-        public bool IsInterstitialAdReady(string place)
-        {
-            return FBAds.IsInterstitialAdReady(place);
-        }
+        public bool IsInterstitialAdReady(string place) { return FBAds.IsInterstitialAdReady(place); }
         public void ShowInterstitialAd(string place)
         {
             if (!this.adServicesConfig.EnableInterstitialAd)
             {
                 return;
             }
+
             FBAds.ShowInterstitialAd(place);
         }
 
@@ -83,6 +88,7 @@
             {
                 return;
             }
+
             FBAds.ShowRewardedVideoAd(place);
         }
         public void ShowRewardedAd(string place, Action onCompleted)
@@ -91,16 +97,21 @@
             {
                 return;
             }
-            onCompleted = this.OnRewardVideoAdCompleted;
+
             onCompleted?.Invoke();
             FBAds.ShowRewardedVideoAd(place);
         }
 
         #endregion
-        
+
+        #region reward interstitial ads
+
         public bool IsRewardedInterstitialAdReady()                              { throw new NotImplementedException(); }
         public void ShowRewardedInterstitialAd(string place)                     { throw new NotImplementedException(); }
         public void ShowRewardedInterstitialAd(string place, Action onCompleted) { throw new NotImplementedException(); }
+
+        #endregion
+
         public void RemoveAds(bool revokeConsent = false)
         {
             // TODO Implement remove ad
@@ -108,10 +119,9 @@
             // this.adServicesConfig.EnableInterstitialAd = false;
             // this.adServicesConfig.EnableRewardedAd     = false;
         }
-        public bool IsAdsInitialized()
-        {
-            return true;
-        }
+
+        public bool IsAdsInitialized() { return true; }
+
         public bool IsRemoveAds() { return false; }
     }
 }

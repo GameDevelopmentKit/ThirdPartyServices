@@ -20,9 +20,12 @@ namespace ServiceImplementation.AdsServices
             this.Container.Bind<AdServicesConfig>().AsCached().NonLazy();
 #if EASY_MOBILE_PRO && (!UNITY_EDITOR || (UNITY_EDITOR && !EM_IRONSOURCE))
             this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
+#elif FB_INSTANT
+            this.Container.BindInterfacesAndSelfTo<FacebookAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName("FacebookAdsWrapper").AsCached();
 #else
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
+            
 #if EM_ADMOB
             this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached().NonLazy();
             this.Container.Bind<AdmobAOAMono>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
@@ -37,10 +40,6 @@ namespace ServiceImplementation.AdsServices
 
 #if EM_IRONSOURCE
             this.Container.BindInterfacesAndSelfTo<IronSourceWrapper>().AsCached();
-#endif
-
-#if FB_INSTANT
-            this.Container.BindInterfacesAndSelfTo<FacebookAdsWrapper>().FromNewComponentOnNewPrefabResource("FacebookAdsWrapper").AsCached().NonLazy();
 #endif
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
 
