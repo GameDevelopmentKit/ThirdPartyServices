@@ -1,4 +1,4 @@
-﻿namespace Plugins.WebGL
+﻿namespace ServiceImplementation.FBInstant
 {
     /// <summary>
     /// The configuration of a purchase request for a product registered to the game.

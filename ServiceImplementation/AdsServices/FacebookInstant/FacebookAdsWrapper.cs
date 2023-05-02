@@ -3,7 +3,7 @@
     using System;
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
-    using Plugins.WebGL;
+    using ServiceImplementation.FBInstant;
     using UnityEngine;
     using Zenject;
    

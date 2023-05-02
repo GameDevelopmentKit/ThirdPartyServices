@@ -1,4 +1,4 @@
-﻿namespace Plugins.WebGL
+﻿namespace ServiceImplementation.FBInstant
 {
     /// <summary>
     /// Represents a game's product information.

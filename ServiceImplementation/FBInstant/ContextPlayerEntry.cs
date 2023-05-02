@@ -1,4 +1,4 @@
-﻿namespace Plugins.WebGL
+﻿namespace ServiceImplementation.FBInstant
 {
     [System.Serializable]
     public class ContextPlayerEntry

@@ -1,4 +1,4 @@
-﻿namespace Plugins.WebGL
+﻿namespace ServiceImplementation.FBInstant
 {
     using System.Runtime.InteropServices;
     using UnityEngine;

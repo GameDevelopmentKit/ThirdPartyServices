@@ -1,4 +1,4 @@
-﻿namespace Plugins.WebGL
+﻿namespace ServiceImplementation.FBInstant
 {
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
