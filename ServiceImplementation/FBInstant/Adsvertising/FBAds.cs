@@ -1,9 +1,11 @@
-﻿namespace ServiceImplementation.FBInstant
+﻿namespace ServiceImplementation.FBInstant.Adsvertising
 {
     using System;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
     using Newtonsoft.Json;
+    using ServiceImplementation.FBInstant.Leaderboard;
+    using ServiceImplementation.FBInstant.Payment;
 
     public class FBAds
     {

@@ -4,6 +4,7 @@
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.FBInstant;
+    using ServiceImplementation.FBInstant.Adsvertising;
     using UnityEngine;
     using Zenject;
    

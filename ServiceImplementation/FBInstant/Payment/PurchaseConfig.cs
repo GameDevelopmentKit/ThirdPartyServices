@@ -1,4 +1,4 @@
-﻿namespace ServiceImplementation.FBInstant
+﻿namespace ServiceImplementation.FBInstant.Payment
 {
     /// <summary>
     /// The configuration of a purchase request for a product registered to the game.

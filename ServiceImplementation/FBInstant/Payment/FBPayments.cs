@@ -1,7 +1,8 @@
-﻿namespace ServiceImplementation.FBInstant
+﻿namespace ServiceImplementation.FBInstant.Payment
 {
     using System.Runtime.InteropServices;
     using Newtonsoft.Json;
+    using ServiceImplementation.FBInstant.Adsvertising;
 
     public class FBPayments
     {

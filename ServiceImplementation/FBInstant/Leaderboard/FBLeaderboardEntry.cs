@@ -1,4 +1,4 @@
-﻿namespace ServiceImplementation.FBInstant
+﻿namespace ServiceImplementation.FBInstant.Leaderboard
 {
     using System.Collections.Generic;
 

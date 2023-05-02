@@ -1,4 +1,4 @@
-﻿namespace ServiceImplementation.FBInstant
+﻿namespace ServiceImplementation.FBInstant.Payment
 {
     /// <summary>
     /// Represents a game's product information.
