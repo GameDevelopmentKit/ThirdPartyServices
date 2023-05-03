@@ -1,0 +1,27 @@
+{
+    "name": "3rd.ServiceImplementation.Ads.FBInstant",
+    "rootNamespace": "",
+    "references": [
+        "3rdCore.Ads",
+        "3rdCore.Analytic",
+        "GameFoundation.Utilities",
+        "Zenject-Source",
+        "Zenject-Signals",
+        "UniTask",
+        "Unity.TextMeshPro",
+        "FBInstant"
+    ],
+    "includePlatforms": [
+        "WebGL"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Zenject-usage.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

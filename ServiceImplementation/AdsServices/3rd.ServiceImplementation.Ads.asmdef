@@ -12,8 +12,7 @@
         "UniTask",
         "IronSource.Scripts",
         "AdjustSDK",
-        "Unity.TextMeshPro",
-        "FBInstant"
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
