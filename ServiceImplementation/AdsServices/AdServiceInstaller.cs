@@ -6,6 +6,7 @@ namespace ServiceImplementation.AdsServices
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.EasyMobile;
+    using ServiceImplementation.AdsServices.FacebookInstant;
     using ServiceImplementation.AdsServices.Signal;
     using Zenject;
 
@@ -17,9 +18,12 @@ namespace ServiceImplementation.AdsServices
             this.Container.Bind<AdServicesConfig>().AsCached().NonLazy();
 #if EASY_MOBILE_PRO && (!UNITY_EDITOR || (UNITY_EDITOR && !EM_IRONSOURCE))
             this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
+#elif FB_INSTANT
+            this.Container.BindInterfacesAndSelfTo<FacebookAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName("FacebookAdsWrapper").AsCached();
 #else
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
+            
 #if EM_ADMOB
             this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached().NonLazy();
             this.Container.Bind<AdmobAOAMono>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
@@ -35,7 +39,6 @@ namespace ServiceImplementation.AdsServices
 #if EM_IRONSOURCE
             this.Container.BindInterfacesAndSelfTo<IronSourceWrapper>().AsCached();
 #endif
-
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
 
             #region Ads signal
