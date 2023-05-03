@@ -8,12 +8,10 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.EasyMobile;
     using ServiceImplementation.AdsServices.FacebookInstant;
     using ServiceImplementation.AdsServices.Signal;
-    using UnityEngine;
     using Zenject;
 
     public class AdServiceInstaller : Installer<AdServiceInstaller>
     {
-        [SerializeField] private GameObject facebookAdWrapperGameObject;
         public override void InstallBindings()
         {
             //config
