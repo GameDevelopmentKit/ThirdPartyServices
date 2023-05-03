@@ -5,7 +5,6 @@
 
     public class HTMLCanvas
     {
-
         [DllImport("__Internal")]
         public static extern string htmlcanvas_toImageBase64(string type, int encoderOptions);
 
@@ -35,7 +34,5 @@
             string base64 = "data:image/png;base64," + System.Convert.ToBase64String(img);
             return base64;
         }
-
     }
-
 }

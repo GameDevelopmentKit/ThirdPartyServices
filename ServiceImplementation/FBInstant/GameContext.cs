@@ -6,7 +6,6 @@
 
     public class GameContext
     {
-
         /// <summary>
         /// callback after confirmed choose context
         /// </summary>
@@ -50,8 +49,5 @@
         {
             return context_getID();
         }
-
-
     }
-
 }

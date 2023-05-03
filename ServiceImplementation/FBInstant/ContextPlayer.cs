@@ -6,7 +6,6 @@
 
     public class ContextPlayer
     {
-
         /// <summary>
         /// callback after get data
         /// </summary>
@@ -87,5 +86,4 @@
             player_subscribeBotAsync();
         }
     }
-
 }

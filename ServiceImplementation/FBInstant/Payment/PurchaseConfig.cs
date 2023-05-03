@@ -6,7 +6,6 @@
     [System.Serializable]
     public class PurchaseConfig
     {
-
         /// <summary>
         /// The identifier of the product to purchase
         /// </summary>
@@ -21,7 +20,5 @@
         {
             return "PurchaseConfig: productID=" + this.productID + ",developerPayload=" + this.developerPayload;
         }
-
     }
-
 }

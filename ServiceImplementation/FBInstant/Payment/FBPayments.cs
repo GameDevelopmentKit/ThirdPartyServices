@@ -6,7 +6,6 @@
 
     public class FBPayments
     {
-
         public static bool isOnReadyOk = false;
 
         public bool isSupportPayments()
@@ -84,7 +83,5 @@
             consumePurchaseAsync_Callback = cb;
             payments_consumePurchaseAsync(purchaseToken);
         }
-
     }
-
 }

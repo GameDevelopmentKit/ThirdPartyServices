@@ -6,7 +6,6 @@
 
     public class FBLeaderboard
     {
-
         /// <summary>
         /// callback after set leaderboard score
         /// </summary>
@@ -63,7 +62,5 @@
             getConnectedPlayerEntriesAsync_Callback = cb;
             leaderboard_getConnectedPlayerEntriesAsync(keyName, limit);
         }
-
     }
-
 }

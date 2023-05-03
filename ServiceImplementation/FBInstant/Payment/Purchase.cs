@@ -6,7 +6,6 @@
     [System.Serializable]
     public class Purchase
     {
-
         /// <summary>
         /// A developer-specified string, provided during the purchase of the product
         /// </summary>
@@ -42,7 +41,5 @@
             return "Purchase: productID=" + this.productID + ",paymentID=" + this.paymentID + ",purchaseTime=" + this.purchaseTime
                 + ",purchaseToken=" + this.purchaseToken + ",developerPayload=" + this.developerPayload + ",signedRequest=" + this.signedRequest;
         }
-
     }
-
 }

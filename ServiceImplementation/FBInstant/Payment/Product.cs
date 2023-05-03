@@ -6,7 +6,6 @@
     [System.Serializable]
     public class Product
     {
-
         /// <summary>
         /// The title of the product
         /// </summary>
@@ -42,7 +41,5 @@
             return "Product: title=" + this.title + ",productID=" + this.productID + ",price=" + this.price + ",imageURI=" + this.imageURI + ",description=" + this.description;
 
         }
-
     }
-
 }

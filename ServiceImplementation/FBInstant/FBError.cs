@@ -2,7 +2,6 @@
 {
     public class FBError
     {
-
         public string code;
         public string message;
 
@@ -10,8 +9,5 @@
         {
             return "FBError: code=" + this.code + ",message=" + this.message;
         }
-
-
     }
-
 }
