@@ -5,9 +5,7 @@ namespace ServiceImplementation.AdsServices
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
-#if EASY_MOBILE_PRO && (!UNITY_EDITOR || (UNITY_EDITOR && !EM_IRONSOURCE))
     using ServiceImplementation.AdsServices.EasyMobile;
-#endif
 #if FB_INSTANT
     using ServiceImplementation.AdsServices.FacebookInstant;
 #endif
