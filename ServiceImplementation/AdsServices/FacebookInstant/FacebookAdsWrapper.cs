@@ -1,9 +1,9 @@
 ﻿namespace ServiceImplementation.AdsServices.FacebookInstant
 {
     using System;
+    using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
-    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.FBInstant.Adsvertising;
     using UnityEngine;
@@ -14,6 +14,8 @@
         private readonly ILogService              logService;
         private readonly SignalBus                signalBus;
         private readonly FacebookAdServicesConfig adServicesConfig;
+        private readonly Dictionary<string, bool> isInterstitialAdLoading = new();
+        private readonly Dictionary<string, bool> isRewardedAdLoading     = new();
 
         public FacebookAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig)
         {
@@ -56,24 +58,23 @@
 
         #region InterstitialAd
 
-        private async void LoadInterstitialAd(string place)
+        private void LoadInterstitialAd(string place)
         {
-            var ucs = new UniTaskCompletionSource<bool>();
+            if (this.isInterstitialAdLoading.GetValueOrDefault(place, false)) return;
+            this.isInterstitialAdLoading[place] = true;
+
             FBAds.LoadInterstitialAd(
                 place,
                 onSuccess: () =>
                 {
-                    ucs.TrySetResult(true);
+                    this.isInterstitialAdLoading[place] = false;
                 },
                 onFail: err =>
                 {
-                    ucs.TrySetResult(false);
+                    this.isInterstitialAdLoading[place] = false;
+                    this.LoadInterstitialAd(place);
                 }
             );
-            if (!await ucs.Task)
-            {
-                this.LoadInterstitialAd(place);
-            }
         }
 
         public bool IsInterstitialAdReady(string place)
@@ -104,24 +105,23 @@
 
         #region RewardedAd
 
-        private async void LoadRewardedAd(string place)
+        private void LoadRewardedAd(string place)
         {
-            var ucs = new UniTaskCompletionSource<bool>();
+            if (this.isRewardedAdLoading.GetValueOrDefault(place, false)) return;
+            this.isRewardedAdLoading[place] = true;
+
             FBAds.LoadRewardedAd(
                 place,
                 onSuccess: () =>
                 {
-                    ucs.TrySetResult(true);
+                    this.isRewardedAdLoading[place] = false;
                 },
                 onFail: err =>
                 {
-                    ucs.TrySetResult(false);
+                    this.isRewardedAdLoading[place] = false;
+                    this.LoadRewardedAd(place);
                 }
             );
-            if (!await ucs.Task)
-            {
-                this.LoadRewardedAd(place);
-            }
         }
 
         public bool IsRewardedAdReady(string place)
