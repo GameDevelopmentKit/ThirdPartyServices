@@ -9,9 +9,11 @@
         "Zenject-Signals",
         "UniTask",
         "Unity.TextMeshPro",
-        "FBInstant"
+        "FBInstant",
+        "3rd.ServiceImplementation.Ads"
     ],
     "includePlatforms": [
+        "Editor",
         "WebGL"
     ],
     "excludePlatforms": [],
