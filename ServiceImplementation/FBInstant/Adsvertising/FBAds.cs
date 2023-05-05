@@ -14,7 +14,7 @@
         public static FBLeaderboard leaderboard = new FBLeaderboard();
 
         public static FBPayments payments = new FBPayments();
-        
+
         #region javascript
 
         [DllImport("__Internal")]
@@ -41,20 +41,27 @@
         [DllImport("__Internal")]
         public static extern string getLocale();
 
+        #region Ads
 
         [DllImport("__Internal")]
-        public static extern void fbinstant_showBannerAdAsync(string adId);
-        [DllImport("__Internal")]
-        public static extern void fbinstant_hideBannerAdAsync();
-        [DllImport("__Internal")]
-        public static extern bool fbinstant_isInterstitialAdReady(string adId);
-        [DllImport("__Internal")]
-        public static extern void fbinstant_showInterstitialAdAsync();
-        [DllImport("__Internal")]
-        public static extern bool fbinstant_isRewardVideoReady(string adId);
+        public static extern void ShowBannerAd(string placement);
 
         [DllImport("__Internal")]
-        public static extern void fbinstant_showRewardedVideoAsync();
+        public static extern void HideBannerAd();
+
+        [DllImport("__Internal")]
+        public static extern void LoadInterstitialAd(string placement, Action onSuccess, Action<string> onFail);
+
+        [DllImport("__Internal")]
+        public static extern void ShowInterstitialAd(string placement, Action onSuccess, Action<string> onFail);
+        
+        [DllImport("__Internal")]
+        public static extern void LoadRewardedAd(string placement, Action onSuccess, Action<string> onFail);
+
+        [DllImport("__Internal")]
+        public static extern void ShowRewardedAd(string placement, Action onSuccess, Action<string> onFail);
+
+        #endregion
 
         [DllImport("__Internal")]
         public static extern void fbinstant_updateAsync(string jsonStr);
@@ -62,10 +69,10 @@
         [DllImport("__Internal")]
         public static extern void fbinstant_shareAsync(string jsonStr);
 
-        
         #endregion
-        
+
         private static List<string> supportedApis = null; // use memory cache
+
         public static List<string> getSupportedAPIs()
         {
             if (supportedApis != null)
@@ -79,57 +86,24 @@
             return supportedApis;
         }
 
-        #region banner
-
-        public static void ShowBannerAd(string adId)
-        {
-            fbinstant_showBannerAdAsync(adId);
-        }
-
-        public static void HideBannerAd()
-        {
-            fbinstant_hideBannerAdAsync();   
-        }
-
-        #endregion
-
-        #region interstitial
-
-        public static bool IsInterstitialAdReady(string adId) { return fbinstant_isInterstitialAdReady(adId); }
-
-        public static void ShowInterstitialAd(string adId)
-        {
-            if (!fbinstant_isInterstitialAdReady(adId)) return;
-            fbinstant_showInterstitialAdAsync();
-        }
-
-        #endregion
-
-        #region reward video
-
-        public static bool IsRewardVideoReady(string adId)
-        {
-            return fbinstant_isRewardVideoReady(adId);
-        }
-
-        public static void ShowRewardedVideoAd(string adId)
-        {
-            if (!fbinstant_isRewardVideoReady(adId)) return;
-            fbinstant_showRewardedVideoAsync();
-        }
-
-        #endregion
-        
         /// <summary>
         /// Only Support on Web & Android
         /// </summary>
         /// <param name="appId"></param>
         /// <param name="entryPointData"></param>
-        public static void switchGameAsync(string appId, Dictionary<string, object> entryPointData) { fbinstant_switchGameAsync(appId, JsonConvert.SerializeObject(entryPointData)); }
+        public static void switchGameAsync(string appId, Dictionary<string, object> entryPointData)
+        {
+            fbinstant_switchGameAsync(appId, JsonConvert.SerializeObject(entryPointData));
+        }
 
-        public static void shareAsync(Dictionary<string, object> p, Action cb) { fbinstant_shareAsync(JsonConvert.SerializeObject(p)); }
+        public static void shareAsync(Dictionary<string, object> p, Action cb)
+        {
+            fbinstant_shareAsync(JsonConvert.SerializeObject(p));
+        }
 
-        public static void updateAsync(Dictionary<string, object> p) { fbinstant_updateAsync(JsonConvert.SerializeObject(p)); }
+        public static void updateAsync(Dictionary<string, object> p)
+        {
+            fbinstant_updateAsync(JsonConvert.SerializeObject(p));
+        }
     }
-
 }
