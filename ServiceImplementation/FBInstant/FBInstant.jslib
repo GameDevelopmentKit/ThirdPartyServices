@@ -16,6 +16,8 @@ var LibraryMyFBPlugin = {
             .catch(err => console.error(err.message))
     },
 
+    IsInterstitialAdReady: placement => !!MyAdInstance.interstitialAd[placement],
+
     LoadInterstitialAd: (placement, onSuccess, onFail) => {
         if (MyAdInstance.interstitialAd[placement]) {
             onSuccess();
@@ -57,6 +59,8 @@ var LibraryMyFBPlugin = {
                 onFail(err.message);
             });
     },
+
+    IsRewardedAdReady: placement => !!MyAdInstance.rewardedAd[placement],
 
     LoadRewardedAd: function (placement, onSuccess, onFail) {
         if (MyAdInstance.rewardedAd[placement]) {

@@ -50,11 +50,17 @@
         public static extern void HideBannerAd();
 
         [DllImport("__Internal")]
+        public static extern bool IsInterstitialAdReady(string placement);
+
+        [DllImport("__Internal")]
         public static extern void LoadInterstitialAd(string placement, Action onSuccess, Action<string> onFail);
 
         [DllImport("__Internal")]
         public static extern void ShowInterstitialAd(string placement, Action onSuccess, Action<string> onFail);
-        
+
+        [DllImport("__Internal")]
+        public static extern bool IsRewardedAdReady(string placement);
+
         [DllImport("__Internal")]
         public static extern void LoadRewardedAd(string placement, Action onSuccess, Action<string> onFail);
 
