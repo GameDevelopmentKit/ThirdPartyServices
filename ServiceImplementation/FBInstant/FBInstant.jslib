@@ -16,9 +16,11 @@ var FBInstantLibrary = {
             .catch(err => console.error(err.message))
     },
 
-    IsInterstitialAdReady: placement => !!LoadedAds.interstitialAd[placement],
+    IsInterstitialAdReady: function (placement) {
+        return !!LoadedAds.interstitialAd[placement];
+    },
 
-    LoadInterstitialAd: (placement, onSuccess, onFail) => {
+    LoadInterstitialAd: function (placement, onSuccess, onFail) {
         if (LoadedAds.interstitialAd[placement]) {
             onSuccess();
             return;
@@ -41,7 +43,7 @@ var FBInstantLibrary = {
         FBInstant.getInterstitialAdAsync(UTF8ToString(placement)).then(success).catch(error);
     },
 
-    ShowInterstitialAd: (placement, onSuccess, onFail) => {
+    ShowInterstitialAd: function (placement, onSuccess, onFail) {
         var ad = LoadedAds.interstitialAd[placement];
         LoadedAds.interstitialAd[placement] = null;
 
@@ -60,7 +62,9 @@ var FBInstantLibrary = {
             });
     },
 
-    IsRewardedAdReady: placement => !!LoadedAds.rewardedAd[placement],
+    IsRewardedAdReady: function (placement) {
+        return !!LoadedAds.rewardedAd[placement];
+    },
 
     LoadRewardedAd: function (placement, onSuccess, onFail) {
         if (LoadedAds.rewardedAd[placement]) {
