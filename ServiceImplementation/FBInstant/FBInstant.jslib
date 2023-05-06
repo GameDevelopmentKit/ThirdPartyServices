@@ -1,5 +1,5 @@
-var LibraryMyFBPlugin = {
-    $MyAdInstance: {
+var FBInstantLibrary = {
+    $LoadedAds: {
         interstitialAd: {},
         rewardedAd: {},
     },
@@ -16,10 +16,10 @@ var LibraryMyFBPlugin = {
             .catch(err => console.error(err.message))
     },
 
-    IsInterstitialAdReady: placement => !!MyAdInstance.interstitialAd[placement],
+    IsInterstitialAdReady: placement => !!LoadedAds.interstitialAd[placement],
 
     LoadInterstitialAd: (placement, onSuccess, onFail) => {
-        if (MyAdInstance.interstitialAd[placement]) {
+        if (LoadedAds.interstitialAd[placement]) {
             onSuccess();
             return;
         };
@@ -32,7 +32,7 @@ var LibraryMyFBPlugin = {
 
         const success = (ad) => {
             ad.loadAsync().then(() => {
-                MyAdInstance.interstitialAd[placement] = ad
+                LoadedAds.interstitialAd[placement] = ad
                 console.log("preload interstitial ad ok");
                 onSuccess();
             }).catch(error);
@@ -42,8 +42,8 @@ var LibraryMyFBPlugin = {
     },
 
     ShowInterstitialAd: (placement, onSuccess, onFail) => {
-        var ad = MyAdInstance.interstitialAd[placement];
-        MyAdInstance.interstitialAd[placement] = null;
+        var ad = LoadedAds.interstitialAd[placement];
+        LoadedAds.interstitialAd[placement] = null;
 
         if (!ad) {
             console.log("interstitial ad not loaded");
@@ -60,10 +60,10 @@ var LibraryMyFBPlugin = {
             });
     },
 
-    IsRewardedAdReady: placement => !!MyAdInstance.rewardedAd[placement],
+    IsRewardedAdReady: placement => !!LoadedAds.rewardedAd[placement],
 
     LoadRewardedAd: function (placement, onSuccess, onFail) {
-        if (MyAdInstance.rewardedAd[placement]) {
+        if (LoadedAds.rewardedAd[placement]) {
             onSuccess();
             return;
         };
@@ -76,7 +76,7 @@ var LibraryMyFBPlugin = {
 
         const success = (ad) => {
             ad.loadAsync().then(() => {
-                MyAdInstance.rewardedAd[placement] = ad;
+                LoadedAds.rewardedAd[placement] = ad;
                 console.log("preload rewarded ad ok");
                 onSuccess();
             }).catch(error);
@@ -86,8 +86,8 @@ var LibraryMyFBPlugin = {
     },
 
     ShowRewardedAd: function (placement, onSuccess, onFail) {
-        var ad = MyAdInstance.rewardedAd[placement];
-        MyAdInstance.rewardedAd[placement] = null;
+        var ad = LoadedAds.rewardedAd[placement];
+        LoadedAds.rewardedAd[placement] = null;
 
         if (!ad) {
             console.log("rewarded ad not loaded");
@@ -466,5 +466,5 @@ var LibraryMyFBPlugin = {
     },
 };
 
-autoAddDeps(LibraryMyFBPlugin, '$MyAdInstance');
-mergeInto(LibraryManager.library, LibraryMyFBPlugin);
+autoAddDeps(FBInstantLibrary, '$LoadedAds');
+mergeInto(LibraryManager.library, FBInstantLibrary);
