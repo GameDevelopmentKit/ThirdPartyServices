@@ -51,6 +51,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.CloseAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.CloseAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedSkippedSignal>(this.CloseAdInDifferentProcessHandler);
+            this.signalBus.Subscribe<DrawNativeAdRequestSignal>(this.OnResponseDrawNativeAdRequest);
 
             this.StartLoadingAOATime = DateTime.Now;
 
@@ -458,6 +459,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             return nativeAdPair.Value;
         }
 
+        private void OnResponseDrawNativeAdRequest(DrawNativeAdRequestSignal signal)
+        {
+            this.DrawNativeAds(signal.NativeAdsView);
+        }
+        
         public void DrawNativeAds(NativeAdsView nativeAdsView)
         {
             if (!this.adServicesConfig.EnableNativeAd) return;
@@ -465,60 +471,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (this.nativeAdsIdToNativeAd.Count == 0 || this.nativeAdsViewToNativeAd.ContainsKey(nativeAdsView)) return;
             var nativeAd = this.nativeAdsViewToNativeAd.GetOrAdd(nativeAdsView, this.GetAvailableNativeAd);
 
-            this.logService.Log($"Start set native ad: {nativeAdsView.name}");
-
-            this.logService.Log($"native star rating : {nativeAd.GetStarRating()}");
-            this.logService.Log($"native store: {nativeAd.GetStore()}");
-            this.logService.Log($"native Price: {nativeAd.GetPrice()}");
-            this.logService.Log($"native advertiser text: {nativeAd.GetAdvertiserText()}");
-            this.logService.Log($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
-
-            this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
-            this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
-
-            // Get Texture2D for icon asset of native ad.
-            nativeAdsView.headlineText.text = nativeAd.GetHeadlineText();
-
-            if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
-            {
-                // Handle failure to register ad asset.
-                this.logService.Log($"Failed to register Headline text for native ad: {nativeAdsView.name}");
-            }
-
-            nativeAdsView.advertiserText.text = nativeAd.GetAdvertiserText();
-
-            if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.advertiserText.gameObject))
-            {
-                // Handle failure to register ad asset.
-                this.logService.Log($"Failed to register advertiser text for native ad: {nativeAdsView.name}");
-            }
-
-            if (nativeAd.GetIconTexture() != null)
-            {
-                nativeAdsView.iconImage.gameObject.SetActive(true);
-                nativeAdsView.iconImage.texture = nativeAd.GetIconTexture();
-
-                // Register GameObject that will display icon asset of native ad.
-                if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.iconImage.gameObject))
-                {
-                    // Handle failure to register ad asset.
-                    this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
-                }
-            }
-
-            if (nativeAd.GetAdChoicesLogoTexture() != null)
-            {
-                nativeAdsView.adChoicesImage.gameObject.SetActive(true);
-                nativeAdsView.adChoicesImage.texture = nativeAd.GetAdChoicesLogoTexture();
-
-                if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoicesImage.gameObject))
-                {
-                    // Handle failure to register ad asset.
-                    this.logService.Log($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
-                }
-            }
+            nativeAdsView.BindData(nativeAd);
         }
-
+        
         private void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
         {
             this.logService.Log($"Native ad failed to load: {e.LoadAdError.GetMessage()}");

@@ -70,6 +70,8 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<AppOpenFullScreenContentOpenedSignal>();
             this.Container.DeclareSignal<AppOpenFullScreenContentClosedSignal>();
 
+            this.Container.DeclareSignal<DrawNativeAdRequestSignal>();
+            
             this.Container.DeclareSignal<AppStateChangeSignal>();
 
             #endregion
