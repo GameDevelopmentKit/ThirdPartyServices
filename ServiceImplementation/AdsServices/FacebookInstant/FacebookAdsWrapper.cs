@@ -13,7 +13,7 @@
     {
         private readonly ILogService              logService;
         private readonly SignalBus                signalBus;
-        private readonly FacebookAdServicesConfig adServicesConfig;
+        private readonly AdServicesConfig         adServicesConfig;
         private readonly Dictionary<string, bool> isInterstitialAdLoading = new();
         private readonly Dictionary<string, bool> isRewardedAdLoading     = new();
 
@@ -21,7 +21,7 @@
         {
             this.logService       = logService;
             this.signalBus        = signalBus;
-            this.adServicesConfig = adServicesConfig as FacebookAdServicesConfig ?? throw new("Please bind FacebookAdServicesConfig to AdServicesConfig!");
+            this.adServicesConfig = adServicesConfig;
             this.PreloadAds();
         }
 
