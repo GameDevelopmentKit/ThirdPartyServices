@@ -40,7 +40,8 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
                 Revenue            = adInfo.Revenue,
                 Currency           = "USD",
                 Placement          = adInfo.Placement,
-                AdNetwork          = adInfo.NetworkName
+                AdNetwork          = adInfo.NetworkName,
+                AdFormat           = adInfo.AdFormat
             };
 
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
