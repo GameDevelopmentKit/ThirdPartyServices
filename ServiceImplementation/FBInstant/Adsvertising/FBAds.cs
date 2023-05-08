@@ -53,19 +53,19 @@
         public static extern bool IsInterstitialAdReady(string placement);
 
         [DllImport("__Internal")]
-        public static extern void LoadInterstitialAd(string placement, Action onSuccess, Action<string> onFail);
+        public static extern void LoadInterstitialAd(string placement, string callbackObj, string callbackFunc);
 
         [DllImport("__Internal")]
-        public static extern void ShowInterstitialAd(string placement, Action onSuccess, Action<string> onFail);
+        public static extern void ShowInterstitialAd(string placement, string callbackObj, string callbackFunc);
 
         [DllImport("__Internal")]
         public static extern bool IsRewardedAdReady(string placement);
 
         [DllImport("__Internal")]
-        public static extern void LoadRewardedAd(string placement, Action onSuccess, Action<string> onFail);
+        public static extern void LoadRewardedAd(string placement, string callbackObj, string callbackFunc);
 
         [DllImport("__Internal")]
-        public static extern void ShowRewardedAd(string placement, Action onSuccess, Action<string> onFail);
+        public static extern void ShowRewardedAd(string placement, string callbackObj, string callbackFunc);
 
         #endregion
 

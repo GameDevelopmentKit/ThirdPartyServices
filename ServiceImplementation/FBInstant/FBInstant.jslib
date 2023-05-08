@@ -5,7 +5,8 @@ var FBInstantLibrary = {
     },
 
     ShowBannerAd: function (placement) {
-        FBInstant.loadBannerAdAsync(UTF8ToString(placement))
+        placement = UTF8ToString(placement);
+        FBInstant.loadBannerAdAsync(placement)
             .then(() => console.log('Banner ad show OK.'))
             .catch(err => console.error(err.message))
     },
@@ -17,33 +18,42 @@ var FBInstantLibrary = {
     },
 
     IsInterstitialAdReady: function (placement) {
+        placement = UTF8ToString(placement);
         return !!LoadedAds.interstitialAd[placement];
     },
 
-    LoadInterstitialAd: function (placement, onSuccess, onFail) {
+    LoadInterstitialAd: function (placement, callbackObj, callbackFunc) {
+        placement = UTF8ToString(placement);
+        callbackObj = UTF8ToString(callbackObj);
+        callbackFunc = UTF8ToString(callbackFunc);
+
         if (LoadedAds.interstitialAd[placement]) {
-            onSuccess();
+            SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
             return;
         };
 
         const error = (err) => {
             FBInstant.logEvent(err.code, 1, FBInstant.getEntryPointData());
             console.error("preload interstitial ad error: " + err.message);
-            onFail(err.message);
+            SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message }));
         }
 
         const success = (ad) => {
             ad.loadAsync().then(() => {
                 LoadedAds.interstitialAd[placement] = ad
                 console.log("preload interstitial ad ok");
-                onSuccess();
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
             }).catch(error);
         }
 
-        FBInstant.getInterstitialAdAsync(UTF8ToString(placement)).then(success).catch(error);
+        FBInstant.getInterstitialAdAsync(placement).then(success).catch(error);
     },
 
-    ShowInterstitialAd: function (placement, onSuccess, onFail) {
+    ShowInterstitialAd: function (placement, callbackObj, callbackFunc) {
+        placement = UTF8ToString(placement);
+        callbackObj = UTF8ToString(callbackObj);
+        callbackFunc = UTF8ToString(callbackFunc);
+
         var ad = LoadedAds.interstitialAd[placement];
         LoadedAds.interstitialAd[placement] = null;
 
@@ -58,38 +68,48 @@ var FBInstantLibrary = {
             .catch(err => {
                 FBInstant.logEvent(err.code, 1, FBInstant.getEntryPointData());
                 console.error("show interstitial ad error" + err.message);
-                onFail(err.message);
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message }));
             });
     },
 
     IsRewardedAdReady: function (placement) {
+        placement = UTF8ToString(placement);
+
         return !!LoadedAds.rewardedAd[placement];
     },
 
-    LoadRewardedAd: function (placement, onSuccess, onFail) {
+    LoadRewardedAd: function (placement, callbackObj, callbackFunc) {
+        placement = UTF8ToString(placement);
+        callbackObj = UTF8ToString(callbackObj);
+        callbackFunc = UTF8ToString(callbackFunc);
+
         if (LoadedAds.rewardedAd[placement]) {
-            onSuccess();
+            SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
             return;
         };
 
         const error = (err) => {
             FBInstant.logEvent(err.code, 1, FBInstant.getEntryPointData());
             console.error("preload rewarded ad error: " + err.message);
-            onFail(err.message);
+            SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message }));
         }
 
         const success = (ad) => {
             ad.loadAsync().then(() => {
                 LoadedAds.rewardedAd[placement] = ad;
                 console.log("preload rewarded ad ok");
-                onSuccess();
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
             }).catch(error);
         }
 
-        FBInstant.getRewardedVideoAsync(UTF8ToString(placement)).then(success).catch(error);
+        FBInstant.getRewardedVideoAsync(placement).then(success).catch(error);
     },
 
-    ShowRewardedAd: function (placement, onSuccess, onFail) {
+    ShowRewardedAd: function (placement, callbackObj, callbackFunc) {
+        placement = UTF8ToString(placement);
+        callbackObj = UTF8ToString(callbackObj);
+        callbackFunc = UTF8ToString(callbackFunc);
+
         var ad = LoadedAds.rewardedAd[placement];
         LoadedAds.rewardedAd[placement] = null;
 
@@ -104,7 +124,7 @@ var FBInstantLibrary = {
             .catch(err => {
                 FBInstant.logEvent(err.code, 1, FBInstant.getEntryPointData());
                 console.error("show rewarded ad error" + err.message);
-                onFail(err.message);
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message }));
             });
     },
 

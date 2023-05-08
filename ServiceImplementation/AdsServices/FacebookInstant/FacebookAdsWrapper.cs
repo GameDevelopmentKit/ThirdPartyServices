@@ -5,6 +5,7 @@
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.LogService;
+    using Newtonsoft.Json;
     using ServiceImplementation.FBInstant.Adsvertising;
     using UnityEngine;
     using Zenject;
@@ -58,75 +59,107 @@
 
         #region InterstitialAd
 
+        public bool IsInterstitialAdReady(string place)
+        {
+            return FBAds.IsInterstitialAdReady(place);
+        }
+
+        private void OnInterstitialAdLoaded(string message)
+        {
+            var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
+            var place   = @params["place"];
+            var error   = @params["error"];
+
+            this.isInterstitialAdLoading[place] = false;
+
+            if (error is null)
+            {
+                return;
+            }
+
+            this.LoadInterstitialAd(place);
+        }
+
         private void LoadInterstitialAd(string place)
         {
             if (this.isInterstitialAdLoading.GetValueOrDefault(place, false)) return;
             this.isInterstitialAdLoading[place] = true;
 
-            FBAds.LoadInterstitialAd(
-                place,
-                onSuccess: () =>
-                {
-                    this.isInterstitialAdLoading[place] = false;
-                },
-                onFail: err =>
-                {
-                    this.isInterstitialAdLoading[place] = false;
-                    this.LoadInterstitialAd(place);
-                }
-            );
+            FBAds.LoadInterstitialAd(place, this.gameObject.name, nameof(this.OnInterstitialAdLoaded));
         }
 
-        public bool IsInterstitialAdReady(string place)
+        private void OnInterstitialAdShown(string message)
         {
-            return FBAds.IsInterstitialAdReady(place);
+            var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
+            var place   = @params["place"];
+            var error   = @params["error"];
+
+            this.LoadInterstitialAd(place);
+            if (error is not null)
+            {
+                this.signalBus.Fire(new InterstitialAdLoadFailedSignal(place, error));
+            }
+            else
+            {
+                this.signalBus.Fire(new InterstitialAdDownloadedSignal(place));
+            }
         }
 
         public void ShowInterstitialAd(string place)
         {
             if (!this.adServicesConfig.EnableInterstitialAd) return;
 
-            FBAds.ShowInterstitialAd(
-                place,
-                onSuccess: () =>
-                {
-                    this.signalBus.Fire(new InterstitialAdDownloadedSignal(place));
-                    this.LoadInterstitialAd(place);
-                },
-                onFail: err =>
-                {
-                    this.signalBus.Fire(new InterstitialAdLoadFailedSignal(place, err));
-                    this.LoadInterstitialAd(place);
-                }
-            );
+            FBAds.ShowInterstitialAd(place, this.gameObject.name, nameof(this.OnInterstitialAdShown));
         }
 
         #endregion
 
         #region RewardedAd
 
+        public bool IsRewardedAdReady(string place)
+        {
+            return FBAds.IsRewardedAdReady(place);
+        }
+
+        private void OnRewardedAdLoaded(string message)
+        {
+            var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
+            var place   = @params["place"];
+            var error   = @params["error"];
+
+            this.isRewardedAdLoading[place] = false;
+
+            if (error is null)
+            {
+                return;
+            }
+
+            this.LoadRewardedAd(place);
+        }
+
         private void LoadRewardedAd(string place)
         {
             if (this.isRewardedAdLoading.GetValueOrDefault(place, false)) return;
             this.isRewardedAdLoading[place] = true;
 
-            FBAds.LoadRewardedAd(
-                place,
-                onSuccess: () =>
-                {
-                    this.isRewardedAdLoading[place] = false;
-                },
-                onFail: err =>
-                {
-                    this.isRewardedAdLoading[place] = false;
-                    this.LoadRewardedAd(place);
-                }
-            );
+            FBAds.LoadRewardedAd(place, this.gameObject.name, nameof(this.OnRewardedAdLoaded) );
         }
-
-        public bool IsRewardedAdReady(string place)
+        
+        private void OnRewardedAdShown(string message)
         {
-            return FBAds.IsRewardedAdReady(place);
+            var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
+            var place   = @params["place"];
+            var error   = @params["error"];
+
+            this.LoadRewardedAd(place);
+            if (error is not null)
+            {
+                this.signalBus.Fire(new RewardedAdLoadFailedSignal(place, error));
+            }
+            else
+            {
+                this.signalBus.Fire(new RewardedAdLoadedSignal(place));
+            }
         }
 
         public void ShowRewardedAd(string place)
@@ -138,18 +171,7 @@
         {
             if (!this.adServicesConfig.EnableRewardedAd) return;
 
-            FBAds.ShowRewardedAd(
-                place,
-                onSuccess: () =>
-                {
-                    onCompleted?.Invoke();
-                    this.LoadRewardedAd(place);
-                },
-                onFail: err =>
-                {
-                    this.LoadRewardedAd(place);
-                }
-            );
+            FBAds.ShowRewardedAd(place, this.gameObject.name, nameof(this.OnRewardedAdShown));
         }
 
         #endregion
