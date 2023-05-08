@@ -9,6 +9,7 @@ namespace Core.AnalyticServices.CommonEvents
         public string AdsRevenueSourceId;
         public string AdNetwork;
         public string AdUnit;
+        public string AdFormat;
         public string Placement;
         public string Currency;
         public double Revenue;
