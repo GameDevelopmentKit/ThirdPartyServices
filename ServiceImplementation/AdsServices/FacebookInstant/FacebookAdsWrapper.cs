@@ -17,6 +17,7 @@
         private readonly AdServicesConfig         adServicesConfig;
         private readonly Dictionary<string, bool> isInterstitialAdLoading = new();
         private readonly Dictionary<string, bool> isRewardedAdLoading     = new();
+        private          Action                   onShowRewardedAdCompleted;
 
         public FacebookAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig)
         {
@@ -72,12 +73,10 @@
 
             this.isInterstitialAdLoading[place] = false;
 
-            if (error is null)
+            if (error is not null)
             {
-                return;
+                this.LoadInterstitialAd(place);
             }
-
-            this.LoadInterstitialAd(place);
         }
 
         private void LoadInterstitialAd(string place)
@@ -129,12 +128,10 @@
 
             this.isRewardedAdLoading[place] = false;
 
-            if (error is null)
+            if (error is not null)
             {
-                return;
+                this.LoadRewardedAd(place);
             }
-
-            this.LoadRewardedAd(place);
         }
 
         private void LoadRewardedAd(string place)
@@ -142,9 +139,9 @@
             if (this.isRewardedAdLoading.GetValueOrDefault(place, false)) return;
             this.isRewardedAdLoading[place] = true;
 
-            FBAds.LoadRewardedAd(place, this.gameObject.name, nameof(this.OnRewardedAdLoaded) );
+            FBAds.LoadRewardedAd(place, this.gameObject.name, nameof(this.OnRewardedAdLoaded));
         }
-        
+
         private void OnRewardedAdShown(string message)
         {
             var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
@@ -159,6 +156,7 @@
             else
             {
                 this.signalBus.Fire(new RewardedAdLoadedSignal(place));
+                this.onShowRewardedAdCompleted?.Invoke();
             }
         }
 
@@ -171,6 +169,7 @@
         {
             if (!this.adServicesConfig.EnableRewardedAd) return;
 
+            this.onShowRewardedAdCompleted = onCompleted;
             FBAds.ShowRewardedAd(place, this.gameObject.name, nameof(this.OnRewardedAdShown));
         }
 
