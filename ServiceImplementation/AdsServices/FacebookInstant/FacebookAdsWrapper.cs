@@ -12,14 +12,15 @@
 
     public class FacebookAdsWrapper : MonoBehaviour, IAdServices
     {
-        private readonly ILogService              logService;
-        private readonly SignalBus                signalBus;
-        private readonly AdServicesConfig         adServicesConfig;
+        private          ILogService              logService;
+        private          SignalBus                signalBus;
+        private          AdServicesConfig         adServicesConfig;
         private readonly Dictionary<string, bool> isInterstitialAdLoading = new();
         private readonly Dictionary<string, bool> isRewardedAdLoading     = new();
         private          Action                   onShowRewardedAdCompleted;
 
-        public FacebookAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig)
+        [Inject]
+        public void Construct(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig)
         {
             this.logService       = logService;
             this.signalBus        = signalBus;
