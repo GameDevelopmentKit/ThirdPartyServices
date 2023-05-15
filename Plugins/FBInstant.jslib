@@ -59,12 +59,14 @@ var FBInstantLibrary = {
 
         if (!ad) {
             console.log("interstitial ad not loaded");
-            onFail("interstitial ad not loaded");
+            SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: "interstitial ad not loaded" }));
             return;
         }
 
         ad.showAsync()
-            .then(onSuccess)
+            .then(() => {
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
+            })
             .catch(err => {
                 FBInstant.logEvent(err.code, 1, FBInstant.getEntryPointData());
                 console.error("show interstitial ad error" + err.message);
@@ -115,12 +117,14 @@ var FBInstantLibrary = {
 
         if (!ad) {
             console.log("rewarded ad not loaded");
-            onFail("rewarded ad not loaded");
+            SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: "rewarded ad not loaded" }));
             return;
         }
 
         ad.showAsync()
-            .then(onSuccess)
+            .then(() => {
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
+            })
             .catch(err => {
                 FBInstant.logEvent(err.code, 1, FBInstant.getEntryPointData());
                 console.error("show rewarded ad error" + err.message);
