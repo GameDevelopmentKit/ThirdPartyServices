@@ -492,6 +492,41 @@ var FBInstantLibrary = {
         stringToUTF8(base64, buffer, bufferSize);
         return buffer;
     },
+   
+   // Tournament region 
+     tournamentPostScoreAsync:function(score,bestScore, callbackObj, callbackFunc) {
+        if (score > bestScore) {
+        bestScore = score;
+        FBInstant.tournament.postScoreAsync(bestScore)
+         .then(function(){       
+          SendMessage(callbackObj, callbackFunc, JSON.stringify({ score: bestScore }));      
+          });                  
+     }
+    },
+    
+    getTournamentAsync:function(callbackObj, callbackFunc)
+     {
+     FBInstant.getTournamentAsync().then((tournament) => {
+          SendMessage(callbackObj, callbackFunc, JSON.stringify({ id: tournament.getID() }));
+     });
+    },
+    
+    getListTournamentAsync:function(callbackObj, callbackFunc){
+        FBInstant.tournament.getTournamentsAsync()
+        .then(tournaments => {
+        // tournament list
+          SendMessage(callbackObj, callbackFunc, JSON.stringify({ listId:JSON.stringify(tournaments) }));
+        });
+    },
+    
+    joinTournamentAsync:function(tournamentID,callbackObj, callbackFunc)
+    {
+         FBInstant.tournament
+         .joinAsync(tournamentID)
+         .then(function() {
+          SendMessage(callbackObj, callbackFunc, JSON.stringify({ id:tournamentID }));
+         });
+    },
 };
 
 autoAddDeps(FBInstantLibrary, '$LoadedAds');
