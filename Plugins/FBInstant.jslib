@@ -4,17 +4,24 @@ var FBInstantLibrary = {
         rewardedAd: {},
     },
 
+    $GetBuffer: function (str) {
+        var size = lengthBytesUTF8(str) + 1;
+        var buffer = _malloc(size);
+        stringToUTF8(str, buffer, size);
+        return buffer;
+    },
+
     ShowBannerAd: function (placement) {
         placement = UTF8ToString(placement);
         FBInstant.loadBannerAdAsync(placement)
-            .then(() => console.log('Banner ad show OK.'))
-            .catch(err => console.error(err.message))
+            .then(() => console.log("show banner ad ok"))
+            .catch(err => console.error("show banner ad error: " + err.message))
     },
 
     HideBannerAd: function () {
         FBInstant.hideBannerAdAsync()
-            .then(() => console.log('Banner ad hide OK.'))
-            .catch(err => console.error(err.message))
+            .then(() => console.log("hide banner ad ok"))
+            .catch(err => console.error("hide banner ad error: " + err.message))
     },
 
     IsInterstitialAdReady: function (placement) {
@@ -28,12 +35,12 @@ var FBInstantLibrary = {
         callbackFunc = UTF8ToString(callbackFunc);
 
         if (LoadedAds.interstitialAd[placement]) {
+            console.log("preload interstitial ad ok");
             SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
             return;
         };
 
         const error = (err) => {
-            FBInstant.logEvent(err.code, 1, FBInstant.getEntryPointData());
             console.error("preload interstitial ad error: " + err.message);
             SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message }));
         }
@@ -65,11 +72,11 @@ var FBInstantLibrary = {
 
         ad.showAsync()
             .then(() => {
+                console.error("show interstitial ad ok");
                 SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
             })
             .catch(err => {
-                FBInstant.logEvent(err.code, 1, FBInstant.getEntryPointData());
-                console.error("show interstitial ad error" + err.message);
+                console.error("show interstitial ad error: " + err.message);
                 SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message }));
             });
     },
@@ -86,12 +93,12 @@ var FBInstantLibrary = {
         callbackFunc = UTF8ToString(callbackFunc);
 
         if (LoadedAds.rewardedAd[placement]) {
+            console.log("preload rewarded ad ok");
             SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
             return;
         };
 
         const error = (err) => {
-            FBInstant.logEvent(err.code, 1, FBInstant.getEntryPointData());
             console.error("preload rewarded ad error: " + err.message);
             SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message }));
         }
@@ -123,64 +130,63 @@ var FBInstantLibrary = {
 
         ad.showAsync()
             .then(() => {
+                console.error("show rewarded ad ok");
                 SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
             })
             .catch(err => {
-                FBInstant.logEvent(err.code, 1, FBInstant.getEntryPointData());
-                console.error("show rewarded ad error" + err.message);
+                console.error("show rewarded ad error: " + err.message);
                 SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message }));
             });
+    },
+
+    SaveUserData: function (key, json, callbackObj, callbackFunc) {
+        key = UTF8ToString(key);
+        json = UTF8ToString(json);
+        callbackObj = UTF8ToString(callbackObj);
+        callbackFunc = UTF8ToString(callbackFunc);
+
+        FBInstant.player.setDataAsync({ key: json })
+            .then(() => {
+                console.error("save user data ok");
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: null }));
+            })
+            .catch(err => {
+                console.error("save user data error: " + err.message);
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message }));
+            });
+    },
+
+    LoadUserData: function (key, callbackObj, callbackFunc) {
+        key = UTF8ToString(key);
+        callbackObj = UTF8ToString(callbackObj);
+        callbackFunc = UTF8ToString(callbackFunc);
+
+        FBInstant.player.getDataAsync([key])
+            .then(data => {
+                console.error("load user data ok");
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: data[key], error: null }));
+            })
+            .catch(err => {
+                console.error("load user data error: " + err.message);
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: null, error: err.message }));
+            });
+    },
+
+    GetUserId: function () {
+        return GetBuffer(FBInstant.player.getID());
+    },
+
+    GetUserName: function () {
+        return GetBuffer(FBInstant.player.getName());
+    },
+
+    GetUserAvatar: function () {
+        return GetBuffer(FBInstant.player.getPhoto());
     },
 
     PrintFloatArray: function (array, size) {
         for (var i = 0; i < size; i++)
             console.log(HEAPF32[(array >> 2) + i]);
-    },
-
-    player_getID: function () {
-        var val = FBInstant.player.getID();
-
-        var bufferSize = lengthBytesUTF8(val) + 1;
-        var buffer = _malloc(bufferSize);
-        stringToUTF8(val, buffer, bufferSize);
-        return buffer;
-    },
-
-    player_getName: function () {
-        var val = FBInstant.player.getName();
-        var bufferSize = lengthBytesUTF8(val) + 1;
-        var buffer = _malloc(bufferSize);
-        stringToUTF8(val, buffer, bufferSize);
-        return buffer;
-    },
-
-    player_getPhoto: function () {
-        var val = FBInstant.player.getPhoto();
-        var bufferSize = lengthBytesUTF8(val) + 1;
-        var buffer = _malloc(bufferSize);
-        stringToUTF8(val, buffer, bufferSize);
-        return buffer;
-    },
-
-    player_getDataAsync: function (keysJsonStr) {
-        keysJsonStr = UTF8ToString(keysJsonStr);
-
-        var keys = JSON.parse(keysJsonStr);
-        FBInstant.player.getDataAsync(keys)
-            .then(function (data) {
-                gameInstance.SendMessage("__IGEXPORTER__", "Promise_on_player_getDataAsync", JSON.stringify(data));
-            }).catch(function (ex) {
-                console.error("getDataAsync|error|" + JSON.stringify(ex));
-            });
-    },
-
-    player_setDataAsync: function (gameDataJsonStr) {
-        var gameData = JSON.parse(UTF8ToString(gameDataJsonStr));
-
-        FBInstant.player.setDataAsync(gameData)
-            .then(function () {
-                gameInstance.SendMessage("__IGEXPORTER__", "Promise_on_player_setDataAsync");
-            });
     },
 
     player_canSubscribeBotAsync: function () {

@@ -18,17 +18,17 @@
 
         public static System.Action<bool> canSubscribeBotAsync_Callback = null;
 
-        public static System.Action subscribeBot_Success_Callback = null;
-        public static System.Action<FBError> subscribeBot_Error_Callback = null;
+        public static System.Action          subscribeBot_Success_Callback = null;
+        public static System.Action<FBError> subscribeBot_Error_Callback   = null;
 
         [DllImport("__Internal")]
-        public static extern string player_getID();
+        public static extern string GetUserId();
 
         [DllImport("__Internal")]
-        public static extern string player_getName();
+        public static extern string GetUserName();
 
         [DllImport("__Internal")]
-        public static extern string player_getPhoto();
+        public static extern string GetUserAvatar();
 
         [DllImport("__Internal")]
         public static extern void player_getDataAsync(string keysJsonStr);
@@ -41,22 +41,6 @@
 
         [DllImport("__Internal")]
         public static extern void player_subscribeBotAsync();
-
-
-        public string getID()
-        {
-            return player_getID();
-        }
-
-        public string getName()
-        {
-            return player_getName();
-        }
-
-        public string getPhoto()
-        {
-            return player_getPhoto();
-        }
 
         public void getDataAsync(List<string> keys, System.Action<Dictionary<string, object>> cb)
         {
@@ -82,7 +66,7 @@
         public void subscribeBotAsync(System.Action successCallback, System.Action<FBError> errorCallback)
         {
             subscribeBot_Success_Callback = successCallback;
-            subscribeBot_Error_Callback = errorCallback;
+            subscribeBot_Error_Callback   = errorCallback;
             player_subscribeBotAsync();
         }
     }

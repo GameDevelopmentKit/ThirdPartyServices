@@ -7,7 +7,7 @@ namespace ServiceImplementation.AdsServices.FacebookInstant
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
-    using ServiceImplementation.FBInstant.Adsvertising;
+    using ServiceImplementation.FBInstant.Advertising;
     using UnityEngine;
     using Zenject;
 
