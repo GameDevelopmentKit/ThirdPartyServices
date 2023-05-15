@@ -11,7 +11,7 @@ namespace ServiceImplementation.FBInstant.Tournament
         #region Javascript
 
         [DllImport("__Internal")]
-        public static extern string tournamentPostScoreAsync(int score, int bestScore, string callBackObj, string callBackMethod);
+        public static extern string tournamentPostScoreAsync(int bestScore, string callBackObj, string callBackMethod);
 
         [DllImport("__Internal")]
         public static extern string getTournamentAsync(string callBackObj, string callBackMethod);
@@ -27,7 +27,7 @@ namespace ServiceImplementation.FBInstant.Tournament
         private Action<int>       onCompleteGetTournament, onJoinTournamentCallBack;
         private Action<List<int>> onCompleteGetListTournament;
 
-        public void TournamentPostScoreAsync(int score, int bestScore) { tournamentPostScoreAsync(score, bestScore, this.gameObject.name, nameof(this.TournamentPostScoreAsyncCallback)); }
+        public void TournamentPostScoreAsync(int score) { tournamentPostScoreAsync(score, this.gameObject.name, nameof(this.TournamentPostScoreAsyncCallback)); }
 
         public void GetTournamentAsync(Action<int> onComplete)
         {

@@ -494,9 +494,7 @@ var FBInstantLibrary = {
     },
    
    // Tournament region 
-     tournamentPostScoreAsync:function(score,bestScore, callbackObj, callbackFunc) {
-        if (score > bestScore) {
-        bestScore = score;
+     tournamentPostScoreAsync:function(bestScore, callbackObj, callbackFunc) {       
         FBInstant.tournament.postScoreAsync(bestScore)
          .then(function(){       
           SendMessage(callbackObj, callbackFunc, JSON.stringify({ score: bestScore }));      
