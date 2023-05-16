@@ -1,8 +1,6 @@
 namespace ServiceImplementation.FBInstant.Notification
 {
-    using System.Collections.Generic;
     using System.Runtime.InteropServices;
-    using Newtonsoft.Json;
     using ServiceImplementation.FBInstant.EventHandler;
     using UnityEngine;
     using UnityEngine.UI;
@@ -28,7 +26,12 @@ namespace ServiceImplementation.FBInstant.Notification
         public static void FacebookInstantSendInvite(Image img, string text, string localizationJson)
         {
             var imgBase64 = img.sprite.texture.EncodeToPNG();
-            fbinstant_inviteAsync(imgBase64.ToString(), text, localizationJson, FBEventHandler.callbackObj, "FacebookInstantSendInviteCallback");
+            fbinstant_inviteAsync(imgBase64.ToString(), text, localizationJson, FBEventHandler.callbackObj, nameof(FacebookInstantSendInviteCallback));
+        }
+
+        public void FacebookInstantSendInviteCallback()
+        {
+            // Invite sent
         }
 
         #endregion
@@ -39,7 +42,13 @@ namespace ServiceImplementation.FBInstant.Notification
             string template, string strategy, string notification)
         {
             var imgBase64 = img.sprite.texture.EncodeToPNG();
-            fbinstant_notification(action, cta, imgBase64.ToString(), content, localizationJson, template, strategy, notification, FBEventHandler.callbackObj, "FacebookInstantSendNotificationCallback");
+            fbinstant_notification(action, cta, imgBase64.ToString(), content, localizationJson, template, strategy, notification, FBEventHandler.callbackObj,
+                nameof(FacebookInstantSendNotificationCallback));
+        }
+
+        public void FacebookInstantSendNotificationCallback()
+        {
+            // Notification sent
         }
 
         #endregion

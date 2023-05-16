@@ -1,65 +1,41 @@
 namespace ServiceImplementation.FBInstant.EventHandler
 {
-    using System.Collections.Generic;
-    using Newtonsoft.Json;
+    using ServiceImplementation.FBInstant.Notification;
     using ServiceImplementation.FBInstant.Tournament;
     using UnityEngine;
     using Zenject;
 
-    public class FBEventHandler : MonoBehaviour
+    public partial class FBEventHandler : MonoBehaviour
     {
         public static string callbackObj = "FBEventHandler";
 
         private FBTournament fbTournament;
+        private FBNoti       fbNoti;
 
         [Inject]
-        public void Construct(FBTournament fbTournament) { this.fbTournament = fbTournament; }
+        public void Construct(FBTournament fbTournament, FBNoti fbNoti)
+        {
+            this.fbTournament = fbTournament;
+            this.fbNoti       = fbNoti;
+        }
 
         #region Notification
 
-        private void FacebookInstantSendInviteCallback() { Debug.Log("Invite sent"); }
+        private void FacebookInstantSendInviteCallback() { this.fbNoti.FacebookInstantSendInviteCallback(); }
 
-        private void FacebookInstantSendNotificationCallback() { Debug.Log("Notification sent"); }
+        private void FacebookInstantSendNotificationCallback() { this.fbNoti.FacebookInstantSendNotificationCallback(); }
 
         #endregion
 
         #region Tournament
 
-        private void TournamentPostScoreAsyncCallback(string result) { }
+        private void TournamentPostScoreAsyncCallback(string result) { this.fbTournament.TournamentPostScoreAsyncCallback(result); }
 
-        private void GetTournamentAsyncCallback(string result)
-        {
-            var @params      = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
-            var tournamentId = @params["id"];
+        private void GetTournamentAsyncCallback(string result) { this.fbTournament.GetTournamentAsyncCallback(result); }
 
-            if (int.TryParse(tournamentId, out var outId))
-            {
-                this.fbTournament.onCompleteGetTournament?.Invoke(outId);
-            }
-        }
+        private void GetListTournamentAsyncCallback(string result) { this.fbTournament.GetListTournamentAsyncCallback(result); }
 
-        private void GetListTournamentAsyncCallback(string result)
-        {
-            var @params          = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
-            var listIdJsonString = @params["listId"];
-
-            if (string.IsNullOrEmpty(listIdJsonString)) return;
-            var listId = JsonConvert.DeserializeObject<List<int>>(listIdJsonString);
-            this.fbTournament.onCompleteGetListTournament?.Invoke(listId);
-        }
-
-        private void OnJoinTournamentCallBack(string result)
-        {
-            var @params      = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
-            var tournamentId = @params["id"];
-
-            if (string.IsNullOrEmpty(tournamentId)) return;
-
-            if (int.TryParse(tournamentId, out var outId))
-            {
-                this.fbTournament.onJoinTournamentCallBack?.Invoke(outId);
-            }
-        }
+        private void OnJoinTournamentCallBack(string result) { this.fbTournament.OnJoinTournamentCallBack(result); }
 
         #endregion
     }
