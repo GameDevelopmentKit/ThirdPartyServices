@@ -9,21 +9,21 @@ namespace ServiceImplementation.FBInstant.EventHandler
     {
         public static string callbackObj = "FBEventHandler";
 
-        private FBTournament fbTournament;
-        private FBNoti       fbNoti;
+        private FBInstantTournament   fbTournament;
+        private FBInstantNotification fbNotification;
 
         [Inject]
-        public void Construct(FBTournament fbTournament, FBNoti fbNoti)
+        public void Construct(FBInstantTournament fbTournament, FBInstantNotification fbNotification)
         {
-            this.fbTournament = fbTournament;
-            this.fbNoti       = fbNoti;
+            this.fbTournament   = fbTournament;
+            this.fbNotification = fbNotification;
         }
 
         #region Notification
 
-        private void FacebookInstantSendInviteCallback() { this.fbNoti.FacebookInstantSendInviteCallback(); }
+        private void FacebookInstantSendInviteCallback() { this.fbNotification.FacebookInstantSendInviteCallback(); }
 
-        private void FacebookInstantSendNotificationCallback() { this.fbNoti.FacebookInstantSendNotificationCallback(); }
+        private void FacebookInstantSendNotificationCallback() { this.fbNotification.FacebookInstantSendNotificationCallback(); }
 
         #endregion
 

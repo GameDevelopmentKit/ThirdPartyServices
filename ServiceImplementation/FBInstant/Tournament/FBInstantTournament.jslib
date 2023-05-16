@@ -30,5 +30,5 @@ var FBInstantTournamentLibrary = {
             });
     },
 };
-
+autoAddDeps(FBInstantTournamentLibrary, "$GetBuffer");
 mergeInto(LibraryManager.library, FBInstantTournamentLibrary);

@@ -8,7 +8,7 @@ namespace ServiceImplementation.FBInstant.Notification
     /// <summary>
     /// External interface for FBInstant Notification with Message and Facebook Notification
     /// </summary>
-    public class FBNoti
+    public class FBInstantNotification
     {
         #region javascript
 
