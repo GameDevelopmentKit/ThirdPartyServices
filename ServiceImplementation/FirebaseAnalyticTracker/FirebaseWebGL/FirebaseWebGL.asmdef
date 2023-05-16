@@ -3,7 +3,6 @@
     "rootNamespace": "",
     "references": [],
     "includePlatforms": [
-        "Editor",
         "WebGL"
     ],
     "excludePlatforms": [],
