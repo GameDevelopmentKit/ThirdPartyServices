@@ -8,9 +8,9 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.EasyMobile;
 #if FB_INSTANT
     using ServiceImplementation.AdsServices.FacebookInstant;
+    using ServiceImplementation.FBInstant.Tournament;
 #endif
     using ServiceImplementation.AdsServices.Signal;
-    using ServiceImplementation.FBInstant.Tournament;
     using Zenject;
 
     public class AdServiceInstaller : Installer<AdServiceInstaller>
