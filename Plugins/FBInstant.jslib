@@ -139,7 +139,7 @@ var FBInstantLibrary = {
             });
     },
 
-    SaveUserData: function (key, json, callbackObj, callbackFunc) {
+    SaveUserData: function (key, json, callbackObj, callbackFunc, callbackId) {
         key = UTF8ToString(key);
         json = UTF8ToString(json);
         callbackObj = UTF8ToString(callbackObj);
@@ -148,15 +148,15 @@ var FBInstantLibrary = {
         FBInstant.player.setDataAsync({ key: json })
             .then(() => {
                 console.error("save user data ok");
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: null }));
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: null, id: callbackId }));
             })
             .catch(err => {
                 console.error("save user data error: " + err.message);
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message }));
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message, id: callbackId }));
             });
     },
 
-    LoadUserData: function (key, callbackObj, callbackFunc) {
+    LoadUserData: function (key, callbackObj, callbackFunc, callbackId) {
         key = UTF8ToString(key);
         callbackObj = UTF8ToString(callbackObj);
         callbackFunc = UTF8ToString(callbackFunc);
@@ -164,11 +164,11 @@ var FBInstantLibrary = {
         FBInstant.player.getDataAsync([key])
             .then(data => {
                 console.error("load user data ok");
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: data[key], error: null }));
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: data[key], error: null, id: callbackId }));
             })
             .catch(err => {
                 console.error("load user data error: " + err.message);
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: null, error: err.message }));
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: null, error: err.message, id: callbackId }));
             });
     },
 
