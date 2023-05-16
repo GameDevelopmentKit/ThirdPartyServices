@@ -1,4 +1,4 @@
-﻿#if FIREBASE_SDK_EXISTS
+﻿#if FIREBASE_WEBGL
 namespace ServiceImplementation.FirebaseAnalyticTracker
 {
     using System.Collections.Generic;
