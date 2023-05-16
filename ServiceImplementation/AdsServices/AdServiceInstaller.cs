@@ -10,6 +10,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.FacebookInstant;
     using ServiceImplementation.FBInstant.Tournament;
     using ServiceImplementation.FBInstant.Player;
+    using ServiceImplementation.FBInstant.EventHandler;
 #endif
     using ServiceImplementation.AdsServices.Signal;
     using Zenject;
@@ -24,7 +25,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
 #elif FB_INSTANT
             this.Container.BindInterfacesAndSelfTo<FacebookInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FacebookInstantAdsWrapper)).AsCached();
-            this.Container.BindInterfacesAndSelfTo<FBInstantTournament>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantTournament)).AsCached();
+            this.Container.BindInterfacesAndSelfTo<FBEventHandler>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBEventHandler)).AsCached();
             this.Container.BindInterfacesAndSelfTo<FBInstantPlayerDataWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantPlayerDataWrapper)).AsCached();
 #else
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
