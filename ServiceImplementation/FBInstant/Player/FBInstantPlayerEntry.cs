@@ -3,7 +3,7 @@
     using System;
 
     [Serializable]
-    public class FBPlayerEntry
+    public class FBInstantPlayerEntry
     {
         public string id;
         public string name;

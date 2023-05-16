@@ -2,7 +2,7 @@
 {
     using System.Runtime.InteropServices;
 
-    public static class FBPlayer
+    public static class FBInstantPlayer
     {
         [DllImport("__Internal")]
         public static extern string GetUserId();

@@ -25,7 +25,7 @@ namespace ServiceImplementation.AdsServices
 #elif FB_INSTANT
             this.Container.BindInterfacesAndSelfTo<FacebookInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName("FacebookAdsWrapper").AsCached();
             this.Container.BindInterfacesAndSelfTo<FBTournament>().FromNewComponentOnNewGameObject().WithGameObjectName("FBTournament").AsCached();
-            this.Container.BindInterfacesAndSelfTo<FBPlayerWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBPlayerWrapper)).AsCached();
+            this.Container.BindInterfacesAndSelfTo<FBInstantPlayerDataWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantPlayerDataWrapper)).AsCached();
 #else
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif

@@ -15,7 +15,7 @@
         /// <summary>
         /// callback after context.getPlayersAsync
         /// </summary>
-        public static System.Action<FBPlayerEntry[]> getPlayersAsync_Callback = null;
+        public static System.Action<FBInstantPlayerEntry[]> getPlayersAsync_Callback = null;
 
         [DllImport("__Internal")]
         public static extern void context_chooseAsync(string jsonStr);
@@ -35,7 +35,7 @@
             context_chooseAsync(JsonConvert.SerializeObject(p));
         }
 
-        public void getPlayersAsync(System.Action<FBPlayerEntry[]> cb)
+        public void getPlayersAsync(System.Action<FBInstantPlayerEntry[]> cb)
         {
             getPlayersAsync_Callback = cb;
             context_getPlayersAsync();

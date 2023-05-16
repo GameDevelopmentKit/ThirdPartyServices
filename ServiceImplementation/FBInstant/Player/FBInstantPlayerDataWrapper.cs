@@ -6,7 +6,7 @@ namespace ServiceImplementation.FBInstant.Player
     using Newtonsoft.Json;
     using UnityEngine;
 
-    public class FBPlayerWrapper : MonoBehaviour
+    public class FBInstantPlayerDataWrapper : MonoBehaviour
     {
         private readonly Dictionary<string, UniTaskCompletionSource<string>>           saveUserDataTcs = new();
         private readonly Dictionary<string, UniTaskCompletionSource<(string, string)>> loadUserDataTcs = new();
@@ -25,7 +25,7 @@ namespace ServiceImplementation.FBInstant.Player
             var id = Guid.NewGuid().ToString();
             this.saveUserDataTcs[id] = new();
 
-            FBPlayer.SaveUserData(key, json, this.gameObject.name, nameof(this.OnUserDataSaved), id);
+            FBInstantPlayer.SaveUserData(key, json, this.gameObject.name, nameof(this.OnUserDataSaved), id);
 
             var error = UniTask.RunOnThreadPool(() => this.saveUserDataTcs[id].Task).GetAwaiter().GetResult();
             this.saveUserDataTcs.Remove(id);
@@ -51,7 +51,7 @@ namespace ServiceImplementation.FBInstant.Player
             var id = Guid.NewGuid().ToString();
             this.loadUserDataTcs[id] = new();
 
-            FBPlayer.LoadUserData(key, this.gameObject.name, nameof(this.OnUserDataLoaded), id);
+            FBInstantPlayer.LoadUserData(key, this.gameObject.name, nameof(this.OnUserDataLoaded), id);
 
             var (data, error) = UniTask.RunOnThreadPool(() => this.loadUserDataTcs[id].Task).GetAwaiter().GetResult();
             this.loadUserDataTcs.Remove(id);
