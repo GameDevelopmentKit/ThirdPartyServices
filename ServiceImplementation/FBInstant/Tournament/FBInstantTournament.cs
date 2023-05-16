@@ -6,7 +6,7 @@ namespace ServiceImplementation.FBInstant.Tournament
     using Newtonsoft.Json;
     using UnityEngine;
 
-    public class FBTournament : MonoBehaviour
+    public class FBInstantTournament : MonoBehaviour
     {
         #region Javascript
 

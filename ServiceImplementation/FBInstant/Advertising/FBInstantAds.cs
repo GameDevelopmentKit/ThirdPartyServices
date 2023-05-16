@@ -1,22 +1,12 @@
-﻿namespace ServiceImplementation.FBInstant.Adsvertising
+﻿namespace ServiceImplementation.FBInstant.Advertising
 {
     using System;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
     using Newtonsoft.Json;
-    using ServiceImplementation.FBInstant.Leaderboard;
-    using ServiceImplementation.FBInstant.Payment;
 
-    public class FBInstantAds
+    public static class FBInstantAds
     {
-        public static ContextPlayer player      = new ContextPlayer();
-        public static GameContext   context     = new GameContext();
-        public static FBLeaderboard leaderboard = new FBLeaderboard();
-
-        public static FBPayments payments = new FBPayments();
-
-        #region javascript
-
         [DllImport("__Internal")]
         public static extern string fbinstant_getSupportedAPIs();
 
@@ -74,8 +64,6 @@
 
         [DllImport("__Internal")]
         public static extern void fbinstant_shareAsync(string jsonStr);
-
-        #endregion
 
         private static List<string> supportedApis = null; // use memory cache
 

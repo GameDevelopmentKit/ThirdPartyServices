@@ -1,7 +1,10 @@
 {
     "name": "FBInstant",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GameFoundation.Utilities",
+        "UniTask"
+    ],
     "includePlatforms": [
         "Editor",
         "WebGL"

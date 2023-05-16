@@ -2,7 +2,7 @@
 {
     using System.Runtime.InteropServices;
     using Newtonsoft.Json;
-    using ServiceImplementation.FBInstant.Adsvertising;
+    using ServiceImplementation.FBInstant.Advertising;
 
     public class FBPayments
     {
