@@ -9,6 +9,7 @@ namespace ServiceImplementation.AdsServices
 #if FB_INSTANT
     using ServiceImplementation.AdsServices.FacebookInstant;
     using ServiceImplementation.FBInstant.Tournament;
+    using ServiceImplementation.FBInstant.Player;
 #endif
     using ServiceImplementation.AdsServices.Signal;
     using Zenject;
@@ -24,6 +25,7 @@ namespace ServiceImplementation.AdsServices
 #elif FB_INSTANT
             this.Container.BindInterfacesAndSelfTo<FacebookInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName("FacebookAdsWrapper").AsCached();
             this.Container.BindInterfacesAndSelfTo<FBTournament>().FromNewComponentOnNewGameObject().WithGameObjectName("FBTournament").AsCached();
+            this.Container.BindInterfacesAndSelfTo<FBPlayerWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBPlayerWrapper)).AsCached();
 #else
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
