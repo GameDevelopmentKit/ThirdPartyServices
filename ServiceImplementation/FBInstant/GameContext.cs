@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
     using Newtonsoft.Json;
+    using ServiceImplementation.FBInstant.Player;
 
     public class GameContext
     {
@@ -14,7 +15,7 @@
         /// <summary>
         /// callback after context.getPlayersAsync
         /// </summary>
-        public static System.Action<ContextPlayerEntry[]> getPlayersAsync_Callback = null;
+        public static System.Action<FBPlayerEntry[]> getPlayersAsync_Callback = null;
 
         [DllImport("__Internal")]
         public static extern void context_chooseAsync(string jsonStr);
@@ -34,7 +35,7 @@
             context_chooseAsync(JsonConvert.SerializeObject(p));
         }
 
-        public void getPlayersAsync(System.Action<ContextPlayerEntry[]> cb)
+        public void getPlayersAsync(System.Action<FBPlayerEntry[]> cb)
         {
             getPlayersAsync_Callback = cb;
             context_getPlayersAsync();

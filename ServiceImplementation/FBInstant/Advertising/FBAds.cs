@@ -5,7 +5,7 @@
     using System.Runtime.InteropServices;
     using Newtonsoft.Json;
 
-    public class FBInstantAds
+    public static class FBAds
     {
         [DllImport("__Internal")]
         public static extern string fbinstant_getSupportedAPIs();
