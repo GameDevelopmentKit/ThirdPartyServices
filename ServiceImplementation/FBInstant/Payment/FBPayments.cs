@@ -10,7 +10,7 @@
 
         public bool isSupportPayments()
         {
-            return FBAds.getSupportedAPIs().Contains("payments.purchaseAsync") && isOnReadyOk;
+            return FBInstantAds.getSupportedAPIs().Contains("payments.purchaseAsync") && isOnReadyOk;
         }
 
         /// <summary>

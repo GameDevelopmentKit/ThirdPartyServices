@@ -1,4 +1,5 @@
-﻿namespace ServiceImplementation.AdsServices.FacebookInstant
+﻿#if FB_INSTANT
+namespace ServiceImplementation.AdsServices.FacebookInstant
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +11,7 @@
     using UnityEngine;
     using Zenject;
 
-    public class FacebookAdsWrapper : MonoBehaviour, IAdServices
+    public class FacebookInstantAdsWrapper : MonoBehaviour, IAdServices
     {
         private          ILogService              logService;
         private          SignalBus                signalBus;
@@ -44,12 +45,12 @@
             }
 
             this.logService.Log("Enter facebook ad id here!", LogLevel.WARNING);
-            FBAds.ShowBannerAd("");
+            FBInstantAds.ShowBannerAd("");
         }
 
         public void HideBannedAd()
         {
-            FBAds.HideBannerAd();
+            FBInstantAds.HideBannerAd();
         }
 
         public void DestroyBannerAd()
@@ -63,7 +64,7 @@
 
         public bool IsInterstitialAdReady(string place)
         {
-            return FBAds.IsInterstitialAdReady(place);
+            return FBInstantAds.IsInterstitialAdReady(place);
         }
 
         private void OnInterstitialAdLoaded(string message)
@@ -85,7 +86,7 @@
             if (this.isInterstitialAdLoading.GetValueOrDefault(place, false)) return;
             this.isInterstitialAdLoading[place] = true;
 
-            FBAds.LoadInterstitialAd(place, this.gameObject.name, nameof(this.OnInterstitialAdLoaded));
+            FBInstantAds.LoadInterstitialAd(place, this.gameObject.name, nameof(this.OnInterstitialAdLoaded));
         }
 
         private void OnInterstitialAdShown(string message)
@@ -109,7 +110,7 @@
         {
             if (!this.adServicesConfig.EnableInterstitialAd) return;
 
-            FBAds.ShowInterstitialAd(place, this.gameObject.name, nameof(this.OnInterstitialAdShown));
+            FBInstantAds.ShowInterstitialAd(place, this.gameObject.name, nameof(this.OnInterstitialAdShown));
         }
 
         #endregion
@@ -118,7 +119,7 @@
 
         public bool IsRewardedAdReady(string place)
         {
-            return FBAds.IsRewardedAdReady(place);
+            return FBInstantAds.IsRewardedAdReady(place);
         }
 
         private void OnRewardedAdLoaded(string message)
@@ -140,7 +141,7 @@
             if (this.isRewardedAdLoading.GetValueOrDefault(place, false)) return;
             this.isRewardedAdLoading[place] = true;
 
-            FBAds.LoadRewardedAd(place, this.gameObject.name, nameof(this.OnRewardedAdLoaded));
+            FBInstantAds.LoadRewardedAd(place, this.gameObject.name, nameof(this.OnRewardedAdLoaded));
         }
 
         private void OnRewardedAdShown(string message)
@@ -171,7 +172,7 @@
             if (!this.adServicesConfig.EnableRewardedAd) return;
 
             this.onShowRewardedAdCompleted = onCompleted;
-            FBAds.ShowRewardedAd(place, this.gameObject.name, nameof(this.OnRewardedAdShown));
+            FBInstantAds.ShowRewardedAd(place, this.gameObject.name, nameof(this.OnRewardedAdShown));
         }
 
         #endregion
@@ -247,3 +248,4 @@
         }
     }
 }
+#endif

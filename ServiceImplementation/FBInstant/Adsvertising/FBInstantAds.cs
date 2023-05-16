@@ -7,7 +7,7 @@
     using ServiceImplementation.FBInstant.Leaderboard;
     using ServiceImplementation.FBInstant.Payment;
 
-    public class FBAds
+    public class FBInstantAds
     {
         public static ContextPlayer player      = new ContextPlayer();
         public static GameContext   context     = new GameContext();

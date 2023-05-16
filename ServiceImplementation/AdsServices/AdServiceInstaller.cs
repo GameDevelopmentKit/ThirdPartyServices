@@ -22,7 +22,7 @@ namespace ServiceImplementation.AdsServices
 #if EASY_MOBILE_PRO && (!UNITY_EDITOR || (UNITY_EDITOR && !EM_IRONSOURCE))
             this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
 #elif FB_INSTANT
-            this.Container.BindInterfacesAndSelfTo<FacebookAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName("FacebookAdsWrapper").AsCached();
+            this.Container.BindInterfacesAndSelfTo<FacebookInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName("FacebookAdsWrapper").AsCached();
             this.Container.BindInterfacesAndSelfTo<FBTournament>().FromNewComponentOnNewGameObject().WithGameObjectName("FBTournament").AsCached();
 #else
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();

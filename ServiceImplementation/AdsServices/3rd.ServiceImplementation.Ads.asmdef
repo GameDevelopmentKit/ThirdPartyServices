@@ -29,7 +29,8 @@
         "Zenject-usage.dll",
         "GoogleMobileAdsNative.Android.dll",
         "GoogleMobileAdsNative.Common.dll",
-        "GoogleMobileAdsNative.dll"
+        "GoogleMobileAdsNative.dll",
+        "Newtonsoft.Json.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],
