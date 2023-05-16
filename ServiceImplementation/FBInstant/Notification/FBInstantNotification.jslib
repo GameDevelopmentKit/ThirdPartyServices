@@ -36,5 +36,5 @@ var FBInstantNotificationLibrary = {
         });
     },
 };
-autoAddDeps(FBInstantNotificationLibrary, "$GetBuffer");
+
 mergeInto(LibraryManager.library, FBInstantNotificationLibrary);
