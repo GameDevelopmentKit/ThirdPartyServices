@@ -1,6 +1,5 @@
 ﻿namespace Core.AnalyticServices.Editor
 {
-    using global::Editor.GDKManager;
     using Models;
     using UnityEditor;
     using UnityEngine.UIElements;
