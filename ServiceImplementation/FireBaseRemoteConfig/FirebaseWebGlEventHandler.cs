@@ -1,3 +1,4 @@
+#if FIREBASE_WEBGL
 namespace ServiceImplementation.FireBaseRemoteConfig
 {
     using UnityEngine;
@@ -14,3 +15,4 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         public void OnFetchRemoteConfigComplete(string param) { this.firebaseWebGlRemoteConfig.OnFetchRemoteConfigComplete(); }
     }
 }
+#endif
