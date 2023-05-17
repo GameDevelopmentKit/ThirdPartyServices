@@ -1,4 +1,4 @@
-﻿#if !FIREBASE_SDK_EXISTS && !FIREBASE_WEBGL
+﻿#if !FIREBASE_SDK_EXISTS && !FIREBASE_WEBGL|| UNITY_EDITOR && FIREBASE_WEBGL
 namespace ServiceImplementation.FirebaseAnalyticTracker
 {
     using System.Collections.Generic;
