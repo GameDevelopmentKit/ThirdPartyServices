@@ -1,5 +1,5 @@
 {
-    "name": "FBInstant",
+    "name": "3rd.FBInstant",
     "rootNamespace": "",
     "references": [
         "GameFoundation.Utilities",
