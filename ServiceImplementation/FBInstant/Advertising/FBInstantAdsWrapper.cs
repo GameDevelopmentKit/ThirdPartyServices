@@ -1,5 +1,4 @@
-﻿#if FB_INSTANT
-namespace ServiceImplementation.AdsServices.FacebookInstant
+﻿namespace ServiceImplementation.FBInstant.Advertising
 {
     using System;
     using System.Collections.Generic;
@@ -7,11 +6,10 @@ namespace ServiceImplementation.AdsServices.FacebookInstant
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
-    using ServiceImplementation.FBInstant.Advertising;
     using UnityEngine;
     using Zenject;
 
-    public class FacebookInstantAdsWrapper : MonoBehaviour, IAdServices
+    public class FBInstantAdsWrapper : MonoBehaviour, IAdServices
     {
         private          ILogService              logService;
         private          SignalBus                signalBus;
@@ -248,4 +246,3 @@ namespace ServiceImplementation.AdsServices.FacebookInstant
         }
     }
 }
-#endif

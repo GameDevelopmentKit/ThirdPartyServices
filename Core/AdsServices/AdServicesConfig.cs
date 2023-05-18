@@ -1,4 +1,4 @@
-namespace ServiceImplementation.AdsServices
+namespace Core.AdsServices
 {
     using System.Collections.Generic;
 

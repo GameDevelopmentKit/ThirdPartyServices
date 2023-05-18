@@ -6,13 +6,6 @@ namespace ServiceImplementation.AdsServices
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.EasyMobile;
-#if FB_INSTANT
-    using ServiceImplementation.AdsServices.FacebookInstant;
-    using ServiceImplementation.FBInstant.Tournament;
-    using ServiceImplementation.FBInstant.Player;
-    using ServiceImplementation.FBInstant.EventHandler;
-    using ServiceImplementation.FBInstant.Notification;
-#endif
     using ServiceImplementation.AdsServices.Signal;
     using Zenject;
 
@@ -24,12 +17,6 @@ namespace ServiceImplementation.AdsServices
             this.Container.Bind<AdServicesConfig>().AsCached().NonLazy();
 #if EASY_MOBILE_PRO && (!UNITY_EDITOR || (UNITY_EDITOR && !EM_IRONSOURCE))
             this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
-#elif FB_INSTANT
-            this.Container.BindInterfacesAndSelfTo<FacebookInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FacebookInstantAdsWrapper)).AsCached();
-            this.Container.BindInterfacesAndSelfTo<FBInstantTournament>().AsCached();
-            this.Container.BindInterfacesAndSelfTo<FBInstantNotification>().AsCached();
-            this.Container.BindInterfacesAndSelfTo<FBEventHandler>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBEventHandler)).AsCached().NonLazy();
-            this.Container.BindInterfacesAndSelfTo<FBInstantPlayerDataWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantPlayerDataWrapper)).AsCached();
 #else
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif

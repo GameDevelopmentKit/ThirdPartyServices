@@ -25,7 +25,7 @@ var FBInstantPlayerLibrary = {
         callbackObj = UTF8ToString(callbackObj);
         callbackFunc = UTF8ToString(callbackFunc);
 
-        FBInstant.player.setDataAsync({ key: json })
+        FBInstant.player.setDataAsync({ [key]: json })
             .then(() => {
                 console.error("save user data ok");
                 SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: null, id: callbackId }));
