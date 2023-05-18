@@ -59,14 +59,14 @@ var FBInstantAdsLibrary = {
         LoadedAds.interstitialAd[placement] = null;
 
         if (!ad) {
-            console.log("interstitial ad not loaded");
+            console.error("interstitial ad not loaded");
             SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: "interstitial ad not loaded" }));
             return;
         }
 
         ad.showAsync()
             .then(() => {
-                console.error("show interstitial ad ok");
+                console.log("show interstitial ad ok");
                 SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
             })
             .catch(err => {
@@ -117,14 +117,14 @@ var FBInstantAdsLibrary = {
         LoadedAds.rewardedAd[placement] = null;
 
         if (!ad) {
-            console.log("rewarded ad not loaded");
+            console.error("rewarded ad not loaded");
             SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: "rewarded ad not loaded" }));
             return;
         }
 
         ad.showAsync()
             .then(() => {
-                console.error("show rewarded ad ok");
+                console.log("show rewarded ad ok");
                 SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: null }));
             })
             .catch(err => {

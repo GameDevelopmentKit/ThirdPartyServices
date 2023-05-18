@@ -27,7 +27,7 @@ var FBInstantPlayerLibrary = {
 
         FBInstant.player.setDataAsync({ [key]: json })
             .then(() => {
-                console.error("save user data ok");
+                console.log("save user data ok");
                 SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: null, id: callbackId }));
             })
             .catch(err => {
@@ -43,7 +43,7 @@ var FBInstantPlayerLibrary = {
 
         FBInstant.player.getDataAsync([key])
             .then(data => {
-                console.error("load user data ok");
+                console.log("load user data ok");
                 SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: data[key], error: null, id: callbackId }));
             })
             .catch(err => {

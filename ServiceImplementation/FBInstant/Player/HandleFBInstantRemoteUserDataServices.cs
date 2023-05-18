@@ -1,5 +1,6 @@
 namespace ServiceImplementation.FBInstant.Player
 {
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Scripts.Utilities.UserData;
 
@@ -12,12 +13,12 @@ namespace ServiceImplementation.FBInstant.Player
             this.fbInstantPlayer = fbInstantPlayer;
         }
 
-        protected override void SaveJson(string key, string json)
+        protected override UniTask SaveJson(string key, string json)
         {
-            this.fbInstantPlayer.SaveUserData(key, json);
+            return this.fbInstantPlayer.SaveUserData(key, json);
         }
 
-        protected override string LoadJson(string key)
+        protected override UniTask<string> LoadJson(string key)
         {
             return this.fbInstantPlayer.LoadUserData(key);
         }
