@@ -1,9 +1,12 @@
 {
-    "name": "FBInstant",
+    "name": "3rd.FBInstant",
     "rootNamespace": "",
     "references": [
         "GameFoundation.Utilities",
-        "UniTask"
+        "UniTask",
+        "3rdCore.Ads",
+        "Zenject-Source",
+        "Zenject-Signals"
     ],
     "includePlatforms": [
         "Editor",
