@@ -20,12 +20,12 @@ namespace ServiceImplementation.FBInstant.Player
             this.saveUserDataTcs[id].TrySetResult(error);
         }
 
-        public async UniTask SaveUserData(string key, string json)
+        public async UniTask SaveUserData(string json)
         {
             var id = Guid.NewGuid().ToString();
             this.saveUserDataTcs[id] = new();
 
-            FBInstantPlayer.SaveUserData(key, json, this.gameObject.name, nameof(this.OnUserDataSaved), id);
+            FBInstantPlayer.SaveUserData(json, this.gameObject.name, nameof(this.OnUserDataSaved), id);
 
             var error = await this.saveUserDataTcs[id].Task;
             this.saveUserDataTcs.Remove(id);
@@ -46,12 +46,12 @@ namespace ServiceImplementation.FBInstant.Player
             this.loadUserDataTcs[id].TrySetResult((data, error));
         }
 
-        public async UniTask<string> LoadUserData(string key)
+        public async UniTask<string[]> LoadUserData(string[] keys)
         {
             var id = Guid.NewGuid().ToString();
             this.loadUserDataTcs[id] = new();
 
-            FBInstantPlayer.LoadUserData(key, this.gameObject.name, nameof(this.OnUserDataLoaded), id);
+            FBInstantPlayer.LoadUserData(JsonConvert.SerializeObject(keys), this.gameObject.name, nameof(this.OnUserDataLoaded), id);
 
             var (data, error) = await this.loadUserDataTcs[id].Task;
             this.loadUserDataTcs.Remove(id);
@@ -61,7 +61,7 @@ namespace ServiceImplementation.FBInstant.Player
                 throw new(error);
             }
 
-            return data;
+            return JsonConvert.DeserializeObject<string[]>(data);
         }
     }
 }
