@@ -19,13 +19,12 @@ var FBInstantPlayerLibrary = {
         return GetBuffer(FBInstant.player.getPhoto());
     },
 
-    SaveUserData: function (key, json, callbackObj, callbackFunc, callbackId) {
-        key = UTF8ToString(key);
+    SaveUserData: function (json, callbackObj, callbackFunc, callbackId) {
         json = UTF8ToString(json);
         callbackObj = UTF8ToString(callbackObj);
         callbackFunc = UTF8ToString(callbackFunc);
 
-        FBInstant.player.setDataAsync({ [key]: json })
+        FBInstant.player.setDataAsync(json)
             .then(() => {
                 console.log("save user data ok");
                 SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: null, id: callbackId }));
@@ -36,15 +35,15 @@ var FBInstantPlayerLibrary = {
             });
     },
 
-    LoadUserData: function (key, callbackObj, callbackFunc, callbackId) {
-        key = UTF8ToString(key);
+    LoadUserData: function (keys, callbackObj, callbackFunc, callbackId) {
+        keys = JSON.parse(UTF8ToString(keys));
         callbackObj = UTF8ToString(callbackObj);
         callbackFunc = UTF8ToString(callbackFunc);
 
-        FBInstant.player.getDataAsync([key])
+        FBInstant.player.getDataAsync(keys)
             .then(data => {
                 console.log("load user data ok");
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: data[key], error: null, id: callbackId }));
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: JSON.stringify(Object.values(data)), error: null, id: callbackId }));
             })
             .catch(err => {
                 console.error("load user data error: " + err.message);

@@ -6,7 +6,8 @@
         "UniTask",
         "3rdCore.Ads",
         "Zenject-Source",
-        "Zenject-Signals"
+        "Zenject-Signals",
+        "GameFoundation.Models"
     ],
     "includePlatforms": [
         "Editor",

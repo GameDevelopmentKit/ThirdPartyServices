@@ -14,10 +14,10 @@
         public static extern string GetUserAvatar();
 
         [DllImport("__Internal")]
-        public static extern void SaveUserData(string key, string json, string callbackObj, string callbackFunc, string callbackId);
+        public static extern void SaveUserData(string json, string callbackObj, string callbackFunc, string callbackId);
 
         [DllImport("__Internal")]
-        public static extern void LoadUserData(string key, string callbackObj, string callbackFunc, string callbackId);
+        public static extern void LoadUserData(string keys, string callbackObj, string callbackFunc, string callbackId);
 
         [DllImport("__Internal")]
         public static extern void player_canSubscribeBotAsync();
