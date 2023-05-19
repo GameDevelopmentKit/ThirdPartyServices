@@ -23,6 +23,7 @@ var FBInstantPlayerLibrary = {
         json = UTF8ToString(json);
         callbackObj = UTF8ToString(callbackObj);
         callbackFunc = UTF8ToString(callbackFunc);
+        callbackId = UTF8ToString(callbackId);
 
         FBInstant.player.setDataAsync(json)
             .then(() => {
@@ -39,6 +40,7 @@ var FBInstantPlayerLibrary = {
         keys = JSON.parse(UTF8ToString(keys));
         callbackObj = UTF8ToString(callbackObj);
         callbackFunc = UTF8ToString(callbackFunc);
+        callbackId = UTF8ToString(callbackId);
 
         FBInstant.player.getDataAsync(keys)
             .then(data => {
