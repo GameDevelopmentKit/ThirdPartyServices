@@ -153,6 +153,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public bool IsShowingAd           { get; set; } = false;
         public bool IsResumedFromAdsOrIAP { get; set; } = false;
 
+        public float LoadingTimeToShowAOA => 5f;
         public async void ShowAdIfAvailable()
         {
             await UniTask.SwitchToMainThread();
