@@ -11,6 +11,21 @@ namespace ServiceImplementation.FBInstant.Player
         private readonly Dictionary<string, UniTaskCompletionSource<string>>           saveUserDataTcs = new();
         private readonly Dictionary<string, UniTaskCompletionSource<(string, string)>> loadUserDataTcs = new();
 
+        public string GetUserId()
+        {
+            return FBInstantPlayer.GetUserId();
+        }
+
+        public string GetUserName()
+        {
+            return FBInstantPlayer.GetUserName();
+        }
+
+        public string GetUserAvatar()
+        {
+            return FBInstantPlayer.GetUserAvatar();
+        }
+
         private void OnUserDataSaved(string message)
         {
             var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);

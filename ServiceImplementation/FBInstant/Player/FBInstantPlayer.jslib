@@ -52,28 +52,6 @@ var FBInstantPlayerLibrary = {
                 SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: null, error: err.message, id: callbackId }));
             });
     },
-
-    player_canSubscribeBotAsync: function () {
-        FBInstant.player.canSubscribeBotAsync()
-            .then(function (can_subscribe) {
-                console.log("can_subscribe=" + can_subscribe);
-                gameInstance.SendMessage("__IGEXPORTER__", "Promise_on_player_canSubscribeBotAsync", JSON.stringify(can_subscribe));
-            }
-            ).catch(function (e) {
-                console.error("canSubscribeBotAsync|error|" + JSON.stringify(e));
-            });
-    },
-
-    player_subscribeBotAsync: function () {
-        FBInstant.player.subscribeBotAsync()
-            .then(function () {
-                gameInstance.SendMessage("__IGEXPORTER__", "Promise_on_player_subscribeBotAsync_Success");
-            }
-            ).catch(function (e) {
-                console.error("subscribeBotAsync|error|" + JSON.stringify(e));
-                gameInstance.SendMessage("__IGEXPORTER__", "Promise_on_player_subscribeBotAsync_Error", JSON.stringify(e));
-            });
-    },
 };
 
 autoAddDeps(FBInstantPlayerLibrary, "$GetBuffer");
