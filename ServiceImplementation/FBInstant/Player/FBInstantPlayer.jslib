@@ -20,7 +20,7 @@ var FBInstantPlayerLibrary = {
     },
 
     SaveUserData: function (json, callbackObj, callbackFunc, callbackId) {
-        json = UTF8ToString(json);
+        json = JSON.parse(UTF8ToString(json));
         callbackObj = UTF8ToString(callbackObj);
         callbackFunc = UTF8ToString(callbackFunc);
         callbackId = UTF8ToString(callbackId);

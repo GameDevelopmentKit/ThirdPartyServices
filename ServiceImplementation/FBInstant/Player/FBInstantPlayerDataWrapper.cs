@@ -2,6 +2,7 @@ namespace ServiceImplementation.FBInstant.Player
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Cysharp.Threading.Tasks;
     using Newtonsoft.Json;
     using UnityEngine;
@@ -35,12 +36,12 @@ namespace ServiceImplementation.FBInstant.Player
             this.saveUserDataTcs[id].TrySetResult(error);
         }
 
-        public async UniTask SaveUserData(string json)
+        public async UniTask SaveUserData((string key, string json)[] values)
         {
             var id = Guid.NewGuid().ToString();
             this.saveUserDataTcs[id] = new();
 
-            FBInstantPlayer.SaveUserData(json, this.gameObject.name, nameof(this.OnUserDataSaved), id);
+            FBInstantPlayer.SaveUserData(JsonConvert.SerializeObject(values.ToDictionary(value => value.key, value => value.json)), this.gameObject.name, nameof(this.OnUserDataSaved), id);
 
             var error = await this.saveUserDataTcs[id].Task;
             this.saveUserDataTcs.Remove(id);
