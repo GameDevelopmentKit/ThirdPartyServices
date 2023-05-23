@@ -1,7 +1,5 @@
 namespace Core.AdsServices
 {
-    using System.Collections.Generic;
-
     public class AdServicesConfig
     {
         public bool EnableBannerAd               { get; set; } = true;
@@ -14,8 +12,5 @@ namespace Core.AdsServices
 
         public int InterstitialAdInterval    { get; set; } = 10;
         public int MinPauseSecondToShowAoaAd { get; set; } = 0;
-
-        public List<string> InterstitialAdPlacements { get; set; } = new();
-        public List<string> RewardedAdPlacements     { get; set; } = new();
     }
 }
