@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
+    using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
     using UnityEngine;
@@ -11,26 +12,29 @@
 
     public class FBInstantAdsWrapper : MonoBehaviour, IAdServices
     {
-        private          ILogService              logService;
-        private          SignalBus                signalBus;
-        private          AdServicesConfig         adServicesConfig;
+        private SignalBus          signalBus;
+        private ILogService        logService;
+        private AdServicesConfig   adServicesConfig;
+        private FBInstantAdsConfig fbInstantAdsConfig;
+
         private readonly Dictionary<string, bool> isInterstitialAdLoading = new();
         private readonly Dictionary<string, bool> isRewardedAdLoading     = new();
         private          Action                   onShowRewardedAdCompleted;
 
         [Inject]
-        public void Construct(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig)
+        public void Construct(SignalBus signalBus, ILogService logService, AdServicesConfig adServicesConfig, FBInstantAdsConfig fbInstantAdsConfig)
         {
-            this.logService       = logService;
-            this.signalBus        = signalBus;
-            this.adServicesConfig = adServicesConfig;
+            this.signalBus          = signalBus;
+            this.logService         = logService;
+            this.adServicesConfig   = adServicesConfig;
+            this.fbInstantAdsConfig = fbInstantAdsConfig;
             this.PreloadAds();
         }
 
         private void PreloadAds()
         {
-            this.adServicesConfig.InterstitialAdPlacements.ForEach(this.LoadInterstitialAd);
-            this.adServicesConfig.RewardedAdPlacements.ForEach(this.LoadRewardedAd);
+            this.fbInstantAdsConfig.InterstitialAdPlacements.ForEach(this.LoadInterstitialAd);
+            this.fbInstantAdsConfig.RewardedAdPlacements.ForEach(this.LoadRewardedAd);
         }
 
         #region Banner
@@ -42,8 +46,7 @@
                 return;
             }
 
-            this.logService.Log("Enter facebook ad id here!", LogLevel.WARNING);
-            FBInstantAds.ShowBannerAd("");
+            FBInstantAds.ShowBannerAd(this.fbInstantAdsConfig.BannerAdPlacement);
         }
 
         public void HideBannedAd()
@@ -51,6 +54,7 @@
             FBInstantAds.HideBannerAd();
         }
 
+        [Obsolete("Use HideBannerAd method instead!")]
         public void DestroyBannerAd()
         {
             this.logService.Log("Use HideBannerAd method instead!", LogLevel.EXCEPTION);

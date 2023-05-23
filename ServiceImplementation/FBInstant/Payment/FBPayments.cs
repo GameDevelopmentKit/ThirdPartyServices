@@ -1,8 +1,8 @@
 ﻿namespace ServiceImplementation.FBInstant.Payment
 {
+    using System;
     using System.Runtime.InteropServices;
     using Newtonsoft.Json;
-    using ServiceImplementation.FBInstant.Advertising;
 
     public class FBPayments
     {
@@ -10,13 +10,13 @@
 
         public bool isSupportPayments()
         {
-            return FBInstantAds.getSupportedAPIs().Contains("payments.purchaseAsync") && isOnReadyOk;
+            return FBInstant.getSupportedAPIs().Contains("payments.purchaseAsync") && isOnReadyOk;
         }
 
         /// <summary>
         /// callback after FBInstant.payments.onReady
         /// </summary>
-        public static System.Action payments_onReady_Callback = null;
+        public static Action payments_onReady_Callback = null;
 
         [DllImport("__Internal")]
         public static extern void payments_onReady();
@@ -24,7 +24,7 @@
         /// <summary>
         /// callback after getCatalogAsync
         /// </summary>
-        public static System.Action<FBError, Product[]> getCatalogAsync_Callback = null;
+        public static Action<FBError, Product[]> getCatalogAsync_Callback = null;
 
         [DllImport("__Internal")]
         public static extern void payments_getCatalogAsync();
@@ -32,7 +32,7 @@
         /// <summary>
         /// callback after purchaseAsync
         /// </summary>
-        public static System.Action<FBError, Purchase> purchaseAsync_Callback = null;
+        public static Action<FBError, Purchase> purchaseAsync_Callback = null;
 
         [DllImport("__Internal")]
         public static extern void payments_purchaseAsync(string purchaseConfig);
@@ -40,7 +40,7 @@
         /// <summary>
         /// callback after getPurchasesAsync
         /// </summary>
-        public static System.Action<FBError, Purchase[]> getPurchasesAsync_Callback = null;
+        public static Action<FBError, Purchase[]> getPurchasesAsync_Callback = null;
 
         [DllImport("__Internal")]
         public static extern void payments_getPurchasesAsync();
@@ -48,37 +48,37 @@
         /// <summary>
         /// callback after consumePurchaseAsync
         /// </summary>
-        public static System.Action<FBError> consumePurchaseAsync_Callback = null;
+        public static Action<FBError> consumePurchaseAsync_Callback = null;
 
         [DllImport("__Internal")]
         public static extern void payments_consumePurchaseAsync(string purchaseToken);
 
 
-        public void onReady(System.Action cb)
+        public void onReady(Action cb)
         {
             payments_onReady_Callback = cb;
             payments_onReady();
         }
 
-        public void getCatalogAsync(System.Action<FBError, Product[]> cb)
+        public void getCatalogAsync(Action<FBError, Product[]> cb)
         {
             getCatalogAsync_Callback = cb;
             payments_getCatalogAsync();
         }
 
-        public void purchaseAsync(PurchaseConfig purchaseConfig, System.Action<FBError, Purchase> cb)
+        public void purchaseAsync(PurchaseConfig purchaseConfig, Action<FBError, Purchase> cb)
         {
             purchaseAsync_Callback = cb;
             payments_purchaseAsync(JsonConvert.SerializeObject(purchaseConfig));
         }
 
-        public void getPurchasesAsync(System.Action<FBError, Purchase[]> cb)
+        public void getPurchasesAsync(Action<FBError, Purchase[]> cb)
         {
             getPurchasesAsync_Callback = cb;
             payments_getPurchasesAsync();
         }
 
-        public void consumePurchaseAsync(string purchaseToken, System.Action<FBError> cb)
+        public void consumePurchaseAsync(string purchaseToken, Action<FBError> cb)
         {
             consumePurchaseAsync_Callback = cb;
             payments_consumePurchaseAsync(purchaseToken);
