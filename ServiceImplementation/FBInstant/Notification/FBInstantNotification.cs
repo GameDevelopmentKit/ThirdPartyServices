@@ -1,3 +1,5 @@
+using System;
+
 namespace ServiceImplementation.FBInstant.Notification
 {
     using System.Runtime.InteropServices;
@@ -25,8 +27,8 @@ namespace ServiceImplementation.FBInstant.Notification
 
         public static void FacebookInstantSendInvite(Sprite img, string text, string localizationJson)
         {
-            var imgBase64 = img.texture.EncodeToPNG().ToString();
-            fbinstant_inviteAsync(imgBase64.ToString(), text, localizationJson, FBEventHandler.callbackObj, nameof(FacebookInstantSendInviteCallback));
+            var imgBase64 = img.texture.EncodeToPNG();
+            fbinstant_inviteAsync(Convert.ToBase64String(imgBase64), text, localizationJson, FBEventHandler.callbackObj, nameof(FacebookInstantSendInviteCallback));
         }
 
         public void FacebookInstantSendInviteCallback()
