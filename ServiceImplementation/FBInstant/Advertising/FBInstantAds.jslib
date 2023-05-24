@@ -83,7 +83,7 @@ var FBInstantAdsLibrary = {
             return;
         }
 
-        FBInstant.getRewardedVideoAsync(placement)
+        FBInstant.getRewardedVideoAsync(adId)
             .then((ad) => ad.loadAsync()
                 .then(() => {
                     LoadedAds.rewardedAd = ad;

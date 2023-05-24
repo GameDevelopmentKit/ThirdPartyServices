@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
+    using Cysharp.Threading.Tasks;
     using Newtonsoft.Json;
     using UnityEngine;
     using Zenject;
@@ -16,6 +17,8 @@
 
         private bool   isInterstitialAdLoading;
         private bool   isRewardedAdLoading;
+        private int    interstitialAdRetryCount;
+        private int    rewardedAdRetryCount;
         private Action onShowRewardedAdCompleted;
 
         [Inject]
@@ -45,9 +48,9 @@
             FBInstantAds.HideBannerAd();
         }
 
-        [Obsolete("Use HideBannerAd method instead!", error: true)]
         public void DestroyBannerAd()
         {
+            throw new NotImplementedException("Use HideBannerAd method instead!");
         }
 
         #endregion
@@ -68,7 +71,16 @@
 
             if (error is not null)
             {
-                this.LoadInterstitialAd();
+                if (++this.interstitialAdRetryCount >= 3)
+                {
+                    throw new("InterstitialAd load failed 3 times!");
+                }
+
+                UniTask.Delay(3000).ContinueWith(this.LoadInterstitialAd).Forget();
+            }
+            else
+            {
+                this.interstitialAdRetryCount = 0;
             }
         }
 
@@ -123,7 +135,16 @@
 
             if (error is not null)
             {
-                this.LoadRewardedAd();
+                if (++this.rewardedAdRetryCount >= 3)
+                {
+                    throw new("RewardedAd load failed 3 times!");
+                }
+
+                UniTask.Delay(3000).ContinueWith(this.LoadRewardedAd).Forget();
+            }
+            else
+            {
+                this.rewardedAdRetryCount = 0;
             }
         }
 
