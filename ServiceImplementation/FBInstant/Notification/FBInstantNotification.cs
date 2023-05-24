@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace ServiceImplementation.FBInstant.Notification
 {
@@ -15,7 +17,7 @@ namespace ServiceImplementation.FBInstant.Notification
         #region javascript
 
         [DllImport("__Internal")]
-        public static extern void fbinstant_inviteAsync(string imgBase64, string text, string localizationJsonStr, string callbackObj, string callbackFunc);
+        public static extern void fbinstant_inviteAsync(string jsonStr, string callbackObj, string callbackFunc);
 
         [DllImport("__Internal")]
         public static extern void fbinstant_notification(string action, string cta, string img, string content, string localizationJson,
@@ -25,11 +27,9 @@ namespace ServiceImplementation.FBInstant.Notification
 
         #region Invite function
 
-        public static void FacebookInstantSendInvite(Sprite img, string text, string localizationJson)
+        public static void FacebookInstantSendInvite(Dictionary<string, object> p)
         {
-            byte[] imgBase64 = img.texture.EncodeToPNG();
-            string base64String = "data:image/png;base64," + Convert.ToBase64String(imgBase64);
-            fbinstant_inviteAsync(base64String, text, localizationJson, FBEventHandler.callbackObj, nameof(FacebookInstantSendInviteCallback));
+            fbinstant_inviteAsync(JsonConvert.SerializeObject(p), FBEventHandler.callbackObj, nameof(FacebookInstantSendInviteCallback));
         }
 
         public void FacebookInstantSendInviteCallback()

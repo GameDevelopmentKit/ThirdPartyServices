@@ -1,18 +1,14 @@
 var FBInstantNotificationLibrary = {
     // Invite
-    fbinstant_inviteAsync: function (image, text, localizationsJson, callbackObj, callbackFunc) {
-        var localizations = JSON.parse(UTF8ToString(localizationsJson));
-        FBInstant.inviteAsync({
-            image: image,
-            text: {
-                default: text,
-                localizations: localizations
+    fbinstant_inviteAsync: function (jsonStr, callbackObj, callbackFunctionName) {
+                var param = JSON.parse(UTF8ToString(jsonStr));
+                FBInstant.inviteAsync(param)
+                            .then(function () {
+                                SendMessage(callbackObj, callbackFunctionName);
+                            }).catch(function (error) {
+                                console.error("inviteAsync|error|"  + JSON.stringify(error));
+                            });
             },
-            data: {myReplayData: '...'}
-        }).then(function () {
-            SendMessage(callbackObj, callbackFunc);
-        });
-    },
 
     // Send notification
     fbinstant_notification: function (action, cta, img, content, localizationJson, template, strategy, notification, callbackObj, callbackFunctionName) {
