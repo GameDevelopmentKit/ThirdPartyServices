@@ -6,6 +6,7 @@ namespace ServiceImplementation.FBInstant
     using ServiceImplementation.FBInstant.Notification;
     using ServiceImplementation.FBInstant.Tournament;
     using ServiceImplementation.FBInstant.Player;
+    using ServiceImplementation.FBInstant.Sharing;
 #if !UNITY_EDITOR
     using GameFoundation.Scripts.Utilities.UserData;
     using ServiceImplementation.FBInstant.Advertising;
@@ -22,6 +23,7 @@ namespace ServiceImplementation.FBInstant
             this.Container.BindInterfacesAndSelfTo<FBInstantNotification>().AsCached();
             this.Container.BindInterfacesAndSelfTo<FBEventHandler>().FromNewComponentOnNewGameObject().WithGameObjectName(FBEventHandler.callbackObj).AsCached();
             this.Container.BindInterfacesAndSelfTo<FBInstantPlayerDataWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantPlayerDataWrapper)).AsCached();
+            this.Container.BindInterfacesAndSelfTo<FBInstantSharing>().AsCached();
 #if !UNITY_EDITOR
             this.Container.BindInterfacesAndSelfTo<FBInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantAdsWrapper)).AsCached();
 #if FB_INSTANT_PRODUCTION
