@@ -4,8 +4,6 @@
     using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
-    using GameFoundation.Scripts.Utilities.Extension;
-    using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
     using UnityEngine;
     using Zenject;
@@ -13,28 +11,21 @@
     public class FBInstantAdsWrapper : MonoBehaviour, IAdServices
     {
         private SignalBus          signalBus;
-        private ILogService        logService;
         private AdServicesConfig   adServicesConfig;
-        private FBInstantAdsConfig fbInstantAdsConfig;
+        private FBInstantAdsConfig config;
 
-        private readonly Dictionary<string, bool> isInterstitialAdLoading = new();
-        private readonly Dictionary<string, bool> isRewardedAdLoading     = new();
-        private          Action                   onShowRewardedAdCompleted;
+        private bool   isInterstitialAdLoading;
+        private bool   isRewardedAdLoading;
+        private Action onShowRewardedAdCompleted;
 
         [Inject]
-        public void Construct(SignalBus signalBus, ILogService logService, AdServicesConfig adServicesConfig, FBInstantAdsConfig fbInstantAdsConfig)
+        public void Inject(SignalBus signalBus, AdServicesConfig adServicesConfig, FBInstantAdsConfig config)
         {
-            this.signalBus          = signalBus;
-            this.logService         = logService;
-            this.adServicesConfig   = adServicesConfig;
-            this.fbInstantAdsConfig = fbInstantAdsConfig;
-            this.PreloadAds();
-        }
-
-        private void PreloadAds()
-        {
-            this.fbInstantAdsConfig.InterstitialAdPlacements.ForEach(this.LoadInterstitialAd);
-            this.fbInstantAdsConfig.RewardedAdPlacements.ForEach(this.LoadRewardedAd);
+            this.signalBus        = signalBus;
+            this.adServicesConfig = adServicesConfig;
+            this.config           = config;
+            this.LoadInterstitialAd();
+            this.LoadRewardedAd();
         }
 
         #region Banner
@@ -46,7 +37,7 @@
                 return;
             }
 
-            FBInstantAds.ShowBannerAd(this.fbInstantAdsConfig.BannerAdPlacement);
+            FBInstantAds.ShowBannerAd(this.config.BannerAdId);
         }
 
         public void HideBannedAd()
@@ -54,10 +45,9 @@
             FBInstantAds.HideBannerAd();
         }
 
-        [Obsolete("Use HideBannerAd method instead!")]
+        [Obsolete("Use HideBannerAd method instead!", error: true)]
         public void DestroyBannerAd()
         {
-            this.logService.Log("Use HideBannerAd method instead!", LogLevel.EXCEPTION);
         }
 
         #endregion
@@ -66,29 +56,28 @@
 
         public bool IsInterstitialAdReady(string place)
         {
-            return FBInstantAds.IsInterstitialAdReady(place);
+            return FBInstantAds.IsInterstitialAdReady();
         }
 
         private void OnInterstitialAdLoaded(string message)
         {
             var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
-            var place   = @params["place"];
             var error   = @params["error"];
 
-            this.isInterstitialAdLoading[place] = false;
+            this.isInterstitialAdLoading = false;
 
             if (error is not null)
             {
-                this.LoadInterstitialAd(place);
+                this.LoadInterstitialAd();
             }
         }
 
-        private void LoadInterstitialAd(string place)
+        private void LoadInterstitialAd()
         {
-            if (this.isInterstitialAdLoading.GetValueOrDefault(place, false)) return;
-            this.isInterstitialAdLoading[place] = true;
+            if (this.isInterstitialAdLoading) return;
+            this.isInterstitialAdLoading = true;
 
-            FBInstantAds.LoadInterstitialAd(place, this.gameObject.name, nameof(this.OnInterstitialAdLoaded));
+            FBInstantAds.LoadInterstitialAd(this.config.InterstitialAdId, this.gameObject.name, nameof(this.OnInterstitialAdLoaded));
         }
 
         private void OnInterstitialAdShown(string message)
@@ -97,7 +86,8 @@
             var place   = @params["place"];
             var error   = @params["error"];
 
-            this.LoadInterstitialAd(place);
+            this.LoadInterstitialAd();
+
             if (error is not null)
             {
                 this.signalBus.Fire(new InterstitialAdLoadFailedSignal(place, error));
@@ -121,29 +111,28 @@
 
         public bool IsRewardedAdReady(string place)
         {
-            return FBInstantAds.IsRewardedAdReady(place);
+            return FBInstantAds.IsRewardedAdReady();
         }
 
         private void OnRewardedAdLoaded(string message)
         {
             var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
-            var place   = @params["place"];
             var error   = @params["error"];
 
-            this.isRewardedAdLoading[place] = false;
+            this.isRewardedAdLoading = false;
 
             if (error is not null)
             {
-                this.LoadRewardedAd(place);
+                this.LoadRewardedAd();
             }
         }
 
-        private void LoadRewardedAd(string place)
+        private void LoadRewardedAd()
         {
-            if (this.isRewardedAdLoading.GetValueOrDefault(place, false)) return;
-            this.isRewardedAdLoading[place] = true;
+            if (this.isRewardedAdLoading) return;
+            this.isRewardedAdLoading = true;
 
-            FBInstantAds.LoadRewardedAd(place, this.gameObject.name, nameof(this.OnRewardedAdLoaded));
+            FBInstantAds.LoadRewardedAd(this.config.RewardedAdId, this.gameObject.name, nameof(this.OnRewardedAdLoaded));
         }
 
         private void OnRewardedAdShown(string message)
@@ -152,7 +141,8 @@
             var place   = @params["place"];
             var error   = @params["error"];
 
-            this.LoadRewardedAd(place);
+            this.LoadRewardedAd();
+
             if (error is not null)
             {
                 this.signalBus.Fire(new RewardedAdLoadFailedSignal(place, error));

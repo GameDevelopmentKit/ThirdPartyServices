@@ -8,8 +8,12 @@ namespace ServiceImplementation.FBInstant
     using ServiceImplementation.FBInstant.Player;
     using ServiceImplementation.FBInstant.Sharing;
 #if !UNITY_EDITOR
-    using GameFoundation.Scripts.Utilities.UserData;
+    using Models;
     using ServiceImplementation.FBInstant.Advertising;
+#if FB_INSTANT_PRODUCTION
+    using GameFoundation.Scripts.Utilities.UserData;
+#endif
+
 #endif
 
 #endif
@@ -25,6 +29,7 @@ namespace ServiceImplementation.FBInstant
             this.Container.BindInterfacesAndSelfTo<FBInstantPlayerDataWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantPlayerDataWrapper)).AsCached();
             this.Container.BindInterfacesAndSelfTo<FBInstantSharing>().AsCached();
 #if !UNITY_EDITOR
+            this.Container.Bind<FBInstantAdsConfig>().FromResolveGetter<GDKConfig>(configs => configs.GetGameConfig<FBInstantAdsConfig>()).WhenInjectedInto<FBInstantAdsWrapper>();
             this.Container.BindInterfacesAndSelfTo<FBInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantAdsWrapper)).AsCached();
 #if FB_INSTANT_PRODUCTION
         this.Container.Rebind<IHandleUserDataServices>().To<HandleFBInstantRemoteUserDataServices>().AsCached();

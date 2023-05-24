@@ -1,19 +1,15 @@
 ﻿namespace ServiceImplementation.FBInstant.Advertising
 {
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
+    using System;
+    using Models;
+    using UnityEngine;
 
-    public class FBInstantAdsConfig
+    [Serializable]
+    [CreateAssetMenu(fileName = nameof(FBInstantAdsConfig), menuName = "Configs/" + nameof(FBInstantAdsConfig))]
+    public class FBInstantAdsConfig : ScriptableObject, IGameConfig
     {
-        public readonly string                     BannerAdPlacement;
-        public readonly ReadOnlyCollection<string> InterstitialAdPlacements;
-        public readonly ReadOnlyCollection<string> RewardedAdPlacements;
-
-        public FBInstantAdsConfig(string bannerAdPlacement, List<string> interstitialAdPlacements, List<string> rewardedAdPlacements)
-        {
-            this.BannerAdPlacement        = bannerAdPlacement;
-            this.InterstitialAdPlacements = interstitialAdPlacements.AsReadOnly();
-            this.RewardedAdPlacements     = rewardedAdPlacements.AsReadOnly();
-        }
+        [field: SerializeField] public string BannerAdId       { get; private set; }
+        [field: SerializeField] public string InterstitialAdId { get; private set; }
+        [field: SerializeField] public string RewardedAdId     { get; private set; }
     }
 }

@@ -5,25 +5,25 @@
     internal static class FBInstantAds
     {
         [DllImport("__Internal")]
-        internal static extern void ShowBannerAd(string placement);
+        internal static extern void ShowBannerAd(string adId);
 
         [DllImport("__Internal")]
         internal static extern void HideBannerAd();
 
         [DllImport("__Internal")]
-        internal static extern bool IsInterstitialAdReady(string placement);
+        internal static extern bool IsInterstitialAdReady();
 
         [DllImport("__Internal")]
-        internal static extern void LoadInterstitialAd(string placement, string callbackObj, string callbackFunc);
+        internal static extern void LoadInterstitialAd(string adId, string callbackObj, string callbackFunc);
 
         [DllImport("__Internal")]
         internal static extern void ShowInterstitialAd(string placement, string callbackObj, string callbackFunc);
 
         [DllImport("__Internal")]
-        internal static extern bool IsRewardedAdReady(string placement);
+        internal static extern bool IsRewardedAdReady();
 
         [DllImport("__Internal")]
-        internal static extern void LoadRewardedAd(string placement, string callbackObj, string callbackFunc);
+        internal static extern void LoadRewardedAd(string adId, string callbackObj, string callbackFunc);
 
         [DllImport("__Internal")]
         internal static extern void ShowRewardedAd(string placement, string callbackObj, string callbackFunc);
