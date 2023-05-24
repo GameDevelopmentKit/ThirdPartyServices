@@ -4,16 +4,13 @@ namespace ServiceImplementation.FBInstant
 #if FB_INSTANT
     using ServiceImplementation.FBInstant.EventHandler;
     using ServiceImplementation.FBInstant.Notification;
-    using ServiceImplementation.FBInstant.Tournament;
     using ServiceImplementation.FBInstant.Player;
     using ServiceImplementation.FBInstant.Sharing;
-#if !UNITY_EDITOR
+    using ServiceImplementation.FBInstant.Tournament;
+#if FB_INSTANT_PRODUCTION
     using Models;
     using ServiceImplementation.FBInstant.Advertising;
-#if FB_INSTANT_PRODUCTION
     using GameFoundation.Scripts.Utilities.UserData;
-#endif
-
 #endif
 
 #endif
@@ -28,13 +25,10 @@ namespace ServiceImplementation.FBInstant
             this.Container.BindInterfacesAndSelfTo<FBEventHandler>().FromNewComponentOnNewGameObject().WithGameObjectName(FBEventHandler.callbackObj).AsCached();
             this.Container.BindInterfacesAndSelfTo<FBInstantPlayerDataWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantPlayerDataWrapper)).AsCached();
             this.Container.BindInterfacesAndSelfTo<FBInstantSharing>().AsCached();
-#if !UNITY_EDITOR
+#if FB_INSTANT_PRODUCTION
             this.Container.Bind<FBInstantAdsConfig>().FromResolveGetter<GDKConfig>(configs => configs.GetGameConfig<FBInstantAdsConfig>()).WhenInjectedInto<FBInstantAdsWrapper>();
             this.Container.BindInterfacesAndSelfTo<FBInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantAdsWrapper)).AsCached();
-#if FB_INSTANT_PRODUCTION
-        this.Container.Rebind<IHandleUserDataServices>().To<HandleFBInstantRemoteUserDataServices>().AsCached();
-#endif
-
+            this.Container.Rebind<IHandleUserDataServices>().To<HandleFBInstantRemoteUserDataServices>().AsCached();
 #endif
 
 #endif
