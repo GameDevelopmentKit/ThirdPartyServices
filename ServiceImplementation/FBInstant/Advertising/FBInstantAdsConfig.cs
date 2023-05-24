@@ -1,19 +1,16 @@
 ﻿namespace ServiceImplementation.FBInstant.Advertising
 {
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-
     public class FBInstantAdsConfig
     {
-        public readonly string                     BannerAdPlacement;
-        public readonly ReadOnlyCollection<string> InterstitialAdPlacements;
-        public readonly ReadOnlyCollection<string> RewardedAdPlacements;
+        public readonly string BannerAdId;
+        public readonly string InterstitialAdId;
+        public readonly string RewardedAdId;
 
-        public FBInstantAdsConfig(string bannerAdPlacement, List<string> interstitialAdPlacements, List<string> rewardedAdPlacements)
+        public FBInstantAdsConfig(string bannerAdId, string interstitialAdId, string rewardedAdId)
         {
-            this.BannerAdPlacement        = bannerAdPlacement;
-            this.InterstitialAdPlacements = interstitialAdPlacements.AsReadOnly();
-            this.RewardedAdPlacements     = rewardedAdPlacements.AsReadOnly();
+            this.BannerAdId       = bannerAdId;
+            this.InterstitialAdId = interstitialAdId;
+            this.RewardedAdId     = rewardedAdId;
         }
     }
 }
