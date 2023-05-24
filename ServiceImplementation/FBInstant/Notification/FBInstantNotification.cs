@@ -25,7 +25,7 @@ namespace ServiceImplementation.FBInstant.Notification
 
         public static void FacebookInstantSendInvite(Sprite img, string text, string localizationJson)
         {
-            var imgBase64 = img.texture.EncodeToPNG();
+            var imgBase64 = img.texture.EncodeToPNG().ToString();
             fbinstant_inviteAsync(imgBase64.ToString(), text, localizationJson, FBEventHandler.callbackObj, nameof(FacebookInstantSendInviteCallback));
         }
 
