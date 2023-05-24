@@ -17,7 +17,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.Bind<AdServicesConfig>().AsCached().NonLazy();
 #if EASY_MOBILE_PRO && (!UNITY_EDITOR || (UNITY_EDITOR && !EM_IRONSOURCE))
             this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
-#elif !FB_INSTANT || UNITY_EDITOR
+#elif !FB_INSTANT_PRODUCTION || UNITY_EDITOR
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
 
