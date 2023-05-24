@@ -46,7 +46,7 @@ var FBInstantPlayerLibrary = {
         FBInstant.player.getDataAsync(keys)
             .then(data => {
                 console.log("load user data ok");
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: JSON.stringify(keys.map(key => JSON.stringify(data[key]) || null)), error: null, id: callbackId }));
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: JSON.stringify(keys.map(key => JSON.stringify(data[key]))), error: null, id: callbackId }));
             })
             .catch(err => {
                 console.error("load user data error: " + err.message);
