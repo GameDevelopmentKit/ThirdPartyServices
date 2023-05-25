@@ -18,6 +18,9 @@ namespace ServiceImplementation.FBInstant.Notification
 
         [DllImport("__Internal")]
         public static extern void fbinstant_inviteAsync(string jsonStr, string callbackObj, string callbackFunc);
+        
+        [DllImport("__Internal")]
+        public static extern void fbinstant_inviteAlterAsync(string jsonStr, string callbackObj, string callbackFunc);
 
         [DllImport("__Internal")]
         public static extern void fbinstant_notification(string action, string cta, string img, string content, string localizationJson,
@@ -30,6 +33,11 @@ namespace ServiceImplementation.FBInstant.Notification
         public static void FacebookInstantSendInvite(Dictionary<string, object> p)
         {
             fbinstant_inviteAsync(JsonConvert.SerializeObject(p), FBEventHandler.callbackObj, nameof(FacebookInstantSendInviteCallback));
+        }
+        
+        public static void FacebookInstantSendInviteAlter(Dictionary<string, object> p)
+        {
+            fbinstant_inviteAlterAsync(JsonConvert.SerializeObject(p), FBEventHandler.callbackObj, nameof(FacebookInstantSendInviteCallback));
         }
 
         public void FacebookInstantSendInviteCallback()
