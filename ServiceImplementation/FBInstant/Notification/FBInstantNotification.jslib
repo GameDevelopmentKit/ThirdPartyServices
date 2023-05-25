@@ -9,7 +9,7 @@ var FBInstantNotificationLibrary = {
                                 console.error("inviteAsync|error|"  + JSON.stringify(error));
                             });
             },
-            
+
     // Invite (alternative)
         fbinstant_inviteAlterAsync: function (jsonStr, callbackObj, callbackFunctionName) {
                     var param = JSON.parse(UTF8ToString(jsonStr));
