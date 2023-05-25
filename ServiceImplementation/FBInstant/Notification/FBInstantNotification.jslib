@@ -9,6 +9,19 @@ var FBInstantNotificationLibrary = {
                                 console.error("inviteAsync|error|"  + JSON.stringify(error));
                             });
             },
+            
+    // Invite (alternative)
+        fbinstant_inviteAlterAsync: function (jsonStr, callbackObj, callbackFunctionName) {
+                    var param = JSON.parse(UTF8ToString(jsonStr));
+                    FBInstant.context.chooseAsync().then(function() {
+                        FBInstant.updateAsync(param)
+                            .then(function () {
+                                SendMessage(callbackObj, callbackFunctionName);
+                            }).catch(function (error) {
+                                console.error("inviteAsync|error|"  + JSON.stringify(error));
+                            });
+                    });
+                },
 
     // Send notification
     fbinstant_notification: function (action, cta, img, content, localizationJson, template, strategy, notification, callbackObj, callbackFunctionName) {
