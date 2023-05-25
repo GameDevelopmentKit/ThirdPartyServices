@@ -83,11 +83,10 @@ var FBInstantLibrary = {
         FBInstant.shareAsync(param)
             .then(function () {
                 gameInstance.SendMessage("__IGEXPORTER__", "Promise_on_fbinstant_shareAsync");
-            }).catch(function () {
-                console.error("shareAsync|error|");
+            }).catch(function (error) {
+                console.error("shareAsync|error|"+ JSON.stringify(error));
             });
     },
-
     leaderboard_setScoreAsync: function (keyName, extraDataJsonStr, score) {
         keyName = UTF8ToString(keyName);
         extraDataJsonStr = UTF8ToString(extraDataJsonStr);
