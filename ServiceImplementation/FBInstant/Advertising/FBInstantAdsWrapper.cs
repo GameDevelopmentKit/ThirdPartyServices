@@ -75,7 +75,7 @@
             {
                 if (++this.interstitialAdRetryCount >= 3)
                 {
-                    throw new("InterstitialAd load failed 3 times!");
+                    this.logService.Error("InterstitialAd load failed 3 times!");
                 }
 
                 UniTask.Delay(3000).ContinueWith(this.LoadInterstitialAd).Forget();
