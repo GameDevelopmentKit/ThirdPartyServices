@@ -79,7 +79,7 @@
                     return;
                 }
 
-                UniTask.Delay(3000).ContinueWith(this.LoadInterstitialAd).Forget();
+                UniTask.Delay(TimeSpan.FromSeconds(5 * Math.Pow(2, this.interstitialAdRetryCount - 1))).ContinueWith(this.LoadInterstitialAd).Forget();
             }
             else
             {
@@ -144,7 +144,7 @@
                     return;
                 }
 
-                UniTask.Delay(3000).ContinueWith(this.LoadRewardedAd).Forget();
+                UniTask.Delay(TimeSpan.FromSeconds(5 * Math.Pow(2, this.rewardedAdRetryCount - 1))).ContinueWith(this.LoadRewardedAd).Forget();
             }
             else
             {
