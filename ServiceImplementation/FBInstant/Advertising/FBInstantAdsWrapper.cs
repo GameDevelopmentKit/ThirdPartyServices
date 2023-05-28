@@ -29,6 +29,7 @@
             this.signalBus        = signalBus;
             this.adServicesConfig = adServicesConfig;
             this.config           = config;
+            this.logService       = logService;
             this.LoadInterstitialAd();
             this.LoadRewardedAd();
         }
