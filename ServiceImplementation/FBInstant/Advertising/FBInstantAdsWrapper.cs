@@ -5,6 +5,7 @@
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Cysharp.Threading.Tasks;
+    using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
     using UnityEngine;
     using Zenject;
@@ -14,6 +15,7 @@
         private SignalBus          signalBus;
         private AdServicesConfig   adServicesConfig;
         private FBInstantAdsConfig config;
+        private ILogService        logService;
 
         private bool   isInterstitialAdLoading;
         private bool   isRewardedAdLoading;
@@ -22,7 +24,7 @@
         private Action onShowRewardedAdCompleted;
 
         [Inject]
-        public void Inject(SignalBus signalBus, AdServicesConfig adServicesConfig, FBInstantAdsConfig config)
+        public void Inject(SignalBus signalBus, AdServicesConfig adServicesConfig, FBInstantAdsConfig config, ILogService logService)
         {
             this.signalBus        = signalBus;
             this.adServicesConfig = adServicesConfig;
@@ -137,7 +139,7 @@
             {
                 if (++this.rewardedAdRetryCount >= 3)
                 {
-                    throw new("RewardedAd load failed 3 times!");
+                    this.logService.Error("RewardedAd load failed 3 times!");
                 }
 
                 UniTask.Delay(3000).ContinueWith(this.LoadRewardedAd).Forget();
