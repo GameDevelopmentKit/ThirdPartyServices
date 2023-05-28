@@ -19,7 +19,7 @@ namespace ServiceImplementation.FBInstant
     {
         public override void InstallBindings()
         {
-#if FB_INSTANT
+#if FB_INSTANT && !UNITY_EDITOR
             this.Container.BindInterfacesAndSelfTo<FBInstantTournament>().AsCached();
             this.Container.BindInterfacesAndSelfTo<FBInstantNotification>().AsCached();
             this.Container.BindInterfacesAndSelfTo<FBEventHandler>().FromNewComponentOnNewGameObject().WithGameObjectName(FBEventHandler.callbackObj).AsCached();
