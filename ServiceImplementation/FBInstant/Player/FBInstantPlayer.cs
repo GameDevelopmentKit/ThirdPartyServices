@@ -1,45 +1,83 @@
-﻿namespace ServiceImplementation.FBInstant.Player
+namespace ServiceImplementation.FBInstant.Player
 {
-#if FB_INSTANT_PRODUCTION
-    using System.Runtime.InteropServices;
-
-#else
     using System;
-#endif
+    using System.Collections.Generic;
+    using System.Linq;
+    using Cysharp.Threading.Tasks;
+    using Newtonsoft.Json;
+    using UnityEngine;
 
-    internal static class FBInstantPlayer
+    public class FBInstantPlayer : MonoBehaviour
     {
-#if FB_INSTANT_PRODUCTION
-        [DllImport("__Internal")]
-        internal static extern string GetUserId();
+        private readonly Dictionary<string, UniTaskCompletionSource<string>>           saveUserDataTcs = new();
+        private readonly Dictionary<string, UniTaskCompletionSource<(string, string)>> loadUserDataTcs = new();
 
-        [DllImport("__Internal")]
-        internal static extern string GetUserName();
-
-        [DllImport("__Internal")]
-        internal static extern string GetUserAvatar();
-
-        [DllImport("__Internal")]
-        internal static extern void SaveUserData(string json, string callbackObj, string callbackFunc, string callbackId);
-
-        [DllImport("__Internal")]
-        internal static extern void LoadUserData(string keys, string callbackObj, string callbackFunc, string callbackId);
-#else
-        internal static string GetUserId() => "th31";
-
-        internal static string GetUserName() => "TheOneStudio";
-
-        internal static string GetUserAvatar() => "https://cdn.vox-cdn.com/thumbor/WR9hE8wvdM4hfHysXitls9_bCZI=/0x0:1192x795/1400x1400/filters:focal(596x398:597x399)/cdn.vox-cdn.com/uploads/chorus_asset/file/22312759/rickroll_4k.jpg";
-
-        internal static void SaveUserData(string json, string callbackObj, string callbackFunc, string callbackId)
+        public string GetUserId()
         {
-            throw new NotImplementedException("This function should only be called in production");
+            return FBInstantPlayerLibrary.GetUserId();
         }
 
-        internal static void LoadUserData(string keys, string callbackObj, string callbackFunc, string callbackId)
+        public string GetUserName()
         {
-            throw new NotImplementedException("This function should only be called in production");
+            return FBInstantPlayerLibrary.GetUserName();
         }
-#endif
+
+        public string GetUserAvatar()
+        {
+            return FBInstantPlayerLibrary.GetUserAvatar();
+        }
+
+        private void OnUserDataSaved(string message)
+        {
+            var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
+            var error   = @params["error"];
+            var id      = @params["id"];
+
+            this.saveUserDataTcs[id].TrySetResult(error);
+        }
+
+        public async UniTask SaveUserData((string key, string json)[] values)
+        {
+            var id = Guid.NewGuid().ToString();
+            this.saveUserDataTcs[id] = new();
+
+            FBInstantPlayerLibrary.SaveUserData(JsonConvert.SerializeObject(values.ToDictionary(value => value.key, value => value.json)), this.gameObject.name, nameof(this.OnUserDataSaved), id);
+
+            var error = await this.saveUserDataTcs[id].Task;
+            this.saveUserDataTcs.Remove(id);
+
+            if (error is not null)
+            {
+                throw new(error);
+            }
+        }
+
+        private void OnUserDataLoaded(string message)
+        {
+            var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
+            var data    = @params["data"];
+            var error   = @params["error"];
+            var id      = @params["id"];
+
+            this.loadUserDataTcs[id].TrySetResult((data, error));
+        }
+
+        public async UniTask<string[]> LoadUserData(string[] keys)
+        {
+            var id = Guid.NewGuid().ToString();
+            this.loadUserDataTcs[id] = new();
+
+            FBInstantPlayerLibrary.LoadUserData(JsonConvert.SerializeObject(keys), this.gameObject.name, nameof(this.OnUserDataLoaded), id);
+
+            var (data, error) = await this.loadUserDataTcs[id].Task;
+            this.loadUserDataTcs.Remove(id);
+
+            if (error is not null)
+            {
+                throw new(error);
+            }
+
+            return JsonConvert.DeserializeObject<string[]>(data);
+        }
     }
 }

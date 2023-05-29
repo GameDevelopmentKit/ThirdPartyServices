@@ -6,9 +6,9 @@ namespace ServiceImplementation.FBInstant.Player
 
     public class HandleFBInstantRemoteUserDataServices : BaseHandleUserDataServices
     {
-        private readonly FBInstantPlayerDataWrapper fbInstantPlayer;
+        private readonly FBInstantPlayer fbInstantPlayer;
 
-        public HandleFBInstantRemoteUserDataServices(ILogService logService, FBInstantPlayerDataWrapper fbInstantPlayer) : base(logService)
+        public HandleFBInstantRemoteUserDataServices(ILogService logService, FBInstantPlayer fbInstantPlayer) : base(logService)
         {
             this.fbInstantPlayer = fbInstantPlayer;
         }
