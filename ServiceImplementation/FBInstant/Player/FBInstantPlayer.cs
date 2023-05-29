@@ -4,11 +4,15 @@ namespace ServiceImplementation.FBInstant.Player
     using System.Collections.Generic;
     using System.Linq;
     using Cysharp.Threading.Tasks;
+    using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
     using UnityEngine;
+    using Zenject;
 
     public class FBInstantPlayer : MonoBehaviour
     {
+        [Inject] private readonly ILogService logger;
+
         private readonly Dictionary<string, UniTaskCompletionSource<string>>           saveUserDataTcs = new();
         private readonly Dictionary<string, UniTaskCompletionSource<(string, string)>> loadUserDataTcs = new();
 
@@ -48,7 +52,7 @@ namespace ServiceImplementation.FBInstant.Player
 
             if (error is not null)
             {
-                throw new(error);
+                this.logger.Error(error);
             }
         }
 
@@ -74,7 +78,8 @@ namespace ServiceImplementation.FBInstant.Player
 
             if (error is not null)
             {
-                throw new(error);
+                this.logger.Error(error);
+                return Enumerable.Repeat<string>(null, keys.Length).ToArray();
             }
 
             return JsonConvert.DeserializeObject<string[]>(data);
