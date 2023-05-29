@@ -1,12 +1,15 @@
 namespace ServiceImplementation.FBInstant
 {
-    using Zenject;
 #if FB_INSTANT
+    using ServiceImplementation.FBInstant.Player;
+    using Zenject;
+#if !UNITY_EDITOR
     using ServiceImplementation.FBInstant.EventHandler;
     using ServiceImplementation.FBInstant.Notification;
-    using ServiceImplementation.FBInstant.Player;
     using ServiceImplementation.FBInstant.Sharing;
     using ServiceImplementation.FBInstant.Tournament;
+#endif
+
 #if FB_INSTANT_PRODUCTION
     using Models;
     using ServiceImplementation.FBInstant.Advertising;
@@ -19,12 +22,14 @@ namespace ServiceImplementation.FBInstant
     {
         public override void InstallBindings()
         {
-#if FB_INSTANT && !UNITY_EDITOR
+#if FB_INSTANT
+            this.Container.Bind<FBInstantPlayer>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantPlayer)).AsCached();
+#if !UNITY_EDITOR
             this.Container.BindInterfacesAndSelfTo<FBInstantTournament>().AsCached();
             this.Container.BindInterfacesAndSelfTo<FBInstantNotification>().AsCached();
             this.Container.BindInterfacesAndSelfTo<FBEventHandler>().FromNewComponentOnNewGameObject().WithGameObjectName(FBEventHandler.callbackObj).AsCached();
-            this.Container.BindInterfacesAndSelfTo<FBInstantPlayerDataWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantPlayerDataWrapper)).AsCached();
             this.Container.BindInterfacesAndSelfTo<FBInstantSharing>().AsCached();
+#endif
 #if FB_INSTANT_PRODUCTION
             this.Container.Bind<FBInstantAdsConfig>().FromResolveGetter<GDKConfig>(configs => configs.GetGameConfig<FBInstantAdsConfig>()).WhenInjectedInto<FBInstantAdsWrapper>();
             this.Container.BindInterfacesAndSelfTo<FBInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantAdsWrapper)).AsCached();
