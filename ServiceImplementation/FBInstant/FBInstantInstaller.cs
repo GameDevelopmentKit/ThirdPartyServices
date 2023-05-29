@@ -1,8 +1,8 @@
 namespace ServiceImplementation.FBInstant
 {
+    using Zenject;
 #if FB_INSTANT
     using ServiceImplementation.FBInstant.Player;
-    using Zenject;
 #if !UNITY_EDITOR
     using ServiceImplementation.FBInstant.EventHandler;
     using ServiceImplementation.FBInstant.Notification;
