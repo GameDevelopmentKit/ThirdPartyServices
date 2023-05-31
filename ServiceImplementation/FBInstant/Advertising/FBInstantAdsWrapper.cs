@@ -65,8 +65,9 @@
             return FBInstantAds.IsInterstitialAdReady();
         }
 
-        private void OnInterstitialAdLoaded(string message)
+        private async void OnInterstitialAdLoaded(string message)
         {
+            await UniTask.SwitchToMainThread();
             var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
             var error   = @params["error"];
 
@@ -96,8 +97,9 @@
             FBInstantAds.LoadInterstitialAd(this.config.InterstitialAdId, this.gameObject.name, nameof(this.OnInterstitialAdLoaded));
         }
 
-        private void OnInterstitialAdShown(string message)
+        private async void OnInterstitialAdShown(string message)
         {
+            await UniTask.SwitchToMainThread();
             var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
             var place   = @params["place"];
             var error   = @params["error"];
@@ -130,8 +132,9 @@
             return FBInstantAds.IsRewardedAdReady();
         }
 
-        private void OnRewardedAdLoaded(string message)
+        private async void OnRewardedAdLoaded(string message)
         {
+            await UniTask.SwitchToMainThread();
             var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
             var error   = @params["error"];
 
@@ -161,8 +164,9 @@
             FBInstantAds.LoadRewardedAd(this.config.RewardedAdId, this.gameObject.name, nameof(this.OnRewardedAdLoaded));
         }
 
-        private void OnRewardedAdShown(string message)
+        private async void OnRewardedAdShown(string message)
         {
+            await UniTask.SwitchToMainThread();
             var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
             var place   = @params["place"];
             var error   = @params["error"];
