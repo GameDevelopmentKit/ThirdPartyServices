@@ -2,17 +2,35 @@ var FBInstantAdsLibrary = {
 
     $LoadedAds: {},
 
-    ShowBannerAd: function (adId) {
+    ShowBannerAd: function (adId, callbackObj, callbackFunc) {
         adId = UTF8ToString(adId);
+        callbackObj = UTF8ToString(callbackObj);
+        callbackFunc = UTF8ToString(callbackFunc);
+
         FBInstant.loadBannerAdAsync(adId)
-            .then(() => console.log("show banner ad ok"))
-            .catch(err => console.error("show banner ad error: " + err.message))
+            .then(() => {
+                console.log("show banner ad ok");
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: null }));
+            })
+            .catch(err => {
+                console.error("show banner ad error: " + err.message)
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message }))
+            });
     },
 
-    HideBannerAd: function () {
+    HideBannerAd: function (callbackObj, callbackFunc) {
+        callbackObj = UTF8ToString(callbackObj);
+        callbackFunc = UTF8ToString(callbackFunc);
+
         FBInstant.hideBannerAdAsync()
-            .then(() => console.log("hide banner ad ok"))
-            .catch(err => console.error("hide banner ad error: " + err.message))
+            .then(() => {
+                console.log("hide banner ad ok");
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: null }));
+            })
+            .catch(err => {
+                console.error("hide banner ad error: " + err.message)
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message }))
+            });
     },
 
     IsInterstitialAdReady: function () {
