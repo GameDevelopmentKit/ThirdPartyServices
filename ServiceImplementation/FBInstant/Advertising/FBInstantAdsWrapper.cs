@@ -12,29 +12,55 @@
 
     public class FBInstantAdsWrapper : MonoBehaviour, IAdServices
     {
+        #region Inject
+
         private SignalBus          signalBus;
         private AdServicesConfig   adServicesConfig;
         private FBInstantAdsConfig config;
-        private ILogService        logService;
-
-        private bool   isInterstitialAdLoading;
-        private bool   isRewardedAdLoading;
-        private int    interstitialAdRetryCount;
-        private int    rewardedAdRetryCount;
-        private Action onShowRewardedAdCompleted;
+        private ILogService        logger;
 
         [Inject]
-        public void Inject(SignalBus signalBus, AdServicesConfig adServicesConfig, FBInstantAdsConfig config, ILogService logService)
+        public void Inject(SignalBus signalBus, AdServicesConfig adServicesConfig, FBInstantAdsConfig config, ILogService logger)
         {
             this.signalBus        = signalBus;
             this.adServicesConfig = adServicesConfig;
             this.config           = config;
-            this.logService       = logService;
+            this.logger           = logger;
             this.LoadInterstitialAd();
             this.LoadRewardedAd();
         }
 
+        #endregion
+
+        private static readonly int[] AdRetryInterval = { 5, 8, 16, 32, 64 };
+
+        private int bannerAdRetryCount;
+        private int interstitialAdRetryCount;
+        private int rewardedAdRetryCount;
+
+        private bool isInterstitialAdLoading;
+        private bool isRewardedAdLoading;
+
+        private Action onShowRewardedAdCompleted;
+
         #region Banner
+
+        private void OnBannerAdShown(string message)
+        {
+            var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
+            var error   = @params["error"];
+
+            if (error is not null)
+            {
+                this.logger.Error($"Banner ad load failed {++this.bannerAdRetryCount} times!");
+                UniTask.Delay(AdRetryInterval[Math.Min(this.bannerAdRetryCount, AdRetryInterval.Length) - 1])
+                       .ContinueWith(() => this.ShowBannerAd());
+            }
+            else
+            {
+                this.bannerAdRetryCount = 0;
+            }
+        }
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
@@ -43,12 +69,23 @@
                 return;
             }
 
-            FBInstantAds.ShowBannerAd(this.config.BannerAdId);
+            FBInstantAds.ShowBannerAd(this.config.BannerAdId, this.gameObject.name, nameof(this.OnBannerAdShown));
+        }
+
+        private void OnBannerAdHidden(string message)
+        {
+            var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
+            var error   = @params["error"];
+
+            if (error is not null)
+            {
+                this.logger.Error(error);
+            }
         }
 
         public void HideBannedAd()
         {
-            FBInstantAds.HideBannerAd();
+            FBInstantAds.HideBannerAd(this.gameObject.name, nameof(this.OnBannerAdHidden));
         }
 
         public void DestroyBannerAd()
@@ -74,13 +111,9 @@
 
             if (error is not null)
             {
-                if (++this.interstitialAdRetryCount >= 3)
-                {
-                    this.logService.Error("InterstitialAd load failed 3 times!");
-                    return;
-                }
-
-                UniTask.Delay(TimeSpan.FromSeconds(5 * Math.Pow(2, this.interstitialAdRetryCount - 1))).ContinueWith(this.LoadInterstitialAd).Forget();
+                this.logger.Error($"Interstitial ad load failed {++this.interstitialAdRetryCount} times!");
+                UniTask.Delay(AdRetryInterval[Math.Min(this.interstitialAdRetryCount, AdRetryInterval.Length) - 1])
+                       .ContinueWith(this.LoadInterstitialAd);
             }
             else
             {
@@ -135,17 +168,11 @@
             var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
             var error   = @params["error"];
 
-            this.isRewardedAdLoading = false;
-
             if (error is not null)
             {
-                if (++this.rewardedAdRetryCount >= 3)
-                {
-                    this.logService.Error("RewardedAd load failed 3 times!");
-                    return;
-                }
-
-                UniTask.Delay(TimeSpan.FromSeconds(5 * Math.Pow(2, this.rewardedAdRetryCount - 1))).ContinueWith(this.LoadRewardedAd).Forget();
+                this.logger.Error($"Rewarded ad load failed {++this.rewardedAdRetryCount} times!");
+                UniTask.Delay(AdRetryInterval[Math.Min(this.rewardedAdRetryCount, AdRetryInterval.Length) - 1])
+                       .ContinueWith(this.LoadRewardedAd);
             }
             else
             {
