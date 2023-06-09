@@ -61,6 +61,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                      this.LoadAppOpenAd();
                                      this.IntervalCall(5);
                                      this.appEventTracker.ApplicationPauseAction += this.OnAppStateChange;
+                                 });
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
