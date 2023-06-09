@@ -6,6 +6,6 @@
     public class AppEventTracker : MonoBehaviour
     {
         public  Action<bool> ApplicationPauseAction            { get; set; }
-        private void         OnApplicationFocus(bool hasFocus) { this.ApplicationPauseAction?.Invoke(hasFocus); }
+        private void         OnApplicationPause(bool hasPause) { this.ApplicationPauseAction?.Invoke(hasPause); }
     }
 }
