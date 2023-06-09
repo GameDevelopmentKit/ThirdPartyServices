@@ -1,7 +1,6 @@
 ﻿namespace ServiceImplementation.AdsServices
 {
     using System;
-    using GoogleMobileAds.Common;
     using UnityEngine;
 
     public class AppEventTracker : MonoBehaviour
