@@ -60,8 +60,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                  {
                                      this.LoadAppOpenAd();
                                      this.IntervalCall(5);
-                                     //this.appEventTracker.ApplicationPauseAction += this.OnAppStateChange;
-                                     AppStateEventNotifier.AppStateChanged       += this.OnAppStateChanged;
+                                     this.appEventTracker.ApplicationPauseAction += this.OnAppStateChange;
+                                     //AppStateEventNotifier.AppStateChanged       += this.OnAppStateChanged;
                                  });
         }
 
@@ -128,7 +128,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             // Display the app open ad when the app is foregrounded.
             this.signalBus.Fire(new AppStateChangeSignal(state == AppState.Background));
 
-            if (state != AppState.Foreground)
+            if (state != AppState.Foreground||this.IsShowingAd)
             {
                 this.StartBackgroundTime = DateTime.Now;
                 return;
