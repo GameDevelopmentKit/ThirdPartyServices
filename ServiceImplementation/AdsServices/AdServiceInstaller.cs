@@ -22,6 +22,7 @@ namespace ServiceImplementation.AdsServices
 #endif
 
 #if EM_ADMOB
+            this.Container.Bind<AppEventTracker>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
             this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached().NonLazy();
             this.Container.Bind<AdmobAOAMono>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
 #else

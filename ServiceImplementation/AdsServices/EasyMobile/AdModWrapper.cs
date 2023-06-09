@@ -31,10 +31,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private readonly IAdServices       adServices;
         private readonly IAnalyticServices analyticService;
         private readonly AdServicesConfig  adServicesConfig;
+        private readonly AppEventTracker   appEventTracker;
 
         #endregion
 
-        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService, AdServicesConfig adServicesConfig)
+        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService, AdServicesConfig adServicesConfig,AppEventTracker appEventTracker)
         {
             this.logService       = logService;
             this.config           = config;
@@ -42,6 +43,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.adServices       = adServices;
             this.analyticService  = analyticService;
             this.adServicesConfig = adServicesConfig;
+            this.appEventTracker  = appEventTracker;
         }
 
         public void Init()
@@ -58,7 +60,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                  {
                                      this.LoadAppOpenAd();
                                      this.IntervalCall(5);
-                                     AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
+                                     this.appEventTracker.ApplicationPauseAction += this.OnAppStateChanged;
                                  });
         }
 
