@@ -60,7 +60,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                  {
                                      this.LoadAppOpenAd();
                                      this.IntervalCall(5);
-                                     this.appEventTracker.ApplicationPauseAction += this.OnAppStateChanged;
+                                     this.appEventTracker.ApplicationPauseAction += this.OnAppStateChange;
                                  });
         }
 
@@ -113,6 +113,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.logService.Log("CloseAdInDifferentProcessHandler");
             this.IsResumedFromAdsOrIAP = false;
+        }
+
+        private void OnAppStateChange(bool isForeGround)
+        {
+            this.OnAppStateChanged(isForeGround? AppState.Foreground: AppState.Background);
         }
 
         private async void OnAppStateChanged(AppState state)
