@@ -60,7 +60,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                  {
                                      this.LoadAppOpenAd();
                                      this.IntervalCall(5);
-                                     this.appEventTracker.ApplicationPauseAction += this.OnAppStateChange;
+                                     //this.appEventTracker.ApplicationPauseAction += this.OnAppStateChange;
+                                     AppStateEventNotifier.AppStateChanged       += this.OnAppStateChanged;
                                  });
         }
 
