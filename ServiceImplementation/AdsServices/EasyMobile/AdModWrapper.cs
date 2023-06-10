@@ -286,7 +286,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log("Closed app open ad");
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
-            this.IsShowingAd = false;
+            this.StartBackgroundTime = DateTime.Now;
+            this.IsShowingAd         = false;
+            
         }
 
         private void AOAHandleAdFullScreenContentFailed(AdError args)
