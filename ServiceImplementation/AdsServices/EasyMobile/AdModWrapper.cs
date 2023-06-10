@@ -164,7 +164,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public float LoadingTimeToShowAOA => 5f;
         public async void ShowAdIfAvailable()
         {
-            await UniTask.SwitchToMainThread();
+            //await UniTask.SwitchToMainThread();
 
             if (this.IsShowingAd)
             {
@@ -176,6 +176,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.aoaAdLoadedInstance.Show();
                 this.LoadAppOpenAd();
             }
+
+            await UniTask.CompletedTask;
         }
 
         #endregion
