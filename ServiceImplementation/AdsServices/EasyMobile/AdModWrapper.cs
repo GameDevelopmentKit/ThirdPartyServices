@@ -123,7 +123,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private async void OnAppStateChanged(AppState state)
         {
-            await UniTask.SwitchToMainThread();
+            //await UniTask.SwitchToMainThread();
             this.logService.Log($"AOA App State is {state}");
             // Display the app open ad when the app is foregrounded.
             this.signalBus.Fire(new AppStateChangeSignal(state == AppState.Background));
@@ -164,8 +164,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public float LoadingTimeToShowAOA => 5f;
         public async void ShowAdIfAvailable()
         {
-            await UniTask.SwitchToMainThread();
-
+           // await UniTask.SwitchToMainThread();
             if (this.IsShowingAd)
             {
                 return;
@@ -204,13 +203,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         }
 
         private int currentAoaAdIndex          = 0;
+        private int count                      = 0;
         private int minAOASleepLoadingTime     = 8;
         private int currentAOASleepLoadingTime = 8;
         private int maxAOASleepLoadingTime     = 64;
 
         private async void LoadAppOpenAd()
         {
-            await UniTask.SwitchToMainThread();
+            //await UniTask.SwitchToMainThread();
             if (this.adServices.IsRemoveAds()) return;
 
             var adUnitId = this.config.ADModAoaIds[this.currentAoaAdIndex];
