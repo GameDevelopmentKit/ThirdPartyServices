@@ -208,8 +208,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private int currentAOASleepLoadingTime = 8;
         private int maxAOASleepLoadingTime     = 64;
 
-        private void LoadAppOpenAd()
+        private async void LoadAppOpenAd()
         {
+            await UniTask.SwitchToMainThread();
             if (this.adServices.IsRemoveAds()) return;
 
             var adUnitId = this.config.ADModAoaIds[this.currentAoaAdIndex];
