@@ -152,7 +152,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (!this.adServices.IsRemoveAds())
             {
-                this.ShowAdIfAvailable();
+                this.LoadAppOpenAd();
             }
         }
 
@@ -164,7 +164,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public float LoadingTimeToShowAOA => 5f;
         public async void ShowAdIfAvailable()
         {
-            //await UniTask.SwitchToMainThread();
+            await UniTask.SwitchToMainThread();
 
             if (this.IsShowingAd)
             {
@@ -176,8 +176,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.aoaAdLoadedInstance.Show();
                 this.LoadAppOpenAd();
             }
-
-            await UniTask.CompletedTask;
         }
 
         #endregion
@@ -264,6 +262,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 appOpenAd.OnAdImpressionRecorded      += this.AOAHandleAdImpressionRecorded;
                 appOpenAd.OnAdPaid                    += this.AdMobHandlePaidEvent;
 
+
                 this.aoaAdLoadedInstance.Init(appOpenAd);
 
                 if (!this.IsShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
@@ -326,6 +325,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         }
 
         #endregion
+
 
         #region MREC
 
