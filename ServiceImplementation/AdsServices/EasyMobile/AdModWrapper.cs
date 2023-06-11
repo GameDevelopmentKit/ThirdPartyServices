@@ -151,8 +151,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (!this.adServicesConfig.EnableAOAAd) return;
 
             if (!this.adServices.IsRemoveAds())
-            {
-                this.ShowAdIfAvailable();
+            { 
+                this.LoadAppOpenAd();
             }
         }
 
@@ -164,7 +164,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public float LoadingTimeToShowAOA => 5f;
         public async void ShowAdIfAvailable()
         {
-           // await UniTask.SwitchToMainThread();
+            //await UniTask.SwitchToMainThread();
             if (this.IsShowingAd)
             {
                 return;
@@ -208,7 +208,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private int currentAOASleepLoadingTime = 8;
         private int maxAOASleepLoadingTime     = 64;
 
-        private async void LoadAppOpenAd()
+        private void LoadAppOpenAd()
         {
             //await UniTask.SwitchToMainThread();
             if (this.adServices.IsRemoveAds()) return;
@@ -223,7 +223,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             {
                 this.logService.Log($"AOA ads was already loaded");
                 //this.ShowAdIfAvailable();
-                return;
+                //return;
             }
 
             this.aoaAdLoadedInstance.IsLoading = true;
@@ -269,16 +269,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 if (!this.isShowedFirstOpen&&this.config.IsShowAOAAtOpenApp)
                 {
                     var totalLoadingTime = (DateTime.Now - this.StartLoadingAOATime).TotalSeconds;
+                    
                     if (totalLoadingTime <= this.config.AOAOpenAppThreshHold)
                     {
                         this.ShowAdIfAvailable();
                     }
-                    else
+                    else 
                     {
                         this.logService.Log($"AOA loading time for first open over the threshold {totalLoadingTime} > {this.config.AOAOpenAppThreshHold}!");
                     }
 
                     this.isShowedFirstOpen = true;
+                }
+                else if(this.isShowedFirstOpen)
+                {
+                    this.ShowAdIfAvailable();
                 }
             }
         }
@@ -290,7 +295,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
             this.StartBackgroundTime = DateTime.Now;
             this.IsShowingAd         = false;
-            this.LoadAppOpenAd();
+            //this.LoadAppOpenAd();
         }
 
         private void AOAHandleAdFullScreenContentFailed(AdError args)
