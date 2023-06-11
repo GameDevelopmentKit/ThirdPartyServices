@@ -10,7 +10,7 @@
     using UnityEngine;
     using Zenject;
 
-    public class FBInstantAdsWrapper : MonoBehaviour
+    public class FBInstantAdsWrapper : MonoBehaviour, IAdServices
     {
         #region Inject
 

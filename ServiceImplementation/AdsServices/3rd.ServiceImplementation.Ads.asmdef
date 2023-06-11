@@ -8,12 +8,9 @@
         "GameFoundation.Utilities",
         "Zenject-Source",
         "Zenject-Signals",
-        "MaxSdk.Scripts",
         "UniTask",
-        "IronSource.Scripts",
-        "AdjustSDK",
         "Unity.TextMeshPro",
-        "FBInstant"
+        "3rd.FBInstant"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

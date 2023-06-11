@@ -29,14 +29,14 @@ namespace ServiceImplementation.FBInstant
             this.Container.BindInterfacesAndSelfTo<FBInstantNotification>().AsCached();
             this.Container.BindInterfacesAndSelfTo<FBEventHandler>().FromNewComponentOnNewGameObject().WithGameObjectName(FBEventHandler.callbackObj).AsCached();
             this.Container.BindInterfacesAndSelfTo<FBInstantSharing>().AsCached();
-#endif
-#if FB_INSTANT_PRODUCTION
+#endif // !UNITY_EDITOR
+#if FB_INSTANT_PRODUCTION && !UNITY_EDITOR
             this.Container.Bind<FBInstantAdsConfig>().FromResolveGetter<GDKConfig>(configs => configs.GetGameConfig<FBInstantAdsConfig>()).WhenInjectedInto<FBInstantAdsWrapper>();
             this.Container.BindInterfacesAndSelfTo<FBInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantAdsWrapper)).AsCached();
             this.Container.Rebind<IHandleUserDataServices>().To<HandleFBInstantRemoteUserDataServices>().AsCached();
-#endif
+#endif // FB_INSTANT_PRODUCTION && !UNITY_EDITOR
 
-#endif
+#endif // FB_INSTANT
         }
     }
 }
