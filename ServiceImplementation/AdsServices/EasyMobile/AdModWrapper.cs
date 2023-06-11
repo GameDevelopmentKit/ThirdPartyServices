@@ -152,7 +152,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (!this.adServices.IsRemoveAds())
             {
-                this.LoadAppOpenAd();
+                this.ShowAdIfAvailable();
             }
         }
 
@@ -174,7 +174,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (this.aoaAdLoadedInstance.IsAoaAdAvailable)
             {
                 this.aoaAdLoadedInstance.Show();
-                this.LoadAppOpenAd();
             }
         }
 
@@ -222,8 +221,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (this.aoaAdLoadedInstance is { IsAoaAdAvailable: true })
             {
                 this.logService.Log($"AOA ads was already loaded");
-                this.ShowAdIfAvailable();
-                //return;
+                //this.ShowAdIfAvailable();
+                return;
             }
 
             this.aoaAdLoadedInstance.IsLoading = true;
@@ -290,7 +289,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
             this.StartBackgroundTime = DateTime.Now;
             this.IsShowingAd         = false;
-            
+            this.LoadAppOpenAd();
         }
 
         private void AOAHandleAdFullScreenContentFailed(AdError args)
