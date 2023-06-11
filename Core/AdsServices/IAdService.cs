@@ -11,15 +11,12 @@ namespace Core.AdsServices
 
         void          GrantDataPrivacyConsent();
         void          RevokeDataPrivacyConsent();
-        void          GrantDataPrivacyConsent(AdNetwork  adNetwork);
-        void          RevokeDataPrivacyConsent(AdNetwork adNetwork);
-        ConsentStatus GetDataPrivacyConsent(AdNetwork    adNetwork);
 
         #endregion
 
         #region Banner
 
-        void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50);
+        void ShowBannerAd(int width = 320, int height = 50);
         void HideBannedAd();
         void DestroyBannerAd();
 

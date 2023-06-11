@@ -10,20 +10,18 @@
     using UnityEngine;
     using Zenject;
 
-    public class FBInstantAdsWrapper : MonoBehaviour, IAdServices
+    public class FBInstantAdsWrapper : MonoBehaviour
     {
         #region Inject
 
         private SignalBus          signalBus;
-        private AdServicesConfig   adServicesConfig;
         private FBInstantAdsConfig config;
         private ILogService        logger;
 
         [Inject]
-        public void Inject(SignalBus signalBus, AdServicesConfig adServicesConfig, FBInstantAdsConfig config, ILogService logger)
+        public void Inject(SignalBus signalBus, FBInstantAdsConfig config, ILogService logger)
         {
             this.signalBus        = signalBus;
-            this.adServicesConfig = adServicesConfig;
             this.config           = config;
             this.logger           = logger;
             this.LoadInterstitialAd();
@@ -62,13 +60,8 @@
             }
         }
 
-        public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
+        public void ShowBannerAd( int width = 320, int height = 50)
         {
-            if (!this.adServicesConfig.EnableBannerAd)
-            {
-                return;
-            }
-
             FBInstantAds.ShowBannerAd(this.config.BannerAdId, this.gameObject.name, nameof(this.OnBannerAdShown));
         }
 
@@ -149,7 +142,6 @@
 
         public void ShowInterstitialAd(string place)
         {
-            if (!this.adServicesConfig.EnableInterstitialAd) return;
 
             FBInstantAds.ShowInterstitialAd(place, this.gameObject.name, nameof(this.OnInterstitialAdShown));
         }
@@ -214,8 +206,6 @@
 
         public void ShowRewardedAd(string place, Action onCompleted)
         {
-            if (!this.adServicesConfig.EnableRewardedAd) return;
-
             this.onShowRewardedAdCompleted = onCompleted;
             FBInstantAds.ShowRewardedAd(place, this.gameObject.name, nameof(this.OnRewardedAdShown));
         }
@@ -266,21 +256,6 @@
         }
 
         public void RevokeDataPrivacyConsent()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GrantDataPrivacyConsent(AdNetwork adNetwork)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RevokeDataPrivacyConsent(AdNetwork adNetwork)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ConsentStatus GetDataPrivacyConsent(AdNetwork adNetwork)
         {
             throw new NotImplementedException();
         }

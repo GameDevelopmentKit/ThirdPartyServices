@@ -1,43 +1,16 @@
 namespace ServiceImplementation.AdsServices
 {
-    using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
-    using GameFoundation.Scripts.Utilities.Extension;
-    using ServiceImplementation.AdsServices.AdRevenueTracker;
-    using ServiceImplementation.AdsServices.EasyMobile;
-    using ServiceImplementation.AdsServices.Signal;
     using Zenject;
 
     public class AdServiceInstaller : Installer<AdServiceInstaller>
     {
         public override void InstallBindings()
         {
-            //config
-            this.Container.Bind<AdServicesConfig>().AsCached().NonLazy();
-#if EASY_MOBILE_PRO && (!UNITY_EDITOR || (UNITY_EDITOR && !EM_IRONSOURCE))
-            this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
-#elif !FB_INSTANT_PRODUCTION || UNITY_EDITOR
+#if !FB_INSTANT_PRODUCTION || UNITY_EDITOR
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
-
-#if EM_ADMOB
-            this.Container.Bind<AppEventTracker>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
-            this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached().NonLazy();
-            this.Container.Bind<AdmobAOAMono>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
-#else
-            this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();
-#endif
-
-#if EM_APPLOVIN
-            this.Container.BindInterfacesAndSelfTo<MaxSDKWrapper>().AsCached();
-            this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<MaxSDKWrapper>();
-#endif
-
-#if EM_IRONSOURCE
-            this.Container.BindInterfacesAndSelfTo<IronSourceWrapper>().AsCached();
-#endif
-            this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
 
             #region Ads signal
 
@@ -46,12 +19,6 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<BannerAdLoadedSignal>();
             this.Container.DeclareSignal<BannerAdLoadFailedSignal>();
             this.Container.DeclareSignal<BannerAdClickedSignal>();
-
-            this.Container.DeclareSignal<MRecAdLoadedSignal>();
-            this.Container.DeclareSignal<MRecAdLoadFailedSignal>();
-            this.Container.DeclareSignal<MRecAdClickedSignal>();
-            this.Container.DeclareSignal<MRecAdDisplayedSignal>();
-            this.Container.DeclareSignal<MRecAdDismissedSignal>();
 
             this.Container.DeclareSignal<InterstitialAdDownloadedSignal>();
             this.Container.DeclareSignal<InterstitialAdLoadFailedSignal>();
@@ -67,11 +34,6 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<RewardedAdDisplayedSignal>();
             this.Container.DeclareSignal<RewardedAdCompletedSignal>();
             this.Container.DeclareSignal<RewardedSkippedSignal>();
-
-            this.Container.DeclareSignal<AppOpenFullScreenContentOpenedSignal>();
-            this.Container.DeclareSignal<AppOpenFullScreenContentClosedSignal>();
-
-            this.Container.DeclareSignal<AppStateChangeSignal>();
 
             #endregion
         }
