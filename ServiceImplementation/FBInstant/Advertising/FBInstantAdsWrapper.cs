@@ -106,7 +106,8 @@
             {
                 this.logger.Error($"Interstitial ad load failed {++this.interstitialAdRetryCount} times!");
                 UniTask.Delay(TimeSpan.FromSeconds(AdRetryInterval[Math.Min(this.interstitialAdRetryCount, AdRetryInterval.Length) - 1]))
-                       .ContinueWith(this.LoadInterstitialAd);
+                       .ContinueWith(this.LoadInterstitialAd)
+                       .Forget();
             }
             else
             {
@@ -166,7 +167,8 @@
             {
                 this.logger.Error($"Rewarded ad load failed {++this.rewardedAdRetryCount} times!");
                 UniTask.Delay(TimeSpan.FromSeconds(AdRetryInterval[Math.Min(this.rewardedAdRetryCount, AdRetryInterval.Length) - 1]))
-                       .ContinueWith(this.LoadRewardedAd);
+                       .ContinueWith(this.LoadRewardedAd)
+                       .Forget();
             }
             else
             {
