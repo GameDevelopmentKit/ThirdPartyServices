@@ -32,7 +32,11 @@ namespace ServiceImplementation.FBInstant
 #endif // !UNITY_EDITOR
 #if FB_INSTANT_PRODUCTION && !UNITY_EDITOR
             this.Container.Bind<FBInstantAdsConfig>().FromResolveGetter<GDKConfig>(configs => configs.GetGameConfig<FBInstantAdsConfig>()).WhenInjectedInto<FBInstantAdsWrapper>();
-            this.Container.BindInterfacesAndSelfTo<FBInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantAdsWrapper)).AsCached();
+#if SHOW_DUMMY_ADS
+            this.Container.BindInterfacesAndSelfTo<Core.AdsServices.DummyAdServiceIml>().AsCached();
+#else
+            this.Container.BindInterfacesAndSelfTo<FBInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantAdsWrapper)).AsCached(); 
+#endif
             this.Container.Rebind<IHandleUserDataServices>().To<HandleFBInstantRemoteUserDataServices>().AsCached();
 #endif // FB_INSTANT_PRODUCTION && !UNITY_EDITOR
 
