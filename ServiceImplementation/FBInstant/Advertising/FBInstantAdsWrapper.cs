@@ -138,6 +138,8 @@
             {
                 this.signalBus.Fire(new InterstitialAdDownloadedSignal(place));
             }
+            
+            this.signalBus.Fire(new InterstitialAdClosedSignal(place));
         }
 
         public void ShowInterstitialAd(string place)
@@ -197,6 +199,8 @@
                 this.signalBus.Fire(new RewardedAdLoadedSignal(place));
                 this.onShowRewardedAdCompleted?.Invoke();
             }
+            
+            this.signalBus.Fire(new RewardedAdCompletedSignal(place));
         }
 
         public void ShowRewardedAd(string place)
