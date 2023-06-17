@@ -36,8 +36,10 @@ namespace ServiceImplementation.FBInstant
             this.Container.BindInterfacesAndSelfTo<Core.AdsServices.DummyAdServiceIml>().AsCached();
 #else
             this.Container.BindInterfacesAndSelfTo<FBInstantAdsWrapper>().FromNewComponentOnNewGameObject().WithGameObjectName(nameof(FBInstantAdsWrapper)).AsCached(); 
-#endif
+#endif //SHOW_DUMMY_ADS
+#if CLOUD_DATA
             this.Container.Rebind<IHandleUserDataServices>().To<HandleFBInstantRemoteUserDataServices>().AsCached();
+#endif //CLOUD_DATA
 #endif // FB_INSTANT_PRODUCTION && !UNITY_EDITOR
 
 #endif // FB_INSTANT
