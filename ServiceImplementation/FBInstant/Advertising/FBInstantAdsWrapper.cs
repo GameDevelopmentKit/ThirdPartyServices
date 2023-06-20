@@ -163,6 +163,8 @@
             var @params = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
             var error   = @params["error"];
 
+            this.isRewardedAdLoading = false;
+
             if (error is not null)
             {
                 this.logger.Error($"Rewarded ad load failed {++this.rewardedAdRetryCount} times!");
