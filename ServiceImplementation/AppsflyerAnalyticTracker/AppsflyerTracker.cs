@@ -11,6 +11,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
@@ -67,11 +68,15 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             AppsFlyer.setIsDebug(this.analyticConfig.AppsflyerIsDebug);
             AppsFlyer.initSDK(devKey, apiId);
             AppsFlyer.startSDK();
-            AppsFlyerAdRevenue.start();
-
-            this.TrackerReady.SetResult(true);
-
+            this.InitTrackMethod();
             return this.TrackerReady.Task;
+        }
+
+        private async void InitTrackMethod()
+        {
+            await UniTask.WaitUntil(() => AppsFlyer.instance.isInit);
+            AppsFlyerAdRevenue.start();
+            this.TrackerReady.SetResult(true);
         }
 
         protected override void SetUserId(string userId) { AppsFlyer.setCustomerUserId(userId); }
@@ -120,7 +125,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add(AFAdRevenueEvent.AD_UNIT, adsRevenueEvent.AdUnit);
             dic.Add(AFAdRevenueEvent.PLACEMENT, adsRevenueEvent.Placement);
-
+            dic.Add("af_quantity", "1");
             AppsFlyerAdRevenueMediationNetworkType mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
             {
                 AdRevenueConstants.ARSourceAppLovinMAX => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax,
