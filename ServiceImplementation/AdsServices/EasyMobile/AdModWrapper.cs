@@ -101,7 +101,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private bool isShowedFirstOpen = false;
+        public bool IsShowedFirstOpen { get; private set; } = false;
 
         private void ShownAdInDifferentProcessHandler()
         {
@@ -263,7 +263,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
                 this.aoaAdLoadedInstance.Init(appOpenAd);
 
-                if (!this.isShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
+                if (!this.IsShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
                 {
                     var totalLoadingTime = (DateTime.Now - this.StartLoadingAOATime).TotalSeconds;
                     if (totalLoadingTime <= this.config.AOAOpenAppThreshHold)
@@ -275,7 +275,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                         this.logService.Log($"AOA loading time for first open over the threshold {totalLoadingTime} > {this.config.AOAOpenAppThreshHold}!");
                     }
 
-                    this.isShowedFirstOpen = true;
+                    this.IsShowedFirstOpen = true;
                 }
             }
         }
