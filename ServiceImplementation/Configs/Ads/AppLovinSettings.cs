@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using ServiceImplementation.Configs.Common;
+    using Sirenix.OdinInspector;
     using UnityEngine;
 
     [Serializable]
@@ -11,96 +12,67 @@
         /// <summary>
         /// Gets or sets the AppLovin SDKKey.
         /// </summary>
-        public string SDKKey
-        {
-            get { return this.mSDKKey; }
-            set { this.mSDKKey = value; }
-        }
+        public string SDKKey { get { return this.mSDKKey; } set { this.mSDKKey = value; } }
 
         /// <summary>
         /// Gets or sets the default banner identifier.
         /// </summary>
-        public AdId DefaultBannerAdId
-        {
-            get { return this.mDefaultBannerAdId; }
-            set { this.mDefaultBannerAdId = value; }
-        }
+        public AdId DefaultBannerAdId { get { return this.mDefaultBannerAdId; } set { this.mDefaultBannerAdId = value; } }
 
         /// <summary>
         /// Gets or sets the default interstitial ad identifier.
         /// </summary>
-        public AdId DefaultInterstitialAdId
-        {
-            get { return this.mDefaultInterstitialAdId; }
-            set { this.mDefaultInterstitialAdId = value; }
-        }
+        public AdId DefaultInterstitialAdId { get { return this.mDefaultInterstitialAdId; } set { this.mDefaultInterstitialAdId = value; } }
 
         /// <summary>
         /// Gets or sets the default rewarded ad identifier.
         /// </summary>
-        public AdId DefaultRewardedAdId
-        {
-            get { return this.mDefaultRewardedAdId; }
-            set { this.mDefaultRewardedAdId = value; }
-        }
+        public AdId DefaultRewardedAdId { get { return this.mDefaultRewardedAdId; } set { this.mDefaultRewardedAdId = value; } }
 
         /// <summary>
         /// age-restricted category.
         /// </summary>
-        public bool AgeRestrictMode
-        {
-            get { return this.mAgeRestrictMode; }
-            set { this.mAgeRestrictMode = value; }
-        }
+        public bool AgeRestrictMode { get { return this.mAgeRestrictMode; } set { this.mAgeRestrictMode = value; } }
 
         /// <summary>
         /// Gets or sets the list of custom banner identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public Dictionary<AdPlacement, AdId> CustomBannerAdIds
-        {
-            get { return this.mCustomBannerAdIds; }
-            set { this.mCustomBannerAdIds = value as Dictionary_AdPlacement_AdId; }
-        }
+        public Dictionary<AdPlacement, AdId> CustomBannerAdIds { get { return this.mCustomBannerAdIds; } set { this.mCustomBannerAdIds = value as Dictionary_AdPlacement_AdId; } }
 
         /// <summary>
         /// Gets or sets the list of custom interstitial ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public Dictionary<AdPlacement, AdId> CustomInterstitialAdIds
-        {
-            get { return this.mCustomInterstitialAdIds; }
-            set { this.mCustomInterstitialAdIds = value as Dictionary_AdPlacement_AdId; }
-        }
+        public Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get { return this.mCustomInterstitialAdIds; } set { this.mCustomInterstitialAdIds = value as Dictionary_AdPlacement_AdId; } }
 
         /// <summary>
         /// Gets or sets the list of custom rewarded ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public Dictionary<AdPlacement, AdId> CustomRewardedAdIds
-        {
-            get { return this.mCustomRewardedAdIds; }
-            set { this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId; }
-        }
+        public Dictionary<AdPlacement, AdId> CustomRewardedAdIds { get { return this.mCustomRewardedAdIds; } set { this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId; } }
 
-        [SerializeField]
+        [SerializeField] [LabelText("AgeRestrictMode")]
         private bool mAgeRestrictMode;
 
-        [SerializeField]
+        [SerializeField] [LabelText("SDK Key")]
         private string mSDKKey;
-        [SerializeField]
+
+        [SerializeField] [LabelText("Banner")] [BoxGroup("Default Id")]
         private AdId mDefaultBannerAdId;
-        [SerializeField]
+
+        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Default Id")]
         private AdId mDefaultInterstitialAdId;
-        [SerializeField]
+
+        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Default Id")]
         private AdId mDefaultRewardedAdId;
-        [SerializeField]
-        private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
-        [SerializeField]
+
+        [SerializeField] [LabelText("Banner")] private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
+
+        [SerializeField] [LabelText("Interstitial")]
         private Dictionary_AdPlacement_AdId mCustomInterstitialAdIds;
-        [SerializeField]
+
+        [SerializeField] [LabelText("Rewarded")]
         private Dictionary_AdPlacement_AdId mCustomRewardedAdIds;
-
-
     }
 }
