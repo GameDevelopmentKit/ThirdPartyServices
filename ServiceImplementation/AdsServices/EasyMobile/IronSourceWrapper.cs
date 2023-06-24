@@ -7,10 +7,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
-    using Cysharp.Threading.Tasks;
+    using UnityEngine;
     using Zenject;
 
-    public class IronSourceWrapper : IMRECAdService, IInitializable, IDisposable
+    public class IronSourceWrapper : IMRECAdService, IInitializable, IDisposable, IAdServices
     {
         private readonly IAnalyticServices analyticServices;
         private readonly AdServicesConfig  adServicesConfig;
@@ -25,6 +25,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void Initialize()
         {
+            // IronSource.Agent.init();
+            
             IronSourceEvents.onImpressionDataReadyEvent += this.ImpressionDataReadyEvent;
 
             IronSourceEvents.onBannerAdClickedEvent         += this.OnBannerClicked;
@@ -166,6 +168,48 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
             this.analyticServices.Track(adsRevenueEvent);
         }
+
+        #region AdService
+
+        //todo convert ads position
+        public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
+        {
+            IronSource.Agent.loadBanner(new IronSourceBannerSize(width, height), IronSourceBannerPosition.BOTTOM);
+        }
+        public void HideBannedAd()
+        {
+            IronSource.Agent.hideBanner();
+        }
+        public void DestroyBannerAd()
+        {
+            IronSource.Agent.destroyBanner();
+        }
+        public bool IsInterstitialAdReady(string place)
+        {
+            return IronSource.Agent.isInterstitialReady();
+        }
+        public void ShowInterstitialAd(string place)
+        {
+            IronSource.Agent.showInterstitial();
+        }
+        public bool IsRewardedAdReady(string place)
+        {
+            return IronSource.Agent.isRewardedVideoAvailable();
+        }
+        public void ShowRewardedAd(string place, Action onCompleted)
+        {
+            IronSource.Agent.showRewardedVideo();
+        }
+
+        public void RemoveAds(bool revokeConsent = false)
+        {
+            PlayerPrefs.SetInt("EM_REMOVE_ADS", -1);
+        }
+
+        public bool IsAdsInitialized() { return true; }
+
+        public bool IsRemoveAds() { return PlayerPrefs.HasKey("EM_REMOVE_ADS"); }
+        #endregion
     }
 }
 #endif

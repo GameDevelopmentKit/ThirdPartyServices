@@ -1,3 +1,4 @@
+#if APPSFLYER
 namespace Core.AnalyticServices
 {
     using System;
@@ -56,3 +57,4 @@ namespace Core.AnalyticServices
         [SerializeField] private bool appsflyerIsDebug;
     }
 }
+#endif

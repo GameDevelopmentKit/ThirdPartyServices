@@ -9,11 +9,11 @@ namespace Core.AdsServices
     {
         #region consent
 
-        void          GrantDataPrivacyConsent();
-        void          RevokeDataPrivacyConsent();
-        void          GrantDataPrivacyConsent(AdNetwork  adNetwork);
-        void          RevokeDataPrivacyConsent(AdNetwork adNetwork);
-        ConsentStatus GetDataPrivacyConsent(AdNetwork    adNetwork);
+        // void          GrantDataPrivacyConsent();
+        // void          RevokeDataPrivacyConsent();
+        // void          GrantDataPrivacyConsent(AdNetwork  adNetwork);
+        // void          RevokeDataPrivacyConsent(AdNetwork adNetwork);
+        // ConsentStatus GetDataPrivacyConsent(AdNetwork    adNetwork);
 
         #endregion
 
@@ -35,16 +35,16 @@ namespace Core.AdsServices
         #region Reward
 
         bool IsRewardedAdReady(string place);
-        void ShowRewardedAd(string    place);
+        // void ShowRewardedAd(string    place);
         void ShowRewardedAd(string    place, Action onCompleted);
 
         #endregion
 
         #region RewardedInterstitialAd
 
-        bool IsRewardedInterstitialAdReady();
-        void ShowRewardedInterstitialAd(string place);
-        void ShowRewardedInterstitialAd(string place, Action onCompleted);
+        // bool IsRewardedInterstitialAdReady();
+        // void ShowRewardedInterstitialAd(string place);
+        // void ShowRewardedInterstitialAd(string place, Action onCompleted);
 
         #endregion
 
