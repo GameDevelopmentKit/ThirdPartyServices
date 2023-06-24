@@ -10,7 +10,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using UnityEngine;
     using Zenject;
 
-    public class IronSourceWrapper : IMRECAdService, IInitializable, IDisposable, IAdServices
+    public class IronSourceWrapper : IMRECAdService, IInitializable, IDisposable//, IAdServices
     {
         private readonly IAnalyticServices analyticServices;
         private readonly AdServicesConfig  adServicesConfig;
