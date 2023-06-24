@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using Sirenix.OdinInspector;
     using UnityEngine;
 
 #pragma warning disable 0618
@@ -14,8 +15,7 @@
         // Stores all custom placements, built-in or user-created.
         private static Dictionary<string, AdPlacement> sCustomPlacements = new Dictionary<string, AdPlacement>();
 
-        [SerializeField]
-        protected string mName;
+        [SerializeField] [LabelText("Name")] protected string mName;
 
         /// <summary>
         /// The name of the placement.
@@ -23,9 +23,7 @@
         /// <value>The name.</value>
         public string Name { get { return this.mName; } }
 
-        protected AdPlacement()
-        {
-        }
+        protected AdPlacement() { }
 
         private AdPlacement(string name, bool isDefault = false)
             : base(name, false)
@@ -48,83 +46,83 @@
         /// A placement with the name "Startup".
         /// </summary>
         new public static readonly AdPlacement Startup = new AdPlacement("Startup");
-        
+
         /// <summary>
         /// A placement with the name "Home_Screen".
         /// </summary>
         new public static readonly AdPlacement HomeScreen = new AdPlacement("Home_Screen");
-        
+
         /// <summary>
         /// A placement with the name "Main_Menu".
         /// </summary>
         new public static readonly AdPlacement MainMenu = new AdPlacement("Main_Menu");
-        
+
         /// <summary>
         /// A placement with the name "Game_Screen".
         /// </summary>
         new public static readonly AdPlacement GameScreen = new AdPlacement("Game_Screen");
-        
+
         /// <summary>
         /// A placement with the name "Achievements".
         /// </summary>
         new public static readonly AdPlacement Achievements = new AdPlacement("Achievements");
-        
+
         /// <summary>
         /// A placement with the name "Level_Start".
         /// </summary>
         new public static readonly AdPlacement LevelStart = new AdPlacement("Level_Start");
-        
+
         /// <summary>
         /// A placement with the name "Level_Complete".
         /// </summary>
         new public static readonly AdPlacement LevelComplete = new AdPlacement("Level_Complete");
-        
+
         /// <summary>
         /// A placement with the name "Turn_Complete".
         /// </summary>
         new public static readonly AdPlacement TurnComplete = new AdPlacement("Turn_Complete");
-        
+
         /// <summary>
         /// A placement with the name "Quests".
         /// </summary>
         new public static readonly AdPlacement Quests = new AdPlacement("Quests");
-        
+
         /// <summary>
         /// A placement with the name "Pause".
         /// </summary>
         new public static readonly AdPlacement Pause = new AdPlacement("Pause");
-        
+
         /// <summary>
         /// A placement with the name "IAP_Store".
         /// </summary>
         new public static readonly AdPlacement IAPStore = new AdPlacement("IAP_Store");
-        
+
         /// <summary>
         /// A placement with the name "Item_Store".
         /// </summary>
         new public static readonly AdPlacement ItemStore = new AdPlacement("Item_Store");
-        
+
         /// <summary>
         /// A placement with the name "Game_Over".
         /// </summary>
         new public static readonly AdPlacement GameOver = new AdPlacement("Game_Over");
-        
+
         /// <summary>
         /// A placement with the name "Leaderboard".
         /// </summary>
         public static readonly AdPlacement Leaderboard = new AdPlacement("Leaderboard");
-        
+
         /// <summary>
         /// A placement with the name "Settings".
         /// </summary>
         new public static readonly AdPlacement Settings = new AdPlacement("Settings");
-        
+
         /// <summary>
         /// A placement with the name "Quit".
         /// </summary>
         new public static readonly AdPlacement Quit = new AdPlacement("Quit");
 
-        #endregion  // Built-in Placements
+        #endregion // Built-in Placements
 
         /// <summary>
         /// Gets all existing placements including <c>AdPlacement.Default</c>.
@@ -166,15 +164,9 @@
             return new AdPlacement(name);
         }
 
-        public static string GetPrintableName(AdPlacement placement)
-        {
-            return placement == null ? "null" : placement == Default ? "[Default]" : placement.ToString();
-        }
+        public static string GetPrintableName(AdPlacement placement) { return placement == null ? "null" : placement == Default ? "[Default]" : placement.ToString(); }
 
-        public override string ToString()
-        {
-            return this.mName;
-        }
+        public override string ToString() { return this.mName; }
 
         public override bool Equals(object obj)
         {
@@ -189,10 +181,7 @@
             return this.Name.Equals(other.Name);
         }
 
-        public override int GetHashCode()
-        {
-            return this.Name.GetHashCode();
-        }
+        public override int GetHashCode() { return this.Name.GetHashCode(); }
 
         public static bool operator ==(AdPlacement placementA, AdPlacement placementB)
         {
@@ -202,11 +191,7 @@
             return placementA.Equals(placementB);
         }
 
-        public static bool operator !=(AdPlacement placementA, AdPlacement placementB)
-        {
-            return !(placementA == placementB);
-        }
+        public static bool operator !=(AdPlacement placementA, AdPlacement placementB) { return !(placementA == placementB); }
     }
-    #pragma warning restore 0618
+#pragma warning restore 0618
 }
-

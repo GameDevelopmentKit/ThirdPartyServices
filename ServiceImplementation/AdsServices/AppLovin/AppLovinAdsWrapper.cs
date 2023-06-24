@@ -1,4 +1,4 @@
-#if ADS_ENABLE && ADS_APPLOVIN
+#if ADVERTISNG_ENABLE && ADVERTISNG_APPLOVIN
 namespace ServiceImplementation.AdsServices.AppLovin
 {
     using System;
@@ -39,8 +39,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig)
         {
-            this.logService       = logService;
-            this.signalBus        = signalBus;
+            this.logService = logService;
+            this.signalBus = signalBus;
             this.adServicesConfig = adServicesConfig;
         }
 
@@ -234,7 +234,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitRewardedAds()
         {
-            MaxSdkCallbacks.Rewarded.OnAdHiddenEvent         += this.OnRewardedHidden;
+            MaxSdkCallbacks.Rewarded.OnAdHiddenEvent += this.OnRewardedHidden;
             MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent += this.OnRewardedCompleted;
 
             this.InternalLoadRewarded(AdPlacement.Default);
@@ -242,7 +242,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void DisposeRewardedAds()
         {
-            MaxSdkCallbacks.Rewarded.OnAdHiddenEvent         += this.OnRewardedHidden;
+            MaxSdkCallbacks.Rewarded.OnAdHiddenEvent += this.OnRewardedHidden;
             MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent += this.OnRewardedCompleted;
         }
 

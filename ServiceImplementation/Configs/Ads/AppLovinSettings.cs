@@ -67,12 +67,13 @@
         [SerializeField] [LabelText("Rewarded")] [BoxGroup("Default Id")]
         private AdId mDefaultRewardedAdId;
 
-        [SerializeField] [LabelText("Banner")] private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
+        [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")]
+        private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
 
-        [SerializeField] [LabelText("Interstitial")]
+        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomInterstitialAdIds;
 
-        [SerializeField] [LabelText("Rewarded")]
+        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomRewardedAdIds;
     }
 }
