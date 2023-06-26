@@ -497,16 +497,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void RemoveAds(bool revokeConsent = false)
         {
-            // TODO
+            PlayerPrefs.SetInt("EM_REMOVE_ADS", -1);
         }
 
         public bool IsAdsInitialized() { return this.isInit; }
 
-        public bool IsRemoveAds()
-        {
-            // TODO 
-            return false;
-        }
+        public bool IsRemoveAds() { return PlayerPrefs.HasKey("EM_REMOVE_ADS"); }
     }
 }
 
