@@ -5,6 +5,7 @@ namespace ServiceImplementation.AdsServices
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
+    using ServiceImplementation.AdsServices.EasyMobile;
     using ServiceImplementation.AdsServices.Signal;
     using Zenject;
 #if APPLOVIN
