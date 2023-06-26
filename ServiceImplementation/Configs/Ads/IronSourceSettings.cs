@@ -2,6 +2,7 @@
 {
     using System;
     using ServiceImplementation.Configs.Common;
+    using Sirenix.OdinInspector;
     using UnityEngine;
 
     [Serializable]
@@ -19,8 +20,7 @@
             }
         }
 
-        [SerializeField]
-        private AdId mAppId;
+        [SerializeField] [LabelText("App Id")] private AdId mAppId;
 
         public enum IronSourceBannerType
         {
