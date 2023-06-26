@@ -1,4 +1,4 @@
-#if EM_APPLOVIN
+#if APPLOVIN
 namespace ServiceImplementation.AdsServices.AdRevenueTracker
 {
     using Core.AnalyticServices;

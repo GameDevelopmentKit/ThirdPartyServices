@@ -7,7 +7,7 @@
     //Need to init AdsMob through mono, it doesn't work if init in Zenject's initialize
     public class AdmobAOAMono : MonoBehaviour
     {
-#if EM_ADMOB
+#if ADMOB
         private AdModWrapper adModWrapper;
 
         [Inject]
