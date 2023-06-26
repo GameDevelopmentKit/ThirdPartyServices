@@ -41,11 +41,6 @@
         public bool EnableTestMode { get { return this.mEnableTestMode; } set { this.mEnableTestMode = value; } }
 
         /// <summary>
-        /// Use google mobile ad adaptive banner when calling for smart banner
-        /// </summary>
-        public bool UseAdaptiveBanner { get { return this.mUseAdaptiveBanner; } set { this.mUseAdaptiveBanner = value; } }
-
-        /// <summary>
         /// Gets or sets the list of custom banner identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
@@ -75,9 +70,6 @@
 
         [SerializeField] [LabelText("Enable Test Mode")]
         private bool mEnableTestMode;
-
-        [SerializeField] [LabelText("Use Adaptive Banner")]
-        private bool mUseAdaptiveBanner;
 
         [SerializeField] [LabelText("App Id")] private AdId mAppId;
 
