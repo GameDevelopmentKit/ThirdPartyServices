@@ -7,13 +7,16 @@
     [Serializable]
     public class IronSourceSettings : AdNetworkSettings
     {
-        /// <summary>
-        /// Gets or sets the IronSource app identifier.
-        /// </summary>
-        public AdId AppId
+        public string AppId
         {
-            get { return this.mAppId; }
-            set { this.mAppId = value; }
+            get
+            {
+#if UNITY_ANDROID
+                return this.mAppId.AndroidId;
+#else
+                return this.mAppId.IosId;
+#endif
+            }
         }
 
         [SerializeField]

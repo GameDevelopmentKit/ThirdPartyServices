@@ -1,11 +1,9 @@
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
-#if EM_ADMOB
+#if ADMOB
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Core.AdsServices;
-    using Core.AdsServices.Native;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -404,13 +402,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.signalBus.Fire(new MRecAdLoadedSignal(""));
         }
-
-        public event Action<string, AdInfo>    OnAdLoadedEvent;
-        public event Action<string, ErrorInfo> OnAdLoadFailedEvent;
-        public event Action<string, AdInfo>    OnAdClickedEvent;
-        public event Action<string, AdInfo>    OnAdRevenuePaidEvent;
-        public event Action<string, AdInfo>    OnAdExpandedEvent;
-        public event Action<string, AdInfo>    OnAdCollapsedEvent;
 
         private AdPosition ConvertAdViewPosition(AdViewPosition adViewPosition) =>
             adViewPosition switch

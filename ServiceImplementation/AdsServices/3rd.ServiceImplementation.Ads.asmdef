@@ -13,7 +13,8 @@
         "IronSource.Scripts",
         "AdjustSDK",
         "Unity.TextMeshPro",
-        "FBInstant"
+        "FBInstant",
+        "3rd.Configs"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
