@@ -8,7 +8,7 @@ namespace ServiceImplementation.Configs.Editor
         [MenuItem("Tools/TheOneStudio/Third Party/Advertising")]
         public static void OpenThirdPartyAsset()
         {
-            var asset = Resources.Load(nameof(ThirdPartiesConfig));
+            var asset = Resources.Load(ThirdPartiesConfig.ResourcePath);
             Selection.activeObject = asset;
         }
     }
