@@ -20,6 +20,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private readonly SignalBus                          signalBus;
         private readonly AdServicesConfig                   adServicesConfig;
         private readonly Dictionary<AdViewPosition, string> positionToMRECAdUnitId;
+        private readonly ThirdPartiesConfig                 thirdPartiesConfig;
 
         #endregion
 
@@ -39,20 +40,22 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #endregion
 
-        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig, Dictionary<AdViewPosition, string> positionToMRECAdUnitId)
+        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig, Dictionary<AdViewPosition, string> positionToMRECAdUnitId,
+            ThirdPartiesConfig thirdPartiesConfig)
         {
             this.logService             = logService;
             this.signalBus              = signalBus;
             this.adServicesConfig       = adServicesConfig;
             this.positionToMRECAdUnitId = positionToMRECAdUnitId;
+            this.thirdPartiesConfig     = thirdPartiesConfig;
         }
 
         public async void Initialize()
         {
-            this.adsSettings = ThirdPartiesConfig.Advertising.AppLovin;
+            this.adsSettings = this.thirdPartiesConfig.AdSettings.AppLovin;
 
             MaxSdk.SetIsAgeRestrictedUser(this.adsSettings.AgeRestrictMode);
-            MaxSdk.SetSdkKey(ThirdPartiesConfig.Advertising.AppLovin.SDKKey);
+            MaxSdk.SetSdkKey(this.thirdPartiesConfig.AdSettings.AppLovin.SDKKey);
             MaxSdk.InitializeSdk();
 
             await UniTask.WaitUntil(MaxSdk.IsInitialized);
