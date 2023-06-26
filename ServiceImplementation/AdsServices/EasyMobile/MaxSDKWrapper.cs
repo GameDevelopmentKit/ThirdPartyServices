@@ -1,4 +1,4 @@
-#if EM_APPLOVIN
+#if APPLOVIN
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
     using System;

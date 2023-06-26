@@ -15,13 +15,17 @@ namespace ServiceImplementation.AdsServices
         {
             //config
             this.Container.Bind<AdServicesConfig>().AsCached().NonLazy();
-#if EASY_MOBILE_PRO && (!UNITY_EDITOR || (UNITY_EDITOR && !EM_IRONSOURCE))
-            this.Container.BindInterfacesTo<EasyMobileAdIml>().AsCached();
-#elif !FB_INSTANT_PRODUCTION || UNITY_EDITOR
+
+#if APPLOVIN
+            this.Container.BindInterfacesAndSelfTo<MaxSDKWrapper>().AsCached();
+            this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<MaxSDKWrapper>();
+#elif IRONSOURCE && !UNITY_EDITOR
+            this.Container.BindInterfacesTo<IronSourceWrapper>().AsCached();
+#else
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
 
-#if EM_ADMOB
+#if ADMOB
             this.Container.Bind<AppEventTracker>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
             this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached().NonLazy();
             this.Container.Bind<AdmobAOAMono>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
@@ -29,14 +33,6 @@ namespace ServiceImplementation.AdsServices
             this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();
 #endif
 
-#if EM_APPLOVIN
-            this.Container.BindInterfacesAndSelfTo<MaxSDKWrapper>().AsCached();
-            this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<MaxSDKWrapper>();
-#endif
-
-#if EM_IRONSOURCE
-            this.Container.BindInterfacesAndSelfTo<IronSourceWrapper>().AsCached();
-#endif
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
 
             #region Ads signal
