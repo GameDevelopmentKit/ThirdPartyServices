@@ -1,5 +1,6 @@
 namespace ServiceImplementation.AdsServices
 {
+    using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
@@ -18,8 +19,8 @@ namespace ServiceImplementation.AdsServices
             this.Container.Bind<AdServicesConfig>().AsCached().NonLazy();
 
 #if APPLOVIN
-            this.Container.BindInterfacesAndSelfTo<MaxSDKWrapper>().AsCached();
-            this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<MaxSDKWrapper>();
+            this.Container.BindInterfacesAndSelfTo<AppLovinAdsWrapper>().AsCached();
+            this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<AppLovinAdsWrapper>();
 #elif IRONSOURCE && !UNITY_EDITOR
             this.Container.BindInterfacesTo<IronSourceWrapper>().AsCached();
 #else

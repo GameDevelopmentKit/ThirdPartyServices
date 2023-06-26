@@ -7,13 +7,9 @@ namespace ServiceImplementation.Configs
     [CreateAssetMenu(fileName = "ThirdPartiesConfig", menuName = "ScriptableObjects/SpawnThirdPartiesConfig", order = 1)]
     public class ThirdPartiesConfig : ScriptableObject
     {
-        #region Private members
-
-        private static ThirdPartiesConfig sInstance;
+        public AdSettings AdSettings => this.mAdvertisingSettings;
 
         [SerializeField] [LabelText("Advertising Setting")]
         private AdSettings mAdvertisingSettings = null;
-
-        #endregion
     }
 }

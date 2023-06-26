@@ -1,4 +1,4 @@
-#if ADVERTISNG_ENABLE && ADVERTISNG_APPLOVIN
+#if APPLOVIN
 namespace ServiceImplementation.AdsServices.AppLovin
 {
     using System;
@@ -40,8 +40,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #endregion
 
-        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig, Dictionary<AdViewPosition, string> positionToMRECAdUnitId,
-            ThirdPartiesConfig thirdPartiesConfig)
+        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig, Dictionary<AdViewPosition, string> positionToMRECAdUnitId, ThirdPartiesConfig thirdPartiesConfig)
         {
             this.logService             = logService;
             this.signalBus              = signalBus;

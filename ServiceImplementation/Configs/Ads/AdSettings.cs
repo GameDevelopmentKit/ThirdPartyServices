@@ -49,28 +49,22 @@
 #if UNITY_EDITOR
 
         private const string Delimiter         = ";";
-        private const string AdvertisingSymbol = "ADVERTISNG_ENABLE";
-        private const string AdModSymbol       = "ADVERTISNG_ADMOB";
-        private const string AppLovinSymbol    = "ADVERTISNG_APPLOVIN";
-        private const string IronSourceSymbol  = "ADVERTISNG_IRONSOURCE";
-
-        private bool EnableAdvertising => this.enableAdMob || this.enableAppLovin || this.enableIronSource;
+        private const string AdModSymbol       = "ADMOB";
+        private const string AppLovinSymbol    = "APPLOVIN";
+        private const string IronSourceSymbol  = "IRONSOURCE";
 
         private void OnChangeAdMob()
         {
-            this.SetDefineSymbol(AdvertisingSymbol, this.EnableAdvertising);
             this.SetDefineSymbol(AdModSymbol, this.enableAdMob);
         }
 
         private void OnChangeAppLovin()
         {
-            this.SetDefineSymbol(AdvertisingSymbol, this.EnableAdvertising);
             this.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin);
         }
 
         private void OnChangeIronSource()
         {
-            this.SetDefineSymbol(AdvertisingSymbol, this.EnableAdvertising);
             this.SetDefineSymbol(IronSourceSymbol, this.enableIronSource);
         }
 
