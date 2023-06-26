@@ -1,6 +1,7 @@
 ﻿namespace ServiceImplementation.Configs.Common
 {
     using System;
+    using Sirenix.OdinInspector;
     using UnityEngine;
 
     /// <summary>
@@ -9,11 +10,10 @@
     [Serializable]
     public class CrossPlatformId
     {
-        [SerializeField]
-        [Rename("iOS ID")]
+        [SerializeField] [LabelText("IOS Id", SdfIconType.Apple)]
         protected string mIosId;
-        [SerializeField]
-        [Rename("Android ID")]
+
+        [SerializeField] [LabelText("Android Id", SdfIconType.Google)]
         protected string mAndroidId;
 
         /// <summary>
@@ -49,14 +49,11 @@
 
         public CrossPlatformId(string iOSId, string androidId)
         {
-            this.mIosId = iOSId;
+            this.mIosId     = iOSId;
             this.mAndroidId = androidId;
         }
 
-        public override string ToString()
-        {
-            return this.Id;
-        }
+        public override string ToString() { return this.Id; }
 
         public override bool Equals(object obj)
         {
@@ -70,10 +67,7 @@
             return this.Id.Equals(item.Id);
         }
 
-        public override int GetHashCode()
-        {
-            return this.Id.GetHashCode();
-        }
+        public override int GetHashCode() { return this.Id.GetHashCode(); }
 
         public static bool operator ==(CrossPlatformId a, CrossPlatformId b)
         {
@@ -83,9 +77,6 @@
             return a.Equals(b);
         }
 
-        public static bool operator !=(CrossPlatformId a, CrossPlatformId b)
-        {
-            return !(a == b);
-        }
+        public static bool operator !=(CrossPlatformId a, CrossPlatformId b) { return !(a == b); }
     }
 }

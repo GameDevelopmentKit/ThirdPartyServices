@@ -5,9 +5,11 @@ namespace ServiceImplementation.AdsServices
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
-    using ServiceImplementation.AdsServices.EasyMobile;
     using ServiceImplementation.AdsServices.Signal;
     using Zenject;
+#if APPLOVIN
+    using ServiceImplementation.AdsServices.AppLovin;
+#endif
 
     public class AdServiceInstaller : Installer<AdServiceInstaller>
     {
@@ -17,8 +19,8 @@ namespace ServiceImplementation.AdsServices
             this.Container.Bind<AdServicesConfig>().AsCached().NonLazy();
 
 #if APPLOVIN
-            this.Container.BindInterfacesAndSelfTo<MaxSDKWrapper>().AsCached();
-            this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<MaxSDKWrapper>();
+            this.Container.BindInterfacesAndSelfTo<AppLovinAdsWrapper>().AsCached();
+            this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<AppLovinAdsWrapper>();
 #elif IRONSOURCE && !UNITY_EDITOR
             this.Container.BindInterfacesTo<IronSourceWrapper>().AsCached();
 #else
