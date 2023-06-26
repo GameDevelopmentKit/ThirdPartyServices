@@ -53,7 +53,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Subscribe<RewardedSkippedSignal>(this.CloseAdInDifferentProcessHandler);
 
             this.StartLoadingAOATime = DateTime.Now;
-
             MobileAds.Initialize(_ =>
                                  {
                                      this.LoadAppOpenAd();
