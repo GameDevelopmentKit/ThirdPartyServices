@@ -59,16 +59,18 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             await UniTask.SwitchToMainThread();
             this.StartLoadingAOATime                 =  DateTime.Now;
             MobileAds.RaiseAdEventsOnUnityMainThread =  true;
+            this.logService.Log("AOA start init");
             MobileAds.Initialize(_ =>
                                  {
+                                     this.logService.Log("AOA finished init");
                                      this.LoadAppOpenAd();
                                      this.IntervalCall(5);
                                  });
         }
 
         // Temporarily disable this
-        // [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
-        // private static void InitAdmob() { MobileAds.Initialize(_ => { }); }
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+        private static void InitAdmob() { MobileAds.Initialize(_ => { }); }
 
         private async void IntervalCall(int intervalSecond)
         {
