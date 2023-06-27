@@ -120,7 +120,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add(AFAdRevenueEvent.AD_UNIT, adsRevenueEvent.AdUnit);
             dic.Add(AFAdRevenueEvent.PLACEMENT, adsRevenueEvent.Placement);
-
+            dic.Add("af_quantity", "1");
             AppsFlyerAdRevenueMediationNetworkType mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
             {
                 AdRevenueConstants.ARSourceAppLovinMAX => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax,
