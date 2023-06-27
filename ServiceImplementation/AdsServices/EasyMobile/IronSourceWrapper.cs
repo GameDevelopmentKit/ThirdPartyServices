@@ -11,7 +11,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using UnityEngine;
     using Zenject;
 
-    public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable
+    public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable,IAdLoadService
     {
         #region inject
 
@@ -288,6 +288,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public bool IsRemoveAds() { return PlayerPrefs.HasKey("EM_REMOVE_ADS"); }
         #endregion
+
+        public void LoadRewardAds()
+        {
+            IronSource.Agent.loadRewardedVideo();
+        }
+        public void LoadInterstitialAd()
+        {
+            IronSource.Agent.loadInterstitial();
+        }
+        public void LoadBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
+        {
+            IronSource.Agent.loadBanner(new IronSourceBannerSize(width, height), IronSourceBannerPosition.BOTTOM);
+        }
     }
 }
 #endif
