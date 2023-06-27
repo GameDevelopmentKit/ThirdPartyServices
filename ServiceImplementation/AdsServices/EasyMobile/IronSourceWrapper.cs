@@ -11,7 +11,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using UnityEngine;
     using Zenject;
 
-    public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable
+    public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable,IAdLoadService
     {
         #region inject
 
