@@ -277,7 +277,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void ShowRewardedAd(string place, Action onCompleted)
         {
             IronSource.Agent.showRewardedVideo();
-
+            onCompleted?.Invoke();
         }
         public void RemoveAds(bool revokeConsent = false)
         {
