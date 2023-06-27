@@ -16,7 +16,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using UnityEngine;
     using Zenject;
 
-    public class AdModWrapper : IAOAAdService, IMRECAdService
+    public class AdModWrapper : IAOAAdService, IMRECAdService, IInitializable
 #if ADMOB_NATIVE_ADS
                               , INativeAdsService
 #endif
@@ -29,11 +29,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private readonly IAdServices       adServices;
         private readonly IAnalyticServices analyticService;
         private readonly AdServicesConfig  adServicesConfig;
-        private readonly AppEventTracker   appEventTracker;
 
         #endregion
 
-        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService, AdServicesConfig adServicesConfig,AppEventTracker appEventTracker)
+        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService, AdServicesConfig adServicesConfig)
         {
             this.logService       = logService;
             this.config           = config;
@@ -41,28 +40,35 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.adServices       = adServices;
             this.analyticService  = analyticService;
             this.adServicesConfig = adServicesConfig;
-            this.appEventTracker  = appEventTracker;
         }
 
-        public void Init()
+        public void Initialize()
         {
             this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
             this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.CloseAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.CloseAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedSkippedSignal>(this.CloseAdInDifferentProcessHandler);
+            AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
+            
+            this.Init();
+        }
 
-            this.StartLoadingAOATime = DateTime.Now;
+        private async void Init()
+        {
+            await UniTask.SwitchToMainThread();
+            this.StartLoadingAOATime                 =  DateTime.Now;
+            MobileAds.RaiseAdEventsOnUnityMainThread =  true;
             MobileAds.Initialize(_ =>
                                  {
                                      this.LoadAppOpenAd();
                                      this.IntervalCall(5);
-                                     this.appEventTracker.ApplicationPauseAction += this.OnAppStateChange;
                                  });
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
-        private static void InitAdmob() { MobileAds.Initialize(_ => { }); }
+        // Temporarily disable this
+        // [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+        // private static void InitAdmob() { MobileAds.Initialize(_ => { }); }
 
         private async void IntervalCall(int intervalSecond)
         {
@@ -112,14 +118,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.IsResumedFromAdsOrIAP = false;
         }
 
-        private void OnAppStateChange(bool isForeGround)
+        private void OnAppStateChanged(AppState state)
         {
-            this.OnAppStateChanged(isForeGround? AppState.Foreground: AppState.Background);
-        }
-
-        private async void OnAppStateChanged(AppState state)
-        {
-            await UniTask.SwitchToMainThread();
             this.logService.Log($"AOA App State is {state}");
             // Display the app open ad when the app is foregrounded.
             this.signalBus.Fire(new AppStateChangeSignal(state == AppState.Background));
@@ -158,10 +158,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public bool IsResumedFromAdsOrIAP { get; set; } = false;
 
         public float LoadingTimeToShowAOA => 5f;
-        public async void ShowAdIfAvailable()
+        public void ShowAdIfAvailable()
         {
-            await UniTask.SwitchToMainThread();
-
             if (this.IsShowingAd)
             {
                 return;
