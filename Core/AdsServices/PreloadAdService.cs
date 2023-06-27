@@ -3,7 +3,6 @@ namespace Core.AdsServices
     using System;
     using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
-    using fbg;
     using Zenject;
     using Debug = UnityEngine.Debug;
 
