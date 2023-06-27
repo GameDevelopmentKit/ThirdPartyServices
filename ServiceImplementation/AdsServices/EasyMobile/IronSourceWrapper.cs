@@ -31,6 +31,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.thirdPartiesConfig = thirdPartiesConfig;
         }
 
+        private Action onRewardComplete;
+
         public void Initialize()
         {
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
@@ -102,6 +104,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void RewardedVideoOnAdRewardedEvent(IronSourcePlacement arg1, IronSourceAdInfo arg2)
         {
+            this.onRewardComplete?.Invoke();
+            this.onRewardComplete = null;
             this.signalBus.Fire(new RewardedAdCompletedSignal(""));
         }
         private void RewardedVideoOnAdUnavailable()
@@ -277,7 +281,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void ShowRewardedAd(string place, Action onCompleted)
         {
             IronSource.Agent.showRewardedVideo();
-            onCompleted?.Invoke();
+            this.onRewardComplete = onCompleted;
         }
         public void RemoveAds(bool revokeConsent = false)
         {
@@ -296,10 +300,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void LoadInterstitialAd()
         {
             IronSource.Agent.loadInterstitial();
-        }
-        public void LoadBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
-        {
-            IronSource.Agent.loadBanner(new IronSourceBannerSize(width, height), IronSourceBannerPosition.BOTTOM);
         }
     }
 }
