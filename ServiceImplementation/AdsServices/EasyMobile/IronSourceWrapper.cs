@@ -11,7 +11,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using UnityEngine;
     using Zenject;
 
-    public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable
+    public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable,IAdLoadService
     {
         #region inject
 
@@ -30,6 +30,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus          = signalBus;
             this.thirdPartiesConfig = thirdPartiesConfig;
         }
+
+        private Action onRewardComplete;
 
         public void Initialize()
         {
@@ -102,6 +104,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void RewardedVideoOnAdRewardedEvent(IronSourcePlacement arg1, IronSourceAdInfo arg2)
         {
+            this.onRewardComplete?.Invoke();
+            this.onRewardComplete = null;
             this.signalBus.Fire(new RewardedAdCompletedSignal(""));
         }
         private void RewardedVideoOnAdUnavailable()
@@ -277,7 +281,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void ShowRewardedAd(string place, Action onCompleted)
         {
             IronSource.Agent.showRewardedVideo();
-
+            this.onRewardComplete = onCompleted;
         }
         public void RemoveAds(bool revokeConsent = false)
         {
@@ -288,6 +292,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public bool IsRemoveAds() { return PlayerPrefs.HasKey("EM_REMOVE_ADS"); }
         #endregion
+
+        public void LoadRewardAds()
+        {
+            IronSource.Agent.loadRewardedVideo();
+        }
+        public void LoadInterstitialAd()
+        {
+            IronSource.Agent.loadInterstitial();
+        }
     }
 }
 #endif

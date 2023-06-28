@@ -9,6 +9,7 @@ namespace Core.AdsServices
         public bool EnableRewardedAd             { get; set; } = true;
         public bool EnableRewardedInterstitialAd { get; set; } = true;
         public bool EnableNativeAd               { get; set; } = true;
+        public int  IntervalLoadAds              { get; set; } = 5;
 
         public int InterstitialAdInterval    { get; set; } = 10;
         public int MinPauseSecondToShowAoaAd { get; set; } = 0;
