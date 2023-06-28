@@ -38,19 +38,19 @@
         /// Gets or sets the list of custom banner identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public Dictionary<AdPlacement, AdId> CustomBannerAdIds { get { return this.mCustomBannerAdIds; } set { this.mCustomBannerAdIds = value as Dictionary_AdPlacement_AdId; } }
+        public override Dictionary<AdPlacement, AdId> CustomBannerAdIds { get { return this.mCustomBannerAdIds; } set { this.mCustomBannerAdIds = value as Dictionary_AdPlacement_AdId; } }
 
         /// <summary>
         /// Gets or sets the list of custom interstitial ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get { return this.mCustomInterstitialAdIds; } set { this.mCustomInterstitialAdIds = value as Dictionary_AdPlacement_AdId; } }
+        public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get { return this.mCustomInterstitialAdIds; } set { this.mCustomInterstitialAdIds = value as Dictionary_AdPlacement_AdId; } }
 
         /// <summary>
         /// Gets or sets the list of custom rewarded ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public Dictionary<AdPlacement, AdId> CustomRewardedAdIds { get { return this.mCustomRewardedAdIds; } set { this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId; } }
+        public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds { get { return this.mCustomRewardedAdIds; } set { this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId; } }
 
         [SerializeField] [LabelText("AgeRestrictMode")]
         private bool mAgeRestrictMode;

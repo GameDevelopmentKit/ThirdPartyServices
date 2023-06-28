@@ -8,6 +8,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using ServiceImplementation.Configs;
+    using ServiceImplementation.Configs.Ads;
     using UnityEngine;
     using Zenject;
 
@@ -274,6 +275,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             IronSource.Agent.showInterstitial();
         }
+        public AdNetworkSettings AdNetworkSettings => this.thirdPartiesConfig.AdSettings.IronSource;
         public bool IsRewardedAdReady(string place)
         {
             return IronSource.Agent.isRewardedVideoAvailable();

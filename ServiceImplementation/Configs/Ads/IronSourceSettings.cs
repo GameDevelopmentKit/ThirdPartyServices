@@ -1,6 +1,7 @@
 ﻿namespace ServiceImplementation.Configs.Ads
 {
     using System;
+    using System.Collections.Generic;
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
@@ -48,5 +49,8 @@
             /// </summary>
             SmartBanner,
         }
+        public override Dictionary<AdPlacement, AdId> CustomBannerAdIds       { get; set; }
+        public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get; set; }
+        public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds     { get; set; }
     }
 }
