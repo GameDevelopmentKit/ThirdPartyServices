@@ -21,19 +21,19 @@ namespace Core.AdsServices
             this.LoadAdsInterval();
         }
 
-        private async void LoadAdsInterval(string place = "")
+        private async void LoadAdsInterval()
         {
-            Debug.Log("load ads intreval");
-            this.adLoadServices.ForEach(ads=>this.LoadSingleAds(ads,place));
+            Debug.Log("load ads interval");
+            this.adLoadServices.ForEach(ads=>this.LoadSingleAds(ads));
             await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.IntervalLoadAds));
-            this.LoadAdsInterval(place);
+            this.LoadAdsInterval();
         }
 
-        private void LoadSingleAds(IAdLoadService loadService, string place)
+        private void LoadSingleAds(IAdLoadService loadService)
         {
             if(loadService.IsRemoveAds()) return;
-            if(!loadService.IsInterstitialAdReady(place)) loadService.LoadInterstitialAd();
-            if(!loadService.IsRewardedAdReady(place)) loadService.LoadRewardAds();
+            if(!loadService.IsInterstitialAdReady()) loadService.LoadInterstitialAd();
+            if(!loadService.IsRewardedAdReady()) loadService.LoadRewardAds();
         }
         
     }
