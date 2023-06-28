@@ -4,6 +4,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System;
     using System.Collections.Generic;
     using Core.AdsServices;
+    using Core.AdsServices.Native;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
