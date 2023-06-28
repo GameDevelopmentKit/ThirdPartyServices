@@ -14,7 +14,7 @@ var FBInstantAdsLibrary = {
             })
             .catch(err => {
                 console.error("show banner ad error: " + err.message)
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message }))
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message || "" }))
             });
     },
 
@@ -29,7 +29,7 @@ var FBInstantAdsLibrary = {
             })
             .catch(err => {
                 console.error("hide banner ad error: " + err.message)
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message }))
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message || "" }))
             });
     },
 
@@ -57,7 +57,7 @@ var FBInstantAdsLibrary = {
                 }))
             .catch((err) => {
                 console.error("preload interstitial ad error: " + err.message);
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message }))
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message || "" }))
             });
     },
 
@@ -82,7 +82,7 @@ var FBInstantAdsLibrary = {
             })
             .catch(err => {
                 console.error("show interstitial ad error: " + err.message);
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message }));
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message || "" }));
             });
     },
 
@@ -110,7 +110,7 @@ var FBInstantAdsLibrary = {
                 }))
             .catch((err) => {
                 console.error("preload rewarded ad error: " + err.message);
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message }));
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message || "" }));
             });
     },
 
@@ -135,7 +135,7 @@ var FBInstantAdsLibrary = {
             })
             .catch(err => {
                 console.error("show rewarded ad error: " + err.message);
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message }));
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ place: placement, error: err.message || "" }));
             });
     },
 };

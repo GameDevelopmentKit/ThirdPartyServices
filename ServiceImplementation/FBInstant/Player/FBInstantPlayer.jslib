@@ -33,7 +33,7 @@ var FBInstantPlayerLibrary = {
             })
             .catch(err => {
                 console.error("save user data error: " + err.message);
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message, id: callbackId }));
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ error: err.message || "", id: callbackId }));
             });
     },
 
@@ -50,7 +50,7 @@ var FBInstantPlayerLibrary = {
             })
             .catch(err => {
                 console.error("load user data error: " + err.message);
-                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: null, error: err.message, id: callbackId }));
+                SendMessage(callbackObj, callbackFunc, JSON.stringify({ data: null, error: err.message || "", id: callbackId }));
             });
     },
 };
