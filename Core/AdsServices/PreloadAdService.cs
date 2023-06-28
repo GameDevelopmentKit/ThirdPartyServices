@@ -46,7 +46,7 @@ namespace Core.AdsServices
 
             loadService.AdNetworkSettings.CustomInterstitialAdIds.ForEach(adsNetwork =>
             {
-                if(!loadService.IsInterstitialAdReady(adsNetwork.Key.Name)) loadService.LoadInterstitialAd();
+                if(!loadService.IsInterstitialAdReady(adsNetwork.Key.Name)) loadService.LoadInterstitialAd(adsNetwork.Key.Name);
             });
         }
         
@@ -60,7 +60,7 @@ namespace Core.AdsServices
 
             loadService.AdNetworkSettings.CustomRewardedAdIds.ForEach(adsNetwork =>
             {
-                if(!loadService.IsRewardedAdReady(adsNetwork.Key.Name)) loadService.LoadRewardAds();
+                if(!loadService.IsRewardedAdReady(adsNetwork.Key.Name)) loadService.LoadRewardAds(adsNetwork.Key.Name);
             });
         }
         

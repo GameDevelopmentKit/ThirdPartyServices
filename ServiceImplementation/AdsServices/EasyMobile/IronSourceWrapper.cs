@@ -295,11 +295,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public bool IsRemoveAds() { return PlayerPrefs.HasKey("EM_REMOVE_ADS"); }
         #endregion
 
-        public void LoadRewardAds()
+        public void LoadRewardAds(string place)
         {
             IronSource.Agent.loadRewardedVideo();
         }
-        public void LoadInterstitialAd()
+        public void LoadInterstitialAd(string place)
         {
             IronSource.Agent.loadInterstitial();
         }

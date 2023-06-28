@@ -9,7 +9,7 @@ namespace Core.AdsServices
         bool              IsRewardedAdReady(string place="");
         bool              IsInterstitialAdReady(string place="");
         bool              IsRemoveAds();
-        public void       LoadRewardAds();
-        public void       LoadInterstitialAd();
+        public void       LoadRewardAds(string place="");
+        public void       LoadInterstitialAd(string place="");
     }
 }
