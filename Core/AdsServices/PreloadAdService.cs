@@ -2,23 +2,28 @@ namespace Core.AdsServices
 {
     using System;
     using System.Collections.Generic;
+    using Core.AdsServices.Signals;
     using Cysharp.Threading.Tasks;
     using Sirenix.Utilities;
     using UnityEngine;
     using Zenject;
 
-    public class PreloadAdService: IInitializable
+    public class PreloadAdService: IInitializable,IDisposable
     {
-        private List<IAdLoadService>                        adLoadServices;
-        private AdServicesConfig                            adServicesConfig;
-        public PreloadAdService(List<IAdLoadService> adLoadServices,AdServicesConfig adServicesConfig)
+        private List<IAdLoadService> adLoadServices;
+        private AdServicesConfig     adServicesConfig;
+        private SignalBus            signalBus;
+        public PreloadAdService(List<IAdLoadService> adLoadServices,AdServicesConfig adServicesConfig,SignalBus signalBus)
         {
-            this.adLoadServices     = adLoadServices;
-            this.adServicesConfig   = adServicesConfig;
+            this.adLoadServices   = adLoadServices;
+            this.adServicesConfig = adServicesConfig;
+            this.signalBus        = signalBus;
         }
         public void Initialize()
         {
             this.LoadAdsInterval();
+            this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.LoadRewardAdsAfterShow);
+            this.signalBus.Subscribe<RewardedInterstitialAdCompletedSignal>(this.LoadInterAdsAfterShow);
         }
 
         private async void LoadAdsInterval()
@@ -49,6 +54,14 @@ namespace Core.AdsServices
                 if(!loadService.IsInterstitialAdReady(adsNetwork.Key.Name)) loadService.LoadInterstitialAd(adsNetwork.Key.Name);
             });
         }
+
+        private void LoadInterAdsAfterShow(RewardedInterstitialAdCompletedSignal signal)
+        {
+            this.adLoadServices.ForEach(ads =>
+            {
+                if(!ads.IsInterstitialAdReady(signal.Placement)) ads.LoadInterstitialAd(signal.Placement);
+            });
+        }
         
         private void LoadSingleRewardAds(IAdLoadService loadService)
         {
@@ -64,6 +77,19 @@ namespace Core.AdsServices
             });
         }
         
-        
+        private void LoadRewardAdsAfterShow(RewardedAdCompletedSignal signal)
+        {
+            this.adLoadServices.ForEach(ads =>
+            {
+                if(!ads.IsRewardedAdReady(signal.Placement)) ads.LoadRewardAds(signal.Placement);
+            });
+        }
+
+
+        public void Dispose()
+        {
+            this.signalBus.TryUnsubscribe<RewardedAdCompletedSignal>(this.LoadRewardAdsAfterShow);
+            this.signalBus.TryUnsubscribe<RewardedInterstitialAdCompletedSignal>(this.LoadInterAdsAfterShow);
+        }
     }
 }
