@@ -1,6 +1,7 @@
 var FBInstantPlayerLibrary = {
 
     $GetBuffer: function (str) {
+        str = str || "";
         var size = lengthBytesUTF8(str) + 1;
         var buffer = _malloc(size);
         stringToUTF8(str, buffer, size);
