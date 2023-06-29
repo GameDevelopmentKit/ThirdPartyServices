@@ -23,7 +23,9 @@ namespace Core.AdsServices
         {
             this.LoadAdsInterval();
             this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.LoadRewardAdsAfterShow);
+            this.signalBus.Subscribe<RewardedSkippedSignal>(this.LoadRewardAdsAfterSkip);
             this.signalBus.Subscribe<RewardedInterstitialAdCompletedSignal>(this.LoadInterAdsAfterShow);
+            this.signalBus.Subscribe<RewardInterstitialAdSkippedSignal>(this.LoadInterAdsAfterSkip);
         }
 
         private async void LoadAdsInterval()
@@ -41,6 +43,7 @@ namespace Core.AdsServices
             this.LoadSingleRewardAds(loadService);
         }
 
+        #region Load InterstitialAds
         private void LoadSingleInterAds(IAdLoadService loadService)
         {
             if (loadService.AdNetworkSettings.CustomInterstitialAdIds == null || loadService.AdNetworkSettings.CustomInterstitialAdIds.Count == 0)
@@ -57,12 +60,27 @@ namespace Core.AdsServices
 
         private void LoadInterAdsAfterShow(RewardedInterstitialAdCompletedSignal signal)
         {
+            this.LoadSingleInterAdWithPlace(signal.Placement);
+        }
+
+        private void LoadInterAdsAfterSkip(RewardInterstitialAdSkippedSignal signal)
+        {
+            this.LoadSingleInterAdWithPlace(signal.Placement);
+        }
+
+        private void LoadSingleInterAdWithPlace(string placement)
+        {
             this.adLoadServices.ForEach(ads =>
             {
-                if(!ads.IsInterstitialAdReady(signal.Placement)) ads.LoadInterstitialAd(signal.Placement);
+                if(!ads.IsInterstitialAdReady(placement)) ads.LoadInterstitialAd(placement);
             });
         }
         
+
+        #endregion
+
+
+        #region Load RewardAds
         private void LoadSingleRewardAds(IAdLoadService loadService)
         {
             if (loadService.AdNetworkSettings.CustomRewardedAdIds == null || loadService.AdNetworkSettings.CustomRewardedAdIds.Count == 0)
@@ -79,17 +97,33 @@ namespace Core.AdsServices
         
         private void LoadRewardAdsAfterShow(RewardedAdCompletedSignal signal)
         {
+            this.LoadSingleRewardAdWithPlace(signal.Placement);
+        }
+
+        private void LoadRewardAdsAfterSkip(RewardedSkippedSignal signal)
+        {
+            this.LoadSingleRewardAdWithPlace(signal.Placement);
+        }
+
+        private void LoadSingleRewardAdWithPlace(string placement)
+        {
             this.adLoadServices.ForEach(ads =>
             {
-                if(!ads.IsRewardedAdReady(signal.Placement)) ads.LoadRewardAds(signal.Placement);
+                if(!ads.IsRewardedAdReady(placement)) ads.LoadRewardAds(placement);
             });
         }
 
+        
+
+        #endregion
+        
 
         public void Dispose()
         {
             this.signalBus.TryUnsubscribe<RewardedAdCompletedSignal>(this.LoadRewardAdsAfterShow);
             this.signalBus.TryUnsubscribe<RewardedInterstitialAdCompletedSignal>(this.LoadInterAdsAfterShow);
+            this.signalBus.TryUnsubscribe<RewardedSkippedSignal>(this.LoadRewardAdsAfterSkip);
+            this.signalBus.TryUnsubscribe<RewardInterstitialAdSkippedSignal>(this.LoadInterAdsAfterSkip);
         }
     }
 }
