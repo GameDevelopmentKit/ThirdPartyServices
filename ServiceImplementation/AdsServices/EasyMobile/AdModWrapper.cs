@@ -3,6 +3,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #if ADMOB
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Core.AdsServices;
     using Core.AdsServices.Native;
     using Core.AdsServices.Signals;
