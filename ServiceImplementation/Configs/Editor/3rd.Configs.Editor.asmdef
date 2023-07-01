@@ -1,5 +1,5 @@
 {
-    "name": "3rd,Configs.Editor",
+    "name": "3rd.Configs.Editor",
     "rootNamespace": "",
     "references": [
         "3rd.Configs"
