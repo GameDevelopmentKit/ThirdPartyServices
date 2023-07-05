@@ -189,6 +189,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void BannerOnAdLoadFailedEvent(IronSourceError obj)
         {
             this.signalBus.Fire(new BannerAdLoadFailedSignal("", $"{obj.getDescription()}"));
+            this.ShowBannerAd();
         }
         private void BannerOnAdLeftApplicationEvent(IronSourceAdInfo obj)
         {
@@ -256,11 +257,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region AdService
 
         //todo convert ads position
-        public async void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
+        public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
-            IronSource.Agent.loadBanner(new IronSourceBannerSize(width, height), IronSourceBannerPosition.BOTTOM);
-            await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.IntervalLoadAds));
-            this.ShowBannerAd();
+            IronSource.Agent.loadBanner(IronSourceBannerSize.BANNER,IronSourceBannerPosition.BOTTOM);
         }
         public void HideBannedAd()
         {
