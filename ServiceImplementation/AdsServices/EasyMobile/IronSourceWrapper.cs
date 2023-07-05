@@ -7,7 +7,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
+    using Cysharp.Threading.Tasks;
     using ServiceImplementation.Configs;
+    using ServiceImplementation.Configs.Ads;
     using UnityEngine;
     using Zenject;
 
@@ -254,9 +256,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region AdService
 
         //todo convert ads position
-        public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
+        public async void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
             IronSource.Agent.loadBanner(new IronSourceBannerSize(width, height), IronSourceBannerPosition.BOTTOM);
+            await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.IntervalLoadAds));
+            this.ShowBannerAd();
         }
         public void HideBannedAd()
         {
@@ -274,6 +278,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             IronSource.Agent.showInterstitial();
         }
+        public AdNetworkSettings AdNetworkSettings => this.thirdPartiesConfig.AdSettings.IronSource;
         public bool IsRewardedAdReady(string place)
         {
             return IronSource.Agent.isRewardedVideoAvailable();
@@ -293,11 +298,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public bool IsRemoveAds() { return PlayerPrefs.HasKey("EM_REMOVE_ADS"); }
         #endregion
 
-        public void LoadRewardAds()
+        public void LoadRewardAds(string place)
         {
             IronSource.Agent.loadRewardedVideo();
         }
-        public void LoadInterstitialAd()
+        public void LoadInterstitialAd(string place)
         {
             IronSource.Agent.loadInterstitial();
         }

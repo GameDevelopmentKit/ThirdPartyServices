@@ -12,7 +12,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using UnityEngine;
     using Zenject;
 
-    public class AppLovinAdsWrapper : IAdServices, IMRECAdService, IInitializable, IDisposable
+    public class AppLovinAdsWrapper : IAdServices, IMRECAdService, IInitializable, IDisposable, IAdLoadService
     {
         #region Inject
 
@@ -40,7 +40,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #endregion
 
-        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig, Dictionary<AdViewPosition, string> positionToMRECAdUnitId, ThirdPartiesConfig thirdPartiesConfig)
+        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig, Dictionary<AdViewPosition, string> positionToMRECAdUnitId,
+            ThirdPartiesConfig thirdPartiesConfig)
         {
             this.logService             = logService;
             this.signalBus              = signalBus;
@@ -495,14 +496,21 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #endregion
 
-        public void RemoveAds(bool revokeConsent = false)
-        {
-            PlayerPrefs.SetInt("EM_REMOVE_ADS", -1);
-        }
+        public void RemoveAds(bool revokeConsent = false) { PlayerPrefs.SetInt("EM_REMOVE_ADS", -1); }
 
         public bool IsAdsInitialized() { return this.isInit; }
 
         public bool IsRemoveAds() { return PlayerPrefs.HasKey("EM_REMOVE_ADS"); }
+
+        #region Load Ads
+
+        public void LoadRewardAds(string place) { this.InternalLoadRewarded(AdPlacement.PlacementWithName(place)); }
+
+        public void LoadInterstitialAd(string place) { this.InternalLoadInterstitialAd(AdPlacement.PlacementWithName(place)); }
+
+        public AdNetworkSettings AdNetworkSettings => this.adsSettings;
+
+        #endregion
     }
 }
 
