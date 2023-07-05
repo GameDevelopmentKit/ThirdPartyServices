@@ -7,6 +7,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
+    using Cysharp.Threading.Tasks;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
@@ -255,9 +256,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region AdService
 
         //todo convert ads position
-        public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
+        public async void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
             IronSource.Agent.loadBanner(new IronSourceBannerSize(width, height), IronSourceBannerPosition.BOTTOM);
+            await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.IntervalLoadAds));
+            this.ShowBannerAd();
         }
         public void HideBannedAd()
         {
