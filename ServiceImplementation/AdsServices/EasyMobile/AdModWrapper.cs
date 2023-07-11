@@ -3,9 +3,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #if ADMOB
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Core.AdsServices;
-    using Core.AdsServices.Native;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -15,33 +13,37 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using GoogleMobileAds.Api;
     using GoogleMobileAds.Common;
     using ServiceImplementation.AdsServices.Signal;
+    using ServiceImplementation.Configs;
+    using ServiceImplementation.Configs.Ads;
     using UnityEngine;
     using Zenject;
 
-    public class AdModWrapper : IAOAAdService, IMRECAdService, IInitializable
+    public class AdModWrapper : IAOAAdService, IMRECAdService, IInitializable, IBackFillAdsService, IAdLoadService
 #if ADMOB_NATIVE_ADS
                               , INativeAdsService
 #endif
     {
         #region inject
 
-        private readonly ILogService       logService;
-        private readonly Config            config;
-        private readonly SignalBus         signalBus;
-        private readonly IAdServices       adServices;
-        private readonly IAnalyticServices analyticService;
-        private readonly AdServicesConfig  adServicesConfig;
+        private readonly ILogService        logService;
+        private readonly Config             config;
+        private readonly SignalBus          signalBus;
+        private readonly IAdServices        adServices;
+        private readonly IAnalyticServices  analyticService;
+        private readonly AdServicesConfig   adServicesConfig;
+        private readonly ThirdPartiesConfig thirdPartiesConfig;
 
         #endregion
 
-        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService, AdServicesConfig adServicesConfig)
+        public AdModWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService, AdServicesConfig adServicesConfig, ThirdPartiesConfig thirdPartiesConfig)
         {
-            this.logService       = logService;
-            this.config           = config;
-            this.signalBus        = signalBus;
-            this.adServices       = adServices;
-            this.analyticService  = analyticService;
-            this.adServicesConfig = adServicesConfig;
+            this.logService         = logService;
+            this.config             = config;
+            this.signalBus          = signalBus;
+            this.adServices         = adServices;
+            this.analyticService    = analyticService;
+            this.adServicesConfig   = adServicesConfig;
+            this.thirdPartiesConfig = thirdPartiesConfig;
         }
 
         public void Initialize()
@@ -83,6 +85,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #endif
             await UniTask.Delay(TimeSpan.FromSeconds(intervalSecond));
             this.IntervalCall(intervalSecond);
+        }
+
+        private string GetInterstitialAdsIdByPlace(string place)
+        {
+            var adSettingsAdMob = this.thirdPartiesConfig.AdSettings.AdMob;
+            return adSettingsAdMob.CustomInterstitialAdIds.GetValueOrDefault(AdPlacement.PlacementWithName(place),  adSettingsAdMob.DefaultInterstitialAdId).Id;
         }
 
         #region AOA
@@ -542,6 +550,69 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #endregion
 
 #endif
+
+        private Dictionary<string, InterstitialAd> AdUnitIdToInterstitialAd = new();
+        
+        #region backfill ads
+
+        public AdNetworkSettings AdNetworkSettings                    => this.thirdPartiesConfig.AdSettings.AdMob;
+        public bool              IsRewardedAdReady(string place = "") { return false; }
+        public void LoadRewardAds(string place = "")
+        {
+        }
+        public bool              IsRemoveAds()                        => this.adServices.IsRemoveAds();
+
+        public bool IsInterstitialAdReady(string place)
+        {
+            return this.AdUnitIdToInterstitialAd.TryGetValue(this.GetInterstitialAdsIdByPlace(place), out var interstitialAd) && interstitialAd.CanShowAd();
+        }
+
+        public void ShowInterstitialAd(string place)
+        {
+            var idId = this.GetInterstitialAdsIdByPlace(place);
+            if (this.AdUnitIdToInterstitialAd.TryGetValue(idId, out var interstitialAd) && interstitialAd.CanShowAd())
+            {
+                this.logService.Log("Showing interstitial ad.");
+                interstitialAd.Show();
+            }
+            else
+            {
+                this.logService.Error("Interstitial ad is not ready yet.");
+            }
+        }
+        
+        public void LoadInterstitialAd(string place)
+        {
+            var idId = this.GetInterstitialAdsIdByPlace(place);
+            // Clean up the old ad before loading a new one.
+            if (this.AdUnitIdToInterstitialAd.TryGetValue(idId, out var interstitialAd))
+            {
+                interstitialAd.Destroy();
+                this.AdUnitIdToInterstitialAd.Remove(idId);
+            }
+
+            this.logService.Log("AdmobWrapper - Loading the interstitial ad.");
+
+            // create our request used to load the ad.
+            var adRequest = new AdRequest();
+            InterstitialAd.Load(idId, adRequest, (InterstitialAd ad, LoadAdError error) =>
+            {
+                // if error is not null, the load request failed.
+                if (error != null || ad == null)
+                {
+                    this.logService.Error("interstitial ad failed to load an ad " +
+                                          "with error : " + error);
+                    return;
+                }
+
+                this.logService.Log("Interstitial ad loaded with response : "
+                                    + ad.GetResponseInfo());
+
+                this.AdUnitIdToInterstitialAd.Add(idId, ad);
+            });
+        }
+
+        #endregion
     }
 
 #endif

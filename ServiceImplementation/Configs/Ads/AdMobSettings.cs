@@ -13,50 +13,50 @@
         /// <summary>
         /// Gets or sets the AdMob app identifier.
         /// </summary>
-        public AdId AppId { get { return this.mAppId; } set { this.mAppId = value; } }
+        public AdId AppId { get => this.mAppId; set => this.mAppId = value; }
 
         /// <summary>
         /// Gets or sets the default banner identifier.
         /// </summary>
-        public AdId DefaultBannerAdId { get { return this.mDefaultBannerAdId; } set { this.mDefaultBannerAdId = value; } }
+        public AdId DefaultBannerAdId { get => this.mDefaultBannerAdId; set => this.mDefaultBannerAdId = value; }
 
         /// <summary>
         /// Gets or sets the default interstitial ad identifier.
         /// </summary>
-        public AdId DefaultInterstitialAdId { get { return this.mDefaultInterstitialAdId; } set { this.mDefaultInterstitialAdId = value; } }
+        public AdId DefaultInterstitialAdId { get => this.mDefaultInterstitialAdId; set => this.mDefaultInterstitialAdId = value; }
 
         /// <summary>
         /// Gets or sets the default rewarded ad identifier.
         /// </summary>
-        public AdId DefaultRewardedAdId { get { return this.mDefaultRewardedAdId; } set { this.mDefaultRewardedAdId = value; } }
+        public AdId DefaultRewardedAdId { get => this.mDefaultRewardedAdId; set => this.mDefaultRewardedAdId = value; }
 
         /// <summary>
         /// Gets or sets the default rewarded interstitial ad identifier.
         /// </summary>
-        public AdId DefaultRewardedInterstitialAdId { get { return this.mDefaultRewardedInterstitialAdId; } set { this.mDefaultRewardedInterstitialAdId = value; } }
+        public AdId DefaultRewardedInterstitialAdId { get => this.mDefaultRewardedInterstitialAdId; set => this.mDefaultRewardedInterstitialAdId = value; }
 
         /// <summary>
         /// Enables or disables test mode.
         /// </summary>
-        public bool EnableTestMode { get { return this.mEnableTestMode; } set { this.mEnableTestMode = value; } }
+        public bool EnableTestMode { get => this.mEnableTestMode; set => this.mEnableTestMode = value; }
 
         /// <summary>
         /// Gets or sets the list of custom banner identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public override Dictionary<AdPlacement, AdId> CustomBannerAdIds { get { return this.mCustomBannerAdIds; } set { this.mCustomBannerAdIds = value as Dictionary_AdPlacement_AdId; } }
+        public override Dictionary<AdPlacement, AdId> CustomBannerAdIds { get => this.mCustomBannerAdIds; set => this.mCustomBannerAdIds = value as Dictionary_AdPlacement_AdId; }
 
         /// <summary>
         /// Gets or sets the list of custom interstitial ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get { return this.mCustomInterstitialAdIds; } set { this.mCustomInterstitialAdIds = value as Dictionary_AdPlacement_AdId; } }
+        public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get => this.mCustomInterstitialAdIds; set => this.mCustomInterstitialAdIds = value as Dictionary_AdPlacement_AdId; }
 
         /// <summary>
         /// Gets or sets the list of custom rewarded ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds { get { return this.mCustomRewardedAdIds; } set { this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId; } }
+        public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds { get => this.mCustomRewardedAdIds; set => this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId; }
 
         /// <summary>
         /// Gets or sets the list of custom rewarded interstitial ad identifiers.
@@ -64,8 +64,8 @@
         /// </summary>
         public Dictionary<AdPlacement, AdId> CustomRewardedInterstitialAdIds
         {
-            get { return this.mCustomRewardedInterstitialAdIds; }
-            set { this.mCustomRewardedInterstitialAdIds = value as Dictionary_AdPlacement_AdId; }
+            get => this.mCustomRewardedInterstitialAdIds;
+            set => this.mCustomRewardedInterstitialAdIds = value as Dictionary_AdPlacement_AdId;
         }
 
         [SerializeField] [LabelText("Enable Test Mode")]
