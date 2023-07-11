@@ -33,9 +33,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private readonly Dictionary<AdPlacement, KeyValuePair<BannerAdsPosition, BannerSize>> placementToBanner = new();
 
-        private bool     isInit;
-        private DateTime lasTimeShowInter = DateTime.MinValue;
-
+        private bool         isInit;
         private event Action RewardedAdCompletedOneTimeAction;
 
         #endregion
@@ -305,10 +303,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public void ShowInterstitialAd(string place)
         {
             var placement = AdPlacement.PlacementWithName(place);
-            var totalTime = (DateTime.UtcNow - this.lasTimeShowInter).TotalSeconds;
-            if (totalTime < this.adServicesConfig.InterstitialAdInterval) return;
-
-            this.lasTimeShowInter = DateTime.UtcNow;
             this.InternalShowInterstitialAd(placement);
         }
 

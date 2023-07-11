@@ -266,7 +266,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 appOpenAd.OnAdFullScreenContentFailed += this.AOAHandleAdFullScreenContentFailed;
                 appOpenAd.OnAdFullScreenContentOpened += this.AOAHandleAdFullScreenContentOpened;
                 appOpenAd.OnAdImpressionRecorded      += this.AOAHandleAdImpressionRecorded;
-                appOpenAd.OnAdPaid                    += this.AdMobHandlePaidEvent;
+                appOpenAd.OnAdPaid                    += this.AOAHandleAdPaid;
 
                 this.aoaAdLoadedInstance.Init(appOpenAd);
 
@@ -313,20 +313,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log("Recorded ad impression");
         }
 
-        private void AdMobHandlePaidEvent(AdValue args)
-        {
-            this.analyticService.Track(new AdsRevenueEvent()
-                                       {
-                                           AdsRevenueSourceId = "AdMob",
-                                           Revenue            = args.Value / 1e5,
-                                           Currency           = "USD",
-                                           Placement          = "AOA",
-                                           AdNetwork          = "AdMob"
-                                       });
-
-            this.logService.Log($"Received paid event. (currency: {args.CurrencyCode}, value: {args.Value}");
-        }
-
         #endregion
 
         #region MREC
@@ -365,7 +351,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             bannerView.OnBannerAdLoaded            += this.BannerViewOnAdLoaded;
             bannerView.OnBannerAdLoadFailed        += this.BannerViewOnAdLoadFailed;
             bannerView.OnAdClicked                 += this.BannerViewOnAdClicked;
-            bannerView.OnAdPaid                    += this.AdMobHandlePaidEvent;
+            bannerView.OnAdPaid                    += this.MRECAdHandlePaid;
             bannerView.OnAdFullScreenContentOpened += this.BannerViewOnAdFullScreenContentOpened;
             bannerView.OnAdFullScreenContentClosed += this.BannerViewOnAdFullScreenContentClosed;
 
@@ -552,9 +538,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #endif
 
         private Dictionary<string, InterstitialAd> AdUnitIdToInterstitialAd = new();
+        private string                             currentPlacement         = string.Empty;
         
-        #region backfill ads
-
         public AdNetworkSettings AdNetworkSettings                    => this.thirdPartiesConfig.AdSettings.AdMob;
         public bool              IsRewardedAdReady(string place = "") { return false; }
         public void LoadRewardAds(string place = "")
@@ -574,6 +559,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             {
                 this.logService.Log("Showing interstitial ad.");
                 interstitialAd.Show();
+                this.currentPlacement = place;
             }
             else
             {
@@ -595,24 +581,66 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             // create our request used to load the ad.
             var adRequest = new AdRequest();
-            InterstitialAd.Load(idId, adRequest, (InterstitialAd ad, LoadAdError error) =>
+            InterstitialAd.Load(idId, adRequest, (ad, error) =>
             {
                 // if error is not null, the load request failed.
                 if (error != null || ad == null)
                 {
-                    this.logService.Error("interstitial ad failed to load an ad " +
-                                          "with error : " + error);
+                    this.logService.Error($"interstitial ad failed to load an ad " +
+                                          $"with error : {error}");
+                    this.signalBus.Fire(new InterstitialAdLoadFailedSignal(place, error?.GetMessage()));
                     return;
                 }
 
                 this.logService.Log("Interstitial ad loaded with response : "
                                     + ad.GetResponseInfo());
 
+                ad.OnAdPaid                    += this.InterstitialAdHandlePaid;
+                ad.OnAdClicked                 += this.InterstitialAdHandleClicked;
+                ad.OnAdFullScreenContentClosed += this.InterstitialAdHandleFullScreenClosed;
+                ad.OnAdFullScreenContentFailed += this.InterstitialAdHandleFullScreenFailed;
+                ad.OnAdFullScreenContentOpened += this.InterstitialAdHandleFullScreenOpened;
+
+                this.signalBus.Fire(new InterstitialAdDownloadedSignal(place));
                 this.AdUnitIdToInterstitialAd.Add(idId, ad);
             });
         }
+        
+        private void InterstitialAdHandleFullScreenOpened()
+        {
+            this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.currentPlacement));
+        }
+        private void InterstitialAdHandleFullScreenFailed(AdError obj)
+        {
+            this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(this.currentPlacement));
+        }
+        private void InterstitialAdHandleFullScreenClosed()
+        {
+            this.signalBus.Fire(new InterstitialAdClosedSignal(this.currentPlacement));
+        }
+        private void InterstitialAdHandleClicked()
+        {
+            this.signalBus.Fire(new InterstitialAdClickedSignal(this.currentPlacement));
+        }
 
-        #endregion
+        private void AOAHandleAdPaid(AdValue obj)          { this.AdMobHandlePaidEvent(obj, "AOA"); }
+        private void InterstitialAdHandlePaid(AdValue obj) { this.AdMobHandlePaidEvent(obj, "Interstitial"); }
+        private void MRECAdHandlePaid(AdValue obj)         { this.AdMobHandlePaidEvent(obj, "MREC"); }
+        
+        private void AdMobHandlePaidEvent(AdValue args, string adFormat)
+        {
+            this.analyticService.Track(new AdsRevenueEvent()
+            {
+                AdsRevenueSourceId = "AdMob",
+                Revenue            = args.Value / 1e5,
+                Currency           = "USD",
+                Placement          = "AOA",
+                AdNetwork          = "AdMob",
+                AdFormat =  adFormat,
+            });
+
+            this.logService.Log($"Received paid event. (currency: {args.CurrencyCode}, value: {args.Value}");
+        }
     }
 
 #endif
