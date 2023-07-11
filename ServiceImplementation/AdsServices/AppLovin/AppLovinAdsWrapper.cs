@@ -177,6 +177,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 return;
             }
 
+            MaxSdk.UpdateMRecPosition(this.positionToMRECAdUnitId[adViewPosition], this.ConvertAdViewPosition(adViewPosition));
             MaxSdk.ShowMRec(this.positionToMRECAdUnitId[adViewPosition]);
         }
 
