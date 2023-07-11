@@ -8,12 +8,12 @@ namespace Core.AdsServices
     using UnityEngine;
     using Zenject;
 
-    public class PreloadAdService: IInitializable,IDisposable
+    public class PreloadAdService : IInitializable, IDisposable
     {
         private List<IAdLoadService> adLoadServices;
         private AdServicesConfig     adServicesConfig;
         private SignalBus            signalBus;
-        public PreloadAdService(List<IAdLoadService> adLoadServices,AdServicesConfig adServicesConfig,SignalBus signalBus)
+        public PreloadAdService(List<IAdLoadService> adLoadServices, AdServicesConfig adServicesConfig, SignalBus signalBus)
         {
             this.adLoadServices   = adLoadServices;
             this.adServicesConfig = adServicesConfig;
@@ -31,92 +31,79 @@ namespace Core.AdsServices
         private async void LoadAdsInterval()
         {
             Debug.Log("load ads interval");
-            this.adLoadServices.ForEach(ads=>this.LoadSingleAds(ads));
+            this.adLoadServices.ForEach(ads => this.LoadSingleAds(ads));
             await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.IntervalLoadAds));
             this.LoadAdsInterval();
         }
 
         private void LoadSingleAds(IAdLoadService loadService)
         {
-            if(loadService.IsRemoveAds()) return;
+            if (loadService.IsRemoveAds()) return;
             this.LoadSingleInterAds(loadService);
             this.LoadSingleRewardAds(loadService);
         }
 
         #region Load InterstitialAds
+
         private void LoadSingleInterAds(IAdLoadService loadService)
         {
             if (loadService.AdNetworkSettings.CustomInterstitialAdIds == null || loadService.AdNetworkSettings.CustomInterstitialAdIds.Count == 0)
             {
-                if(!loadService.IsInterstitialAdReady()) loadService.LoadInterstitialAd();
+                if (!loadService.IsInterstitialAdReady()) loadService.LoadInterstitialAd();
                 return;
             }
 
             loadService.AdNetworkSettings.CustomInterstitialAdIds.ForEach(adsNetwork =>
             {
-                if(!loadService.IsInterstitialAdReady(adsNetwork.Key.Name)) loadService.LoadInterstitialAd(adsNetwork.Key.Name);
+                if (!loadService.IsInterstitialAdReady(adsNetwork.Key.Name)) loadService.LoadInterstitialAd(adsNetwork.Key.Name);
             });
         }
 
-        private void LoadInterAdsAfterShow(RewardedInterstitialAdCompletedSignal signal)
-        {
-            this.LoadSingleInterAdWithPlace(signal.Placement);
-        }
+        private void LoadInterAdsAfterShow(RewardedInterstitialAdCompletedSignal signal) { this.LoadSingleInterAdWithPlace(signal.Placement); }
 
-        private void LoadInterAdsAfterSkip(RewardInterstitialAdSkippedSignal signal)
-        {
-            this.LoadSingleInterAdWithPlace(signal.Placement);
-        }
+        private void LoadInterAdsAfterSkip(RewardInterstitialAdSkippedSignal signal) { this.LoadSingleInterAdWithPlace(signal.Placement); }
 
         private void LoadSingleInterAdWithPlace(string placement)
         {
             this.adLoadServices.ForEach(ads =>
             {
-                if(!ads.IsInterstitialAdReady(placement)) ads.LoadInterstitialAd(placement);
+                if (!ads.IsInterstitialAdReady(placement)) ads.LoadInterstitialAd(placement);
             });
         }
-        
 
         #endregion
 
 
         #region Load RewardAds
+
         private void LoadSingleRewardAds(IAdLoadService loadService)
         {
             if (loadService.AdNetworkSettings.CustomRewardedAdIds == null || loadService.AdNetworkSettings.CustomRewardedAdIds.Count == 0)
             {
-                if(!loadService.IsRewardedAdReady()) loadService.LoadRewardAds();
+                if (!loadService.IsRewardedAdReady()) loadService.LoadRewardAds();
                 return;
             }
 
             loadService.AdNetworkSettings.CustomRewardedAdIds.ForEach(adsNetwork =>
             {
-                if(!loadService.IsRewardedAdReady(adsNetwork.Key.Name)) loadService.LoadRewardAds(adsNetwork.Key.Name);
+                if (!loadService.IsRewardedAdReady(adsNetwork.Key.Name)) loadService.LoadRewardAds(adsNetwork.Key.Name);
             });
         }
-        
-        private void LoadRewardAdsAfterShow(RewardedAdCompletedSignal signal)
-        {
-            this.LoadSingleRewardAdWithPlace(signal.Placement);
-        }
 
-        private void LoadRewardAdsAfterSkip(RewardedSkippedSignal signal)
-        {
-            this.LoadSingleRewardAdWithPlace(signal.Placement);
-        }
+        private void LoadRewardAdsAfterShow(RewardedAdCompletedSignal signal) { this.LoadSingleRewardAdWithPlace(signal.Placement); }
+
+        private void LoadRewardAdsAfterSkip(RewardedSkippedSignal signal) { this.LoadSingleRewardAdWithPlace(signal.Placement); }
 
         private void LoadSingleRewardAdWithPlace(string placement)
         {
             this.adLoadServices.ForEach(ads =>
             {
-                if(!ads.IsRewardedAdReady(placement)) ads.LoadRewardAds(placement);
+                if (!ads.IsRewardedAdReady(placement)) ads.LoadRewardAds(placement);
             });
         }
 
-        
-
         #endregion
-        
+
 
         public void Dispose()
         {
