@@ -24,8 +24,7 @@ namespace Core.AdsServices
             this.LoadAdsInterval();
             this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.LoadRewardAdsAfterShow);
             this.signalBus.Subscribe<RewardedSkippedSignal>(this.LoadRewardAdsAfterSkip);
-            this.signalBus.Subscribe<RewardedInterstitialAdCompletedSignal>(this.LoadInterAdsAfterShow);
-            this.signalBus.Subscribe<RewardInterstitialAdSkippedSignal>(this.LoadInterAdsAfterSkip);
+            this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.LoadInterAdsAfterShow);
         }
 
         private async void LoadAdsInterval()
@@ -59,9 +58,7 @@ namespace Core.AdsServices
             });
         }
 
-        private void LoadInterAdsAfterShow(RewardedInterstitialAdCompletedSignal signal) { this.LoadSingleInterAdWithPlace(signal.Placement); }
-
-        private void LoadInterAdsAfterSkip(RewardInterstitialAdSkippedSignal signal) { this.LoadSingleInterAdWithPlace(signal.Placement); }
+        private void LoadInterAdsAfterShow(InterstitialAdClosedSignal signal) { this.LoadSingleInterAdWithPlace(signal.Placement); }
 
         private void LoadSingleInterAdWithPlace(string placement)
         {
@@ -108,9 +105,8 @@ namespace Core.AdsServices
         public void Dispose()
         {
             this.signalBus.TryUnsubscribe<RewardedAdCompletedSignal>(this.LoadRewardAdsAfterShow);
-            this.signalBus.TryUnsubscribe<RewardedInterstitialAdCompletedSignal>(this.LoadInterAdsAfterShow);
+            this.signalBus.TryUnsubscribe<InterstitialAdClosedSignal>(this.LoadInterAdsAfterShow);
             this.signalBus.TryUnsubscribe<RewardedSkippedSignal>(this.LoadRewardAdsAfterSkip);
-            this.signalBus.TryUnsubscribe<RewardInterstitialAdSkippedSignal>(this.LoadInterAdsAfterSkip);
         }
     }
 }
