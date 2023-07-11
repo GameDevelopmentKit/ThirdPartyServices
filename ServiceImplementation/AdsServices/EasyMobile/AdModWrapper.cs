@@ -177,8 +177,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
+            this.signalBus.Fire(new AppOpenEligibleSignal(""));
             if (this.aoaAdLoadedInstance.IsAoaAdAvailable)
             {
+                this.signalBus.Fire(new AppOpenCalledSignal(""));
                 this.aoaAdLoadedInstance.Show();
                 this.LoadAppOpenAd();
             }
@@ -240,6 +242,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 {
                     // Handle the error.
                     this.logService.Log($"Failed to load the ad. (reason: {error.GetMessage()}), id: {adUnitId}");
+                    this.signalBus.Fire(new AppOpenLoadFailedSignal(""));
                     this.aoaAdLoadedInstance.IsLoading = false;
 
                     this.currentAoaAdIndex = (this.currentAoaAdIndex + 1) % this.config.ADModAoaIds.Count;
@@ -258,6 +261,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 }
 
                 this.logService.Log($"Load Open App Ads Tier {this.currentAoaAdIndex} - {adUnitId} successfully!!");
+                this.signalBus.Fire(new AppOpenLoadedSignal(""));
                 this.currentAoaAdIndex          = 0;
                 this.currentAOASleepLoadingTime = this.minAOASleepLoadingTime;
 
@@ -291,14 +295,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.logService.Log("Closed app open ad");
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
-            // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
             this.IsShowingAd = false;
         }
 
         private void AOAHandleAdFullScreenContentFailed(AdError args)
         {
             this.logService.Log($"Failed to present the ad (reason: {args.GetMessage()})");
-            // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
+            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(""));
         }
 
         private void AOAHandleAdFullScreenContentOpened()
