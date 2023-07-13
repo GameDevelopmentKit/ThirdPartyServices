@@ -3,7 +3,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #if ADMOB
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Core.AdsServices;
+#if ADMOB_NATIVE_ADS
+    using Core.AdsServices.Native;
+#endif
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -526,7 +530,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log($"Native ad loaded successfully");
         }
 
-        private void AdMobNativePaidHandler(object sender, AdValueEventArgs e) { this.AdMobHandlePaidEvent(e.AdValue); }
+        private void AdMobNativePaidHandler(object sender, AdValueEventArgs e) { this.AdMobHandlePaidEvent(e.AdValue, "NativeAds"); }
 
         private void LoadAllNativeAds()
         {
