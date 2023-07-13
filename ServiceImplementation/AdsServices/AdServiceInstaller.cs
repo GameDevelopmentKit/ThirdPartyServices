@@ -54,8 +54,11 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<InterstitialAdDownloadedSignal>();
             this.Container.DeclareSignal<InterstitialAdLoadFailedSignal>();
             this.Container.DeclareSignal<InterstitialAdClickedSignal>();
+            this.Container.DeclareSignal<InterstitialAdDisplayedFailedSignal>();
             this.Container.DeclareSignal<InterstitialAdDisplayedSignal>();
             this.Container.DeclareSignal<InterstitialAdClosedSignal>();
+            this.Container.DeclareSignal<InterstitialAdCalledSignal>();
+            this.Container.DeclareSignal<InterstitialAdEligibleSignal>();
 
             this.Container.DeclareSignal<RewardedInterstitialAdCompletedSignal>();
             this.Container.DeclareSignal<RewardInterstitialAdSkippedSignal>();
@@ -65,6 +68,9 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<RewardedAdDisplayedSignal>();
             this.Container.DeclareSignal<RewardedAdCompletedSignal>();
             this.Container.DeclareSignal<RewardedSkippedSignal>();
+            this.Container.DeclareSignal<RewardedAdEligibleSignal>();
+            this.Container.DeclareSignal<RewardedAdCalledSignal>();
+            this.Container.DeclareSignal<RewardedAdOfferSignal>();
 
             this.Container.DeclareSignal<AppOpenFullScreenContentOpenedSignal>();
             this.Container.DeclareSignal<AppOpenFullScreenContentFailedSignal>();

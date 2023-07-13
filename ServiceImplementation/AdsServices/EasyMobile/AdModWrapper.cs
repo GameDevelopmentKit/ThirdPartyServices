@@ -603,7 +603,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 ad.OnAdFullScreenContentClosed += this.InterstitialAdHandleFullScreenClosed;
                 ad.OnAdFullScreenContentFailed += this.InterstitialAdHandleFullScreenFailed;
                 ad.OnAdFullScreenContentOpened += this.InterstitialAdHandleFullScreenOpened;
-
+                
                 this.signalBus.Fire(new InterstitialAdDownloadedSignal(place));
                 this.AdUnitIdToInterstitialAd.Add(idId, ad);
             });

@@ -43,4 +43,25 @@
         {
         }
     }
+    
+    public class RewardedAdEligibleSignal : BaseAdsSignal
+    {
+        public RewardedAdEligibleSignal(string placement) : base(placement)
+        {
+        }
+    }
+    
+    public class RewardedAdCalledSignal : BaseAdsSignal
+    {
+        public RewardedAdCalledSignal(string placement) : base(placement)
+        {
+        }
+    }
+    
+    public class RewardedAdOfferSignal : BaseAdsSignal
+    {
+        public RewardedAdOfferSignal(string placement) : base(placement)
+        {
+        }
+    }
 }
