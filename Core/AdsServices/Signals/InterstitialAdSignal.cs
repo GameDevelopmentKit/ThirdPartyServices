@@ -1,8 +1,20 @@
 ﻿namespace Core.AdsServices.Signals
 {
+    public class InterstitialAdCalledSignal : BaseAdsSignal
+    {
+        public InterstitialAdCalledSignal(string placement) : base(placement) { }
+    }
+    
     public class InterstitialAdDownloadedSignal : BaseAdsSignal
     {
         public InterstitialAdDownloadedSignal(string placement) : base(placement) { }
+    }
+    
+    public class InterstitialAdEligibleSignal : BaseAdsSignal
+    {
+        public InterstitialAdEligibleSignal(string placement) : base(placement)
+        {
+        }
     }
 
     public class InterstitialAdLoadFailedSignal : BaseAdsSignal
