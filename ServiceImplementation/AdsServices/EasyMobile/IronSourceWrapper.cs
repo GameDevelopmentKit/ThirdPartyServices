@@ -226,6 +226,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
         public void LoadMREC(AdViewPosition adViewPosition)             { }
         public bool IsMRECReady(AdViewPosition adViewPosition)          { return false; }
+        public void HideAllMREC()                                       { }
 
         public event Action<string, AdInfo>    OnAdLoadedEvent;
         public event Action<string, ErrorInfo> OnAdLoadFailedEvent;
