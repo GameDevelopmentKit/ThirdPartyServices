@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using Core.AdsServices;
+    using Zenject;
 
     public class DummyIapServices : IIapServices
     {
@@ -17,17 +18,20 @@
 
     public class DummyRemoveAdsIapServices : IRemoveAdsServices
     {
+        private readonly SignalBus    signalBus;
         private readonly RemoveAdData removeAdData;
         private readonly IAdServices  adServices;
 
-        public DummyRemoveAdsIapServices(RemoveAdData removeAdData, IAdServices adServices)
+        public DummyRemoveAdsIapServices(SignalBus signalBus, RemoveAdData removeAdData, IAdServices adServices)
         {
+            this.signalBus    = signalBus;
             this.removeAdData = removeAdData;
             this.adServices   = adServices;
         }
 
         public void BuyRemoveAds(string removeAdsId, Action<string> onComplete = null, Action<string> onFailed = null)
         {
+            this.signalBus.Fire(new RemoveAdsCompleteSignal());
             this.adServices.RemoveAds();
             onComplete?.Invoke(removeAdsId);
         }
