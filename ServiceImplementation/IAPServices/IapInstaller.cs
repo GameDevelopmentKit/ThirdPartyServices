@@ -10,8 +10,8 @@
         public override void InstallBindings()
         {
 #if !IAP
-            this.Container.Bind<IUnityIapServices>().To<DummyUnityIapServices>().AsCached().NonLazy();
-            this.Container.Bind<IUnityRemoveAdsServices>().To<DummyUnityRemoveAdsIapServices>().AsCached().NonLazy();
+            this.Container.Bind<IIapServices>().To<DummyIapServices>().AsCached().NonLazy();
+            this.Container.Bind<IRemoveAdsServices>().To<DummyRemoveAdsIapServices>().AsCached().NonLazy();
 #else
             this.Container.Bind<IIapServices>().To<UnityIapServices>().AsCached().NonLazy();
             this.Container.Bind<IRemoveAdsServices>().To<RemoveAdsIapServices>().AsCached().NonLazy();
