@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using Core.AdsServices;
 
-    public class DummyUnityIapServices : IUnityIapServices
+    public class DummyIapServices : IIapServices
     {
         public void InitIapServices(Dictionary<string, IAPModel> iapPack, string environment = "production") { }
 
@@ -15,12 +15,12 @@
         public bool   IsProductOwned(string productId)                    { return true; }
     }
 
-    public class DummyUnityRemoveAdsIapServices : IUnityRemoveAdsServices
+    public class DummyRemoveAdsIapServices : IRemoveAdsServices
     {
         private readonly RemoveAdData removeAdData;
         private readonly IAdServices  adServices;
 
-        public DummyUnityRemoveAdsIapServices(RemoveAdData removeAdData, IAdServices adServices)
+        public DummyRemoveAdsIapServices(RemoveAdData removeAdData, IAdServices adServices)
         {
             this.removeAdData = removeAdData;
             this.adServices   = adServices;

@@ -9,15 +9,15 @@
         public List<string> listIdRemoveAds = new List<string>();
     }
 
-    public class UnityRemoveAdsIapServices : IUnityRemoveAdsServices
+    public class RemoveAdsIapServices : IRemoveAdsServices
     {
-        private readonly IUnityIapServices unityIapServices;
+        private readonly IIapServices iapServices;
         private readonly RemoveAdData      removeAdData;
         private readonly IAdServices       adServices;
 
-        public UnityRemoveAdsIapServices(IUnityIapServices unityIapServices, RemoveAdData removeAdData, IAdServices adServices)
+        public RemoveAdsIapServices(IIapServices iapServices, RemoveAdData removeAdData, IAdServices adServices)
         {
-            this.unityIapServices = unityIapServices;
+            this.iapServices = iapServices;
             this.removeAdData     = removeAdData;
             this.adServices       = adServices;
         }
@@ -29,7 +29,7 @@
                 throw new ArgumentException($"Product ID {removeAdsId} is not a remove ads product");
             }
 
-            this.unityIapServices.BuyProductID(removeAdsId, (x) =>
+            this.iapServices.BuyProductID(removeAdsId, (x) =>
             {
                 this.adServices.RemoveAds();
                 onComplete?.Invoke(x);

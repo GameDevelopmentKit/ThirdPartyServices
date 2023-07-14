@@ -1,4 +1,4 @@
-#if ENABLE_IAP
+#if IAP
 namespace ServiceImplementation.IAPServices
 {
     using System;
@@ -14,7 +14,7 @@ namespace ServiceImplementation.IAPServices
     using UnityEngine.Purchasing.Security;
     using Zenject;
 
-    public class UnityIapServices : IUnityIapServices, IStoreListener
+    public class UnityIapServices : IIapServices, IStoreListener
     {
         private Action<string>     onPurchaseComplete, onPurchaseFailed;
         private IStoreController   mStoreController;
@@ -191,7 +191,7 @@ namespace ServiceImplementation.IAPServices
                     foreach (var iapPack in this.iapPacks)
                     {
                         if (!this.IsProductOwned(iapPack.Value.Id)) continue;
-                        this.signalBus.Fire(new UnityIAPOnRestorePurchaseCompleteSignal(iapPack.Value.Id));
+                        this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(iapPack.Value.Id));
                     }
 
                     onComplete?.Invoke();
@@ -319,7 +319,7 @@ namespace ServiceImplementation.IAPServices
         {
             if (this.onPurchaseComplete == null)
             {
-                this.signalBus.Fire(new UnityIAPOnRestorePurchaseCompleteSignal(args.purchasedProduct.definition.id));
+                this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(args.purchasedProduct.definition.id));
             }
 
             this.onPurchaseComplete?.Invoke(args.purchasedProduct.definition.id);
