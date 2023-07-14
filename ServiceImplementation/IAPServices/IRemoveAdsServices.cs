@@ -2,7 +2,7 @@
 {
     using System;
 
-    public interface IUnityRemoveAdsServices
+    public interface IRemoveAdsServices
     {
         void BuyRemoveAds(string removeAdsId, Action<string> onComplete = null, Action<string> onFailed = null);
     }
