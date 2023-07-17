@@ -551,7 +551,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
 #endif
 
-        private Dictionary<string, InterstitialAd> AdUnitIdToInterstitialAd = new();
+        private Dictionary<string, InterstitialAd> PlacementToInterstitialAds = new();
         private string                             currentPlacement         = string.Empty;
         
         public AdNetworkSettings AdNetworkSettings                    => this.thirdPartiesConfig.AdSettings.AdMob;
@@ -563,13 +563,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public bool IsInterstitialAdReady(string place)
         {
-            return this.AdUnitIdToInterstitialAd.TryGetValue(this.GetInterstitialAdsIdByPlace(place), out var interstitialAd) && interstitialAd.CanShowAd();
+            return this.PlacementToInterstitialAds.TryGetValue(place, out var interstitialAd) && interstitialAd.CanShowAd();
         }
 
         public void ShowInterstitialAd(string place)
         {
-            var idId = this.GetInterstitialAdsIdByPlace(place);
-            if (this.AdUnitIdToInterstitialAd.TryGetValue(idId, out var interstitialAd) && interstitialAd.CanShowAd())
+            if (this.PlacementToInterstitialAds.TryGetValue(place, out var interstitialAd) && interstitialAd.CanShowAd())
             {
                 this.logService.Log("Showing interstitial ad.");
                 interstitialAd.Show();
@@ -585,10 +584,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             var idId = this.GetInterstitialAdsIdByPlace(place);
             // Clean up the old ad before loading a new one.
-            if (this.AdUnitIdToInterstitialAd.TryGetValue(idId, out var interstitialAd))
+            if (this.PlacementToInterstitialAds.TryGetValue(place, out var interstitialAd))
             {
                 interstitialAd.Destroy();
-                this.AdUnitIdToInterstitialAd.Remove(idId);
+                this.PlacementToInterstitialAds.Remove(place);
             }
 
             this.logService.Log("AdmobWrapper - Loading the interstitial ad.");
@@ -616,7 +615,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 ad.OnAdFullScreenContentOpened += this.InterstitialAdHandleFullScreenOpened;
                 
                 this.signalBus.Fire(new InterstitialAdDownloadedSignal(place));
-                this.AdUnitIdToInterstitialAd.Add(idId, ad);
+                this.PlacementToInterstitialAds.Add(place, ad);
             });
         }
         
