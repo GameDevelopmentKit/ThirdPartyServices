@@ -4,6 +4,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using Core.AdsServices;
 #if ADMOB_NATIVE_ADS
     using Core.AdsServices.Native;
@@ -52,6 +53,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void Initialize()
         {
+            this.VerifySetting();
+            
             this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
             this.signalBus.Subscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
             this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.CloseAdInDifferentProcessHandler);
@@ -60,6 +63,18 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
             
             this.Init();
+        }
+
+        private void VerifySetting()
+        {
+            //Interstitial
+            var adSettingsAdMob = this.thirdPartiesConfig.AdSettings.AdMob;
+            if (string.IsNullOrEmpty(adSettingsAdMob.DefaultInterstitialAdId.Id) && adSettingsAdMob.CustomInterstitialAdIds.Values.Contains(adSettingsAdMob.DefaultInterstitialAdId)) throw new RuntimeWrappedException("The default interstitial id is duplicated with custom interstitial Id");
+            if (adSettingsAdMob.CustomInterstitialAdIds.GroupBy(x => x.Value).Any(group => group.Count() > 1)) throw new RuntimeWrappedException("There is duplicated interstitial admob ads service");
+            
+            //Rewarded ads
+            if (string.IsNullOrEmpty(adSettingsAdMob.DefaultRewardedAdId.Id) && adSettingsAdMob.CustomRewardedAdIds.Values.Contains(adSettingsAdMob.DefaultInterstitialAdId)) throw new RuntimeWrappedException("The default interstitial id is duplicated with custom interstitial Id");
+            if (adSettingsAdMob.CustomRewardedAdIds.GroupBy(x => x.Value).Any(group => group.Count() > 1)) throw new RuntimeWrappedException("There is duplicated Rewarded video admob ads service");
         }
 
         private async void Init()
