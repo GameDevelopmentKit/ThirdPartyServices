@@ -8,15 +8,11 @@
     {
         public override void InstallBindings()
         {
-#if !IAP
-            this.Container.Bind<IIapServices>().To<DummyIapServices>().AsCached().NonLazy();
-            this.Container.Bind<IRemoveAdsServices>().To<DummyRemoveAdsIapServices>().AsCached().NonLazy();
-#else
+#if IAP
             this.Container.Bind<IIapServices>().To<UnityIapServices>().AsCached().NonLazy();
             this.Container.Resolve<ILogService>().LogWithColor("IAP Enable, don't forget to call IIapServices.InitIapServices in your game,ignore if already done!!", Color.red);
 #endif
 
-            this.Container.DeclareSignal<RemoveAdsCompleteSignal>();
             this.Container.DeclareSignal<OnRestorePurchaseCompleteSignal>();
         }
     }
