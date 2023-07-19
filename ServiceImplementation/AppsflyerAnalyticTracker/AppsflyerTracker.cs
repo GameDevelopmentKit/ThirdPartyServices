@@ -48,12 +48,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             Debug.Log($"setting up appsflyer tracker");
 
-            var apiId = string.Empty;
-
-#if UNITY_IOS || UNITY_STANDALONE_OSX
             var apiId = this.analyticConfig.AppsflyerAppId;
-#endif
-
             var devKey = this.analyticConfig.AppsflyerDevKey;
 
 #if UNITY_IOS || UNITY_STANDALONE_OSX
