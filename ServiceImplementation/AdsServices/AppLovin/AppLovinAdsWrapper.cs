@@ -228,6 +228,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
+            if (this.IsRemoveAds()) return;
             this.InternalShowBanner(AdPlacement.Default, bannerAdsPosition, new BannerSize(width, height));
         }
 
