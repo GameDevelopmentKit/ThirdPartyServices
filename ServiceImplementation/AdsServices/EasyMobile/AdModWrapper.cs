@@ -81,7 +81,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             await UniTask.SwitchToMainThread();
             this.StartLoadingAOATime                 =  DateTime.Now;
-            MobileAds.RaiseAdEventsOnUnityMainThread =  true;
+#if !GOOGLE_MOBILE_ADS_BELLOW_7_4_0
+            MobileAds.RaiseAdEventsOnUnityMainThread = true;
+#endif
             this.logService.Log("AOA start init");
             MobileAds.Initialize(_ =>
                                  {
