@@ -282,16 +282,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         }
         public void ShowInterstitialAd(string place)
         {
-            IronSource.Agent.showInterstitial();
+            IronSource.Agent.showInterstitial(place);
         }
         public AdNetworkSettings AdNetworkSettings => this.thirdPartiesConfig.AdSettings.IronSource;
         public bool IsRewardedAdReady(string place)
-        {
+        {  
             return IronSource.Agent.isRewardedVideoAvailable();
         }
         public void ShowRewardedAd(string place, Action onCompleted)
         {
-            IronSource.Agent.showRewardedVideo();
+            IronSource.Agent.showRewardedVideo(place);
             this.onRewardComplete = onCompleted;
         }
         public void RemoveAds(bool revokeConsent = false)
