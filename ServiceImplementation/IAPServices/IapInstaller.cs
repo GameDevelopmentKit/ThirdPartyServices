@@ -11,6 +11,8 @@
 #if IAP
             this.Container.Bind<IIapServices>().To<UnityIapServices>().AsCached().NonLazy();
             this.Container.Resolve<ILogService>().LogWithColor("IAP Enable, don't forget to call IIapServices.InitIapServices in your game,ignore if already done!!", Color.red);
+#else
+            this.Container.Bind<IIapServices>().To<DummyIapServices>().AsCached().NonLazy();
 #endif
 
             this.Container.DeclareSignal<OnRestorePurchaseCompleteSignal>();
