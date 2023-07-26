@@ -569,6 +569,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #endif
 
         private Dictionary<string, InterstitialAd> AdUnitIdToInterstitialAd = new();
+        private HashSet<string>                    LoadingInterstitialAdsId = new();
         private string                             currentPlacement         = string.Empty;
         
         public AdNetworkSettings AdNetworkSettings                    => this.thirdPartiesConfig.AdSettings.AdMob;
@@ -600,20 +601,23 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         
         public void LoadInterstitialAd(string place)
         {
-            var idId = this.GetInterstitialAdsIdByPlace(place);
+            var adsId = this.GetInterstitialAdsIdByPlace(place);
+            if (this.LoadingInterstitialAdsId.Contains(adsId)) return;
             // Clean up the old ad before loading a new one.
-            if (this.AdUnitIdToInterstitialAd.TryGetValue(idId, out var interstitialAd))
+            if (this.AdUnitIdToInterstitialAd.TryGetValue(adsId, out var interstitialAd))
             {
                 interstitialAd.Destroy();
-                this.AdUnitIdToInterstitialAd.Remove(idId);
+                this.AdUnitIdToInterstitialAd.Remove(adsId);
             }
 
             this.logService.Log("AdmobWrapper - Loading the interstitial ad.");
 
             // create our request used to load the ad.
             var adRequest = new AdRequest();
-            InterstitialAd.Load(idId, adRequest, (ad, error) =>
+            this.LoadingInterstitialAdsId.Add(adsId);
+            InterstitialAd.Load(adsId, adRequest, (ad, error) =>
             {
+                this.LoadingInterstitialAdsId.Remove(adsId);
                 // if error is not null, the load request failed.
                 if (error != null || ad == null)
                 {
@@ -633,7 +637,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 ad.OnAdFullScreenContentOpened += this.InterstitialAdHandleFullScreenOpened;
                 
                 this.signalBus.Fire(new InterstitialAdDownloadedSignal(place));
-                this.AdUnitIdToInterstitialAd.Add(idId, ad);
+                this.AdUnitIdToInterstitialAd.Add(adsId, ad);
             });
         }
         
