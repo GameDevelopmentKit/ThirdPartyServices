@@ -205,6 +205,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void BannerOnAdLoadedEvent(IronSourceAdInfo info)
         {
             this.signalBus.Fire(new BannerAdLoadedSignal(""));
+            this.isLoadedBanner = true;
         }
         private void BannerOnAdClickedEvent(IronSourceAdInfo info)
         {
@@ -227,13 +228,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void LoadMREC(AdViewPosition adViewPosition)             { }
         public bool IsMRECReady(AdViewPosition adViewPosition)          { return false; }
         public void HideAllMREC()                                       { }
-
-        public event Action<string, AdInfo>    OnAdLoadedEvent;
-        public event Action<string, ErrorInfo> OnAdLoadFailedEvent;
-        public event Action<string, AdInfo>    OnAdClickedEvent;
-        public event Action<string, AdInfo>    OnAdRevenuePaidEvent;
-        public event Action<string, AdInfo>    OnAdExpandedEvent;
-        public event Action<string, AdInfo>    OnAdCollapsedEvent;
 
         #endregion
 
@@ -258,8 +252,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region AdService
 
         //todo convert ads position
+        private bool isLoadedBanner;
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
+            if (this.isLoadedBanner)
+            {
+                IronSource.Agent.displayBanner();
+                return;
+            }
+            
             var position = bannerAdsPosition switch
             {
                 BannerAdsPosition.Top => IronSourceBannerPosition.TOP,
