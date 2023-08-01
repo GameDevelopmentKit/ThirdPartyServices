@@ -602,6 +602,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void LoadInterstitialAd(string place)
         {
             var adsId = this.GetInterstitialAdsIdByPlace(place);
+            if (string.IsNullOrEmpty(adsId)) return;
+            
             if (this.LoadingInterstitialAdsId.Contains(adsId)) return;
             // Clean up the old ad before loading a new one.
             if (this.AdUnitIdToInterstitialAd.TryGetValue(adsId, out var interstitialAd))
