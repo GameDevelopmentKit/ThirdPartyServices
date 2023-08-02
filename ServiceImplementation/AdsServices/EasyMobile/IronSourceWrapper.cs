@@ -186,9 +186,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region Banner
 
-        private void BannerOnAdLoadFailedEvent(IronSourceError obj)
+        private async void BannerOnAdLoadFailedEvent(IronSourceError obj)
         {
             this.signalBus.Fire(new BannerAdLoadFailedSignal("", $"{obj.getDescription()}"));
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
             this.ShowBannerAd();
         }
         private void BannerOnAdLeftApplicationEvent(IronSourceAdInfo obj)
