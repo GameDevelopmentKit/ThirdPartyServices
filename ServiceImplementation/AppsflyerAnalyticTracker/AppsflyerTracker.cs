@@ -80,7 +80,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
             Debug.Log($"Appsflyer: On Event {name}");
-            var convertedData = data.ToDictionary(pair => pair.Key, pair => pair.Value.ToJson());
+            var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value.ToJson());
             AppsFlyer.sendEvent(name, convertedData);
         }
 
