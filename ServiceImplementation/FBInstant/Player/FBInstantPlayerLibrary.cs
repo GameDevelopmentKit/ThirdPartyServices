@@ -1,15 +1,14 @@
 ﻿namespace ServiceImplementation.FBInstant.Player
 {
-#if FB_INSTANT_PRODUCTION
+#if FB_INSTANT_PRODUCTION && !UNITY_EDITOR
     using System.Runtime.InteropServices;
-
 #else
     using System;
 #endif
 
     internal static class FBInstantPlayerLibrary
     {
-#if FB_INSTANT_PRODUCTION
+#if FB_INSTANT_PRODUCTION && !UNITY_EDITOR
         [DllImport("__Internal")]
         internal static extern string GetUserId();
 

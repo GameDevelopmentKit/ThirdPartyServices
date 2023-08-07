@@ -1,24 +1,24 @@
 {
-    "name": "3rd.FBInstant",
-    "rootNamespace": "",
-    "references": [
-        "GameFoundation.Utilities",
-        "UniTask",
-        "3rdCore.Ads",
-        "Zenject-Source",
-        "Zenject-Signals",
-        "GameFoundation.Models"
-    ],
-    "includePlatforms": [
-        "Editor",
-        "WebGL"
-    ],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "3rd.FBInstant",
+  "rootNamespace": "",
+  "references": [
+    "GameFoundation.Utilities",
+    "UniTask",
+    "3rdCore.Ads",
+    "Zenject-Source",
+    "Zenject-Signals",
+    "GameFoundation.Models"
+  ],
+  "includePlatforms": [
+    "Editor",
+    "WebGL"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }
