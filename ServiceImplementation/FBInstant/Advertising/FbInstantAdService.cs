@@ -129,7 +129,7 @@
             {
                 for (var index = 0;; ++index)
                 {
-                    var adId  = adIds[Math.Min(index, adIds.Length - 1)];
+                    var adId  = adIds[index % adIds.Length];
                     var error = await action(adId);
                     if (error is null) break;
                     this._logger.Error($"{caller} error {index + 1} time(s): {error}");
