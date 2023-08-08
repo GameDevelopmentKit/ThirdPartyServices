@@ -32,6 +32,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached().NonLazy();
 #else
             this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();
+            this.Container.Bind<IBackFillAdsService>().To<DummyIBackFillService>().AsCached();
 #endif
 
             this.Container.BindInterfacesAndSelfTo<PreloadAdService>().AsCached().NonLazy();
