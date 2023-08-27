@@ -48,7 +48,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceRewardedVideoEvents.onAdShowFailedEvent  += this.RewardedVideoOnAdShowFailedEvent;
             IronSourceRewardedVideoEvents.onAdRewardedEvent    += this.RewardedVideoOnAdRewardedEvent;
             IronSourceRewardedVideoEvents.onAdClickedEvent     += this.RewardedVideoOnAdClickedEvent;
-            IronSourceRewardedVideoEvents.onAdReadyEvent       += this.RewardedVideoOnAdReadyEvent;
 
 
             //Add AdInfo Interstitial Events
@@ -81,7 +80,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceRewardedVideoEvents.onAdShowFailedEvent  -= this.RewardedVideoOnAdShowFailedEvent;
             IronSourceRewardedVideoEvents.onAdRewardedEvent    -= this.RewardedVideoOnAdRewardedEvent;
             IronSourceRewardedVideoEvents.onAdClickedEvent     -= this.RewardedVideoOnAdClickedEvent;
-            IronSourceRewardedVideoEvents.onAdReadyEvent       -= this.RewardedVideoOnAdReadyEvent;
 
 
             //Add AdInfo Interstitial Events
@@ -111,12 +109,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Fire(new RewardedAdCompletedSignal(""));
         }
         private void RewardedVideoOnAdUnavailable()
-        {
-            
+        {            
+            this.signalBus.Fire(new RewardedAdLoadFailedSignal("", ""));
         }
         private void RewardedVideoOnAdAvailable(IronSourceAdInfo obj)
         {
-            
+            this.signalBus.Fire(new RewardedAdLoadedSignal(""));
         }
         private void RewardedVideoOnAdClosedEvent(IronSourceAdInfo obj)
         {
@@ -124,12 +122,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         }
         private void RewardedVideoOnAdShowFailedEvent(IronSourceError obj, IronSourceAdInfo info)
         {
-            this.signalBus.Fire(new RewardedAdLoadFailedSignal("", obj.getDescription()));
-        }
-
-        private void RewardedVideoOnAdReadyEvent(IronSourceAdInfo info)
-        {
-            this.signalBus.Fire(new RewardedAdLoadedSignal(""));
         }
 
         private void RewardedVideoOnAdClickedEvent(IronSourcePlacement obj, IronSourceAdInfo info)
