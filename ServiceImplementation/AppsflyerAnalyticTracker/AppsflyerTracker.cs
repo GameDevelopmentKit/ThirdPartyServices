@@ -125,11 +125,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 _ => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeCustomMediation
             };
 
-            var revenue = adsRevenueEvent.AdsRevenueSourceId == AdRevenueConstants.ARSourceAdMob
-                ? adsRevenueEvent.Revenue / 1000000
-                : adsRevenueEvent.Revenue;
-
-            AppsFlyerAdRevenue.logAdRevenue(adsRevenueEvent.AdNetwork, mediationNetworkType, revenue, adsRevenueEvent.Currency, dic);
+            AppsFlyerAdRevenue.logAdRevenue(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Revenue, adsRevenueEvent.Currency, dic);
         }
     }
 }
