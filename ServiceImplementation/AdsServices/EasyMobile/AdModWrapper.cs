@@ -669,7 +669,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.analyticService.Track(new AdsRevenueEvent()
             {
                 AdsRevenueSourceId = "AdMob",
-                Revenue            = args.Value / 1e5,
+                Revenue            = args.Value / 1e6,
                 Currency           = "USD",
                 Placement          = "AOA",
                 AdNetwork          = "AdMob",
