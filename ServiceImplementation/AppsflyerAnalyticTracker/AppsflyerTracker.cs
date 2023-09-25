@@ -48,7 +48,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             Debug.Log($"setting up appsflyer tracker");
 
-            var apiId = this.analyticConfig.AppsflyerAppId;
+            var apiId  = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
 
 #if UNITY_IOS || UNITY_STANDALONE_OSX
@@ -125,7 +125,11 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 _ => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeCustomMediation
             };
 
-            AppsFlyerAdRevenue.logAdRevenue(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Revenue, adsRevenueEvent.Currency, dic);
+            var revenue = adsRevenueEvent.AdsRevenueSourceId == AdRevenueConstants.ARSourceAdMob
+                ? adsRevenueEvent.Revenue / 1000000
+                : adsRevenueEvent.Revenue;
+
+            AppsFlyerAdRevenue.logAdRevenue(adsRevenueEvent.AdNetwork, mediationNetworkType, revenue, adsRevenueEvent.Currency, dic);
         }
     }
 }
