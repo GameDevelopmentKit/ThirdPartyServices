@@ -73,6 +73,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 #endif
 
             var adjustConfig = new AdjustConfig(appToken, environment);
+            adjustConfig.setLogLevel(AdjustLogLevel.Verbose);
             adjustConfig.setSendInBackground(true);
             Adjust.start(adjustConfig);
             this.TrackerReady.SetResult(true);
