@@ -190,7 +190,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public bool IsShowingAd           { get; set; } = false;
         public bool IsResumedFromAdsOrIAP { get; set; } = false;
 
-        public float LoadingTimeToShowAOA => 5f;
+        public float LoadingTimeToShowAOA => this.config.AOAOpenAppThreshHold;
         public void ShowAdIfAvailable()
         {
             if (this.IsShowingAd)
