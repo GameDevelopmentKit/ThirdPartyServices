@@ -27,7 +27,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInterfacesAndSelfTo<MiscConfig>().AsCached();
 
             #if APPLOVIN
-            this.Container.BindInterfacesAndSelfTo<AppLovinAdsWrapper>().AsCached();
+            ApplovinAdsInstaller.Install(this.Container);
             // this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<AppLovinAdsWrapper>();
             #elif IRONSOURCE && !UNITY_EDITOR
             this.Container.BindInterfacesTo<IronSourceWrapper>().AsCached();
@@ -100,7 +100,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<AppOpenEligibleSignal>();
             this.Container.DeclareSignal<AppOpenCalledSignal>();
             this.Container.DeclareSignal<AppOpenClickedSignal>();
-
+            
             this.Container.DeclareSignal<AppStateChangeSignal>();
 
             #endregion
