@@ -205,11 +205,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
             var id       = this.positionToMRECAdUnitId[adViewPosition];
             var position = this.ConvertAdViewPosition(adViewPosition);
-            if (this.isFirstMRecRequest)
+
+            var amazonId = this.amazonSetting.AmazonMRecAdId.Id;
+            if (this.isFirstMRecRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstMRecRequest = false;
 
-                this.mRecAdsRequest = new APSBannerAdRequest(300, 250, this.amazonSetting.AmazonMRecAdId.Id);
+                this.mRecAdsRequest = new APSBannerAdRequest(300, 250, amazonId);
                 this.mRecAdsRequest.onSuccess += response =>
                     {
                         MaxSdk.SetMRecLocalExtraParameter(id, AmazonResponseMessage, response.GetResponse());
@@ -221,7 +223,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
                     MaxSdk.SetMRecLocalExtraParameter(id, AmazonErrorMessage, error.GetAdError());
                     this.InternalShowMRec(id, position);
                 };
-                
+
                 this.mRecAdsRequest.LoadAd();
             }
             else
@@ -333,20 +335,29 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void AmazonCreateBanner(AdPlacement adPlacement, BannerAdsPosition position, BannerSize bannerSize)
         {
             if (!this.IsBannerPlacementReady(adPlacement.Name, out var id)) return;
-            this.bannerAdRequest = new APSBannerAdRequest(bannerSize.width, bannerSize.height, this.amazonSetting.AmazonBannerAdId.Id);
 
-            this.bannerAdRequest.onFailedWithError += error =>
+            var amazonId = this.amazonSetting.AmazonBannerAdId.Id;
+            if (!string.IsNullOrEmpty(amazonId))
             {
-                MaxSdk.SetBannerLocalExtraParameter(id, AmazonErrorMessage, error.GetAdError());
-                this.CreateAdBanner(id, position);
-            };
+                this.bannerAdRequest = new APSBannerAdRequest(bannerSize.width, bannerSize.height, amazonId);
 
-            this.bannerAdRequest.onSuccess += response =>
+                this.bannerAdRequest.onFailedWithError += error =>
+                {
+                    MaxSdk.SetBannerLocalExtraParameter(id, AmazonErrorMessage, error.GetAdError());
+                    this.CreateAdBanner(id, position);
+                };
+
+                this.bannerAdRequest.onSuccess += response =>
+                {
+                    MaxSdk.SetBannerLocalExtraParameter(id, AmazonResponseMessage, response.GetResponse());
+                    this.CreateAdBanner(id, position);
+                };
+                this.bannerAdRequest.LoadAd();
+            }
+            else
             {
-                MaxSdk.SetBannerLocalExtraParameter(id, AmazonResponseMessage, response.GetResponse());
                 this.CreateAdBanner(id, position);
-            };
-            this.bannerAdRequest.LoadAd();
+            }
         }
 
         private void InternalHideBanner(AdPlacement adPlacement)
@@ -408,10 +419,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void InternalLoadInterstitialAd(AdPlacement adPlacement)
         {
             if (!this.IsInterstitialPlacementReady(adPlacement.Name, out var id)) return;
-            if (this.isFirstInterstitialRequest)
+
+            var amazonId = this.amazonSetting.AmazonInterstitialAdId.Id;
+            if (this.isFirstInterstitialRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstInterstitialRequest = false;
-                this.interstitialAdRequest      = new APSInterstitialAdRequest(this.amazonSetting.AmazonInterstitialAdId.Id);
+                this.interstitialAdRequest      = new APSInterstitialAdRequest(amazonId);
 
                 this.interstitialAdRequest.onSuccess += response =>
                 {
@@ -525,10 +538,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             if (!this.IsRewardedPlacementReady(placement.Name, out var id)) return;
 
-            if (this.isFirstRewardedVideoRequest)
+            var amazonId = this.amazonSetting.AmazonRewardedAdId.Id;
+            if (this.isFirstRewardedVideoRequest && string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstRewardedVideoRequest = false;
-                this.rewardedVideoAdRequest      = new APSVideoAdRequest(320, 480, this.amazonSetting.AmazonRewardedAdId.Id);
+                this.rewardedVideoAdRequest      = new APSVideoAdRequest(320, 480, amazonId);
 
                 this.rewardedVideoAdRequest.onSuccess += response =>
                 {
