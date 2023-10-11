@@ -539,7 +539,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (!this.IsRewardedPlacementReady(placement.Name, out var id)) return;
 
             var amazonId = this.amazonSetting.AmazonRewardedAdId.Id;
-            if (this.isFirstRewardedVideoRequest && string.IsNullOrEmpty(amazonId))
+            if (this.isFirstRewardedVideoRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstRewardedVideoRequest = false;
                 this.rewardedVideoAdRequest      = new APSVideoAdRequest(320, 480, amazonId);
