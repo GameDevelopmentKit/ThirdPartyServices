@@ -10,6 +10,6 @@ namespace Core.AdsServices
         CenterRight,
         BottomLeft,
         BottomCenter,
-        BottomRight
+        BottomRight,
     }
 }

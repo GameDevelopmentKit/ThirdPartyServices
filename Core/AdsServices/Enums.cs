@@ -1,15 +1,5 @@
 namespace Core.AdsServices
 {
-    public enum BannerAdsPosition
-    {
-        Top,
-        Bottom,
-        TopLeft,
-        TopRight,
-        BottomLeft,
-        BottomRight
-    }
-
     public enum AdNetwork
     {
         None,
@@ -71,9 +61,9 @@ namespace Core.AdsServices
     public enum RewardedInterstitialAdNetwork
     {
         None  = AdNetwork.None,
-        AdMob = AdNetwork.AdMob
+        AdMob = AdNetwork.AdMob,
     }
-    
+
     public enum ConsentStatus
     {
         /// <summary>
