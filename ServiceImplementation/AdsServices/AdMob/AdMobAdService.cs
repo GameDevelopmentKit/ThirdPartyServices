@@ -13,7 +13,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using UnityEngine;
     using Zenject;
 
-    public class AdMobAdService : IAdServices, IAdLoadService, IInitializable
+    public class AdMobAdService : IAdServices, IAdLoadService, IBackFillAdsService, IInitializable
     {
         #region Constructor
 
