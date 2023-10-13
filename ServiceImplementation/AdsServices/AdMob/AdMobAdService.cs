@@ -81,9 +81,9 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             this.bannerView.OnBannerAdLoaded            += () => this.signalBus.Fire<BannerAdLoadedSignal>(new(PLACEMENT));
             this.bannerView.OnBannerAdLoadFailed        += (error) => this.signalBus.Fire<BannerAdLoadFailedSignal>(new(PLACEMENT, error.GetMessage()));
-            this.bannerView.OnAdClicked                 += () => this.signalBus.Fire<BannerAdClickedSignal>(new(PLACEMENT));
             this.bannerView.OnAdFullScreenContentOpened += () => this.signalBus.Fire<BannerAdPresentedSignal>(new(PLACEMENT));
             this.bannerView.OnAdFullScreenContentClosed += () => this.signalBus.Fire<BannerAdDismissedSignal>(new(PLACEMENT));
+            this.bannerView.OnAdClicked                 += () => this.signalBus.Fire<BannerAdClickedSignal>(new(PLACEMENT));
             this.bannerView.OnAdPaid += adValue =>
             {
                 this.analyticService.Track(new AdsRevenueEvent
@@ -136,6 +136,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     return;
                 }
                 this.signalBus.Fire<InterstitialAdDownloadedSignal>(new(place));
+                this.interstitialAd?.Destroy();
                 this.interstitialAd = ad;
             });
         }
@@ -146,7 +147,10 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             #region Events
 
-            this.interstitialAd.OnAdClicked += () => this.signalBus.Fire<InterstitialAdClickedSignal>(new(place));
+            this.interstitialAd.OnAdFullScreenContentOpened += () => this.signalBus.Fire<InterstitialAdDisplayedSignal>(new(place));
+            this.interstitialAd.OnAdFullScreenContentClosed += () => this.signalBus.Fire<InterstitialAdClosedSignal>(new(place));
+            this.interstitialAd.OnAdFullScreenContentFailed += (_) => this.signalBus.Fire<InterstitialAdDisplayedFailedSignal>(new(place));
+            this.interstitialAd.OnAdClicked                 += () => this.signalBus.Fire<InterstitialAdClickedSignal>(new(place));
             this.interstitialAd.OnAdPaid += adValue =>
             {
                 this.analyticService.Track(new AdsRevenueEvent
@@ -158,11 +162,13 @@ namespace ServiceImplementation.AdsServices.AdMob
                     Currency           = "USD",
                     Revenue            = adValue.Value / 1e6,
                 });
+                this.signalBus.Fire<InterstitialAdEligibleSignal>(new(place));
             };
 
             #endregion
 
             this.interstitialAd.Show();
+            this.signalBus.Fire<InterstitialAdCalledSignal>(new(place));
         }
 
         #endregion
@@ -188,6 +194,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     return;
                 }
                 this.signalBus.Fire<RewardedAdLoadedSignal>(new(place));
+                this.rewardedAd?.Destroy();
                 this.rewardedAd = ad;
             });
         }
@@ -198,7 +205,9 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             #region Events
 
-            this.rewardedAd.OnAdClicked += () => this.signalBus.Fire<RewardedAdLoadClickedSignal>(new(place));
+            this.rewardedAd.OnAdFullScreenContentOpened += () => this.signalBus.Fire<RewardedAdDisplayedSignal>(new(place));
+            this.rewardedAd.OnAdFullScreenContentFailed += (_) => this.signalBus.Fire<RewardedSkippedSignal>(new(place));
+            this.rewardedAd.OnAdClicked                 += () => this.signalBus.Fire<RewardedAdLoadClickedSignal>(new(place));
             this.rewardedAd.OnAdPaid += adValue =>
             {
                 this.analyticService.Track(new AdsRevenueEvent
@@ -210,6 +219,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     Currency           = "USD",
                     Revenue            = adValue.Value / 1e6,
                 });
+                this.signalBus.Fire<RewardedAdEligibleSignal>(new(place));
             };
 
             #endregion
@@ -219,6 +229,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                 this.signalBus.Fire<RewardedAdCompletedSignal>(new(place));
                 onCompleted?.Invoke();
             });
+            this.signalBus.Fire<RewardedAdCalledSignal>(new(place));
         }
 
         #endregion

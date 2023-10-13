@@ -34,7 +34,7 @@ namespace ServiceImplementation.AdsServices
 #endif
 
 #if ADMOB
-            this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached().NonLazy();
+            this.Container.BindInterfacesAndSelfTo<AdMobWrapper>().AsCached().NonLazy();
 #else
             #if !APPLOVIN
             this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();

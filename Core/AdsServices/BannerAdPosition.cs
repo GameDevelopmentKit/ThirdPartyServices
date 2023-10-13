@@ -1,6 +1,5 @@
 namespace Core.AdsServices
 {
-    using System;
     #if ADMOB
     using GoogleMobileAds.Api;
     #endif
@@ -28,7 +27,7 @@ namespace Core.AdsServices
                 BannerAdsPosition.TopRight    => AdPosition.TopRight,
                 BannerAdsPosition.BottomLeft  => AdPosition.BottomLeft,
                 BannerAdsPosition.BottomRight => AdPosition.BottomRight,
-                _                             => throw new ArgumentOutOfRangeException(),
+                _                             => AdPosition.Bottom,
             };
         }
         #endif
