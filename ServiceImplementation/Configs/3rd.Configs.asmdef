@@ -1,4 +1,19 @@
 {
-	"name": "3rd.Configs",
-	"references":[ "GUID:d5b34dada42fd2a46af3b40b69efba3a", "GUID:f072e216975d56b4f9ab0e22fb7a76a5", "GUID:7a0ce557fb18cf144926a988b97de9cc" ]
+    "name": "3rd.Configs",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d5b34dada42fd2a46af3b40b69efba3a",
+        "GUID:f072e216975d56b4f9ab0e22fb7a76a5",
+        "GUID:7a0ce557fb18cf144926a988b97de9cc",
+        "GUID:01fa4e28fca7445b6a9cb73be7bdbdde"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
