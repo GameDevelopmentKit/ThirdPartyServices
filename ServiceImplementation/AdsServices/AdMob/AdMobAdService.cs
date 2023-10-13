@@ -141,7 +141,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                 #endregion
 
                 this.signalBus.Fire<InterstitialAdDownloadedSignal>(new(place));
-                this.interstitialAds.Add(place, ad);
+                this.interstitialAds[place] = ad;
             });
         }
 
@@ -190,7 +190,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                 #endregion
 
                 this.signalBus.Fire<RewardedAdLoadedSignal>(new(place));
-                this.rewardedAds.Add(place, ad);
+                this.rewardedAds[place] = ad;
             });
         }
 
