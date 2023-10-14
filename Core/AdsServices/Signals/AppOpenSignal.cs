@@ -48,4 +48,11 @@ namespace Core.AdsServices.Signals
        {
        }
    }
+   
+   public class AppOpenClickedSignal : BaseAdsSignal
+   {
+       public AppOpenClickedSignal(string placement) : base(placement)
+       {
+       }
+   }
 }
