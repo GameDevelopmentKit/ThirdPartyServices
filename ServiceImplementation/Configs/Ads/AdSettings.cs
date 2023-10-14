@@ -27,6 +27,14 @@
         /// Gets the IronSource settings.
         /// </summary>
         public IronSourceSettings IronSource { get { return this.mIronSource; } }
+        
+        /// <summary>
+        /// AOA threshold
+        /// </summary>
+        public float AOAThreshHold { get { return this.mAOAThreshHold; } }
+        
+        [SerializeField] [LabelText("AOA ThreshHold", SdfIconType.Download)]
+        private float mAOAThreshHold = 5f;
 
         [SerializeField] [LabelText("AdMob", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdMob")]
         private bool enableAdMob;
@@ -34,7 +42,7 @@
         [SerializeField] [ShowIf("enableAdMob")] [HideLabel] [BoxGroup("AdMob")]
         private AdMobSettings mAdMob = null;
 
-        [SerializeField] [LabelText("ApLovin", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppLovin")]
+        [SerializeField] [LabelText("AppLovin", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppLovin")]
         private bool enableAppLovin;
 
         [SerializeField] [ShowIf("enableAppLovin")] [HideLabel] [BoxGroup("AppLovin")]

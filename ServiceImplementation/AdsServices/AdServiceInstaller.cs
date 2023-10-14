@@ -31,7 +31,9 @@ namespace ServiceImplementation.AdsServices
 #if ADMOB
             this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached().NonLazy();
 #else
+            #if !APPLOVIN
             this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();
+            #endif
             this.Container.Bind<IBackFillAdsService>().To<DummyIBackFillService>().AsCached();
 #endif
 
@@ -80,6 +82,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<AppOpenLoadFailedSignal>();
             this.Container.DeclareSignal<AppOpenEligibleSignal>();
             this.Container.DeclareSignal<AppOpenCalledSignal>();
+            this.Container.DeclareSignal<AppOpenClickedSignal>();
             
             this.Container.DeclareSignal<AppStateChangeSignal>();
 

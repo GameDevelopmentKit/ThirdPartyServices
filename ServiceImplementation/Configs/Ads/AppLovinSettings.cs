@@ -28,6 +28,11 @@
         /// Gets or sets the default rewarded ad identifier.
         /// </summary>
         public AdId DefaultRewardedAdId { get { return this.mDefaultRewardedAdId; } set { this.mDefaultRewardedAdId = value; } }
+        
+        /// <summary>
+        /// Gets or sets the default AOA ad identifier.
+        /// </summary>
+        public AdId DefaultAOAAdId { get { return this.mAOAAdId; } set { this.mAOAAdId = value; } }
 
         /// <summary>
         /// age-restricted category.
@@ -66,6 +71,9 @@
 
         [SerializeField] [LabelText("Rewarded")] [BoxGroup("Default Id")]
         private AdId mDefaultRewardedAdId;
+        
+        [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")]
+        private AdId mAOAAdId;
 
         [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
