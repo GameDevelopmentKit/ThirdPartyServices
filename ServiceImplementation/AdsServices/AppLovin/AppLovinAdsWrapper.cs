@@ -341,6 +341,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         
         private void InitAOAAds()
         {
+            if (string.IsNullOrEmpty(this.appLovinSetting.DefaultAOAAdId.Id)) return;
             this.StartLoadingAOATime = DateTime.Now;
 
             MaxSdkCallbacks.OnSdkInitializedEvent += this.OnMaxSdkCallbacksOnOnSdkInitializedEvent;
@@ -402,6 +403,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.AppOpen.OnAdClickedEvent       -= this.OnAppOpenClickedEvent;
             MaxSdkCallbacks.AppOpen.OnAdDisplayedEvent     -= this.OnAppOpenDisplayedEvent;
             MaxSdkCallbacks.AppOpen.OnAdDisplayFailedEvent -= this.OnAppOpenDisplayFailedEvent;
+            
+            this.signalBus.Unsubscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
+            this.signalBus.Unsubscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
+            this.signalBus.Unsubscribe<InterstitialAdClosedSignal>(this.CloseAdInDifferentProcessHandler);
+            this.signalBus.Unsubscribe<RewardedAdCompletedSignal>(this.CloseAdInDifferentProcessHandler);
+            this.signalBus.Unsubscribe<RewardedSkippedSignal>(this.CloseAdInDifferentProcessHandler);
+            this.signalBus.Unsubscribe<ApplicationPauseSignal>(this.OnApplicationPause);
         }
 
         private void OnMaxSdkCallbacksOnOnSdkInitializedEvent(MaxSdkBase.SdkConfiguration sdkConfiguration)
@@ -413,7 +421,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.AppOpen.OnAdDisplayedEvent     += this.OnAppOpenDisplayedEvent;
             MaxSdkCallbacks.AppOpen.OnAdDisplayFailedEvent += this.OnAppOpenDisplayFailedEvent;
 
-            MaxSdkUnityEditor.LoadAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
+            this.InternalLoadAppOpenAd();
         }
 
         private void OnAppOpenDisplayFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)
@@ -450,7 +458,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnAppOpenDismissedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
-            MaxSdkUnityEditor.LoadAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
+            this.InternalLoadAppOpenAd();
             this.IsShowingAd = false;
         }
 
@@ -650,12 +658,17 @@ namespace ServiceImplementation.AdsServices.AppLovin
             {
                 this.signalBus.Fire(new AppOpenCalledSignal(""));
                 MaxSdkUnityEditor.ShowAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
-                MaxSdkUnityEditor.LoadAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
+                this.InternalLoadAppOpenAd();
             }
             else
             {
-                MaxSdkUnityEditor.LoadAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
+                this.InternalLoadAppOpenAd();
             }
+        }
+
+        private void InternalLoadAppOpenAd()
+        {
+            MaxSdkUnityEditor.LoadAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
         }
         
         #endregion
