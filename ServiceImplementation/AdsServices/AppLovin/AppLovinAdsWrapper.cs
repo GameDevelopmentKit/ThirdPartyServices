@@ -336,8 +336,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #region AOA
 
+        private DateTime StartLoadingAOATime;
+        private DateTime StartBackgroundTime;
+        
         private void InitAOAAds()
         {
+            this.StartLoadingAOATime = DateTime.Now;
+
             MaxSdkCallbacks.OnSdkInitializedEvent += this.OnMaxSdkCallbacksOnOnSdkInitializedEvent;
 
             this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
@@ -360,7 +365,29 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnApplicationPause(ApplicationPauseSignal obj)
         {
-            if (!obj.PauseStatus)
+            if (obj.PauseStatus)
+            {
+                this.StartBackgroundTime = DateTime.Now;
+                return;
+            }
+
+            var totalBackgroundSeconds = (DateTime.Now - this.StartBackgroundTime).TotalSeconds;
+            if (totalBackgroundSeconds < this.adServicesConfig.MinPauseSecondToShowAoaAd)
+            {
+                this.logService.Log($"AOA background time: {totalBackgroundSeconds}");
+                return;
+            }
+
+            // if (!this.config.OpenAOAAfterResuming) return;
+
+            if (this.IsResumedFromAdsOrIAP)
+            {
+                return;
+            }
+
+            if (!this.adServicesConfig.EnableAOAAd) return;
+
+            if (!this.IsRemoveAds())
             {
                 this.InternalShowAOAAdsIfAvailable();
             }
@@ -386,7 +413,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.AppOpen.OnAdDisplayedEvent     += this.OnAppOpenDisplayedEvent;
             MaxSdkCallbacks.AppOpen.OnAdDisplayFailedEvent += this.OnAppOpenDisplayFailedEvent;
 
-            this.InternalShowAOAAdsIfAvailable();
+            MaxSdkUnityEditor.LoadAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
         }
 
         private void OnAppOpenDisplayFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)
@@ -400,7 +427,25 @@ namespace ServiceImplementation.AdsServices.AppLovin
         }
         private void OnAppOpenClickedEvent(string arg1, MaxSdkBase.AdInfo arg2)                                  { this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(arg1)); }
         private void OnAppOpenLoadFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2)                            { this.signalBus.Fire(new AppOpenLoadFailedSignal(arg1)); }
-        private void OnAppOpenLoadedEvent(string arg1, MaxSdkBase.AdInfo arg2)                                   { this.signalBus.Fire(new AppOpenLoadedSignal(arg1)); }
+        private void OnAppOpenLoadedEvent(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+            this.signalBus.Fire(new AppOpenLoadedSignal(arg1));
+                
+            if (!this.IsShowedFirstOpen)
+            {
+                var totalLoadingTime = (DateTime.Now - this.StartLoadingAOATime).TotalSeconds;
+                if (totalLoadingTime <= this.thirdPartiesConfig.AdSettings.AOAThreshHold)
+                {
+                    this.InternalShowAOAAdsIfAvailable();
+                }
+                else
+                {
+                    this.logService.Log($"AOA loading time for first open over the threshold {totalLoadingTime} > {this.thirdPartiesConfig.AdSettings.AOAThreshHold}!");
+                }
+
+                this.IsShowedFirstOpen = true;
+            }
+        }
 
         private void OnAppOpenDismissedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
@@ -588,7 +633,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         #region IAOAServices
 
         public bool  IsShowingAd           { get; set; } = false;
-        public bool  IsShowedFirstOpen     { get; }      = false;
+        public bool  IsShowedFirstOpen     { get; set; } = false;
         public bool  IsResumedFromAdsOrIAP { get; set; } = false;
         public float LoadingTimeToShowAOA  => this.thirdPartiesConfig.AdSettings.AOAThreshHold;
         
