@@ -84,18 +84,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.bannerView.OnAdFullScreenContentOpened += () => this.signalBus.Fire<BannerAdPresentedSignal>(new(PLACEMENT));
             this.bannerView.OnAdFullScreenContentClosed += () => this.signalBus.Fire<BannerAdDismissedSignal>(new(PLACEMENT));
             this.bannerView.OnAdClicked                 += () => this.signalBus.Fire<BannerAdClickedSignal>(new(PLACEMENT));
-            this.bannerView.OnAdPaid += adValue =>
-            {
-                this.analyticService.Track(new AdsRevenueEvent
-                {
-                    AdsRevenueSourceId = "AdMob",
-                    AdNetwork          = "AdMob",
-                    AdFormat           = "Banner",
-                    Placement          = PLACEMENT,
-                    Currency           = "USD",
-                    Revenue            = adValue.Value / 1e6,
-                });
-            };
+            this.bannerView.OnAdPaid                    += this.TrackAdRevenue("Banner", PLACEMENT);
 
             #endregion
 
@@ -151,19 +140,8 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.interstitialAd.OnAdFullScreenContentClosed += () => this.signalBus.Fire<InterstitialAdClosedSignal>(new(place));
             this.interstitialAd.OnAdFullScreenContentFailed += (_) => this.signalBus.Fire<InterstitialAdDisplayedFailedSignal>(new(place));
             this.interstitialAd.OnAdClicked                 += () => this.signalBus.Fire<InterstitialAdClickedSignal>(new(place));
-            this.interstitialAd.OnAdPaid += adValue =>
-            {
-                this.analyticService.Track(new AdsRevenueEvent
-                {
-                    AdsRevenueSourceId = "AdMob",
-                    AdNetwork          = "AdMob",
-                    AdFormat           = "Interstitial",
-                    Placement          = place,
-                    Currency           = "USD",
-                    Revenue            = adValue.Value / 1e6,
-                });
-                this.signalBus.Fire<InterstitialAdEligibleSignal>(new(place));
-            };
+            this.interstitialAd.OnAdPaid                    += (_) => this.signalBus.Fire<InterstitialAdEligibleSignal>(new(place));
+            this.interstitialAd.OnAdPaid                    += this.TrackAdRevenue("Interstitial", place);
 
             #endregion
 
@@ -208,19 +186,8 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.rewardedAd.OnAdFullScreenContentOpened += () => this.signalBus.Fire<RewardedAdDisplayedSignal>(new(place));
             this.rewardedAd.OnAdFullScreenContentFailed += (_) => this.signalBus.Fire<RewardedSkippedSignal>(new(place));
             this.rewardedAd.OnAdClicked                 += () => this.signalBus.Fire<RewardedAdLoadClickedSignal>(new(place));
-            this.rewardedAd.OnAdPaid += adValue =>
-            {
-                this.analyticService.Track(new AdsRevenueEvent
-                {
-                    AdsRevenueSourceId = "AdMob",
-                    AdNetwork          = "AdMob",
-                    AdFormat           = "Reward",
-                    Placement          = place,
-                    Currency           = "USD",
-                    Revenue            = adValue.Value / 1e6,
-                });
-                this.signalBus.Fire<RewardedAdEligibleSignal>(new(place));
-            };
+            this.rewardedAd.OnAdPaid                    += (_) => this.signalBus.Fire<RewardedAdEligibleSignal>(new(place));
+            this.rewardedAd.OnAdPaid                    += this.TrackAdRevenue("Rewarded", place);
 
             #endregion
 
@@ -247,6 +214,19 @@ namespace ServiceImplementation.AdsServices.AdMob
         }
 
         #endregion
+
+        private Action<AdValue> TrackAdRevenue(string format, string placement)
+        {
+            return adValue => this.analyticService.Track(new AdsRevenueEvent
+            {
+                AdsRevenueSourceId = "AdMob",
+                AdNetwork          = "AdMob",
+                AdFormat           = format,
+                Placement          = placement,
+                Currency           = "USD",
+                Revenue            = adValue.Value / 1e6,
+            });
+        }
     }
 }
 #endif
