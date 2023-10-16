@@ -9,10 +9,10 @@
     [Serializable]
     public class AdMobSettings : AdNetworkSettings
     {
-        [Obsolete("AppId has been deprecated since Easy Mobile Pro version 2.6.0 because the GoogleMobileAds SDK no longer allows access to this value in runtime.")]
         /// <summary>
         /// Gets or sets the AdMob app identifier.
         /// </summary>
+        [Obsolete("AppId has been deprecated since Easy Mobile Pro version 2.6.0 because the GoogleMobileAds SDK no longer allows access to this value in runtime.")]
         public AdId AppId { get => this.mAppId; set => this.mAppId = value; }
 
         /// <summary>
