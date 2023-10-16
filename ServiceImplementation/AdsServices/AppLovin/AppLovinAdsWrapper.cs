@@ -52,11 +52,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public async void Initialize()
         {
-            MaxSdkUnityEditor.SetIsAgeRestrictedUser(this.appLovinSetting.AgeRestrictMode);
-            MaxSdkUnityEditor.SetSdkKey(this.appLovinSetting.SDKKey);
-            MaxSdkUnityEditor.InitializeSdk();
+            MaxSdk.SetIsAgeRestrictedUser(this.appLovinSetting.AgeRestrictMode);
+            MaxSdk.SetSdkKey(this.appLovinSetting.SDKKey);
+            MaxSdk.InitializeSdk();
 
-            await UniTask.WaitUntil(MaxSdkUnityEditor.IsInitialized);
+            await UniTask.WaitUntil(MaxSdk.IsInitialized);
             this.InitBannerAds();
             this.InitMRECAds();
             this.InitInterstitialAds();
@@ -148,8 +148,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             foreach (var (position, adUnitId) in this.positionToMRECAdUnitId)
             {
-                this.logService.Log($"Check max init {MaxSdkUnityEditor.IsInitialized()}");
-                MaxSdkUnityEditor.CreateMRec(adUnitId, this.ConvertAdViewPosition(position));
+                this.logService.Log($"Check max init {MaxSdk.IsInitialized()}");
+                MaxSdk.CreateMRec(adUnitId, this.ConvertAdViewPosition(position));
             }
 
             MaxSdkCallbacks.MRec.OnAdLoadedEvent      += this.OnMRecAdLoadedEvent;
@@ -171,17 +171,17 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 return;
             }
 
-            MaxSdkUnityEditor.UpdateMRecPosition(this.positionToMRECAdUnitId[adViewPosition], this.ConvertAdViewPosition(adViewPosition));
-            MaxSdkUnityEditor.ShowMRec(this.positionToMRECAdUnitId[adViewPosition]);
+            MaxSdk.UpdateMRecPosition(this.positionToMRECAdUnitId[adViewPosition], this.ConvertAdViewPosition(adViewPosition));
+            MaxSdk.ShowMRec(this.positionToMRECAdUnitId[adViewPosition]);
         }
 
-        public void HideMREC(AdViewPosition adViewPosition) { MaxSdkUnityEditor.HideMRec(this.positionToMRECAdUnitId[adViewPosition]); }
+        public void HideMREC(AdViewPosition adViewPosition) { MaxSdk.HideMRec(this.positionToMRECAdUnitId[adViewPosition]); }
 
-        public void StopMRECAutoRefresh(AdViewPosition adViewPosition) { MaxSdkUnityEditor.StopMRecAutoRefresh(this.positionToMRECAdUnitId[adViewPosition]); }
+        public void StopMRECAutoRefresh(AdViewPosition adViewPosition) { MaxSdk.StopMRecAutoRefresh(this.positionToMRECAdUnitId[adViewPosition]); }
 
-        public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { MaxSdkUnityEditor.StartMRecAutoRefresh(this.positionToMRECAdUnitId[adViewPosition]); }
+        public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { MaxSdk.StartMRecAutoRefresh(this.positionToMRECAdUnitId[adViewPosition]); }
 
-        public void LoadMREC(AdViewPosition adViewPosition) { MaxSdkUnityEditor.LoadMRec(this.positionToMRECAdUnitId[adViewPosition]); }
+        public void LoadMREC(AdViewPosition adViewPosition) { MaxSdk.LoadMRec(this.positionToMRECAdUnitId[adViewPosition]); }
 
         public bool IsMRECReady(AdViewPosition adViewPosition) { return this.positionToMRECAdUnitId.ContainsKey(adViewPosition); }
 
@@ -245,8 +245,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (shouldCreateBanner)
             {
                 this.InternalDestroyBanner(adPlacement);
-                MaxSdkUnityEditor.CreateBanner(id, this.ConvertToBannerAdPosition(position));
-                MaxSdkUnityEditor.SetBannerBackgroundColor(id, new Color(1, 1, 1, 0));
+                MaxSdk.CreateBanner(id, this.ConvertToBannerAdPosition(position));
+                MaxSdk.SetBannerBackgroundColor(id, new Color(1, 1, 1, 0));
 
                 if (!this.placementToBanner.ContainsKey(adPlacement))
                 {
@@ -254,19 +254,19 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 }
             }
 
-            MaxSdkUnityEditor.ShowBanner(id);
+            MaxSdk.ShowBanner(id);
         }
 
         private void InternalHideBanner(AdPlacement adPlacement)
         {
             if (!this.IsBannerPlacementReady(adPlacement.Name, out var id)) return;
-            MaxSdkUnityEditor.HideBanner(id);
+            MaxSdk.HideBanner(id);
         }
 
         private void InternalDestroyBanner(AdPlacement adPlacement)
         {
             if (!this.IsBannerPlacementReady(adPlacement.Name, out var id)) return;
-            MaxSdkUnityEditor.DestroyBanner(id);
+            MaxSdk.DestroyBanner(id);
             this.placementToBanner.Remove(adPlacement);
         }
 
@@ -295,7 +295,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public bool IsInterstitialAdReady(string place)
         {
             var isPlacementReady = this.IsInterstitialPlacementReady(place, out var id);
-            return isPlacementReady && MaxSdkUnityEditor.IsInterstitialReady(id);
+            return isPlacementReady && MaxSdk.IsInterstitialReady(id);
         }
 
         public void ShowInterstitialAd(string place)
@@ -316,13 +316,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void InternalLoadInterstitialAd(AdPlacement adPlacement)
         {
             if (!this.IsInterstitialPlacementReady(adPlacement.Name, out var id)) return;
-            MaxSdkUnityEditor.LoadInterstitial(id);
+            MaxSdk.LoadInterstitial(id);
         }
 
         private void InternalShowInterstitialAd(AdPlacement adPlacement)
         {
             if (!this.IsInterstitialPlacementReady(adPlacement.Name, out var id)) return;
-            MaxSdkUnityEditor.ShowInterstitial(id);
+            MaxSdk.ShowInterstitial(id);
             this.currentShowingInterstitial = adPlacement;
         }
 
@@ -531,7 +531,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public bool IsRewardedAdReady(string place)
         {
             var isPlacementReady = this.IsRewardedPlacementReady(place, out var id);
-            return isPlacementReady && MaxSdkUnityEditor.IsRewardedAdReady(id);
+            return isPlacementReady && MaxSdk.IsRewardedAdReady(id);
         }
 
         public void ShowRewardedAd(string place, Action onCompleted)
@@ -544,7 +544,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void InternalLoadRewarded(AdPlacement placement)
         {
             if (!this.IsRewardedPlacementReady(placement.Name, out var id)) return;
-            MaxSdkUnityEditor.LoadRewardedAd(id);
+            MaxSdk.LoadRewardedAd(id);
         }
 
         private void InternalShowRewarded(AdPlacement placement)
@@ -557,7 +557,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             }
 
             this.rewardedCompleted[placement] = false;
-            MaxSdkUnityEditor.ShowRewardedAd(id);
+            MaxSdk.ShowRewardedAd(id);
             this.currentShowingRewarded = placement;
         }
 
@@ -654,10 +654,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
             
             this.signalBus.Fire(new AppOpenEligibleSignal(""));
 
-            if (MaxSdkUnityEditor.IsAppOpenAdReady(this.appLovinSetting.DefaultAOAAdId.Id))
+            if (MaxSdk.IsAppOpenAdReady(this.appLovinSetting.DefaultAOAAdId.Id))
             {
                 this.signalBus.Fire(new AppOpenCalledSignal(""));
-                MaxSdkUnityEditor.ShowAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
+                MaxSdk.ShowAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
                 this.InternalLoadAppOpenAd();
             }
             else
@@ -668,7 +668,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InternalLoadAppOpenAd()
         {
-            MaxSdkUnityEditor.LoadAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
+            MaxSdk.LoadAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
         }
         
         #endregion
