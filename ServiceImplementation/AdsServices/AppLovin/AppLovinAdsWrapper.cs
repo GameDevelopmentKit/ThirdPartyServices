@@ -52,6 +52,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             this.adsSettings = this.thirdPartiesConfig.AdSettings.AppLovin;
 
+            MaxSdk.SetCreativeDebuggerEnabled(this.adsSettings.CreativeDebugger);
             MaxSdk.SetIsAgeRestrictedUser(this.adsSettings.AgeRestrictMode);
             MaxSdk.SetSdkKey(this.thirdPartiesConfig.AdSettings.AppLovin.SDKKey);
             MaxSdk.InitializeSdk();
