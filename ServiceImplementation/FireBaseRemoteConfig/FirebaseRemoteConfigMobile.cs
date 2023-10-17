@@ -64,7 +64,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             {
                 this.logger.Log("Fetch completed successfully!");
                 this.IsConfigFetchedSucceed = true;
-                this.signalBus.Fire(new RemoteConfigInitializeSucceededSignal());
+                this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal());
             }
 
             var info = FirebaseRemoteConfig.DefaultInstance.Info;

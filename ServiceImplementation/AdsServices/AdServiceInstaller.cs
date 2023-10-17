@@ -20,7 +20,7 @@ namespace ServiceImplementation.AdsServices
         public override void InstallBindings()
         {
             //config
-            this.Container.Bind<AdServicesConfig>().AsCached().NonLazy();
+            this.Container.BindInterfacesAndSelfTo<AdServicesConfig>().AsCached();
 
             #if APPLOVIN
             this.Container.BindInterfacesAndSelfTo<AppLovinAdsWrapper>().AsCached();
