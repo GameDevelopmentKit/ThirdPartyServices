@@ -8,32 +8,45 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.EasyMobile;
     using ServiceImplementation.AdsServices.Signal;
     using Zenject;
-#if APPLOVIN
+    #if APPLOVIN
     using ServiceImplementation.AdsServices.AppLovin;
-#endif
+    #endif
+    #if ADMOB
+    using ServiceImplementation.AdsServices.AdMob;
+    #endif
 
     public class AdServiceInstaller : Installer<AdServiceInstaller>
     {
         public override void InstallBindings()
         {
             //config
-            this.Container.Bind<AdServicesConfig>().AsCached().NonLazy();
+            this.Container.BindInterfacesAndSelfTo<AdServicesConfig>().AsCached();
 
-#if APPLOVIN
+            #if APPLOVIN
             this.Container.BindInterfacesAndSelfTo<AppLovinAdsWrapper>().AsCached();
             // this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<AppLovinAdsWrapper>();
-#elif IRONSOURCE && !UNITY_EDITOR
+            #elif IRONSOURCE && !UNITY_EDITOR
             this.Container.BindInterfacesTo<IronSourceWrapper>().AsCached();
-#else
+            #elif ADMOB
+            this.Container.BindInterfacesTo<AdMobAdService>().AsCached();
+            #else
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
-#endif
+            #endif
 
-#if ADMOB
-            this.Container.BindInterfacesAndSelfTo<AdModWrapper>().AsCached().NonLazy();
-#else
+            #if ADMOB
+            this.Container.BindInterfacesAndSelfTo<AdMobWrapper>().AsCached().NonLazy();
+            if (!this.Container.HasBinding<IBackFillAdsService>())
+            {
+                this.Container.Bind<IInitializable>().To<AdMobAdService>().AsCached();
+                this.Container.Bind<IAdLoadService>().To<AdMobAdService>().AsCached();
+                this.Container.Bind<IBackFillAdsService>().To<AdMobAdService>().AsCached();
+            }
+            #else
+            #if !APPLOVIN
             this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();
+            #endif
             this.Container.Bind<IBackFillAdsService>().To<DummyIBackFillService>().AsCached();
-#endif
+            #endif
 
             this.Container.BindInterfacesAndSelfTo<PreloadAdService>().AsCached().NonLazy();
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
@@ -80,7 +93,8 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<AppOpenLoadFailedSignal>();
             this.Container.DeclareSignal<AppOpenEligibleSignal>();
             this.Container.DeclareSignal<AppOpenCalledSignal>();
-            
+            this.Container.DeclareSignal<AppOpenClickedSignal>();
+
             this.Container.DeclareSignal<AppStateChangeSignal>();
 
             #endregion
