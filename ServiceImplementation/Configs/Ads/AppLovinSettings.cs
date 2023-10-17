@@ -39,6 +39,8 @@
         /// </summary>
         public bool AgeRestrictMode { get { return this.mAgeRestrictMode; } set { this.mAgeRestrictMode = value; } }
 
+        public bool CreativeDebugger => this.mCreatveiDebugger;
+
         /// <summary>
         /// Gets or sets the list of custom banner identifiers.
         /// Each identifier is associated with an ad placement.
@@ -49,7 +51,11 @@
         /// Gets or sets the list of custom interstitial ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get { return this.mCustomInterstitialAdIds; } set { this.mCustomInterstitialAdIds = value as Dictionary_AdPlacement_AdId; } }
+        public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds
+        {
+            get { return this.mCustomInterstitialAdIds; }
+            set { this.mCustomInterstitialAdIds = value as Dictionary_AdPlacement_AdId; }
+        }
 
         /// <summary>
         /// Gets or sets the list of custom rewarded ad identifiers.
@@ -59,6 +65,9 @@
 
         [SerializeField] [LabelText("AgeRestrictMode")]
         private bool mAgeRestrictMode;
+
+        [SerializeField] [LabelText("Creative Debugger")]
+        private bool mCreatveiDebugger;
 
         [SerializeField] [LabelText("SDK Key")]
         private string mSDKKey;
