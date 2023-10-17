@@ -1,6 +1,6 @@
 ﻿namespace ServiceImplementation.FireBaseRemoteConfig
 {
-    public class RemoteConfigInitializeSucceededSignal
+    public class RemoteConfigFetchedSucceededSignal
     {
     }
 }
