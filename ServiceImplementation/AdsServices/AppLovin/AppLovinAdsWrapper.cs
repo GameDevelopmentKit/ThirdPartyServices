@@ -531,10 +531,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void ShowRewardedAd(string place, Action onCompleted)
         {
-#if UNITY_EDITOR
-            onCompleted?.Invoke();
-            return;
-#endif
             var placement = AdPlacement.PlacementWithName(place);
             this.RewardedAdCompletedOneTimeAction = onCompleted;
             this.InternalShowRewarded(placement);
