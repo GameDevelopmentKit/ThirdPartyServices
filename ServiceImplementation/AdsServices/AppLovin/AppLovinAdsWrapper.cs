@@ -391,6 +391,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void DisposeAOAAds()
         {
+            if (string.IsNullOrEmpty(this.appLovinSetting.DefaultAOAAdId.Id)) return;
             MaxSdkCallbacks.OnSdkInitializedEvent -= this.OnMaxSdkCallbacksOnOnSdkInitializedEvent;
 
             MaxSdkCallbacks.AppOpen.OnAdLoadedEvent        -= this.OnAppOpenLoadedEvent;
