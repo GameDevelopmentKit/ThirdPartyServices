@@ -22,7 +22,7 @@ namespace Core.AdsServices
         public bool EnableNativeAd               { get; set; } = true;
         public int  IntervalLoadAds              { get; set; } = 5;
 
-        public int InterstitialAdInterval    { get; set; } = 10;
+        public int InterstitialAdInterval    { get; set; } = 15;
         public int MinPauseSecondToShowAoaAd { get; set; } = 0;
 
         public AdServicesConfig(SignalBus signalBus, IRemoteConfig remoteConfig)
@@ -50,7 +50,7 @@ namespace Core.AdsServices
             this.EnableRewardedInterstitialAd = this.remoteConfig.GetRemoteConfigBoolValue("enable_rewarded_interstitial_ad", true);
             this.EnableNativeAd = this.remoteConfig.GetRemoteConfigBoolValue("enable_native_ad", true);
             this.IntervalLoadAds = this.remoteConfig.GetRemoteConfigIntValue("interval_load_ads", 5);
-            this.InterstitialAdInterval = this.remoteConfig.GetRemoteConfigIntValue("interstitial_ad_interval", 10);
+            this.InterstitialAdInterval = this.remoteConfig.GetRemoteConfigIntValue("interstitial_ad_interval", 15);
             this.MinPauseSecondToShowAoaAd = this.remoteConfig.GetRemoteConfigIntValue("min_pause_second_to_show_aoa_ad", 0);
         }
     }
