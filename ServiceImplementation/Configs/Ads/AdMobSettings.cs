@@ -10,12 +10,6 @@
     public class AdMobSettings : AdNetworkSettings
     {
         /// <summary>
-        /// Gets or sets the AdMob app identifier.
-        /// </summary>
-        [Obsolete("AppId has been deprecated since Easy Mobile Pro version 2.6.0 because the GoogleMobileAds SDK no longer allows access to this value in runtime.")]
-        public AdId AppId { get => this.mAppId; set => this.mAppId = value; }
-
-        /// <summary>
         /// Gets or sets the default banner identifier.
         /// </summary>
         public AdId DefaultBannerAdId { get => this.mDefaultBannerAdId; set => this.mDefaultBannerAdId = value; }
@@ -34,6 +28,11 @@
         /// Gets or sets the default rewarded interstitial ad identifier.
         /// </summary>
         public AdId DefaultRewardedInterstitialAdId { get => this.mDefaultRewardedInterstitialAdId; set => this.mDefaultRewardedInterstitialAdId = value; }
+        
+        /// <summary>
+        /// Gets or sets the default rewarded interstitial ad identifier.
+        /// </summary>
+        public AdId AOAAdId { get => this.mAoaAdId; set => this.mAoaAdId = value; }
 
         /// <summary>
         /// Enables or disables test mode.
@@ -71,8 +70,6 @@
         [SerializeField] [LabelText("Enable Test Mode")]
         private bool mEnableTestMode;
 
-        [SerializeField] [LabelText("App Id")] private AdId mAppId;
-
         [SerializeField] [LabelText("Banner")] [BoxGroup("Default Id")]
         private AdId mDefaultBannerAdId;
 
@@ -84,6 +81,9 @@
 
         [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Default Id")]
         private AdId mDefaultRewardedInterstitialAdId;
+        
+        [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")]
+        private AdId mAoaAdId;
 
         [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomBannerAdIds;

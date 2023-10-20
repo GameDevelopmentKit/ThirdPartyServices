@@ -127,7 +127,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public class Config
         {
             public List<string>                       ADModAoaIds;
-            public int                                AOAOpenAppThreshHold = 5; //after this number of seconds, AOA will not be shown
             public Dictionary<AdViewPosition, string> ADModMRecIds;
             public List<string>                       NativeAdIds;
 
@@ -195,7 +194,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public bool IsShowingAd           { get; set; } = false;
         public bool IsResumedFromAdsOrIAP { get; set; } = false;
 
-        public float LoadingTimeToShowAOA => this.config.AOAOpenAppThreshHold;
+        public float LoadingTimeToShowAOA => this.thirdPartiesConfig.AdSettings.AOAThreshHold;
 
         public void ShowAdIfAvailable()
         {
@@ -303,13 +302,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 if (!this.IsShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
                 {
                     var totalLoadingTime = (DateTime.Now - this.StartLoadingAOATime).TotalSeconds;
-                    if (totalLoadingTime <= this.config.AOAOpenAppThreshHold)
+                    if (totalLoadingTime <= this.LoadingTimeToShowAOA)
                     {
                         this.ShowAdIfAvailable();
                     }
                     else
                     {
-                        this.logService.Log($"AOA loading time for first open over the threshold {totalLoadingTime} > {this.config.AOAOpenAppThreshHold}!");
+                        this.logService.Log($"AOA loading time for first open over the threshold {totalLoadingTime} > {this.LoadingTimeToShowAOA}!");
                     }
 
                     this.IsShowedFirstOpen = true;
