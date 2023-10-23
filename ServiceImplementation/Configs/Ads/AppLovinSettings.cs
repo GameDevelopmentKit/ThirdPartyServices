@@ -33,6 +33,11 @@
         /// Gets or sets the default AOA ad identifier.
         /// </summary>
         public AdId DefaultAOAAdId { get { return this.mAOAAdId; } set { this.mAOAAdId = value; } }
+        
+        /// <summary>
+        /// Gets or sets the default MREC ad identifier.
+        /// </summary>
+        public Dictionary_AdViewPosition_AdId MRECAdIds { get => this.mMRECAdIds; set => this.mMRECAdIds = value; }
 
         /// <summary>
         /// age-restricted category.
@@ -83,6 +88,9 @@
         
         [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")]
         private AdId mAOAAdId;
+        
+        [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")]
+        private Dictionary_AdViewPosition_AdId mMRECAdIds;
 
         [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomBannerAdIds;

@@ -4,10 +4,8 @@ namespace Core.AdsServices
     using System.Collections.Generic;
     using Core.AdsServices.Signals;
     using Cysharp.Threading.Tasks;
-    using Sirenix.Utilities;
     using UnityEngine;
     using Zenject;
-
     public class PreloadAdService : IInitializable, IDisposable
     {
         private List<IAdLoadService> adLoadServices;
@@ -52,10 +50,10 @@ namespace Core.AdsServices
                 return;
             }
 
-            loadService.AdNetworkSettings.CustomInterstitialAdIds.ForEach(adsNetwork =>
+            foreach (var (key, value) in loadService.AdNetworkSettings.CustomInterstitialAdIds)
             {
-                if (!loadService.IsInterstitialAdReady(adsNetwork.Key.Name)) loadService.LoadInterstitialAd(adsNetwork.Key.Name);
-            });
+                if (!loadService.IsInterstitialAdReady(key.Name)) loadService.LoadInterstitialAd(key.Name);
+            }
         }
 
         private void LoadInterAdsAfterShow(InterstitialAdClosedSignal signal) { this.LoadSingleInterAdWithPlace(signal.Placement); }
@@ -81,10 +79,10 @@ namespace Core.AdsServices
                 return;
             }
 
-            loadService.AdNetworkSettings.CustomRewardedAdIds.ForEach(adsNetwork =>
+            foreach (var (key, value) in loadService.AdNetworkSettings.CustomRewardedAdIds)
             {
-                if (!loadService.IsRewardedAdReady(adsNetwork.Key.Name)) loadService.LoadRewardAds(adsNetwork.Key.Name);
-            });
+                if (!loadService.IsRewardedAdReady(key.Name)) loadService.LoadRewardAds(key.Name);
+            }
         }
 
         private void LoadRewardAdsAfterShow(RewardedAdCompletedSignal signal) { this.LoadSingleRewardAdWithPlace(signal.Placement); }

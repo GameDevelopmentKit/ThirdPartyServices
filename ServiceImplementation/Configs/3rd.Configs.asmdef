@@ -1,3 +1,4 @@
 {
-	"name": "3rd.Configs"
+	"name": "3rd.Configs",
+	"references":[ "GUID:d5b34dada42fd2a46af3b40b69efba3a" ]
 }
