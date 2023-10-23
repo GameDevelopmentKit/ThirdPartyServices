@@ -126,7 +126,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public class Config
         {
             public Dictionary<AdViewPosition, string> ADModMRecIds;
-            public List<string>                       NativeAdIds;
 
             public bool IsShowAOAAtOpenApp   = true;
             public bool OpenAOAAfterResuming = true;
@@ -252,7 +251,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
 
             this.aoaAdLoadedInstance.IsLoading = true;
-            AppOpenAd.Load(adUnitId, new AdRequest(), LoadAoaCompletedHandler);
+            // AppOpenAd.Load(adUnitId, new AdRequest(), LoadAoaCompletedHandler);
             return;
 
             async void LoadAoaCompletedHandler(AppOpenAd appOpenAd, LoadAdError error)
@@ -517,9 +516,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void LoadAllNativeAds()
         {
-            foreach (var configNativeAdId in this.config.NativeAdIds)
+            foreach (var adId in this.ADMobSettings.NativeAdIds.Select(nativeAdId => nativeAdId.Id))
             {
-                this.LoadNativeAds(configNativeAdId);
+                this.LoadNativeAds(adId);
             }
         }
 
