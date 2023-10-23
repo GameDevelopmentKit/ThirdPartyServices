@@ -125,8 +125,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public class Config
         {
-            public Dictionary<AdViewPosition, string> ADModMRecIds;
-
             public bool IsShowAOAAtOpenApp   = true;
             public bool OpenAOAAfterResuming = true;
 
@@ -345,7 +343,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
-            var bannerView = new BannerView(this.config.ADModMRecIds[adViewPosition], AdSize.MediumRectangle, adViewPosition.ToAdMobAdPosition());
+            var bannerView = new BannerView(this.ADMobSettings.MRECAdIds[adViewPosition].Id, AdSize.MediumRectangle, adViewPosition.ToAdMobAdPosition());
 
             var adRequest = new AdRequest.Builder().Build();
 
@@ -385,7 +383,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void LoadAllMRec()
         {
-            foreach (var (position, _) in this.config.ADModMRecIds)
+            foreach (var (position, _) in this.ADMobSettings.MRECAdIds)
             {
                 this.LoadMREC(position);
             }

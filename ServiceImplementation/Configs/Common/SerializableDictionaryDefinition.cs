@@ -1,6 +1,7 @@
 ﻿namespace ServiceImplementation.Configs.Common
 {
     using System;
+    using Core.AdsServices;
     using ServiceImplementation.Configs.Ads;
     using ServiceImplementation.Configs.CustomTypes;
 
@@ -17,6 +18,10 @@
     [Serializable]
     public class Dictionary_AdPlacement_AdId : SerializableDictionary<AdPlacement, AdId>
     {
-        
+    }
+    
+    [Serializable]
+    public class Dictionary_AdViewPosition_AdId : SerializableDictionary<AdViewPosition, AdId>
+    {
     }
 }

@@ -1,6 +1,5 @@
 namespace Core.AdsServices
 {
-    using System.Collections.Generic;
     using ServiceImplementation.Configs.Ads;
 
     public interface IAdLoadService

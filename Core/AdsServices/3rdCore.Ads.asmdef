@@ -9,7 +9,6 @@
         "UniTask",
         "Zenject-Signals",
         "GameFoundation.UIModule",
-        "3rd.Configs",
         "FirebaseRemoteConfig"
     ],
     "includePlatforms": [],

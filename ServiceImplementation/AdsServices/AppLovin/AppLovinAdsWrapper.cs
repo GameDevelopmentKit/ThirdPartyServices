@@ -20,7 +20,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private readonly ILogService                        logService;
         private readonly SignalBus                          signalBus;
         private readonly AdServicesConfig                   adServicesConfig;
-        private readonly Dictionary<AdViewPosition, string> positionToMRECAdUnitId;
 
         #endregion
 
@@ -39,13 +38,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #endregion
 
-        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig, Dictionary<AdViewPosition, string> positionToMRECAdUnitId,
+        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig,
             ThirdPartiesConfig thirdPartiesConfig)
         {
             this.logService             = logService;
             this.signalBus              = signalBus;
             this.adServicesConfig       = adServicesConfig;
-            this.positionToMRECAdUnitId = positionToMRECAdUnitId;
             this.appLovinSetting        = thirdPartiesConfig.AdSettings.AppLovin;
             this.thirdPartiesConfig     = thirdPartiesConfig;
         }
@@ -147,10 +145,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitMRECAds()
         {
-            foreach (var (position, adUnitId) in this.positionToMRECAdUnitId)
+            foreach (var (position, adUnitId) in this.appLovinSetting.MRECAdIds)
             {
                 this.logService.Log($"Check max init {MaxSdk.IsInitialized()}");
-                MaxSdk.CreateMRec(adUnitId, this.ConvertAdViewPosition(position));
+                MaxSdk.CreateMRec(adUnitId.Id, this.ConvertAdViewPosition(position));
             }
 
             MaxSdkCallbacks.MRec.OnAdLoadedEvent     += this.OnMRecAdLoadedEvent;
@@ -172,23 +170,23 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 return;
             }
 
-            MaxSdk.UpdateMRecPosition(this.positionToMRECAdUnitId[adViewPosition], this.ConvertAdViewPosition(adViewPosition));
-            MaxSdk.ShowMRec(this.positionToMRECAdUnitId[adViewPosition]);
+            MaxSdk.UpdateMRecPosition(this.appLovinSetting.MRECAdIds[adViewPosition].Id, this.ConvertAdViewPosition(adViewPosition));
+            MaxSdk.ShowMRec(this.appLovinSetting.MRECAdIds[adViewPosition].Id);
         }
 
-        public void HideMREC(AdViewPosition adViewPosition) { MaxSdk.HideMRec(this.positionToMRECAdUnitId[adViewPosition]); }
+        public void HideMREC(AdViewPosition adViewPosition) { MaxSdk.HideMRec(this.appLovinSetting.MRECAdIds[adViewPosition].Id); }
 
-        public void StopMRECAutoRefresh(AdViewPosition adViewPosition) { MaxSdk.StopMRecAutoRefresh(this.positionToMRECAdUnitId[adViewPosition]); }
+        public void StopMRECAutoRefresh(AdViewPosition adViewPosition) { MaxSdk.StopMRecAutoRefresh(this.appLovinSetting.MRECAdIds[adViewPosition].Id); }
 
-        public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { MaxSdk.StartMRecAutoRefresh(this.positionToMRECAdUnitId[adViewPosition]); }
+        public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { MaxSdk.StartMRecAutoRefresh(this.appLovinSetting.MRECAdIds[adViewPosition].Id); }
 
-        public void LoadMREC(AdViewPosition adViewPosition) { MaxSdk.LoadMRec(this.positionToMRECAdUnitId[adViewPosition]); }
+        public void LoadMREC(AdViewPosition adViewPosition) { MaxSdk.LoadMRec(this.appLovinSetting.MRECAdIds[adViewPosition].Id); }
 
-        public bool IsMRECReady(AdViewPosition adViewPosition) { return this.positionToMRECAdUnitId.ContainsKey(adViewPosition); }
+        public bool IsMRECReady(AdViewPosition adViewPosition) { return this.appLovinSetting.MRECAdIds.ContainsKey(adViewPosition); }
 
         public void HideAllMREC()
         {
-            foreach (var (adViewPosition, adUnitId) in this.positionToMRECAdUnitId)
+            foreach (var (adViewPosition, adUnitId) in this.appLovinSetting.MRECAdIds)
             {
                 this.HideMREC(adViewPosition);
             }
