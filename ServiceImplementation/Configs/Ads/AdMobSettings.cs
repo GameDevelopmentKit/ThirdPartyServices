@@ -5,6 +5,7 @@
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
+    using UnityEngine.Serialization;
 
     [Serializable]
     public class AdMobSettings : AdNetworkSettings
@@ -30,9 +31,14 @@
         public AdId DefaultRewardedInterstitialAdId { get => this.mDefaultRewardedInterstitialAdId; set => this.mDefaultRewardedInterstitialAdId = value; }
         
         /// <summary>
-        /// Gets or sets the default rewarded interstitial ad identifier.
+        /// Gets or sets the default AOA ad identifier.
         /// </summary>
         public AdId AOAAdId { get => this.mAoaAdId; set => this.mAoaAdId = value; }
+        
+        /// <summary>
+        /// Gets or sets the default native ad identifier.
+        /// </summary>
+        public List<AdId> NativeAdIds { get => this.mNativeAdIds; set => this.mNativeAdIds = value; }
 
         /// <summary>
         /// Enables or disables test mode.
@@ -84,6 +90,9 @@
         
         [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")]
         private AdId mAoaAdId;
+        
+        [FormerlySerializedAs("mNativeAdId")] [SerializeField] [LabelText("Native")] [BoxGroup("Default Id")]
+        private List<AdId> mNativeAdIds;
 
         [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
