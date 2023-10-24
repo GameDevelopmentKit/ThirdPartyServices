@@ -6,6 +6,8 @@ namespace Core.AdsServices
 
     public class MiscConfig : IInitializable, IDisposable
     {
+        public bool IsFetchSucceeded { get; private set; }
+
         public bool EnableUMP { get; set; }
 
         #region Key
@@ -31,6 +33,10 @@ namespace Core.AdsServices
 
         public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnFetchRemoteConfig); }
 
-        private void OnFetchRemoteConfig() { this.EnableUMP = this.remoteConfig.GetRemoteConfigBoolValue(EnalbeUMPKey, false); }
+        private void OnFetchRemoteConfig()
+        {
+            this.EnableUMP        = this.remoteConfig.GetRemoteConfigBoolValue(EnalbeUMPKey, false);
+            this.IsFetchSucceeded = true;
+        }
     }
 }

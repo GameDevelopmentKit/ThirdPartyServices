@@ -1,9 +1,8 @@
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
     using GameFoundation.Scripts.Utilities.LogService;
-    using Zenject;
 
-    public class DummyConsentInformation : IInitializable, IConsentInformation
+    public class DummyConsentInformation : IConsentInformation
     {
         #region Inject
 
@@ -12,8 +11,6 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         #endregion
 
         public DummyConsentInformation(ILogService logService) { this.logService = logService; }
-
-        public void Initialize() { this.Request(); }
 
         public void Request() { this.logService.Log("Request consent information"); }
     }
