@@ -1,4 +1,4 @@
-namespace Core.MiscConfig
+namespace Core.AdsServices
 {
     using System;
     using ServiceImplementation.FireBaseRemoteConfig;
