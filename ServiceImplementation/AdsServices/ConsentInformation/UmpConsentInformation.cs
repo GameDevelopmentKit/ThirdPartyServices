@@ -1,6 +1,6 @@
+#if ADMOB
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
-#if ADMOB
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
@@ -25,22 +25,11 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         public void Request()
         {
-            // if (!this.miscConfig.EnableUMP) return;
-
-            #region Debug
-
-            var setting = new ConsentDebugSettings
-            {
-                DebugGeography      = DebugGeography.EEA,
-                TestDeviceHashedIds = { "33BE2250B43518CCDA7DE426D04EE231" }
-            };
-
-            #endregion
+            if (!this.miscConfig.EnableUMP) return;
 
             var request = new ConsentRequestParameters
             {
-                TagForUnderAgeOfConsent = false,
-                ConsentDebugSettings    = setting
+                TagForUnderAgeOfConsent = false
             };
 
             ConsentInformation.Update(request, this.OnConsentInfoUpdated);
@@ -68,5 +57,5 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             });
         }
     }
-#endif
 }
+#endif
