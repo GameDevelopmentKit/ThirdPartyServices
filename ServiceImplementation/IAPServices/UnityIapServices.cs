@@ -24,17 +24,17 @@ namespace ServiceImplementation.IAPServices
 
         private readonly ILogService                  logger;
         private readonly SignalBus                    signalBus;
-        private readonly IAOAAdService                aoaAdService;
+        private readonly List<IAOAAdService>          aoaAdServices;
         private readonly IAdServices                  adServices;
         private          Dictionary<string, IAPModel> iapPacks;
 
         #endregion
 
-        public UnityIapServices(ILogService log, SignalBus signalBus, IAOAAdService aoaAdService)
+        public UnityIapServices(ILogService log, SignalBus signalBus, List<IAOAAdService> aoaAdServices)
         {
-            this.logger       = log;
-            this.signalBus    = signalBus;
-            this.aoaAdService = aoaAdService;
+            this.logger        = log;
+            this.signalBus     = signalBus;
+            this.aoaAdServices = aoaAdServices;
         }
 
         public async void InitIapServices(Dictionary<string, IAPModel> iapPack, string environment = "production")
@@ -110,7 +110,7 @@ namespace ServiceImplementation.IAPServices
             }
             catch (Exception e)
             {
-               this.logger.Log($"GetPriceById {e.Message}");
+                this.logger.Log($"GetPriceById {e.Message}");
             }
 
             return s;
@@ -120,7 +120,11 @@ namespace ServiceImplementation.IAPServices
         {
             if (this.IsInitialized)
             {
-                this.aoaAdService.IsResumedFromAdsOrIAP = true;
+                foreach (var service in this.aoaAdServices)
+                {
+                    service.IsResumedFromAdsOrIAP = true;
+                }
+
                 var product = this.mStoreController.products.WithID(productId);
 
                 if (product is { availableToPurchase: true })
@@ -171,7 +175,11 @@ namespace ServiceImplementation.IAPServices
             // If we are running on an Apple device ... 
             if (Application.platform is RuntimePlatform.IPhonePlayer or RuntimePlatform.OSXPlayer)
             {
-                this.aoaAdService.IsResumedFromAdsOrIAP = true;
+                foreach (var service in this.aoaAdServices)
+                {
+                    service.IsResumedFromAdsOrIAP = true;
+                }
+
                 // ... begin restoring purchases
                 this.logger.Log("RestorePurchases started ...");
 
