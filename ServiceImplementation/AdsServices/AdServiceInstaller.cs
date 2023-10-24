@@ -22,7 +22,7 @@ namespace ServiceImplementation.AdsServices
         {
             //config
             this.Container.BindInterfacesAndSelfTo<AdServicesConfig>().AsCached();
-            this.Container.Bind<MiscConfig>().AsCached();
+            this.Container.BindInterfacesAndSelfTo<MiscConfig>().AsCached();
 
             #if APPLOVIN
             this.Container.BindInterfacesAndSelfTo<AppLovinAdsWrapper>().AsCached();
