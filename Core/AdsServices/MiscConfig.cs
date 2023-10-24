@@ -12,7 +12,7 @@ namespace Core.AdsServices
 
         #region Key
 
-        private const string EnalbeUMPKey = "enalbe_ump";
+        private const string EnalbeUMPKey = "enable_ump";
 
         #endregion
 
