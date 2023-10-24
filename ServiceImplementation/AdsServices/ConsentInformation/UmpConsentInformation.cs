@@ -2,11 +2,11 @@
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
     using Core.AdsServices;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
-    using Zenject;
 
-    public class UmpConsentInformation : IInitializable, IConsentInformation
+    public class UmpConsentInformation : IConsentInformation
     {
         #region Inject
 
@@ -21,10 +21,9 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             this.miscConfig = miscConfig;
         }
 
-        public void Initialize() { this.Request(); }
-
-        public void Request()
+        public async void Request()
         {
+            await UniTask.WaitUntil(() => this.miscConfig.IsFetchSucceeded);
             if (!this.miscConfig.EnableUMP) return;
 
             var request = new ConsentRequestParameters

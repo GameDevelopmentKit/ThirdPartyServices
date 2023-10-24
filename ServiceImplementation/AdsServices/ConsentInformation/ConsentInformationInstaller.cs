@@ -12,5 +12,9 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             this.Container.BindInterfacesAndSelfTo<DummyConsentInformation>().AsCached().NonLazy();
 #endif
         }
+
+        private void WaitToRequest()
+        {
+        }
     }
 }
