@@ -249,7 +249,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
 
             this.aoaAdLoadedInstance.IsLoading = true;
-            // AppOpenAd.Load(adUnitId, new AdRequest(), LoadAoaCompletedHandler);
+            AppOpenAd.Load(adUnitId, new AdRequest(), LoadAoaCompletedHandler);
             return;
 
             async void LoadAoaCompletedHandler(AppOpenAd appOpenAd, LoadAdError error)
