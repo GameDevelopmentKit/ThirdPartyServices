@@ -14,7 +14,8 @@
         "AdjustSDK",
         "Unity.TextMeshPro",
         "FBInstant",
-        "3rd.Configs"
+        "3rd.Configs",
+        "3rdCore.Misc"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
