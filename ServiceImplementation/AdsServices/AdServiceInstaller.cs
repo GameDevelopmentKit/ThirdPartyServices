@@ -1,8 +1,8 @@
 namespace ServiceImplementation.AdsServices
 {
+    using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
-    using Core.MiscConfig;
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;

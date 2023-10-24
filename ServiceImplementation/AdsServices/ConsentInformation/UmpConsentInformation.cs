@@ -1,7 +1,7 @@
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
 #if ADMOB
-    using Core.MiscConfig;
+    using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
     using Zenject;
