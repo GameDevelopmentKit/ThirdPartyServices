@@ -25,7 +25,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         public void Request()
         {
-            if (!this.miscConfig.EnableUMP) return;
+            // if (!this.miscConfig.EnableUMP) return;
 
             #region Debug
 
