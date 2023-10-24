@@ -1,8 +1,8 @@
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
+#if ADMOB
     using Core.MiscConfig;
     using GameFoundation.Scripts.Utilities.LogService;
-    using GoogleMobileAds.Api;
     using GoogleMobileAds.Ump.Api;
     using Zenject;
 
@@ -36,11 +36,11 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             };
 
             #endregion
-            
+
             var request = new ConsentRequestParameters
             {
                 TagForUnderAgeOfConsent = false,
-                ConsentDebugSettings = setting
+                ConsentDebugSettings    = setting
             };
 
             ConsentInformation.Update(request, this.OnConsentInfoUpdated);
@@ -68,4 +68,5 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             });
         }
     }
+#endif
 }

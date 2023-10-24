@@ -1,6 +1,5 @@
 namespace ServiceImplementation.AdsServices
 {
-    using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.MiscConfig;
@@ -9,7 +8,6 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.ConsentInformation;
     using ServiceImplementation.AdsServices.EasyMobile;
     using ServiceImplementation.AdsServices.Signal;
-    using UnityEditor.TextCore.Text;
     using Zenject;
     #if APPLOVIN
     using ServiceImplementation.AdsServices.AppLovin;
