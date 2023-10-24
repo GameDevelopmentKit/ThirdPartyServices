@@ -8,7 +8,7 @@ namespace ServiceImplementation.Configs
     public class ThirdPartiesConfig : ScriptableObject
     {
         public static string ResourcePath = $"GameConfigs/{nameof(ThirdPartiesConfig)}";
-        
+
         public AdSettings AdSettings => this.mAdvertisingSettings;
 
         [SerializeField] [LabelText("Advertising Setting")]
