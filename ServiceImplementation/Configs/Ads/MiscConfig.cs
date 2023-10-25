@@ -1,4 +1,4 @@
-namespace Core.AdsServices
+namespace ServiceImplementation.Configs.Ads
 {
     using System;
     using ServiceImplementation.FireBaseRemoteConfig;
@@ -18,15 +18,17 @@ namespace Core.AdsServices
 
         #region Inject
 
-        private readonly SignalBus     signalBus;
-        private readonly IRemoteConfig remoteConfig;
+        private readonly SignalBus           signalBus;
+        private readonly IRemoteConfig       remoteConfig;
+        private readonly RemoteConfigSetting remoteConfigSetting;
 
         #endregion
 
-        public MiscConfig(SignalBus signalBus, IRemoteConfig remoteConfig)
+        public MiscConfig(SignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
         {
-            this.signalBus    = signalBus;
-            this.remoteConfig = remoteConfig;
+            this.signalBus           = signalBus;
+            this.remoteConfig        = remoteConfig;
+            this.remoteConfigSetting = remoteConfigSetting;
         }
 
         public void Initialize() { this.signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.OnFetchRemoteConfig); }
@@ -35,7 +37,7 @@ namespace Core.AdsServices
 
         private void OnFetchRemoteConfig()
         {
-            this.EnableUMP        = this.remoteConfig.GetRemoteConfigBoolValue(EnalbeUMPKey, false);
+            this.EnableUMP        = this.remoteConfig.GetRemoteConfigBoolValue(this.remoteConfigSetting.GetRemoteKey(EnalbeUMPKey), false);
             this.IsFetchSucceeded = true;
         }
     }
