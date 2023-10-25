@@ -1,4 +1,4 @@
-#if APPLOVIN && THEONE_APS_ENABLE
+#if APPLOVIN && APS_ENABLE
 namespace ServiceImplementation.AdsServices.AppLovin
 {
     using AmazonAds;
