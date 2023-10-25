@@ -6,7 +6,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
     {
         public override void InstallBindings()
         {
-#if APS_ENABLE
+#if APS_ENABLE && APPLOVIN
             this.Container.BindInterfacesAndSelfTo<AmazonApplovinAdsWrapper>().AsCached();
 #else
             this.Container.BindInterfacesAndSelfTo<AppLovinAdsWrapper>().AsCached();
