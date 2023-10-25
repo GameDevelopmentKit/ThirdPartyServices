@@ -72,7 +72,7 @@
         /// Each identifier is associated with an ad placement.
         /// </summary>
         public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds { get { return this.mCustomRewardedAdIds; } set { this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId; } }
-#if THEONE_APS_ENABLE
+#if APS_ENABLE
         public AmazonApplovinSetting AmazonApplovinSetting => this.amazonApplovinSetting;
 
         [SerializeField, BoxGroup("Amazon"), HideLabel]
@@ -116,7 +116,7 @@
         private Dictionary_AdPlacement_AdId mCustomRewardedAdIds;
     }
 
-#if THEONE_APS_ENABLE
+#if APS_ENABLE
     [Serializable]
     public class AmazonApplovinSetting
     {
