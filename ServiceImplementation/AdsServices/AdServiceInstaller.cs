@@ -5,8 +5,10 @@ namespace ServiceImplementation.AdsServices
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
+    using ServiceImplementation.AdsServices.ConsentInformation;
     using ServiceImplementation.AdsServices.EasyMobile;
     using ServiceImplementation.AdsServices.Signal;
+    using ServiceImplementation.Configs.Ads;
     using Zenject;
     #if APPLOVIN
     using ServiceImplementation.AdsServices.AppLovin;
@@ -21,6 +23,7 @@ namespace ServiceImplementation.AdsServices
         {
             //config
             this.Container.BindInterfacesAndSelfTo<AdServicesConfig>().AsCached();
+            this.Container.BindInterfacesAndSelfTo<MiscConfig>().AsCached();
 
             #if APPLOVIN
             this.Container.BindInterfacesAndSelfTo<AppLovinAdsWrapper>().AsCached();
@@ -50,6 +53,8 @@ namespace ServiceImplementation.AdsServices
 
             this.Container.BindInterfacesAndSelfTo<PreloadAdService>().AsCached().NonLazy();
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
+
+            ConsentInformationInstaller.Install(this.Container);
 
             #region Ads signal
 
