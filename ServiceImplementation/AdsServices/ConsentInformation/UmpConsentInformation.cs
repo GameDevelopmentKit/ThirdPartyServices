@@ -1,10 +1,10 @@
 #if ADMOB
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
-    using Core.AdsServices;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
+    using ServiceImplementation.Configs.Ads;
 
     public class UmpConsentInformation : IConsentInformation
     {
