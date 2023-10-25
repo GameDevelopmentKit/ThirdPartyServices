@@ -4,9 +4,11 @@
     using System.Collections.Generic;
     using AmazonAds;
     using ServiceImplementation.Configs.Common;
-    using ServiceImplementation.Configs.Editor;
     using Sirenix.OdinInspector;
     using UnityEngine;
+#if UNITY_EDITOR
+    using ServiceImplementation.Configs.Editor;
+#endif
 
     [Serializable]
     public class AppLovinSettings : AdNetworkSettings
