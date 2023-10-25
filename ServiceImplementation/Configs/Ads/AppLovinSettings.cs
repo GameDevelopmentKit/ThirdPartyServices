@@ -4,9 +4,9 @@
     using System.Collections.Generic;
     using AmazonAds;
     using ServiceImplementation.Configs.Common;
+    using ServiceImplementation.Configs.Editor;
     using Sirenix.OdinInspector;
     using UnityEngine;
-    using UnityEngine.Serialization;
 
     [Serializable]
     public class AppLovinSettings : AdNetworkSettings
@@ -30,12 +30,12 @@
         /// Gets or sets the default rewarded ad identifier.
         /// </summary>
         public AdId DefaultRewardedAdId { get { return this.mDefaultRewardedAdId; } set { this.mDefaultRewardedAdId = value; } }
-        
+
         /// <summary>
         /// Gets or sets the default AOA ad identifier.
         /// </summary>
         public AdId DefaultAOAAdId { get { return this.mAOAAdId; } set { this.mAOAAdId = value; } }
-        
+
         /// <summary>
         /// Gets or sets the default MREC ad identifier.
         /// </summary>
@@ -72,12 +72,14 @@
         /// Each identifier is associated with an ad placement.
         /// </summary>
         public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds { get { return this.mCustomRewardedAdIds; } set { this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId; } }
-#if APS_ENABLE
+
         public AmazonApplovinSetting AmazonApplovinSetting => this.amazonApplovinSetting;
 
-        [SerializeField, BoxGroup("Amazon"), HideLabel]
+        [SerializeField, LabelText("Enable APS"), OnValueChanged("OnSetEnableAPS"), BoxGroup("Amazon")]
+        private bool mEnableAPS;
+
+        [SerializeField, BoxGroup("Amazon"), HideLabel, ShowIf("mEnableAPS")]
         private AmazonApplovinSetting amazonApplovinSetting;
-#endif
 
         [SerializeField] [LabelText("AgeRestrictMode")]
         private bool mAgeRestrictMode;
@@ -99,10 +101,10 @@
 
         [SerializeField] [LabelText("Rewarded")] [BoxGroup("Default Id")]
         private AdId mDefaultRewardedAdId;
-        
+
         [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")]
         private AdId mAOAAdId;
-        
+
         [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")]
         private Dictionary_AdViewPosition_AdId mMRECAdIds;
 
@@ -114,9 +116,16 @@
 
         [SerializeField] [LabelText("Rewarded")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomRewardedAdIds;
+
+#if UNITY_EDITOR
+        private void OnSetEnableAPS()
+        {
+            const string APSSymbol = "APS_ENABLE";
+            DefineSymbolEditorUtils.SetDefineSymbol(APSSymbol, this.mEnableAPS);
+        }
+#endif
     }
 
-#if APS_ENABLE
     [Serializable]
     public class AmazonApplovinSetting
     {
@@ -155,5 +164,4 @@
 
         #endregion
     }
-#endif
 }
