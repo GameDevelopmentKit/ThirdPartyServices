@@ -3,11 +3,8 @@
     using System;
     using Sirenix.OdinInspector;
     using UnityEngine;
-
 #if UNITY_EDITOR
-    using System.Linq;
-    using UnityEditor;
-    using UnityEditor.Build;
+    using ServiceImplementation.Configs.Editor;
 #endif
 
     [Serializable]
@@ -27,12 +24,12 @@
         /// Gets the IronSource settings.
         /// </summary>
         public IronSourceSettings IronSource { get { return this.mIronSource; } }
-        
+
         /// <summary>
         /// AOA threshold
         /// </summary>
         public float AOAThreshHold { get { return this.mAOAThreshHold; } }
-        
+
         [SerializeField] [LabelText("AOA ThreshHold", SdfIconType.Download)]
         private float mAOAThreshHold = 5f;
 
@@ -56,51 +53,15 @@
 
 #if UNITY_EDITOR
 
-        private const string Delimiter         = ";";
-        private const string AdModSymbol       = "ADMOB";
-        private const string AppLovinSymbol    = "APPLOVIN";
-        private const string IronSourceSymbol  = "IRONSOURCE";
+        private const string AdModSymbol      = "ADMOB";
+        private const string AppLovinSymbol   = "APPLOVIN";
+        private const string IronSourceSymbol = "IRONSOURCE";
 
-        private void OnChangeAdMob()
-        {
-            this.SetDefineSymbol(AdModSymbol, this.enableAdMob);
-        }
+        private void OnChangeAdMob() { DefineSymbolEditorUtils.SetDefineSymbol(AdModSymbol, this.enableAdMob); }
 
-        private void OnChangeAppLovin()
-        {
-            this.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin);
-        }
+        private void OnChangeAppLovin() { DefineSymbolEditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin); }
 
-        private void OnChangeIronSource()
-        {
-            this.SetDefineSymbol(IronSourceSymbol, this.enableIronSource);
-        }
-
-        private void SetDefineSymbol(string symbol, bool isAdd)
-        {
-            this.SetBuildTargetDefineSymbol(NamedBuildTarget.Android, symbol, isAdd);
-            this.SetBuildTargetDefineSymbol(NamedBuildTarget.iOS, symbol, isAdd);
-            this.SetBuildTargetDefineSymbol(NamedBuildTarget.WebGL, symbol, isAdd);
-            this.SetBuildTargetDefineSymbol(NamedBuildTarget.Standalone, symbol, isAdd);
-            this.SetBuildTargetDefineSymbol(NamedBuildTarget.Server, symbol, isAdd);
-        }
-
-        private void SetBuildTargetDefineSymbol(NamedBuildTarget buildTarget, string symbol, bool isAdd)
-        {
-            var defineSymbols = PlayerSettings.GetScriptingDefineSymbols(buildTarget).Split(Delimiter).ToList();
-            if (isAdd)
-            {
-                if (defineSymbols.Contains(symbol)) return;
-                defineSymbols.Add(symbol);
-            }
-            else
-            {
-                if (!defineSymbols.Contains(symbol)) return;
-                defineSymbols.Remove(symbol);
-            }
-
-            PlayerSettings.SetScriptingDefineSymbols(buildTarget, string.Join(Delimiter, defineSymbols));
-        }
+        private void OnChangeIronSource() { DefineSymbolEditorUtils.SetDefineSymbol(IronSourceSymbol, this.enableIronSource); }
 #endif
     }
 }
