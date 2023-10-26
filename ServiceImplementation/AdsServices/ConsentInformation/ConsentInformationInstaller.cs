@@ -6,7 +6,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     {
         public override void InstallBindings()
         {
-#if ADMOB
+#if ADMOB && ENABLE_UMP
             this.Container.BindInterfacesAndSelfTo<UmpConsentInformation>().AsCached().NonLazy();
 #else
             this.Container.BindInterfacesAndSelfTo<DummyConsentInformation>().AsCached().NonLazy();

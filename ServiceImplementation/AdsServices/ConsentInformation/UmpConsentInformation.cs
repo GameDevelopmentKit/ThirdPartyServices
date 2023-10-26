@@ -1,4 +1,4 @@
-#if ADMOB
+#if ADMOB && ENABLE_UMP
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
     using Cysharp.Threading.Tasks;
