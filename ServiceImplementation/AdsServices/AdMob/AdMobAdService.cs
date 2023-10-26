@@ -39,16 +39,11 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private bool isInitialized;
 
-        public async void Initialize()
+        public void Initialize()
         {
-            await UniTask.SwitchToMainThread();
-            MobileAds.Initialize(initStatus =>
+            MobileAds.Initialize(_ =>
             {
                 this.isInitialized = true;
-                foreach (var (adapter, status) in initStatus.getAdapterStatusMap())
-                {
-                    this.logger.Log($"{adapter} {status.InitializationState}");
-                }
             });
         }
 
