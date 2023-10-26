@@ -6,6 +6,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
@@ -38,8 +39,9 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private bool isInitialized;
 
-        public void Initialize()
+        public async void Initialize()
         {
+            await UniTask.SwitchToMainThread();
             MobileAds.Initialize(initStatus =>
             {
                 this.isInitialized = true;
