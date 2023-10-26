@@ -5,7 +5,6 @@
     using System.Reflection;
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
-    using UnityEditor;
     using UnityEngine;
     using Object = UnityEngine.Object;
 
@@ -102,7 +101,7 @@
 
         private void SaveAdmobSetting()
         {
-            var googleMobileAdsSettings = Resources.Load<Object>("GoogleMobileAdsSettings");
+            var googleMobileAdsSettings = Resources.Load<ScriptableObject>("GoogleMobileAdsSettings");
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
             var settingType  = googleMobileAdsSettings.GetType();
@@ -113,9 +112,6 @@
             settingType.GetField("optimizeAdLoading", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeAdLoading);
             settingType.GetField("delayAppMeasurementInit", bindingFlags).SetValue(googleMobileAdsSettings, this.mDelayAppMeasurementInit);
             settingType.GetField("userTrackingUsageDescription", bindingFlags).SetValue(googleMobileAdsSettings, this.mUserTrackingUsageDescription);
-            
-            EditorUtility.SetDirty(googleMobileAdsSettings);
-            AssetDatabase.SaveAssets();
         }
 
         private void AppIdChanged() { Debug.Log("Admob app id changed"); }
