@@ -43,6 +43,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 return;
             }
 
+#if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
             {
                 if (formError != null)
@@ -54,6 +55,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
                 // Consent has been gathered.
             });
+#endif
         }
     }
 }
