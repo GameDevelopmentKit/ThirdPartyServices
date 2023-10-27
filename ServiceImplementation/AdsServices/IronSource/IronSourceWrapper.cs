@@ -264,10 +264,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private IronSourceBannerSize GetBannerSize()
         {
-            var bannerSize=IronSourceBannerSize.BANNER;
+            var bannerSize = IronSourceBannerSize.BANNER;
 
 #if ADMOB
-            if (this.thirdPartiesConfig.AdSettings.IronSource.IsAdaptiveBanner) {
+            if (this.thirdPartiesConfig.AdSettings.IronSource.IsAdaptiveBanner)
+            {
                 var width = (int)(Screen.width / GoogleMobileAds.Api.MobileAds.Utils.GetDeviceScale());
                 bannerSize = new IronSourceBannerSize(width, 60);
                 bannerSize.SetAdaptive(true);
