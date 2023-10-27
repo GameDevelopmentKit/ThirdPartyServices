@@ -259,7 +259,23 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 BannerAdsPosition.Top => IronSourceBannerPosition.TOP,
                 _ => IronSourceBannerPosition.BOTTOM
             };
-            IronSource.Agent.loadBanner(IronSourceBannerSize.BANNER, position);
+            IronSource.Agent.loadBanner(this.GetBannerSize(), position);
+        }
+
+        private IronSourceBannerSize GetBannerSize()
+        {
+            var bannerSize = IronSourceBannerSize.BANNER;
+
+#if ADMOB
+            if (this.thirdPartiesConfig.AdSettings.IronSource.IsAdaptiveBanner)
+            {
+                var width = (int)(Screen.width / GoogleMobileAds.Api.MobileAds.Utils.GetDeviceScale());
+                bannerSize = new IronSourceBannerSize(width, 60);
+                bannerSize.SetAdaptive(true);
+            }
+#endif
+
+            return bannerSize;
         }
         
         public void HideBannedAd()

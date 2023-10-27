@@ -20,8 +20,12 @@
 #endif
             }
         }
+        
+        public bool IsAdaptiveBanner => this.isAdaptiveBanner;
 
         [SerializeField] [LabelText("App Id")] private AdId mAppId;
+        
+        [SerializeField] private bool isAdaptiveBanner = true;
 
         public enum IronSourceBannerType
         {
