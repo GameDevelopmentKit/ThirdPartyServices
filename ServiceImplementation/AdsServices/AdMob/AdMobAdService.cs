@@ -37,14 +37,14 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         #region Initialize
 
-        private bool isInitialized;
+        private bool isInitialized = true;
 
         public void Initialize()
         {
-            MobileAds.Initialize(_ =>
-            {
-                this.isInitialized = true;
-            });
+            // MobileAds.Initialize(_ =>
+            // {
+            //     this.isInitialized = true;
+            // });
         }
 
         public bool IsAdsInitialized()
