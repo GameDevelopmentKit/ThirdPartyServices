@@ -175,8 +175,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
-            if (!this.adServicesConfig.EnableAOAAd) return;
-
             if (!this.adServices.IsRemoveAds())
             {
                 this.ShowAdIfAvailable();
@@ -192,6 +190,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void ShowAdIfAvailable()
         {
+            if (!this.adServicesConfig.EnableAOAAd) return;
+
             if (this.IsShowingAd)
             {
                 return;
