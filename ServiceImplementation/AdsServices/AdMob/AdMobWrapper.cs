@@ -177,7 +177,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (!this.adServices.IsRemoveAds())
             {
-                this.ShowAdIfAvailable();
+                this.ShowAOAAdIfAvailable();
             }
         }
 
@@ -188,7 +188,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public float LoadingTimeToShowAOA => this.thirdPartiesConfig.AdSettings.AOAThreshHold;
 
-        public void ShowAdIfAvailable()
+        private void ShowAOAAdIfAvailable()
         {
             if (!this.adServicesConfig.EnableAOAAd) return;
 
@@ -285,7 +285,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                     var totalLoadingTime = (DateTime.Now - this.StartLoadingAOATime).TotalSeconds;
                     if (totalLoadingTime <= this.LoadingTimeToShowAOA)
                     {
-                        this.ShowAdIfAvailable();
+                        this.ShowAOAAdIfAvailable();
                     }
                     else
                     {
