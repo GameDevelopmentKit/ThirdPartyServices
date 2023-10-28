@@ -379,8 +379,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 return;
             }
 
-            if (!this.adServicesConfig.EnableAOAAd) return;
-
             if (!this.IsRemoveAds())
             {
                 this.InternalShowAOAAdsIfAvailable();
@@ -632,6 +630,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InternalShowAOAAdsIfAvailable()
         {
+            if (!this.adServicesConfig.EnableAOAAd) return;
+
             if (this.IsShowingAd || this.IsResumedFromAdsOrIAP)
             {
                 return;
