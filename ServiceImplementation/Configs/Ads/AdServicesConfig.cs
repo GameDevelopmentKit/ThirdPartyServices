@@ -26,7 +26,7 @@ namespace Core.AdsServices
         public int InterstitialAdInterval    { get; set; } = 15;
         public int MinPauseSecondToShowAoaAd { get; set; } = 0;
         public int AOAStartSession           { get; set; } = 2;
-        public int InterstitialAdStartLevel  { get; set; } = 4;
+        public int InterstitialAdStartLevel  { get; set; } = 2;
 
         public AdServicesConfig(SignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
         {
@@ -58,7 +58,7 @@ namespace Core.AdsServices
             this.InterstitialAdInterval       = this.remoteConfig.GetRemoteConfigIntValue(this.remoteConfigSetting.GetRemoteKey("interstitial_ad_interval"), 15);
             this.MinPauseSecondToShowAoaAd    = this.remoteConfig.GetRemoteConfigIntValue(this.remoteConfigSetting.GetRemoteKey("min_pause_second_to_show_aoa_ad"), 0);
             this.AOAStartSession = this.remoteConfig.GetRemoteConfigIntValue(this.remoteConfigSetting.GetRemoteKey("aoa_start_session"), 2);
-            this.InterstitialAdStartLevel = this.remoteConfig.GetRemoteConfigIntValue(this.remoteConfigSetting.GetRemoteKey("interstitial_ad_start_level"), 4);
+            this.InterstitialAdStartLevel = this.remoteConfig.GetRemoteConfigIntValue(this.remoteConfigSetting.GetRemoteKey("interstitial_ad_start_level"), 2);
         }
     }
 }
