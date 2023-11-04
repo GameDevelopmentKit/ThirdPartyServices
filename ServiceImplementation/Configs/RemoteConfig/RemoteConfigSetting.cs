@@ -25,8 +25,9 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             { "interstitial_ad_interval", "interstitial_ad_interval" },
             { "min_pause_second_to_show_aoa_ad", "min_pause_second_to_show_aoa_ad" },
             { "enable_ump", "enable_ump" },
-            { "aoa_start_session", "aoa_start_session"},
-            { "interstitial_ad_start_level", "interstitial_ad_start_level" }
+            { "aoa_start_session", "aoa_start_session" },
+            { "interstitial_ad_start_level", "interstitial_ad_start_level" },
+            { "delay_first_inters_ad_interval", "delay_first_inters_ad_interval" }
         };
 
         public string GetRemoteKey(string key) => this.mRemoteKeyMapping.TryGetValue(key, out var remoteKey) ? remoteKey : key;

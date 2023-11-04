@@ -63,8 +63,6 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             else if (fetchTask.IsCompleted)
             {
                 this.logger.Log("Fetch completed successfully!");
-                this.IsConfigFetchedSucceed = true;
-                this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal());
             }
 
             var info = FirebaseRemoteConfig.DefaultInstance.Info;
@@ -72,7 +70,12 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             switch (info.LastFetchStatus)
             {
                 case LastFetchStatus.Success:
-                    FirebaseRemoteConfig.DefaultInstance.ActivateAsync();
+                    FirebaseRemoteConfig.DefaultInstance.ActivateAsync().ContinueWithOnMainThread(task =>
+                    {
+                        this.logger.Log($"Remote data loaded and ready (last fetch time {info.FetchTime}).");
+                        this.IsConfigFetchedSucceed = true;
+                        this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal());
+                    });
 
                     break;
                 case LastFetchStatus.Failure:
