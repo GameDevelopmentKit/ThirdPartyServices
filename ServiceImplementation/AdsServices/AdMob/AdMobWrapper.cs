@@ -13,8 +13,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Api;
-    using GoogleMobileAds.Common;
-    using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
@@ -31,7 +29,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region inject
 
         private readonly ILogService        logService;
-        private readonly Config             config;
         private readonly SignalBus          signalBus;
         private readonly IAdServices        adServices;
         private readonly IAnalyticServices  analyticService;
@@ -40,11 +37,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
-        public AdMobWrapper(ILogService logService, Config config, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService, AdServicesConfig adServicesConfig,
+        public AdMobWrapper(ILogService logService, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService, AdServicesConfig adServicesConfig,
             ThirdPartiesConfig thirdPartiesConfig)
         {
             this.logService         = logService;
-            this.config             = config;
             this.signalBus          = signalBus;
             this.adServices         = adServices;
             this.analyticService    = analyticService;
@@ -55,14 +51,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void Initialize()
         {
             this.VerifySetting();
-
-            this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
-            this.signalBus.Subscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
-            this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.CloseAdInDifferentProcessHandler);
-            this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.CloseAdInDifferentProcessHandler);
-            this.signalBus.Subscribe<RewardedSkippedSignal>(this.CloseAdInDifferentProcessHandler);
-            AppStateEventNotifier.AppStateChanged += this.OnAppStateChanged;
-
             this.Init();
         }
 
@@ -85,7 +73,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private async void Init()
         {
             await UniTask.SwitchToMainThread();
-            this.StartLoadingAOATime = DateTime.Now;
 #if !GOOGLE_MOBILE_ADS_BELLOW_7_4_0
             MobileAds.RaiseAdEventsOnUnityMainThread = true;
 #endif
@@ -120,93 +107,20 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region AOA
 
-        private DateTime StartLoadingAOATime;
-        private DateTime StartBackgroundTime;
-
-        public class Config
-        {
-            public bool IsShowAOAAtOpenApp   = true;
-            public bool OpenAOAAfterResuming = true;
-
-            public Config(bool isShowAoaAtOpenApp = true, bool openAoaAfterResuming = true)
-            {
-                this.OpenAOAAfterResuming = openAoaAfterResuming;
-                this.IsShowAOAAtOpenApp   = isShowAoaAtOpenApp;
-            }
-        }
-
-        public bool IsShowedFirstOpen { get; private set; } = false;
-
-        private void ShownAdInDifferentProcessHandler()
-        {
-            this.logService.Log("ShownAdInDifferentProcessHandler");
-            this.IsResumedFromAdsOrIAP = true;
-        }
-
-        private void CloseAdInDifferentProcessHandler()
-        {
-            this.logService.Log("CloseAdInDifferentProcessHandler");
-            this.IsResumedFromAdsOrIAP = false;
-        }
-
-        private void OnAppStateChanged(AppState state)
-        {
-            this.logService.Log($"AOA App State is {state}");
-            // Display the app open ad when the app is foregrounded.
-            this.signalBus.Fire(new AppStateChangeSignal(state == AppState.Background));
-
-            if (state != AppState.Foreground)
-            {
-                this.StartBackgroundTime = DateTime.Now;
-                return;
-            }
-
-            var totalBackgroundSeconds = (DateTime.Now - this.StartBackgroundTime).TotalSeconds;
-            if (totalBackgroundSeconds < this.adServicesConfig.MinPauseSecondToShowAoaAd)
-            {
-                this.logService.Log($"AOA background time: {totalBackgroundSeconds}");
-                return;
-            }
-
-            if (!this.config.OpenAOAAfterResuming) return;
-
-            if (this.IsResumedFromAdsOrIAP)
-            {
-                return;
-            }
-
-            if (!this.adServices.IsRemoveAds())
-            {
-                this.ShowAOAAdIfAvailable();
-            }
-        }
-
-        #region IAOAService
-
-        public bool IsShowingAd           { get; set; } = false;
-        public bool IsResumedFromAdsOrIAP { get; set; } = false;
+        public bool IsShowingAOAAd           { get; set; } = false;
 
         public float LoadingTimeToShowAOA => this.thirdPartiesConfig.AdSettings.AOAThreshHold;
 
-        private void ShowAOAAdIfAvailable()
+
+        public bool IsAOAReady()
         {
-            if (!this.adServicesConfig.EnableAOAAd) return;
-
-            if (this.IsShowingAd)
-            {
-                return;
-            }
-
-            this.signalBus.Fire(new AppOpenEligibleSignal(""));
-            if (this.aoaAdLoadedInstance.IsAoaAdAvailable)
-            {
-                this.signalBus.Fire(new AppOpenCalledSignal(""));
-                this.aoaAdLoadedInstance.Show();
-                this.LoadAppOpenAd();
-            }
+            return this.aoaAdLoadedInstance.IsAoaAdAvailable && !this.IsShowingAOAAd;
         }
-
-        #endregion
+        public void ShowAOAAds()
+        {
+            this.aoaAdLoadedInstance.Show();
+            this.LoadAppOpenAd();
+        }
 
         private LoadedAppOpenAd aoaAdLoadedInstance = new();
 
@@ -214,11 +128,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             private AppOpenAd appOpenAd;
             private DateTime  loadedTime;
-            public  bool      IsLoading = false;
 
             public void Init(AppOpenAd appOpenAd)
             {
-                this.IsLoading  = false;
                 this.appOpenAd  = appOpenAd;
                 this.loadedTime = DateTime.UtcNow;
             }
@@ -248,7 +160,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
-            this.aoaAdLoadedInstance.IsLoading = true;
             AppOpenAd.Load(adUnitId, new AdRequest(), LoadAoaCompletedHandler);
             return;
 
@@ -259,7 +170,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                     // Handle the error.
                     this.logService.Log($"Failed to load the ad. (reason: {error.GetMessage()}), id: {adUnitId}");
                     this.signalBus.Fire(new AppOpenLoadFailedSignal(""));
-                    this.aoaAdLoadedInstance.IsLoading = false;
 
                     await UniTask.Delay(TimeSpan.FromSeconds(this.currentAOASleepLoadingTime));
                     this.currentAOASleepLoadingTime = Math.Min(this.currentAOASleepLoadingTime * 2, this.maxAOASleepLoadingTime);
@@ -279,21 +189,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 appOpenAd.OnAdPaid                    += this.AOAHandleAdPaid;
 
                 this.aoaAdLoadedInstance.Init(appOpenAd);
-
-                if (!this.IsShowedFirstOpen && this.config.IsShowAOAAtOpenApp)
-                {
-                    var totalLoadingTime = (DateTime.Now - this.StartLoadingAOATime).TotalSeconds;
-                    if (totalLoadingTime <= this.LoadingTimeToShowAOA)
-                    {
-                        this.ShowAOAAdIfAvailable();
-                    }
-                    else
-                    {
-                        this.logService.Log($"AOA loading time for first open over the threshold {totalLoadingTime} > {this.LoadingTimeToShowAOA}!");
-                    }
-
-                    this.IsShowedFirstOpen = true;
-                }
             }
         }
 
@@ -301,7 +196,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.logService.Log("Closed app open ad");
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
-            this.IsShowingAd = false;
+            this.IsShowingAOAAd = false;
         }
 
         private void AOAHandleAdFullScreenContentFailed(AdError args)
@@ -314,7 +209,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.logService.Log("Displayed app open ad");
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(""));
-            this.IsShowingAd = true;
+            this.IsShowingAOAAd = true;
         }
 
         private void AOAHandleAdImpressionRecorded() { this.logService.Log("Recorded ad impression"); }
