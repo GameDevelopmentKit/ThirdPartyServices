@@ -5,8 +5,7 @@ namespace Core.AdsServices
     /// </summary>
     public interface IAOAAdService
     {
-        bool        IsShowedFirstOpen     { get; }
-        bool        IsResumedFromAdsOrIAP { get; set; }
-        float       LoadingTimeToShowAOA  { get; }
+        bool IsAOAReady();
+        void ShowAOAAds();
     }
 }

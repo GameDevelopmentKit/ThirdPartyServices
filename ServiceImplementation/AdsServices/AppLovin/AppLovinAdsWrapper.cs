@@ -6,7 +6,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Cysharp.Threading.Tasks;
-    using GameFoundation.Scripts.Utilities.ApplicationServices;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
@@ -335,54 +334,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #region AOA
 
-        private DateTime StartLoadingAOATime;
-        private DateTime StartBackgroundTime;
-
         private void InitAOAAds()
         {
             if (string.IsNullOrEmpty(this.appLovinSetting.DefaultAOAAdId.Id)) return;
-            this.StartLoadingAOATime = DateTime.Now;
 
             MaxSdkCallbacks.OnSdkInitializedEvent += this.OnMaxSdkCallbacksOnOnSdkInitializedEvent;
 
-            this.signalBus.Subscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
-            this.signalBus.Subscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
-            this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.CloseAdInDifferentProcessHandler);
-            this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.CloseAdInDifferentProcessHandler);
-            this.signalBus.Subscribe<RewardedSkippedSignal>(this.CloseAdInDifferentProcessHandler);
-            this.signalBus.Subscribe<ApplicationPauseSignal>(this.OnApplicationPause);
-        }
-
-        private void CloseAdInDifferentProcessHandler() { this.IsResumedFromAdsOrIAP = false; }
-
-        private void ShownAdInDifferentProcessHandler() { this.IsResumedFromAdsOrIAP = true; }
-
-        private void OnApplicationPause(ApplicationPauseSignal obj)
-        {
-            if (obj.PauseStatus)
-            {
-                this.StartBackgroundTime = DateTime.Now;
-                return;
-            }
-
-            var totalBackgroundSeconds = (DateTime.Now - this.StartBackgroundTime).TotalSeconds;
-            if (totalBackgroundSeconds < this.adServicesConfig.MinPauseSecondToShowAoaAd)
-            {
-                this.logService.Log($"AOA background time: {totalBackgroundSeconds}");
-                return;
-            }
-
-            // if (!this.config.OpenAOAAfterResuming) return;
-
-            if (this.IsResumedFromAdsOrIAP)
-            {
-                return;
-            }
-
-            if (!this.IsRemoveAds())
-            {
-                this.InternalShowAOAAdsIfAvailable();
-            }
         }
 
         private void DisposeAOAAds()
@@ -395,13 +352,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.AppOpen.OnAdClickedEvent       -= this.OnAppOpenClickedEvent;
             MaxSdkCallbacks.AppOpen.OnAdDisplayedEvent     -= this.OnAppOpenDisplayedEvent;
             MaxSdkCallbacks.AppOpen.OnAdDisplayFailedEvent -= this.OnAppOpenDisplayFailedEvent;
-
-            this.signalBus.Unsubscribe<InterstitialAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
-            this.signalBus.Unsubscribe<RewardedAdDisplayedSignal>(this.ShownAdInDifferentProcessHandler);
-            this.signalBus.Unsubscribe<InterstitialAdClosedSignal>(this.CloseAdInDifferentProcessHandler);
-            this.signalBus.Unsubscribe<RewardedAdCompletedSignal>(this.CloseAdInDifferentProcessHandler);
-            this.signalBus.Unsubscribe<RewardedSkippedSignal>(this.CloseAdInDifferentProcessHandler);
-            this.signalBus.Unsubscribe<ApplicationPauseSignal>(this.OnApplicationPause);
         }
 
         private void OnMaxSdkCallbacksOnOnSdkInitializedEvent(MaxSdkBase.SdkConfiguration sdkConfiguration)
@@ -421,7 +371,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnAppOpenDisplayedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(arg1));
-            this.IsShowingAd = true;
+            this.IsShowingAOAAd = true;
         }
 
         private void OnAppOpenClickedEvent(string arg1, MaxSdkBase.AdInfo arg2)       { this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(arg1)); }
@@ -430,28 +380,24 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnAppOpenLoadedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
             this.signalBus.Fire(new AppOpenLoadedSignal(arg1));
+        }
 
-            if (!this.IsShowedFirstOpen)
-            {
-                var totalLoadingTime = (DateTime.Now - this.StartLoadingAOATime).TotalSeconds;
-                if (totalLoadingTime <= this.thirdPartiesConfig.AdSettings.AOAThreshHold)
-                {
-                    this.InternalShowAOAAdsIfAvailable();
-                }
-                else
-                {
-                    this.logService.Log($"AOA loading time for first open over the threshold {totalLoadingTime} > {this.thirdPartiesConfig.AdSettings.AOAThreshHold}!");
-                }
-
-                this.IsShowedFirstOpen = true;
-            }
+        public bool IsAOAReady()
+        {
+            if (string.IsNullOrEmpty(this.appLovinSetting.DefaultAOAAdId.Id)) return false;
+            return MaxSdk.IsAppOpenAdReady(this.appLovinSetting.DefaultAOAAdId.Id) && !this.IsShowingAOAAd;
+        }
+        public void ShowAOAAds()
+        {
+            MaxSdk.ShowAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
+            this.InternalLoadAppOpenAd();
         }
 
         private void OnAppOpenDismissedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
             this.InternalLoadAppOpenAd();
-            this.IsShowingAd = false;
+            this.IsShowingAOAAd = false;
         }
 
         #endregion
@@ -623,34 +569,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #region IAOAServices
 
-        public bool  IsShowingAd           { get; set; } = false;
-        public bool  IsShowedFirstOpen     { get; set; } = false;
-        public bool  IsResumedFromAdsOrIAP { get; set; } = false;
-        public float LoadingTimeToShowAOA  => this.thirdPartiesConfig.AdSettings.AOAThreshHold;
-
-        private void InternalShowAOAAdsIfAvailable()
-        {
-            if (!this.adServicesConfig.EnableAOAAd) return;
-
-            if (this.IsShowingAd || this.IsResumedFromAdsOrIAP)
-            {
-                return;
-            }
-
-            this.signalBus.Fire(new AppOpenEligibleSignal(""));
-
-            if (MaxSdk.IsAppOpenAdReady(this.appLovinSetting.DefaultAOAAdId.Id))
-            {
-                this.signalBus.Fire(new AppOpenCalledSignal(""));
-                MaxSdk.ShowAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id);
-                this.InternalLoadAppOpenAd();
-            }
-            else
-            {
-                this.InternalLoadAppOpenAd();
-            }
-        }
-
+        public  bool IsShowingAOAAd             { get; set; } = false;
         private void InternalLoadAppOpenAd() { MaxSdk.LoadAppOpenAd(this.appLovinSetting.DefaultAOAAdId.Id); }
 
         #endregion
