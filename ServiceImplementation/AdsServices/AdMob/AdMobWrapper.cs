@@ -32,19 +32,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private readonly SignalBus          signalBus;
         private readonly IAdServices        adServices;
         private readonly IAnalyticServices  analyticService;
-        private readonly AdServicesConfig   adServicesConfig;
         private readonly ThirdPartiesConfig thirdPartiesConfig;
 
         #endregion
 
-        public AdMobWrapper(ILogService logService, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService, AdServicesConfig adServicesConfig,
+        public AdMobWrapper(ILogService logService, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService,
             ThirdPartiesConfig thirdPartiesConfig)
         {
             this.logService         = logService;
             this.signalBus          = signalBus;
             this.adServices         = adServices;
             this.analyticService    = analyticService;
-            this.adServicesConfig   = adServicesConfig;
             this.thirdPartiesConfig = thirdPartiesConfig;
         }
 

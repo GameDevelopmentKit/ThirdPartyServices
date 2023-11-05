@@ -16,9 +16,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
     {
         #region Inject
 
-        private readonly ILogService                        logService;
-        private readonly SignalBus                          signalBus;
-        private readonly AdServicesConfig                   adServicesConfig;
+        private readonly ILogService      logService;
+        private readonly SignalBus        signalBus;
 
         #endregion
 
@@ -28,7 +27,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private AdPlacement                   currentShowingInterstitial;
         private AdPlacement                   currentShowingRewarded;
         private Dictionary<AdPlacement, bool> rewardedCompleted = new();
-        private ThirdPartiesConfig            thirdPartiesConfig;
 
         private readonly Dictionary<AdPlacement, KeyValuePair<BannerAdsPosition, BannerSize>> placementToBanner = new();
 
@@ -37,14 +35,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #endregion
 
-        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig,
+        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus,
             ThirdPartiesConfig thirdPartiesConfig)
         {
             this.logService             = logService;
             this.signalBus              = signalBus;
-            this.adServicesConfig       = adServicesConfig;
             this.appLovinSetting        = thirdPartiesConfig.AdSettings.AppLovin;
-            this.thirdPartiesConfig     = thirdPartiesConfig;
         }
 
         public async void Initialize()
@@ -164,11 +160,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void ShowMREC(AdViewPosition adViewPosition)
         {
-            if (!this.adServicesConfig.EnableMRECAd)
-            {
-                return;
-            }
-
             MaxSdk.UpdateMRecPosition(this.appLovinSetting.MRECAdIds[adViewPosition].Id, this.ConvertAdViewPosition(adViewPosition));
             MaxSdk.ShowMRec(this.appLovinSetting.MRECAdIds[adViewPosition].Id);
         }
