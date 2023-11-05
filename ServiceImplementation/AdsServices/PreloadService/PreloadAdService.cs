@@ -1,11 +1,14 @@
-namespace Core.AdsServices
+namespace ServiceImplementation.AdsServices.PreloadService
 {
     using System;
     using System.Collections.Generic;
+    using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Cysharp.Threading.Tasks;
+    using ServiceImplementation.Configs.Ads;
     using UnityEngine;
     using Zenject;
+
     public class PreloadAdService : IInitializable, IDisposable
     {
         private List<IAdLoadService> adLoadServices;
