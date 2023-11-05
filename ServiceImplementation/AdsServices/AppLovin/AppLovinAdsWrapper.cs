@@ -49,6 +49,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.SetIsAgeRestrictedUser(this.appLovinSetting.AgeRestrictMode);
             MaxSdk.SetSdkKey(this.appLovinSetting.SDKKey);
             MaxSdk.InitializeSdk();
+            MaxSdkCallbacks.OnSdkInitializedEvent += this.OnSDKInitializedHandler;
 
             await UniTask.WaitUntil(MaxSdk.IsInitialized);
             this.InitBannerAds();
@@ -60,6 +61,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.isInit = true;
 
             this.logService.Log("AppLovin Ads Services has been initialized!");
+        }
+        
+        private void OnSDKInitializedHandler(MaxSdkBase.SdkConfiguration obj)
+        {
+#if CREATIVE
+            // Show Mediation Debugger
+            MaxSdk.ShowMediationDebugger();
+#endif
         }
 
         public void Dispose()
