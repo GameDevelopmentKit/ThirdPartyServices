@@ -58,6 +58,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InitRewardedAds();
             this.InitAOAAds();
 
+            if (this.appLovinSetting.MediationDebugger) MaxSdk.ShowMediationDebugger();
+            
             this.isInit = true;
 
             this.logService.Log("AppLovin Ads Services has been initialized!");
