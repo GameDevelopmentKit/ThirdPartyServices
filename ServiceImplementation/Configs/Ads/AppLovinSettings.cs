@@ -45,6 +45,8 @@
         public bool AgeRestrictMode { get { return this.mAgeRestrictMode; } set { this.mAgeRestrictMode = value; } }
 
         public bool CreativeDebugger => this.mCreatveiDebugger;
+        
+        public bool MediationDebugger => this.mMediationDebugger;
 
         /// <summary>
         /// Gets or sets the list of custom banner identifiers.
@@ -73,6 +75,9 @@
 
         [SerializeField] [LabelText("Creative Debugger")]
         private bool mCreatveiDebugger;
+
+        [SerializeField] [LabelText("Mediation Debugger")]
+        private bool mMediationDebugger;
 
         [SerializeField] [LabelText("SDK Key")]
         private string mSDKKey;
