@@ -1,6 +1,7 @@
 ﻿namespace ServiceImplementation.IAPServices
 {
     using GameFoundation.Scripts.Utilities.LogService;
+    using ServiceImplementation.IAPServices.Signals;
     using UnityEngine;
     using Zenject;
 
@@ -16,6 +17,7 @@
 #endif
 
             this.Container.DeclareSignal<OnRestorePurchaseCompleteSignal>();
+            this.Container.DeclareSignal<OnStartDoingIAPSignal>();
         }
     }
 }

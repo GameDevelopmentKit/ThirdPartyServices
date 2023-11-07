@@ -1,4 +1,4 @@
-namespace ServiceImplementation.IAPServices
+namespace ServiceImplementation.IAPServices.Signals
 {
     public class OnRestorePurchaseCompleteSignal
     {
