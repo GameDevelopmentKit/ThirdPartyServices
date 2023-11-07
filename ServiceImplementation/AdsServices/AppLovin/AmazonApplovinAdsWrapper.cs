@@ -52,34 +52,32 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #region MREC
 
-        protected override void InternalShowMREC(string id, MaxSdkBase.AdViewPosition position)
+        protected override void InternalShowMREC(AdViewPosition position)
         {
             var amazonId = this.amazonSetting.AmazonMRecAdId.Id;
+            var id       = this.AppLovinSetting.MRECAdIds[position].Id;
             if (this.isFirstMRecRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstMRecRequest = false;
-
+                
                 this.mRecAdsRequest = new APSBannerAdRequest(300, 250, amazonId);
                 this.mRecAdsRequest.onSuccess += response =>
                     {
                         MaxSdk.SetMRecLocalExtraParameter(id, AmazonResponseMessage, response.GetResponse());
-                        MaxSdk.UpdateMRecPosition(id, position);
-                        MaxSdk.ShowMRec(id);
+                        base.InternalShowMREC(position);
                     }
                     ;
                 this.mRecAdsRequest.onFailedWithError += error =>
                 {
                     MaxSdk.SetMRecLocalExtraParameter(id, AmazonErrorMessage, error.GetAdError());
-                    MaxSdk.UpdateMRecPosition(id, position);
-                    MaxSdk.ShowMRec(id);
+                    base.InternalShowMREC(position);
                 };
 
                 this.mRecAdsRequest.LoadAd();
             }
             else
             {
-                MaxSdk.UpdateMRecPosition(id, position);
-                MaxSdk.ShowMRec(id);
+                base.InternalShowMREC(position);
             }
         }
 
