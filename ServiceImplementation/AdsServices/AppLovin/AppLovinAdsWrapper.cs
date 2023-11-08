@@ -67,7 +67,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         
         private void OnSDKInitializedHandler(MaxSdkBase.SdkConfiguration obj)
         {
-#if CREATIVE
+#if THEONE_ADS_DEBUGGER
             // Show Mediation Debugger
             MaxSdk.ShowMediationDebugger();
 #endif
