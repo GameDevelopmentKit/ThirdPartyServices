@@ -251,9 +251,9 @@ namespace ServiceImplementation.IAPServices
             // Note that the code is disabled in the editor for it to not stop the EM editor code (due to ClassNotFound error)
             // from recreating the dummy AppleTangle and GoogleTangle classes if they were inadvertently removed.
 
-#if UNITY_ANDROID && !UNITY_EDITOR
-            googlePlayTangleData = GooglePlayTangle.Data();
-#endif
+// #if UNITY_ANDROID && !UNITY_EDITOR
+            // googlePlayTangleData = GooglePlayTangle.Data();
+// #endif
 
 #if (UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS) && !UNITY_EDITOR
             appleTangleData = AppleTangle.Data();
