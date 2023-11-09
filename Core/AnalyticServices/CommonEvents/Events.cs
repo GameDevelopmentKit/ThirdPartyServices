@@ -41,7 +41,7 @@ namespace Core.AnalyticServices.CommonEvents
     /// Use this class to track location changes (screen in game).
     /// </remarks>
     [Serializable]
-    internal class LocationChange : IEvent
+    internal class ScreenLocationChange : IEvent
     {
         /// <summary>
         /// Next (current) location (screen).
@@ -54,11 +54,11 @@ namespace Core.AnalyticServices.CommonEvents
         public string LocationPrev;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LocationChange"/> class.
+        /// Initializes a new instance of the <see cref="ScreenLocationChange"/> class.
         /// </summary>
         /// <param name="locationNext">Next (current) location (screen).</param>
         /// <param name="locationPrev">Previous location (screen).</param>
-        public LocationChange(string locationNext, string locationPrev)
+        public ScreenLocationChange(string locationNext, string locationPrev)
         {
             this.LocationNext = locationNext;
             this.LocationPrev = locationPrev;
