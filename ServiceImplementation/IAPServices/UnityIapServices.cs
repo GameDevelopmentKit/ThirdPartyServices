@@ -225,6 +225,17 @@ namespace ServiceImplementation.IAPServices
 #endif
             return true;
         }
+        
+        public ProductData GetProductData(string productId)
+        {
+            var product = this.mStoreController.products.WithID(productId);
+            return new ProductData()
+            {
+                Id           = productId,
+                Price        = product.metadata.localizedPrice,
+                CurrencyCode = product.metadata.isoCurrencyCode
+            };
+        }
 
         //check Valid product
         private bool ValidateReceipt(string receipt, out IPurchaseReceipt[] purchaseReceipts, bool logReceiptContent = true)

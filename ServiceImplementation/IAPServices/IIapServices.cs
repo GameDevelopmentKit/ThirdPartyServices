@@ -10,5 +10,6 @@
         string GetPriceById(string productId, string defaultPrice);
         void   RestorePurchases(Action onComplete);
         bool   IsProductOwned(string productId);
+        ProductData GetProductData(string productId);
     }
 }
