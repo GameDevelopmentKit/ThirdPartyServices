@@ -1,9 +1,11 @@
 {
     "name": "FirebaseTracker",
+    "rootNamespace": "",
     "references": [
         "FirebaseWebGL",
         "3rdCore.Analytic",
-        "Zenject-Signals"
+        "Zenject-Signals",
+        "FirebaseSDKBridge"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -12,12 +14,6 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "com.google.firebase.analytics",
-            "expression": "",
-            "define": "FIREBASE_SDK_EXISTS"
-        }
-    ],
+    "versionDefines": [],
     "noEngineReferences": false
 }

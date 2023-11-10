@@ -1,8 +1,12 @@
 {
-    "name": "FirebaseWebGL",
+    "name": "FirebaseSDKBridge",
     "rootNamespace": "",
     "references": [],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Android",
+        "Editor",
+        "iOS"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
@@ -11,9 +15,9 @@
     "defineConstraints": [],
     "versionDefines": [
         {
-            "name": "com.gdk.3rd",
+            "name": "com.google.firebase.analytics",
             "expression": "",
-            "define": "FIREBASE_WEBGL"
+            "define": "FIREBASE_SDK_EXISTS"
         }
     ],
     "noEngineReferences": false
