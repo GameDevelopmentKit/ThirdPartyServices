@@ -2,6 +2,8 @@
 namespace Core.AnalyticServices
 {
     using System;
+    using Sirenix.OdinInspector;
+    using Sirenix.Serialization;
     using UnityEngine;
 
     /// <summary>
@@ -17,8 +19,7 @@ namespace Core.AnalyticServices
             get
             {
 #if UNITY_ANDROID
-                if(!String.IsNullOrEmpty(appsflyerDevKeyAndroid))
-                    return this.appsflyerDevKeyAndroid;
+                return this.appsflyerDevKeyAndroid;
 #elif UNITY_IOS
                 if(!String.IsNullOrEmpty(appsflyerDevKeyIos))
                     return this.appsflyerDevKeyIos;
@@ -26,7 +27,6 @@ namespace Core.AnalyticServices
                  if(!String.IsNullOrEmpty(appsflyerDevKeyUwp))
                     return this.appsflyerDevKeyUwp;
 #endif
-                return this.appsflyerDevKey;
             }
         }
 
@@ -37,7 +37,7 @@ namespace Core.AnalyticServices
 #if UNITY_IOS
             => this.appsflyerAppIdIos;
 #elif UNITY_ANDROID
-            => Application.identifier;
+            => this.appsflyerAppIdAndroid;
 #elif UNITY_WSA_10_0 && !UNITY_EDITOR
             => this.appsflyerAppIdUWP;
 #else
@@ -46,13 +46,14 @@ namespace Core.AnalyticServices
 
         public bool AppsflyerIsDebug           => this.appsflyerIsDebug;
 
-        [SerializeField] private string appsflyerDevKey;
+        [Header("DevKey")]
         [SerializeField] private string appsflyerDevKeyIos;
         [SerializeField] private string appsflyerDevKeyAndroid;
-        [SerializeField] private string appsflyerDevKeyUwp;
 
+        [Header("App Id")]
         [SerializeField] private string appsflyerAppIdIos;
-        [SerializeField] private string appsflyerAppIdUWP;
+        [SerializeField][ReadOnly] private string appsflyerAppIdAndroid = Application.identifier;
+
 
         [SerializeField] private bool appsflyerIsDebug;
     }

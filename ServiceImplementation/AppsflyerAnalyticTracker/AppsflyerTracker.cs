@@ -7,6 +7,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
+    using AppsFlyerConnector;
     using AppsFlyerSDK;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -59,11 +60,23 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 return this.TrackerReady.Task;
             }
 #endif
-            AppsFlyer.setIsDebug(this.analyticConfig.AppsflyerIsDebug);
             AppsFlyer.initSDK(devKey, apiId);
-            AppsFlyer.startSDK();
+            AppsFlyer.setIsDebug(this.analyticConfig.AppsflyerIsDebug);
+            
+            //Ads Revenue connector
             AppsFlyerAdRevenue.start();
+            
+            //IAP Revenue connector
+            AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), AppsFlyerConnector.Store.GOOGLE);
+            AppsFlyerPurchaseConnector.setIsSandbox(this.analyticConfig.AppsflyerIsDebug);
+            AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
+            AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
+            AppsFlyerPurchaseConnector.build();
+            AppsFlyerPurchaseConnector.startObservingTransactions();
 
+            //Start SDK
+            AppsFlyer.startSDK();
+            
             this.TrackerReady.SetResult(true);
 
             return this.TrackerReady.Task;
