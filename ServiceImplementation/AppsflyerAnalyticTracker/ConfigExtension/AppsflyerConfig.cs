@@ -37,7 +37,7 @@ namespace Core.AnalyticServices
 #if UNITY_IOS
             => this.appsflyerAppIdIos;
 #elif UNITY_ANDROID
-            => this.appsflyerAppIdAndroid;
+            => Application.identifier;
 #elif UNITY_WSA_10_0 && !UNITY_EDITOR
             => this.appsflyerAppIdUWP;
 #else
@@ -52,7 +52,7 @@ namespace Core.AnalyticServices
 
         [Header("App Id")]
         [SerializeField] private string appsflyerAppIdIos;
-        [SerializeField][ReadOnly] private string appsflyerAppIdAndroid = Application.identifier;
+        // [SerializeField][ReadOnly] private string appsflyerAppIdAndroid = Application.identifier;
 
 
         [SerializeField] private bool appsflyerIsDebug;
