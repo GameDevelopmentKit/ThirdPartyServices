@@ -6,7 +6,8 @@
         "Zenject-Signals",
         "AppsFlyer",
         "GameFoundation.Utilities",
-        "AppsFlyerAdRevenue"
+        "AppsFlyerAdRevenue",
+        "AppsFlyerPurchaseConnector"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
