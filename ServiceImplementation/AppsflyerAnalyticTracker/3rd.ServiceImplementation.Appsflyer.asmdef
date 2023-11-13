@@ -7,7 +7,7 @@
         "AppsFlyer",
         "GameFoundation.Utilities",
         "AppsFlyerAdRevenue",
-        "AppsFlyerConnector"
+        "AppsFlyerPurchaseConnector"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
