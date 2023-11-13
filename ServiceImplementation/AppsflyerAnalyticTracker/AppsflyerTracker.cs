@@ -96,9 +96,11 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value.ToJson());
             AppsFlyer.sendEvent(name, convertedData);
         }
-
+        
+        //we don't need it anymore because we use AppsFlyer Purchase Connector instead
         private void TrackIAP(IEvent trackedEvent, Dictionary<string, object> data)
         {
+            return;
             if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
             {
                 Debug.LogError("trackedEvent in TrackIAP is not of correct type");
