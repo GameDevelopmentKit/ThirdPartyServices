@@ -21,10 +21,8 @@ namespace Core.AnalyticServices
 #if UNITY_ANDROID
                 return this.appsflyerDevKeyAndroid;
 #elif UNITY_IOS
-                if(!String.IsNullOrEmpty(appsflyerDevKeyIos))
                     return this.appsflyerDevKeyIos;
 #elif UNITY_WSA_10_0
-                 if(!String.IsNullOrEmpty(appsflyerDevKeyUwp))
                     return this.appsflyerDevKeyUwp;
 #endif
             }
