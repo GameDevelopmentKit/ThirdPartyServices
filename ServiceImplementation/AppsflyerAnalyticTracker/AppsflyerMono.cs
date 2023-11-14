@@ -1,3 +1,4 @@
+#if APPSFLYER
 namespace ServiceImplementation.AppsflyerAnalyticTracker
 {
     using AppsFlyerSDK;
@@ -19,3 +20,4 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         }
     }
 }
+#endif
