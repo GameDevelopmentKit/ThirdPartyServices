@@ -67,12 +67,14 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             AppsFlyerAdRevenue.start();
             
             //IAP Revenue connector
-            AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), AppsFlyerConnector.Store.GOOGLE);
+#if THEONE_IAP
+            AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
             AppsFlyerPurchaseConnector.setIsSandbox(this.analyticConfig.AppsflyerIsDebug);
             AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
             AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();
+#endif
 
             //Start SDK
             AppsFlyer.startSDK();
