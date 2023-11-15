@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+#if APS_ENABLE
     using AmazonAds;
+#endif
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
@@ -136,7 +138,10 @@
         public bool               EnableTesting  => this.enableTesting;
         public bool               EnableLogging  => this.enableLogging;
         public bool               UseGeoLocation => this.useGeoLocation;
+        
+        #if APS_ENABLE
         public Amazon.MRAIDPolicy MRAIDPolicy    => this.mraidPolicy;
+        #endif
 
         public string AppId                  => this.appId;
         public AdId   AmazonBannerAdId       { get => this.amazonBannerAdId;       set => this.amazonBannerAdId = value; }
@@ -147,7 +152,11 @@
         [SerializeField] private bool               enableTesting  = true;
         [SerializeField] private bool               enableLogging  = true;
         [SerializeField] private bool               useGeoLocation = true;
+        #if APS_ENABLE
+
         [SerializeField] private Amazon.MRAIDPolicy mraidPolicy    = Amazon.MRAIDPolicy.CUSTOM;
+        #endif
+
 
         [SerializeField] [BoxGroup("Amazon Id")]
         private string appId;
