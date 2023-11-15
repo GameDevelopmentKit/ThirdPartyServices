@@ -8,7 +8,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
 #if APS_ENABLE && APPLOVIN
             this.Container.BindInterfacesAndSelfTo<AmazonApplovinAdsWrapper>().AsCached();
-#else
+#elif APPLOVIN
             this.Container.BindInterfacesAndSelfTo<AppLovinAdsWrapper>().AsCached();
 #endif
         }
