@@ -7,7 +7,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
-    using AppsFlyerConnector;
     using AppsFlyerSDK;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -16,6 +15,9 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using Zenject;
+#if THEONE_IAP
+    using AppsFlyerConnector;
+#endif
 
     public class AppsflyerTracker : BaseTracker
     {
