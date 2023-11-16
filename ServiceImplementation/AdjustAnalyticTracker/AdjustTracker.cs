@@ -47,6 +47,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             {
                 foreach (var (key, value) in data)
                 {
+                    if (key == null || value == null) continue;
                     adjustEvent.addCallbackParameter(key, value.ToString());
                 } 
             }
