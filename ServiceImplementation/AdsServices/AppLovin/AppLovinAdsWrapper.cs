@@ -46,7 +46,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public virtual async void Initialize()
         {
+#if THEONE_ADS_DEBUG
+            MaxSdk.SetCreativeDebuggerEnabled(true);
+#else
             MaxSdk.SetCreativeDebuggerEnabled(this.AppLovinSetting.CreativeDebugger);
+#endif
             MaxSdk.SetIsAgeRestrictedUser(this.AppLovinSetting.AgeRestrictMode);
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
             MaxSdk.InitializeSdk();
@@ -68,7 +72,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnSDKInitializedHandler(MaxSdkBase.SdkConfiguration obj)
         {
-#if CREATIVE
+#if THEONE_MEDIATION_DEBUG
             // Show Mediation Debugger
             MaxSdk.ShowMediationDebugger();
 #endif
@@ -105,29 +109,29 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             return pos switch
             {
-                BannerAdsPosition.Top => MaxSdkBase.BannerPosition.TopCenter,
-                BannerAdsPosition.Bottom => MaxSdkBase.BannerPosition.BottomCenter,
-                BannerAdsPosition.TopLeft => MaxSdkBase.BannerPosition.TopLeft,
-                BannerAdsPosition.TopRight => MaxSdkBase.BannerPosition.TopRight,
-                BannerAdsPosition.BottomLeft => MaxSdkBase.BannerPosition.BottomLeft,
+                BannerAdsPosition.Top         => MaxSdkBase.BannerPosition.TopCenter,
+                BannerAdsPosition.Bottom      => MaxSdkBase.BannerPosition.BottomCenter,
+                BannerAdsPosition.TopLeft     => MaxSdkBase.BannerPosition.TopLeft,
+                BannerAdsPosition.TopRight    => MaxSdkBase.BannerPosition.TopRight,
+                BannerAdsPosition.BottomLeft  => MaxSdkBase.BannerPosition.BottomLeft,
                 BannerAdsPosition.BottomRight => MaxSdkBase.BannerPosition.BottomRight,
-                _ => MaxSdkBase.BannerPosition.Centered
+                _                             => MaxSdkBase.BannerPosition.Centered
             };
         }
 
         protected MaxSdkBase.AdViewPosition ConvertAdViewPosition(AdViewPosition adViewPosition) =>
             adViewPosition switch
             {
-                AdViewPosition.TopLeft => MaxSdkBase.AdViewPosition.TopLeft,
-                AdViewPosition.TopCenter => MaxSdkBase.AdViewPosition.TopCenter,
-                AdViewPosition.TopRight => MaxSdkBase.AdViewPosition.TopRight,
-                AdViewPosition.CenterLeft => MaxSdkBase.AdViewPosition.CenterLeft,
-                AdViewPosition.Centered => MaxSdkBase.AdViewPosition.Centered,
-                AdViewPosition.CenterRight => MaxSdkBase.AdViewPosition.CenterRight,
-                AdViewPosition.BottomLeft => MaxSdkBase.AdViewPosition.BottomLeft,
+                AdViewPosition.TopLeft      => MaxSdkBase.AdViewPosition.TopLeft,
+                AdViewPosition.TopCenter    => MaxSdkBase.AdViewPosition.TopCenter,
+                AdViewPosition.TopRight     => MaxSdkBase.AdViewPosition.TopRight,
+                AdViewPosition.CenterLeft   => MaxSdkBase.AdViewPosition.CenterLeft,
+                AdViewPosition.Centered     => MaxSdkBase.AdViewPosition.Centered,
+                AdViewPosition.CenterRight  => MaxSdkBase.AdViewPosition.CenterRight,
+                AdViewPosition.BottomLeft   => MaxSdkBase.AdViewPosition.BottomLeft,
                 AdViewPosition.BottomCenter => MaxSdkBase.AdViewPosition.BottomCenter,
-                AdViewPosition.BottomRight => MaxSdkBase.AdViewPosition.BottomRight,
-                _ => MaxSdkBase.AdViewPosition.BottomCenter
+                AdViewPosition.BottomRight  => MaxSdkBase.AdViewPosition.BottomRight,
+                _                           => MaxSdkBase.AdViewPosition.BottomCenter
             };
 
         protected AdInfo ConvertAdInfo(MaxSdkBase.AdInfo maxAdInfo)
@@ -242,8 +246,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (!this.IsBannerPlacementReady(adPlacement.Name, out var id)) return;
 
             var shouldCreateBanner = !this.placementToBanner.ContainsKey(adPlacement)
-                                     || this.placementToBanner[adPlacement].Key != position
-                                     || this.placementToBanner[adPlacement].Value != bannerSize;
+                                  || this.placementToBanner[adPlacement].Key != position
+                                  || this.placementToBanner[adPlacement].Value != bannerSize;
 
             if (shouldCreateBanner)
             {
@@ -394,6 +398,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return false;
             return MaxSdk.IsAppOpenAdReady(this.AppLovinSetting.DefaultAOAAdId.Id) && !this.IsShowingAOAAd;
         }
+
         public void ShowAOAAds()
         {
             MaxSdk.ShowAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.Id);
