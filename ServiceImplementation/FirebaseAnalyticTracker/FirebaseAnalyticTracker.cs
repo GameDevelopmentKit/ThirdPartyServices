@@ -41,7 +41,7 @@
         {
             if (!name.IsNameValid().Equals("Valid"))
             {
-                Debug.LogError($"Event name error: {name} {name.IsNameValid()}");
+                Debug.LogError($"Firebase: Event name error: {name} {name.IsNameValid()}");
 
                 return;
             }
@@ -49,7 +49,7 @@
             if (data == null)
             {
                 FirebaseAnalytics.LogEvent(name);
-                Debug.Log($"OnEvent - {name}");
+                Debug.Log($"Firebase: OnEvent - {name}");
 
                 return;
             }
@@ -57,7 +57,7 @@
             if (!this.CheckConventions(data))
                 return;
 
-            Debug.Log($"OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
+            Debug.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
             switch (data.Count)
             {
                 case > 1:
