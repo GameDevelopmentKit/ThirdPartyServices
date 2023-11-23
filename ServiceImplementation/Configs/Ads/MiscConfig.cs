@@ -29,6 +29,9 @@ namespace ServiceImplementation.Configs.Ads
             this.signalBus           = signalBus;
             this.remoteConfig        = remoteConfig;
             this.remoteConfigSetting = remoteConfigSetting;
+
+            // Init default value
+            this.OnFetchRemoteConfig();
         }
 
         public void Initialize() { this.signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.OnFetchRemoteConfig); }
