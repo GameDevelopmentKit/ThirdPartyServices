@@ -29,6 +29,9 @@ namespace ServiceImplementation.Configs.Ads
             this.signalBus           = signalBus;
             this.remoteConfig        = remoteConfig;
             this.remoteConfigSetting = remoteConfigSetting;
+
+            // Init default value
+            this.OnFetchRemoteConfig();
         }
 
         public void Initialize() { this.signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.OnFetchRemoteConfig); }
@@ -37,7 +40,8 @@ namespace ServiceImplementation.Configs.Ads
 
         private void OnFetchRemoteConfig()
         {
-            this.EnableUMP        = this.remoteConfig.GetRemoteConfigBoolValue(this.remoteConfigSetting.GetRemoteKey(EnalbeUMPKey), false);
+            var umpSetting = this.remoteConfigSetting.GetRemoteConfig(EnalbeUMPKey);
+            this.EnableUMP        = this.remoteConfig.GetRemoteConfigBoolValue(umpSetting.key, bool.Parse(umpSetting.defaultValue));
             this.IsFetchSucceeded = true;
         }
     }
