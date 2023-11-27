@@ -10,12 +10,6 @@ namespace ServiceImplementation.Configs.Ads
 
         public bool EnableUMP { get; set; }
 
-        #region Key
-
-        private const string EnalbeUMPKey = "enable_ump";
-
-        #endregion
-
         #region Inject
 
         private readonly SignalBus           signalBus;
@@ -29,19 +23,23 @@ namespace ServiceImplementation.Configs.Ads
             this.signalBus           = signalBus;
             this.remoteConfig        = remoteConfig;
             this.remoteConfigSetting = remoteConfigSetting;
-
-            // Init default value
-            this.OnFetchRemoteConfig();
         }
 
-        public void Initialize() { this.signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.OnFetchRemoteConfig); }
+        public void Initialize()
+        {
+            this.signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.OnFetchRemoteConfig);
+
+            // Init default value
+            this.InitDefaultValue();
+        }
 
         public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnFetchRemoteConfig); }
 
+        private void InitDefaultValue() { this.EnableUMP = RemoteConfigHelpers.GetBoolDefaultValue(this.remoteConfigSetting, RemoteConfigKey.EnableUmp); }
+
         private void OnFetchRemoteConfig()
         {
-            var umpSetting = this.remoteConfigSetting.GetRemoteConfig(EnalbeUMPKey);
-            this.EnableUMP        = this.remoteConfig.GetRemoteConfigBoolValue(umpSetting.key, bool.Parse(umpSetting.defaultValue));
+            this.EnableUMP        = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableUmp);
             this.IsFetchSucceeded = true;
         }
     }

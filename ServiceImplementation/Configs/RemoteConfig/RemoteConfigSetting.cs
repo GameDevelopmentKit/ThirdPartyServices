@@ -1,6 +1,7 @@
 namespace ServiceImplementation.FireBaseRemoteConfig
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -9,31 +10,52 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     {
         public static string ResourcePath = $"GameConfigs/{nameof(RemoteConfigSetting)}";
 
-        public List<RemoteConfig> RemoteConfigs => this.mRemoteConfigs;
+        public List<RemoteConfig> AdsRemoteConfigs  => this.mAdsRemoteConfigs;
+        public List<RemoteConfig> MiscRemoteConfigs => this.mMiscRemoteConfigs;
+        public List<RemoteConfig> GameRemoteConfigs => this.mGameRemoteConfigs;
 
-        [TableList] [LabelText("Remote Configs")] [SerializeField]
-        private List<RemoteConfig> mRemoteConfigs = new()
+        [TableList] [LabelText("Ads Remote Configs")] [SerializeField]
+        private List<RemoteConfig> mAdsRemoteConfigs = new()
         {
-            new RemoteConfig("enable_banner_ad", "enable_banner_ad", "true"),
-            new RemoteConfig("enable_interstitial_ad", "enable_interstitial_ad", "true"),
-            new RemoteConfig("enable_mrec_ad", "enable_mrec_ad", "true"),
-            new RemoteConfig("enable_aoa_ad", "enable_aoa_ad", "true"),
-            new RemoteConfig("enable_rewarded_ad", "enable_rewarded_ad", "true"),
-            new RemoteConfig("enable_rewarded_interstitial_ad", "enable_rewarded_interstitial_ad", "true"),
-            new RemoteConfig("enable_native_ad", "enable_native_ad", "true"),
+            new RemoteConfig(RemoteConfigKey.EnableBannerAD, RemoteConfigKey.EnableBannerAD, "true"),
+            new RemoteConfig(RemoteConfigKey.EnableInterstitialAD, RemoteConfigKey.EnableInterstitialAD, "true"),
+            new RemoteConfig(RemoteConfigKey.EnableMrecAD, RemoteConfigKey.EnableMrecAD, "true"),
+            new RemoteConfig(RemoteConfigKey.EnableAoaAD, RemoteConfigKey.EnableAoaAD, "true"),
+            new RemoteConfig(RemoteConfigKey.EnableRewardedAD, RemoteConfigKey.EnableRewardedAD, "true"),
+            new RemoteConfig(RemoteConfigKey.EnableRewardedInterstitialAD, RemoteConfigKey.EnableRewardedInterstitialAD, "true"),
+            new RemoteConfig(RemoteConfigKey.EnableNativeAD, RemoteConfigKey.EnableNativeAD, "true"),
 
-            new RemoteConfig("interval_load_ads", "interval_load_ads", "5"),
-            new RemoteConfig("min_pause_second_to_show_aoa_ad", "min_pause_second_to_show_aoa_ad", "0"),
-            new RemoteConfig("aoa_start_session", "aoa_start_session", "2"),
+            new RemoteConfig(RemoteConfigKey.IntervalLoadAds, RemoteConfigKey.IntervalLoadAds, "5"),
+            new RemoteConfig(RemoteConfigKey.MinPauseSecondToShowAoaAD, RemoteConfigKey.MinPauseSecondToShowAoaAD, "0"),
+            new RemoteConfig(RemoteConfigKey.AoaStartSession, RemoteConfigKey.AoaStartSession, "2"),
 
-            new RemoteConfig("interstitial_ad_interval", "interstitial_ad_interval", "15"),
-            new RemoteConfig("interstitial_ad_start_level", "interstitial_ad_start_level", "1"),
-            new RemoteConfig("delay_first_inters_ad_interval", "delay_first_inters_ad_interval", "0"),
-            new RemoteConfig("delay_first_inters_new_session", "delay_first_inters_new_session", "0"),
-
-            new RemoteConfig("enable_ump", "enable_ump", "false"),
+            new RemoteConfig(RemoteConfigKey.InterstitialADInterval, RemoteConfigKey.InterstitialADInterval, "15"),
+            new RemoteConfig(RemoteConfigKey.InterstitialADStartLevel, RemoteConfigKey.InterstitialADStartLevel, "1"),
+            new RemoteConfig(RemoteConfigKey.DelayFirstIntersADInterval, RemoteConfigKey.DelayFirstIntersADInterval, "0"),
+            new RemoteConfig(RemoteConfigKey.DelayFirstIntersNewSession, RemoteConfigKey.DelayFirstIntersNewSession, "0"),
         };
 
-        public RemoteConfig GetRemoteConfig(string key) => this.mRemoteConfigs.Find(x => x.key == key);
+        [TableList] [LabelText("Misc Remote Configs")] [SerializeField]
+        private List<RemoteConfig> mMiscRemoteConfigs = new()
+        {
+            new RemoteConfig(RemoteConfigKey.EnableUmp, RemoteConfigKey.EnableUmp, "false"),
+        };
+
+        [TableList] [LabelText("Game Remote Configs")] [SerializeField]
+        private List<RemoteConfig> mGameRemoteConfigs = new() { };
+
+        public RemoteConfig GetRemoteConfig(string key)
+        {
+            var result = this.mAdsRemoteConfigs.FirstOrDefault(x => x.key == key);
+            result ??= this.mMiscRemoteConfigs.FirstOrDefault(x => x.key == key);
+            result ??= this.mGameRemoteConfigs.FirstOrDefault(x => x.key == key);
+
+            if (result == null)
+            {
+                Debug.LogError($"RemoteConfigSetting.GetRemoteConfig: Cannot find remote config with key: {key}");
+            }
+
+            return result;
+        }
     }
 }
