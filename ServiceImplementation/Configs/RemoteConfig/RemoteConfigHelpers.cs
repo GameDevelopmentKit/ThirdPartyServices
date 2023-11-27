@@ -9,25 +9,25 @@
         public static int GetIntRemoteValue(IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting, string key)
         {
             var config = remoteConfigSetting.GetRemoteConfig(key);
-            return remoteConfig.GetRemoteConfigIntValue(config.mapping, GetIntDefaultValue(config));
+            return remoteConfig.GetRemoteConfigIntValue(config.mapping.Id, GetIntDefaultValue(config));
         }
 
         public static bool GetBoolRemoteValue(IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting, string key)
         {
             var config = remoteConfigSetting.GetRemoteConfig(key);
-            return remoteConfig.GetRemoteConfigBoolValue(config.mapping, GetBoolDefaultValue(config));
+            return remoteConfig.GetRemoteConfigBoolValue(config.mapping.Id, GetBoolDefaultValue(config));
         }
 
         public static float GetFloatRemoteValue(IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting, string key)
         {
             var config = remoteConfigSetting.GetRemoteConfig(key);
-            return remoteConfig.GetRemoteConfigFloatValue(config.mapping, GetFloatDefaultValue(config));
+            return remoteConfig.GetRemoteConfigFloatValue(config.mapping.Id, GetFloatDefaultValue(config));
         }
 
         public static string GetStringRemoteValue(IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting, string key)
         {
             var config = remoteConfigSetting.GetRemoteConfig(key);
-            return remoteConfig.GetRemoteConfigStringValue(config.mapping, config.defaultValue);
+            return remoteConfig.GetRemoteConfigStringValue(config.mapping.Id, config.defaultValue.Id);
         }
 
         #endregion
@@ -58,7 +58,7 @@
 
         private static int GetIntDefaultValue(RemoteConfig config)
         {
-            if (int.TryParse(config.defaultValue, out var result))
+            if (int.TryParse(config.defaultValue.Id, out var result))
             {
                 return result;
             }
@@ -69,7 +69,7 @@
 
         private static bool GetBoolDefaultValue(RemoteConfig config)
         {
-            if (bool.TryParse(config.defaultValue, out var result))
+            if (bool.TryParse(config.defaultValue.Id, out var result))
             {
                 return result;
             }
@@ -80,7 +80,7 @@
 
         private static float GetFloatDefaultValue(RemoteConfig config)
         {
-            if (float.TryParse(config.defaultValue, out var result))
+            if (float.TryParse(config.defaultValue.Id, out var result))
             {
                 return result;
             }
