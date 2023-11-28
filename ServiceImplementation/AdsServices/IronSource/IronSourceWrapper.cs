@@ -13,7 +13,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using UnityEngine;
     using Zenject;
 
-    public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable,IAdLoadService
+    public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable, IAdLoadService
     {
         #region inject
 
@@ -23,9 +23,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private readonly ThirdPartiesConfig thirdPartiesConfig;
 
         #endregion
-        
 
-        public IronSourceWrapper(IAnalyticServices analyticServices,AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig)
+
+        public IronSourceWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig)
         {
             this.analyticServices   = analyticServices;
             this.adServicesConfig   = adServicesConfig;
@@ -38,7 +38,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void Initialize()
         {
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
-             
+
             IronSourceEvents.onImpressionDataReadyEvent += this.ImpressionDataReadyEvent;
             //Add AdInfo Rewarded Video Events
             IronSourceRewardedVideoEvents.onAdOpenedEvent      += this.RewardedVideoOnAdOpenedEvent;
@@ -67,11 +67,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceBannerEvents.onAdScreenDismissedEvent += this.BannerOnAdScreenDismissedEvent;
             IronSourceBannerEvents.onAdLeftApplicationEvent += this.BannerOnAdLeftApplicationEvent;
         }
-        
+
         public void Dispose()
         {
             IronSourceEvents.onImpressionDataReadyEvent -= this.ImpressionDataReadyEvent;
-            
+
             //Add AdInfo Rewarded Video Events
             IronSourceRewardedVideoEvents.onAdOpenedEvent      -= this.RewardedVideoOnAdOpenedEvent;
             IronSourceRewardedVideoEvents.onAdClosedEvent      -= this.RewardedVideoOnAdClosedEvent;
@@ -108,73 +108,41 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.onRewardComplete = null;
             this.signalBus.Fire(new RewardedAdCompletedSignal(""));
         }
-        private void RewardedVideoOnAdUnavailable()
-        {            
-            this.signalBus.Fire(new RewardedAdLoadFailedSignal("", ""));
-        }
-        private void RewardedVideoOnAdAvailable(IronSourceAdInfo obj)
-        {
-            this.signalBus.Fire(new RewardedAdLoadedSignal(""));
-        }
+
+        private void RewardedVideoOnAdUnavailable()                   { this.signalBus.Fire(new RewardedAdLoadFailedSignal("", "")); }
+        private void RewardedVideoOnAdAvailable(IronSourceAdInfo obj) { this.signalBus.Fire(new RewardedAdLoadedSignal("")); }
+
         private void RewardedVideoOnAdClosedEvent(IronSourceAdInfo obj)
         {
             this.signalBus.Fire(new RewardedSkippedSignal(""));
-        }
-        private void RewardedVideoOnAdShowFailedEvent(IronSourceError obj, IronSourceAdInfo info)
-        {
+            this.signalBus.Fire(new RewardedAdClosedSignal(""));
         }
 
-        private void RewardedVideoOnAdClickedEvent(IronSourcePlacement obj, IronSourceAdInfo info)
-        {
-            this.signalBus.Fire(new RewardedAdLoadClickedSignal(obj.getPlacementName()));
-        }
+        private void RewardedVideoOnAdShowFailedEvent(IronSourceError obj, IronSourceAdInfo info) { this.signalBus.Fire(new RewardedAdShowFailedSignal("")); }
 
-        private void RewardedVideoOnAdOpenedEvent(IronSourceAdInfo info)
-        {
-            this.signalBus.Fire(new RewardedAdDisplayedSignal(""));
-        }
+        private void RewardedVideoOnAdClickedEvent(IronSourcePlacement obj, IronSourceAdInfo info) { this.signalBus.Fire(new RewardedAdLoadClickedSignal(obj.getPlacementName())); }
+
+        private void RewardedVideoOnAdOpenedEvent(IronSourceAdInfo info) { this.signalBus.Fire(new RewardedAdDisplayedSignal("")); }
 
         #endregion
 
 
         #region Interstitial
 
-        private void InterstitialOnAdClosedEvent(IronSourceAdInfo obj)
-        {
-            this.signalBus.Fire(new InterstitialAdClosedSignal(""));
-        }
-        private void InterstitialOnAdShowFailedEvent(IronSourceError arg1, IronSourceAdInfo arg2)
-        {
-            this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(""));
-        }
-        private void InterstitialOnAdShowSucceededEvent(IronSourceAdInfo obj)
-        {
-            this.signalBus.Fire(new InterstitialAdDisplayedSignal(""));
-        }
-        
-        private void InterstitialOnAdLoadFailed(IronSourceError obj)
-        {
-            this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription()));
-        }
+        private void InterstitialOnAdClosedEvent(IronSourceAdInfo obj)                            { this.signalBus.Fire(new InterstitialAdClosedSignal("")); }
+        private void InterstitialOnAdShowFailedEvent(IronSourceError arg1, IronSourceAdInfo arg2) { this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal("")); }
+        private void InterstitialOnAdShowSucceededEvent(IronSourceAdInfo obj)                     { this.signalBus.Fire(new InterstitialAdDisplayedSignal("")); }
 
-        private void InterstitialOnAdReadyEvent(IronSourceAdInfo info)
-        {
-            this.signalBus.Fire(new InterstitialAdDownloadedSignal(""));
-        }
+        private void InterstitialOnAdLoadFailed(IronSourceError obj) { this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription())); }
 
-        private void InterstitialOnAdOpenedEvent(IronSourceAdInfo info)
-        {
-            this.signalBus.Fire(new InterstitialAdDisplayedSignal(""));
-        }
+        private void InterstitialOnAdReadyEvent(IronSourceAdInfo info) { this.signalBus.Fire(new InterstitialAdDownloadedSignal("")); }
 
-        private void InterstitialOnAdClickedEvent(IronSourceAdInfo info)
-        {
-            this.signalBus.Fire(new InterstitialAdClickedSignal(""));
-        }
+        private void InterstitialOnAdOpenedEvent(IronSourceAdInfo info) { this.signalBus.Fire(new InterstitialAdDisplayedSignal("")); }
+
+        private void InterstitialOnAdClickedEvent(IronSourceAdInfo info) { this.signalBus.Fire(new InterstitialAdClickedSignal("")); }
 
         #endregion
-        
-       
+
 
         #region Banner
 
@@ -184,37 +152,29 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             this.ShowBannerAd();
         }
-        private void BannerOnAdLeftApplicationEvent(IronSourceAdInfo obj)
-        {
-        }
-        private void BannerOnAdScreenDismissedEvent(IronSourceAdInfo obj)
-        {
-            this.signalBus.Fire(new BannerAdDismissedSignal(""));
-        }
-        private void BannerOnAdScreenPresentedEvent(IronSourceAdInfo obj)
-        {
-            this.signalBus.Fire(new BannerAdPresentedSignal(""));
-        }
+
+        private void BannerOnAdLeftApplicationEvent(IronSourceAdInfo obj) { }
+        private void BannerOnAdScreenDismissedEvent(IronSourceAdInfo obj) { this.signalBus.Fire(new BannerAdDismissedSignal("")); }
+        private void BannerOnAdScreenPresentedEvent(IronSourceAdInfo obj) { this.signalBus.Fire(new BannerAdPresentedSignal("")); }
+
         private void BannerOnAdLoadedEvent(IronSourceAdInfo info)
         {
             this.signalBus.Fire(new BannerAdLoadedSignal(""));
             this.isLoadedBanner = true;
         }
-        private void BannerOnAdClickedEvent(IronSourceAdInfo info)
-        {
-            this.signalBus.Fire(new BannerAdClickedSignal(""));
-        }
+
+        private void BannerOnAdClickedEvent(IronSourceAdInfo info) { this.signalBus.Fire(new BannerAdClickedSignal("")); }
 
         #endregion
 
-        
 
         #region MREC
 
         public void ShowMREC(AdViewPosition adViewPosition)
         {
-            if(!this.adServicesConfig.EnableMRECAd)return;
+            if (!this.adServicesConfig.EnableMRECAd) return;
         }
+
         public void HideMREC(AdViewPosition adViewPosition)             { }
         public void StopMRECAutoRefresh(AdViewPosition adViewPosition)  { }
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
@@ -246,6 +206,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         //todo convert ads position
         private bool isLoadedBanner;
+
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
             if (this.isLoadedBanner)
@@ -253,11 +214,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 IronSource.Agent.displayBanner();
                 return;
             }
-            
+
             var position = bannerAdsPosition switch
             {
                 BannerAdsPosition.Top => IronSourceBannerPosition.TOP,
-                _ => IronSourceBannerPosition.BOTTOM
+                _                     => IronSourceBannerPosition.BOTTOM
             };
             IronSource.Agent.loadBanner(this.GetBannerSize(), position);
         }
@@ -277,51 +238,30 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             return bannerSize;
         }
-        
-        public void HideBannedAd()
-        {
-            IronSource.Agent.hideBanner();
-        }
-        public void DestroyBannerAd()
-        {
-            IronSource.Agent.destroyBanner();
-        }
-        public bool IsInterstitialAdReady(string place)
-        {
-            return IronSource.Agent.isInterstitialReady();
-        }
-        public void ShowInterstitialAd(string place)
-        {
-            IronSource.Agent.showInterstitial(place);
-        }
-        public AdNetworkSettings AdNetworkSettings => this.thirdPartiesConfig.AdSettings.IronSource;
-        public bool IsRewardedAdReady(string place)
-        {  
-            return IronSource.Agent.isRewardedVideoAvailable();
-        }
+
+        public void              HideBannedAd()                      { IronSource.Agent.hideBanner(); }
+        public void              DestroyBannerAd()                   { IronSource.Agent.destroyBanner(); }
+        public bool              IsInterstitialAdReady(string place) { return IronSource.Agent.isInterstitialReady(); }
+        public void              ShowInterstitialAd(string place)    { IronSource.Agent.showInterstitial(place); }
+        public AdNetworkSettings AdNetworkSettings                   => this.thirdPartiesConfig.AdSettings.IronSource;
+        public bool              IsRewardedAdReady(string place)     { return IronSource.Agent.isRewardedVideoAvailable(); }
+
         public void ShowRewardedAd(string place, Action onCompleted)
         {
             IronSource.Agent.showRewardedVideo(place);
             this.onRewardComplete = onCompleted;
         }
-        public void RemoveAds(bool revokeConsent = false)
-        {
-            PlayerPrefs.SetInt("EM_REMOVE_ADS", -1);
-        }
+
+        public void RemoveAds(bool revokeConsent = false) { PlayerPrefs.SetInt("EM_REMOVE_ADS", -1); }
 
         public bool IsAdsInitialized() { return true; }
 
         public bool IsRemoveAds() { return PlayerPrefs.HasKey("EM_REMOVE_ADS"); }
+
         #endregion
 
-        public void LoadRewardAds(string place)
-        {
-            IronSource.Agent.loadRewardedVideo();
-        }
-        public void LoadInterstitialAd(string place)
-        {
-            IronSource.Agent.loadInterstitial();
-        }
+        public void LoadRewardAds(string place)      { IronSource.Agent.loadRewardedVideo(); }
+        public void LoadInterstitialAd(string place) { IronSource.Agent.loadInterstitial(); }
     }
 }
 #endif
