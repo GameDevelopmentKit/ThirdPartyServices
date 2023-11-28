@@ -447,13 +447,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 if (this.rewardedCompleted[this.currentShowingRewarded])
                 {
                     this.OnRewardCompleted(this.currentShowingRewarded);
-                    this.signalBus.Fire(new RewardedAdCloseSignal(this.currentShowingRewarded.Name));
+                    this.signalBus.Fire(new RewardedAdClosedSignal(this.currentShowingRewarded.Name));
                     return;
                 }
             }
 
             this.OnRewardedSkipped(this.currentShowingRewarded);
-            this.signalBus.Fire(new RewardedAdCloseSignal(this.currentShowingRewarded.Name));
+            this.signalBus.Fire(new RewardedAdClosedSignal(this.currentShowingRewarded.Name));
         }
 
         private void OnRewardCompleted(AdPlacement placement)
