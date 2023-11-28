@@ -47,10 +47,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             // });
         }
 
-        public bool IsAdsInitialized()
-        {
-            return this.isInitialized;
-        }
+        public bool IsAdsInitialized() { return this.isInitialized; }
 
         #endregion
 
@@ -88,10 +85,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.bannerView.LoadAd(new());
         }
 
-        public void HideBannedAd()
-        {
-            this.bannerView?.Hide();
-        }
+        public void HideBannedAd() { this.bannerView?.Hide(); }
 
         public void DestroyBannerAd()
         {
@@ -105,10 +99,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private InterstitialAd interstitialAd;
 
-        public bool IsInterstitialAdReady(string _)
-        {
-            return this.interstitialAd?.CanShowAd() ?? false;
-        }
+        public bool IsInterstitialAdReady(string _) { return this.interstitialAd?.CanShowAd() ?? false; }
 
         public void LoadInterstitialAd(string place)
         {
@@ -121,6 +112,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     this.signalBus.Fire<InterstitialAdLoadFailedSignal>(new(place, error.GetMessage()));
                     return;
                 }
+
                 this.signalBus.Fire<InterstitialAdDownloadedSignal>(new(place));
                 this.interstitialAd?.Destroy();
                 this.interstitialAd = ad;
@@ -152,10 +144,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private RewardedAd rewardedAd;
 
-        public bool IsRewardedAdReady(string place)
-        {
-            return this.rewardedAd?.CanShowAd() ?? false;
-        }
+        public bool IsRewardedAdReady(string place) { return this.rewardedAd?.CanShowAd() ?? false; }
 
         public void LoadRewardAds(string place)
         {
@@ -168,6 +157,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     this.signalBus.Fire<RewardedAdLoadFailedSignal>(new(place, error.GetMessage()));
                     return;
                 }
+
                 this.signalBus.Fire<RewardedAdLoadedSignal>(new(place));
                 this.rewardedAd?.Destroy();
                 this.rewardedAd = ad;
@@ -191,6 +181,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.rewardedAd.Show(_ =>
             {
                 this.signalBus.Fire<RewardedAdCompletedSignal>(new(place));
+                this.signalBus.Fire<RewardedAdClosedSignal>(new(place));
                 onCompleted?.Invoke();
             });
             this.signalBus.Fire<RewardedAdCalledSignal>(new(place));
@@ -200,15 +191,9 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         #region RemoveAds
 
-        public void RemoveAds(bool _)
-        {
-            PlayerPrefs.SetInt("ADMOB_REMOVE_ADS", 1);
-        }
+        public void RemoveAds(bool _) { PlayerPrefs.SetInt("ADMOB_REMOVE_ADS", 1); }
 
-        public bool IsRemoveAds()
-        {
-            return PlayerPrefs.HasKey("ADMOB_REMOVE_ADS");
-        }
+        public bool IsRemoveAds() { return PlayerPrefs.HasKey("ADMOB_REMOVE_ADS"); }
 
         #endregion
 

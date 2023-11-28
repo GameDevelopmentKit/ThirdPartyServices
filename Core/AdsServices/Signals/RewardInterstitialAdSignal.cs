@@ -9,4 +9,14 @@ namespace Core.AdsServices.Signals
     {
         public RewardInterstitialAdSkippedSignal(string placement) : base(placement) { }
     }
+
+    public class RewardInterstitialAdCalledSignal : BaseAdsSignal
+    {
+        public RewardInterstitialAdCalledSignal(string placement) : base(placement) { }
+    }
+
+    public class RewardInterstitialAdClosedSignal : BaseAdsSignal
+    {
+        public RewardInterstitialAdClosedSignal(string placement) : base(placement) { }
+    }
 }
