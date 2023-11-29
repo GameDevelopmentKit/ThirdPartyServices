@@ -174,8 +174,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.MRec.OnAdLoadedEvent     -= this.OnMRecAdLoadedEvent;
             MaxSdkCallbacks.MRec.OnAdLoadFailedEvent -= this.OnMRecAdLoadFailedEvent;
             MaxSdkCallbacks.MRec.OnAdClickedEvent    -= this.OnMRecAdClickedEvent;
-            MaxSdkCallbacks.MRec.OnAdExpandedEvent   += this.OnMRecExpandEvent;
-            MaxSdkCallbacks.MRec.OnAdCollapsedEvent  += this.OnMRecAdCollapseEvent;
+            MaxSdkCallbacks.MRec.OnAdExpandedEvent   -= this.OnMRecExpandEvent;
+            MaxSdkCallbacks.MRec.OnAdCollapsedEvent  -= this.OnMRecAdCollapseEvent;
         }
 
         public void ShowMREC(AdViewPosition adViewPosition) { this.InternalShowMREC(adViewPosition); }
