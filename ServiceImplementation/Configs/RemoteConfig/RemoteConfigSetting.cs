@@ -34,6 +34,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             new RemoteConfig(RemoteConfigKey.InterstitialAdActivePlacements, RemoteConfigKey.InterstitialAdActivePlacements, ""),
             new RemoteConfig(RemoteConfigKey.DelayFirstIntersADInterval, RemoteConfigKey.DelayFirstIntersADInterval, "0"),
             new RemoteConfig(RemoteConfigKey.DelayFirstIntersNewSession, RemoteConfigKey.DelayFirstIntersNewSession, "0"),
+            new RemoteConfig(RemoteConfigKey.ResetInterAdIntervalAfterRewardAd, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd, "true"),
         };
 
         [TableList] [LabelText("Misc Remote Configs")] [SerializeField]
