@@ -52,6 +52,12 @@
             return GetFloatDefaultValue(config);
         }
 
+        public static string GetStringDefaultValue(RemoteConfigSetting remoteConfigSetting, string key)
+        {
+            var config = remoteConfigSetting.GetRemoteConfig(key);
+            return GetStringDefaultValue(config);
+        }
+
         #endregion
 
         #region Get Default Value
@@ -87,6 +93,11 @@
 
             Debug.LogError($"Can not parse float value from remote config key: {config.key}");
             return 0;
+        }
+
+        private static string GetStringDefaultValue(RemoteConfig config)
+        {
+            return config.defaultValue.Id;
         }
 
         #endregion
