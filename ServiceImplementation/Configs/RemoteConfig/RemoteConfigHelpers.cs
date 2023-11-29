@@ -34,6 +34,12 @@
 
         #region Default Value
 
+        public static string GetStringDefaultValue(RemoteConfigSetting remoteConfigSetting, string key)
+        {
+            var config = remoteConfigSetting.GetRemoteConfig(key);
+            return config.defaultValue.Id;
+        }
+
         public static int GetIntDefaultValue(RemoteConfigSetting remoteConfigSetting, string key)
         {
             var config = remoteConfigSetting.GetRemoteConfig(key);
