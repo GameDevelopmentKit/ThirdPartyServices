@@ -54,7 +54,7 @@
         private IronSourceSettings mIronSource = null;
 
         [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)]
-        private bool enableBreakAds = true;
+        private bool enableBreakAds;
 
 #if UNITY_EDITOR
 
