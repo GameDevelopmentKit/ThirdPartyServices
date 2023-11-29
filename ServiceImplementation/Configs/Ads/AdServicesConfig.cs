@@ -2,7 +2,6 @@ namespace ServiceImplementation.Configs.Ads
 {
     using System;
     using ServiceImplementation.FireBaseRemoteConfig;
-    using UnityEngine;
     using Zenject;
 
     public class AdServicesConfig : IInitializable, IDisposable
@@ -30,11 +29,11 @@ namespace ServiceImplementation.Configs.Ads
         public int AOAStartSession           { get; set; }
 
         //Interstitial ads
-        public int InterstitialAdInterval           { get; set; } //The interval between two interstitial ads, we also count the rewarded interstitial ads
-        public int InterstitialAdStartLevel         { get; set; } //The level to start showing interstitial ads
-        public int DelayFirstInterstitialAdInterval { get; set; } //This delay will be applied for the first session
-        public int DelayFirstInterNewSession        { get; set; } //From the second session, this delay will be applied
-
+        public int      InterstitialAdInterval           { get; set; } //The interval between two interstitial ads, we also count the rewarded interstitial ads
+        public int      InterstitialAdStartLevel         { get; set; } //The level to start showing interstitial ads
+        public string[] InterstitialAdActivePlacements   { get; set; } // Places to show interstitial ads, "" means all places
+        public int      DelayFirstInterstitialAdInterval { get; set; } //This delay will be applied for the first session
+        public int      DelayFirstInterNewSession        { get; set; } //From the second session, this delay will be applied
 
         public AdServicesConfig(SignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
         {
@@ -51,7 +50,10 @@ namespace ServiceImplementation.Configs.Ads
             this.InitDefaultValue();
         }
 
-        public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetchedSucceeded); }
+        public void Dispose()
+        {
+            this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetchedSucceeded);
+        }
 
         private void InitDefaultValue()
         {
@@ -67,6 +69,7 @@ namespace ServiceImplementation.Configs.Ads
             this.AOAStartSession                  = RemoteConfigHelpers.GetIntDefaultValue(this.remoteConfigSetting, RemoteConfigKey.AoaStartSession);
             this.InterstitialAdInterval           = RemoteConfigHelpers.GetIntDefaultValue(this.remoteConfigSetting, RemoteConfigKey.InterstitialADInterval);
             this.InterstitialAdStartLevel         = RemoteConfigHelpers.GetIntDefaultValue(this.remoteConfigSetting, RemoteConfigKey.InterstitialADStartLevel);
+            this.InterstitialAdActivePlacements   = RemoteConfigHelpers.GetStringDefaultValue(this.remoteConfigSetting, RemoteConfigKey.InterstitialAdActivePlacements).Split(',');
             this.DelayFirstInterstitialAdInterval = RemoteConfigHelpers.GetIntDefaultValue(this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersADInterval);
             this.DelayFirstInterNewSession        = RemoteConfigHelpers.GetIntDefaultValue(this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersNewSession);
         }
@@ -85,6 +88,7 @@ namespace ServiceImplementation.Configs.Ads
             this.AOAStartSession                  = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaStartSession);
             this.InterstitialAdInterval           = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.InterstitialADInterval);
             this.InterstitialAdStartLevel         = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.InterstitialADStartLevel);
+            this.InterstitialAdActivePlacements   = RemoteConfigHelpers.GetStringRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.InterstitialAdActivePlacements).Split(',');
             this.DelayFirstInterstitialAdInterval = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersADInterval);
             this.DelayFirstInterNewSession        = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersNewSession);
         }
