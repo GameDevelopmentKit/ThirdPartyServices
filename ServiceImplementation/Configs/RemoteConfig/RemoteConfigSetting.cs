@@ -31,6 +31,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             new RemoteConfig(RemoteConfigKey.InterstitialADInterval, RemoteConfigKey.InterstitialADInterval, "15"),
             new RemoteConfig(RemoteConfigKey.InterstitialADStartLevel, RemoteConfigKey.InterstitialADStartLevel, "1"),
+            new RemoteConfig(RemoteConfigKey.InterstitialAdActivePlacements, RemoteConfigKey.InterstitialAdActivePlacements, ""),
             new RemoteConfig(RemoteConfigKey.DelayFirstIntersADInterval, RemoteConfigKey.DelayFirstIntersADInterval, "0"),
             new RemoteConfig(RemoteConfigKey.DelayFirstIntersNewSession, RemoteConfigKey.DelayFirstIntersNewSession, "0"),
         };
@@ -42,7 +43,9 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         };
 
         [TableList] [LabelText("Game Remote Configs")] [SerializeField]
-        private List<RemoteConfig> mGameRemoteConfigs = new() { };
+        private List<RemoteConfig> mGameRemoteConfigs = new()
+        {
+        };
 
         public RemoteConfig GetRemoteConfig(string key)
         {
