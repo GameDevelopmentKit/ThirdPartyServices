@@ -25,6 +25,8 @@
         /// </summary>
         public IronSourceSettings IronSource { get { return this.mIronSource; } }
 
+        public bool EnableBreakAds { get { return this.enableBreakAds; } }
+
         /// <summary>
         /// AOA threshold
         /// </summary>
@@ -50,6 +52,9 @@
 
         [SerializeField] [ShowIf("enableIronSource")] [HideLabel] [BoxGroup("IronSource")]
         private IronSourceSettings mIronSource = null;
+
+        [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)]
+        private bool enableBreakAds = true;
 
 #if UNITY_EDITOR
 
