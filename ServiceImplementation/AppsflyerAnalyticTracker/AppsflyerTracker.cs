@@ -72,6 +72,11 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 return this.TrackerReady.Task;
             }
 #endif
+            AppsFlyer.OnRequestResponse += (sender, args) =>
+            {
+                Debug.Log($"onelog: AF OnRequestResponseReceived {args.ToString()}");
+                Debug.Log($"onelog: AF OnRequestResponseReceived {args.ToJson()}");
+            };
             AppsFlyer.initSDK(devKey, apiId);
             AppsFlyer.setIsDebug(this.analyticConfig.AppsflyerIsDebug);
             
