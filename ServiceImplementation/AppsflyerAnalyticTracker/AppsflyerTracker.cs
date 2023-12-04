@@ -54,6 +54,16 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             var apiId  = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
 
+            if (string.IsNullOrEmpty(apiId))
+            {
+                throw new Exception("Appsflyer can't be initialized, Appsflyer AppId not found");
+            }
+            
+            if (string.IsNullOrEmpty(devKey))
+            {
+                throw new Exception("Appsflyer can't be initialized, Appsflyer DevKey not found");
+            }
+
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(apiId))
             {
