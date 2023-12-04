@@ -92,7 +92,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             AppsFlyer.startSDK();
             
             this.TrackerReady.SetResult(true);
-
+            Debug.Log($"onelog: AF tracker is ready");
             return this.TrackerReady.Task;
         }
 
