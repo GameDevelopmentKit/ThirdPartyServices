@@ -28,7 +28,7 @@ namespace Core.AdsServices
         public bool IsRewardedAdReady(string place)     { return true; }
         public void ShowRewardedAd(string place)        { this.logService.Log($"Dummy show Reward ad at {place}"); }
 
-        public void ShowRewardedAd(string place, Action onCompleted)
+        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
             onCompleted?.Invoke();
             this.logService.Log($"Dummy show Reward ad at {place} then do {onCompleted}");

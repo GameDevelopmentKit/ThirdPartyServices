@@ -164,14 +164,14 @@ namespace ServiceImplementation.AdsServices.AdMob
             });
         }
 
-        public void ShowRewardedAd(string place, Action onCompleted)
+        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
             if (!this.IsRewardedAdReady(place)) return;
 
             #region Events
 
             this.rewardedAd.OnAdFullScreenContentOpened += () => this.signalBus.Fire<RewardedAdDisplayedSignal>(new(place));
-            this.rewardedAd.OnAdFullScreenContentFailed += (_) => this.signalBus.Fire<RewardedSkippedSignal>(new(place));
+            this.rewardedAd.OnAdFullScreenContentFailed += (_) => OnAdFullScreenContentFailed();
             this.rewardedAd.OnAdClicked                 += () => this.signalBus.Fire<RewardedAdLoadClickedSignal>(new(place));
             this.rewardedAd.OnAdPaid                    += (_) => this.signalBus.Fire<RewardedAdEligibleSignal>(new(place));
             this.rewardedAd.OnAdPaid                    += this.TrackAdRevenue("Rewarded", place);
@@ -185,6 +185,13 @@ namespace ServiceImplementation.AdsServices.AdMob
                 onCompleted?.Invoke();
             });
             this.signalBus.Fire<RewardedAdCalledSignal>(new(place));
+
+            void OnAdFullScreenContentFailed()
+            {
+                this.signalBus.Fire<RewardedSkippedSignal>(new(place));
+                onFailed?.Invoke();
+                onFailed = null;
+            }
         }
 
         #endregion
