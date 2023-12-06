@@ -78,9 +78,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 #endif
             AppsFlyer.setIsDebug(this.analyticConfig.AppsflyerIsDebug);
             
-            //Ads Revenue connector
-            AppsFlyerAdRevenue.start();
-            
             //IAP Revenue connector
 #if THEONE_IAP
             AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
@@ -93,6 +90,9 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             //Start SDK
             AppsFlyer.startSDK();
+            
+            //Ads Revenue connector
+            AppsFlyerAdRevenue.start();
             
             this.TrackerReady.SetResult(true);
 
