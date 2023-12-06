@@ -73,6 +73,9 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             }
 #endif
             AppsFlyer.initSDK(devKey, apiId);
+#if UNITY_IOS && !UNITY_EDITOR
+            AppsFlyer.waitForATTUserAuthorizationWithTimeoutInterval(60);
+#endif
             AppsFlyer.setIsDebug(this.analyticConfig.AppsflyerIsDebug);
             
             //Ads Revenue connector
