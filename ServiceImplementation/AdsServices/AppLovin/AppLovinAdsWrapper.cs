@@ -166,8 +166,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.MRec.OnAdLoadedEvent     += this.OnMRecAdLoadedEvent;
             MaxSdkCallbacks.MRec.OnAdLoadFailedEvent += this.OnMRecAdLoadFailedEvent;
             MaxSdkCallbacks.MRec.OnAdClickedEvent    += this.OnMRecAdClickedEvent;
-            MaxSdkCallbacks.MRec.OnAdExpandedEvent   += this.OnMRecExpandEvent;
-            MaxSdkCallbacks.MRec.OnAdCollapsedEvent  += this.OnMRecAdCollapseEvent;
         }
 
         private void DisposeMRECAds()
@@ -175,8 +173,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.MRec.OnAdLoadedEvent     -= this.OnMRecAdLoadedEvent;
             MaxSdkCallbacks.MRec.OnAdLoadFailedEvent -= this.OnMRecAdLoadFailedEvent;
             MaxSdkCallbacks.MRec.OnAdClickedEvent    -= this.OnMRecAdClickedEvent;
-            MaxSdkCallbacks.MRec.OnAdExpandedEvent   -= this.OnMRecExpandEvent;
-            MaxSdkCallbacks.MRec.OnAdCollapsedEvent  -= this.OnMRecAdCollapseEvent;
         }
 
         public void ShowMREC(AdViewPosition adViewPosition) { this.InternalShowMREC(adViewPosition); }
@@ -571,10 +567,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnMRecAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo error) { this.signalBus.Fire(new MRecAdLoadFailedSignal(adUnitId)); }
 
         private void OnMRecAdClickedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { this.signalBus.Fire(new MRecAdClickedSignal(adUnitId)); }
-
-        private void OnMRecAdCollapseEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { this.signalBus.Fire(new MRecAdDismissedSignal(adUnitId)); }
-
-        private void OnMRecExpandEvent(string adUnitId, MaxSdkBase.AdInfo info) { this.signalBus.Fire(new MRecAdDisplayedSignal(adUnitId)); }
 
         #endregion
 
