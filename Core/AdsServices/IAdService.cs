@@ -28,15 +28,16 @@ namespace Core.AdsServices
         #region Interstitial
 
         bool IsInterstitialAdReady(string place);
-        void ShowInterstitialAd(string    place);
+        void ShowInterstitialAd(string place);
 
         #endregion
 
         #region Reward
 
         bool IsRewardedAdReady(string place);
+
         // void ShowRewardedAd(string    place);
-        void ShowRewardedAd(string    place, Action onCompleted);
+        void ShowRewardedAd(string place, Action onCompleted, Action onFailed);
 
         #endregion
 
@@ -50,7 +51,7 @@ namespace Core.AdsServices
 
         #region RemoveAds
 
-        void         RemoveAds(bool revokeConsent = false);
+        void RemoveAds(bool revokeConsent = false);
 
         #endregion
 

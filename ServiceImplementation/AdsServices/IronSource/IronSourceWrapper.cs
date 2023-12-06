@@ -34,6 +34,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         }
 
         private Action onRewardComplete;
+        private Action onRewardFailed;
+        
+        private bool isGotRewarded;
 
         public void Initialize()
         {
@@ -104,6 +107,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void RewardedVideoOnAdRewardedEvent(IronSourcePlacement arg1, IronSourceAdInfo arg2)
         {
+            this.isGotRewarded = true;
             this.onRewardComplete?.Invoke();
             this.onRewardComplete = null;
             this.signalBus.Fire(new RewardedAdCompletedSignal(""));
@@ -114,11 +118,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void RewardedVideoOnAdClosedEvent(IronSourceAdInfo obj)
         {
-            this.signalBus.Fire(new RewardedSkippedSignal(""));
+            if (!this.isGotRewarded)
+            {
+                this.onRewardFailed?.Invoke();
+                this.onRewardFailed = null;
+                this.signalBus.Fire(new RewardedSkippedSignal(""));
+            }
             this.signalBus.Fire(new RewardedAdClosedSignal(""));
         }
 
-        private void RewardedVideoOnAdShowFailedEvent(IronSourceError obj, IronSourceAdInfo info) { this.signalBus.Fire(new RewardedAdShowFailedSignal("")); }
+        private void RewardedVideoOnAdShowFailedEvent(IronSourceError obj, IronSourceAdInfo info)
+        {
+            this.onRewardFailed?.Invoke();
+            this.onRewardFailed = null;
+            this.signalBus.Fire(new RewardedAdShowFailedSignal(""));
+        }
 
         private void RewardedVideoOnAdClickedEvent(IronSourcePlacement obj, IronSourceAdInfo info) { this.signalBus.Fire(new RewardedAdLoadClickedSignal(obj.getPlacementName())); }
 
@@ -246,10 +260,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public AdNetworkSettings AdNetworkSettings                   => this.thirdPartiesConfig.AdSettings.IronSource;
         public bool              IsRewardedAdReady(string place)     { return IronSource.Agent.isRewardedVideoAvailable(); }
 
-        public void ShowRewardedAd(string place, Action onCompleted)
+        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
+            this.isGotRewarded = false;
             IronSource.Agent.showRewardedVideo(place);
             this.onRewardComplete = onCompleted;
+            this.onRewardFailed   = onFailed;
         }
 
         public void RemoveAds(bool revokeConsent = false) { PlayerPrefs.SetInt("EM_REMOVE_ADS", -1); }
