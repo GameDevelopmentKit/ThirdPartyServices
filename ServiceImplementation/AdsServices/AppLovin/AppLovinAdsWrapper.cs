@@ -32,6 +32,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private bool         isInit;
         private event Action RewardedAdCompletedOneTimeAction;
+        private event Action RewardedAdFailed;
 
         #endregion
 
@@ -464,12 +465,15 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             this.RewardedAdCompletedOneTimeAction?.Invoke();
             this.RewardedAdCompletedOneTimeAction = null;
+            this.RewardedAdFailed                 = null;
             this.signalBus.Fire(new RewardedAdCompletedSignal(placement.Name));
             this.InternalLoadRewarded(placement);
         }
 
         private void OnRewardedSkipped(AdPlacement placement)
         {
+            this.RewardedAdFailed?.Invoke();
+            this.RewardedAdFailed                 = null;
             this.RewardedAdCompletedOneTimeAction = null;
             this.signalBus.Fire(new RewardedSkippedSignal(placement.Name));
             this.InternalLoadRewarded(placement);
@@ -490,10 +494,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
             return isPlacementReady && MaxSdk.IsRewardedAdReady(id);
         }
 
-        public void ShowRewardedAd(string place, Action onCompleted)
+        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
             var placement = AdPlacement.PlacementWithName(place);
             this.RewardedAdCompletedOneTimeAction = onCompleted;
+            this.RewardedAdFailed                 = onFailed;
             this.InternalShowRewarded(placement);
         }
 
