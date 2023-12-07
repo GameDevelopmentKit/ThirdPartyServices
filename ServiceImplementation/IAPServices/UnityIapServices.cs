@@ -333,6 +333,10 @@ namespace ServiceImplementation.IAPServices
             {
                 this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(args.purchasedProduct.definition.id));
             }
+            else
+            {
+                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal() { ProductId = args.purchasedProduct.definition.id });
+            }
 
             this.onPurchaseComplete?.Invoke(args.purchasedProduct.definition.id);
             this.onPurchaseComplete = null;
@@ -344,6 +348,7 @@ namespace ServiceImplementation.IAPServices
         {
             this.onPurchaseFailed?.Invoke(product.definition.storeSpecificId);
             this.onPurchaseFailed = null;
+            this.signalBus.Fire(new OnIAPPurchaseFailedSignal() { ProductId = product.definition.storeSpecificId });
             this.logger.Log($"OnPurchaseFailed: FAIL. Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureReason}");
         }
     }
