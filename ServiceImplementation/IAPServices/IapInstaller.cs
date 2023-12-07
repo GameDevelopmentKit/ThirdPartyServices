@@ -18,6 +18,8 @@
 
             this.Container.DeclareSignal<OnRestorePurchaseCompleteSignal>();
             this.Container.DeclareSignal<OnStartDoingIAPSignal>();
+            this.Container.DeclareSignal<OnIAPPurchaseSuccessSignal>();
+            this.Container.DeclareSignal<OnIAPPurchaseFailedSignal>();
         }
     }
 }
