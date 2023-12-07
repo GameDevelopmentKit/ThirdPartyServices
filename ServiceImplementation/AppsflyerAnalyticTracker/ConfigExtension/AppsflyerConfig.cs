@@ -49,11 +49,12 @@ namespace Core.AnalyticServices
         [SerializeField] private string appsflyerDevKeyAndroid;
 
         [Header("App Id")]
+        [ValidateInput("ValidateAppIdIos", "Appsflyer App Id must start with 'id'", InfoMessageType.Error)]
         [SerializeField] private string appsflyerAppIdIos;
-        // [SerializeField][ReadOnly] private string appsflyerAppIdAndroid = Application.identifier;
-
 
         [SerializeField] private bool appsflyerIsDebug;
+
+        private bool ValidateAppIdIos(string value) { return string.IsNullOrEmpty(value) || this.appsflyerAppIdIos.StartsWith("id"); }
     }
 }
 #endif
