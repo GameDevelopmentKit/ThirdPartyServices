@@ -208,7 +208,7 @@ namespace ServiceImplementation.AdsServices.AdMob
         {
             return adValue => this.analyticService.Track(new AdsRevenueEvent
             {
-                AdsRevenueSourceId = "AdMob",
+                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
                 AdNetwork          = "AdMob",
                 AdFormat           = format,
                 Placement          = placement,
