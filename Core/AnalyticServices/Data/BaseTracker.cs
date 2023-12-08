@@ -167,7 +167,7 @@ namespace Core.AnalyticServices.Data
                     return parsedReceipt.Payload;
                 }
             }
-            catch (ArgumentException)
+            catch (Exception)
             {
                 //If the receipt can't be parsed, return the original.
                 return receipt;
