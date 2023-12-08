@@ -37,5 +37,18 @@ namespace Core.AdsServices
             };
         }
         #endif
+
+#if IRONSOURCE
+        public static IronSourceBannerPosition ToIronSourceBannerPosition(this AdViewPosition adViewPosition)
+        {
+            return adViewPosition switch
+            {
+                AdViewPosition.TopLeft      => IronSourceBannerPosition.TOP,
+                AdViewPosition.TopCenter    => IronSourceBannerPosition.TOP,
+                AdViewPosition.TopRight     => IronSourceBannerPosition.TOP,
+                _                           => IronSourceBannerPosition.BOTTOM,
+            };
+        }
+#endif
     }
 }

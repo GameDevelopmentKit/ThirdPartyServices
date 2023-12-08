@@ -186,15 +186,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void ShowMREC(AdViewPosition adViewPosition)
         {
-            if (!this.adServicesConfig.EnableMRECAd) return;
+            IronSource.Agent.loadBanner(IronSourceBannerSize.RECTANGLE, adViewPosition.ToIronSourceBannerPosition());
         }
 
-        public void HideMREC(AdViewPosition adViewPosition)             { }
+        public void HideMREC(AdViewPosition adViewPosition)             { IronSource.Agent.hideBanner(); }
         public void StopMRECAutoRefresh(AdViewPosition adViewPosition)  { }
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
-        public void LoadMREC(AdViewPosition adViewPosition)             { }
-        public bool IsMRECReady(AdViewPosition adViewPosition)          { return false; }
-        public void HideAllMREC()                                       { }
+
+        public void LoadMREC(AdViewPosition adViewPosition)    { }
+        public bool IsMRECReady(AdViewPosition adViewPosition) { return true; }
+        public void HideAllMREC()                              { IronSource.Agent.hideBanner(); }
 
         #endregion
 
