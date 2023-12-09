@@ -6,8 +6,6 @@ namespace ServiceImplementation.AdsServices.AdMob
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
-    using Cysharp.Threading.Tasks;
-    using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
@@ -21,14 +19,12 @@ namespace ServiceImplementation.AdsServices.AdMob
         private readonly AdMobSettings     config;
         private readonly SignalBus         signalBus;
         private readonly IAnalyticServices analyticService;
-        private readonly ILogService       logger;
 
-        public AdMobAdService(ThirdPartiesConfig config, SignalBus signalBus, IAnalyticServices analyticService, ILogService logger)
+        public AdMobAdService(ThirdPartiesConfig config, SignalBus signalBus, IAnalyticServices analyticService)
         {
             this.config          = config.AdSettings.AdMob;
             this.signalBus       = signalBus;
             this.analyticService = analyticService;
-            this.logger          = logger;
         }
 
         #endregion
@@ -135,7 +131,6 @@ namespace ServiceImplementation.AdsServices.AdMob
             #endregion
 
             this.interstitialAd.Show();
-            this.signalBus.Fire<InterstitialAdCalledSignal>(new(place));
         }
 
         #endregion
