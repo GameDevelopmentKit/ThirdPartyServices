@@ -41,9 +41,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInterfacesAndSelfTo<AdMobWrapper>().AsCached().NonLazy();
             if (!this.Container.HasBinding<IBackFillAdsService>())
             {
-                this.Container.Bind<IInitializable>().To<AdMobAdService>().AsCached();
-                this.Container.Bind<IAdLoadService>().To<AdMobAdService>().AsCached();
-                this.Container.Bind<IBackFillAdsService>().To<AdMobAdService>().AsCached();
+                this.Container.Bind(typeof(IInitializable), typeof(IAdLoadService), typeof(IBackFillAdsService)).To<AdMobAdService>().AsCached();
             }
 #else
             #if !APPLOVIN
