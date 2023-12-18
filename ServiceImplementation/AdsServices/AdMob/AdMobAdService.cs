@@ -95,7 +95,12 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private InterstitialAd interstitialAd;
 
-        public bool IsInterstitialAdReady(string _) { return this.interstitialAd?.CanShowAd() ?? false; }
+        public bool IsInterstitialAdReady(string _)
+        {
+            
+            Debug.Log($"onelog: 1111 test backfill ShowInterstitialAd this.IsInterstitialAdReady2 = {this.interstitialAd==null} {this.interstitialAd?.CanShowAd()} ");
+            return this.interstitialAd?.CanShowAd() ?? false;
+        }
 
         public void LoadInterstitialAd(string place)
         {
@@ -117,6 +122,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         public void ShowInterstitialAd(string place)
         {
+            Debug.Log($"onelog: 1111 test backfill ShowInterstitialAd this.IsInterstitialAdReady(place) = {this.IsInterstitialAdReady(place)}");
             if (!this.IsInterstitialAdReady(place)) return;
 
             #region Events
