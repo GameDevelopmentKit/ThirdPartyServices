@@ -98,7 +98,7 @@ namespace ServiceImplementation.AdsServices.AdMob
         public bool IsInterstitialAdReady(string _)
         {
             
-            Debug.Log($"onelog: 1111 test backfill ShowInterstitialAd this.IsInterstitialAdReady2 = {this.interstitialAd==null} {this.interstitialAd?.CanShowAd()} ");
+            Debug.Log($"onelog: 1111 test backfill IsInterstitialAdReady  = {this.interstitialAd==null} {this.interstitialAd?.CanShowAd()} ");
             return this.interstitialAd?.CanShowAd() ?? false;
         }
 
@@ -108,21 +108,25 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             InterstitialAd.Load(this.config.DefaultInterstitialAdId.Id, new(), (ad, error) =>
             {
+                Debug.Log($"onelog: 1111 test backfill LoadInterstitialAd1  = {this.interstitialAd==null}");
                 if (error is not null)
                 {
                     this.signalBus.Fire<InterstitialAdLoadFailedSignal>(new(place, error.GetMessage()));
                     return;
                 }
 
+                Debug.Log($"onelog: 1111 test backfill LoadInterstitialAd2  = {this.interstitialAd==null} ");
                 this.signalBus.Fire<InterstitialAdDownloadedSignal>(new(place));
                 this.interstitialAd?.Destroy();
                 this.interstitialAd = ad;
+                
+                Debug.Log($"onelog: 1111 test backfill LoadInterstitialAd3  = {this.interstitialAd==null}");
             });
         }
 
         public void ShowInterstitialAd(string place)
         {
-            Debug.Log($"onelog: 1111 test backfill ShowInterstitialAd this.IsInterstitialAdReady(place) = {this.IsInterstitialAdReady(place)}");
+            Debug.Log($"onelog: 1111 test backfill check ShowInterstitialAd = {this.IsInterstitialAdReady(place)}");
             if (!this.IsInterstitialAdReady(place)) return;
 
             #region Events
