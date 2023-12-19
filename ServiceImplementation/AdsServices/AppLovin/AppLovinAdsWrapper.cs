@@ -406,6 +406,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void ShowAOAAds()
         {
+            Debug.Log($"onelog: AOA ShowAOAAdsIfAvailable ShowAOAAds");
             MaxSdk.ShowAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.Id);
             this.InternalLoadAppOpenAd();
         }
