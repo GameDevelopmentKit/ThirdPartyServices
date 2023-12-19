@@ -272,6 +272,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
         protected void CreateAdBanner(string id, BannerAdsPosition position)
         {
             MaxSdk.CreateBanner(id, this.ConvertToBannerAdPosition(position));
+            if (!this.AppLovinSetting.IsAdaptiveBanner)
+            {
+                MaxSdk.SetBannerExtraParameter(id, "adaptive_banner", "false");
+            }
             MaxSdk.SetBannerBackgroundColor(id, new Color(1, 1, 1, 0));
         }
 

@@ -19,6 +19,8 @@
         /// Gets or sets the AppLovin SDKKey.
         /// </summary>
         public string SDKKey { get { return this.mSDKKey; } set { this.mSDKKey = value; } }
+        
+        public bool IsAdaptiveBanner => this.isAdaptiveBanner;
 
         /// <summary>
         /// Gets or sets the default banner identifier.
@@ -84,6 +86,8 @@
 
         [SerializeField, BoxGroup("Amazon"), HideLabel, ShowIf("mEnableAPS")]
         private AmazonApplovinSetting amazonApplovinSetting;
+
+        [SerializeField] private bool isAdaptiveBanner = true;
 
         [SerializeField] [LabelText("AgeRestrictMode")]
         private bool mAgeRestrictMode;
