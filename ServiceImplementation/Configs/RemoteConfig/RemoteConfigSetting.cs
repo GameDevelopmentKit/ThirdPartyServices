@@ -40,7 +40,6 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         [TableList] [LabelText("Misc Remote Configs")] [SerializeField]
         private List<RemoteConfig> mMiscRemoteConfigs = new()
         {
-            new RemoteConfig(RemoteConfigKey.EnableUmp, RemoteConfigKey.EnableUmp, "false"),
         };
 
         [TableList] [LabelText("Game Remote Configs")] [SerializeField]

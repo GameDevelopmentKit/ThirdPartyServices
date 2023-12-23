@@ -26,6 +26,8 @@
         public IronSourceSettings IronSource { get { return this.mIronSource; } }
 
         public bool EnableBreakAds { get { return this.enableBreakAds; } }
+        
+        public bool EnableUmp { get { return this.enableUmp; } }
 
         /// <summary>
         /// AOA threshold
@@ -55,6 +57,9 @@
 
         [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)]
         private bool enableBreakAds;
+
+        [SerializeField] [LabelText("Enable UMP", SdfIconType.QuestionDiamondFill)]
+        private bool enableUmp;
 
 #if UNITY_EDITOR
 

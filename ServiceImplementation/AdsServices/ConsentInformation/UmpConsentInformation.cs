@@ -4,27 +4,28 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
+    using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
 
     public class UmpConsentInformation : IConsentInformation
     {
         #region Inject
 
-        private readonly ILogService logService;
-        private readonly MiscConfig  miscConfig;
+        private readonly ILogService        logService;
+        private readonly ThirdPartiesConfig thirdPartiesConfig;
 
         #endregion
 
-        public UmpConsentInformation(ILogService logService, MiscConfig miscConfig)
+        public UmpConsentInformation(ILogService logService, ThirdPartiesConfig thirdPartiesConfig)
         {
-            this.logService = logService;
-            this.miscConfig = miscConfig;
+            this.logService         = logService;
+            this.thirdPartiesConfig = thirdPartiesConfig;
         }
 
         public async void Request()
         {
-            await UniTask.WaitUntil(() => this.miscConfig.IsFetchSucceeded);
-            if (!this.miscConfig.EnableUMP) return;
+            // await UniTask.WaitUntil(() => this.miscConfig.IsFetchSucceeded);
+            // if (!this.miscConfig.EnableUMP) return;
 
             var request = new ConsentRequestParameters
             {
