@@ -55,6 +55,10 @@
         public bool CreativeDebugger => this.mCreatveiDebugger;
         
         public bool MediationDebugger => this.mMediationDebugger;
+        
+        public bool EnableUmp => this.mEnableUmp;
+        
+        public string PrivacyPolicyUrl => this.mPrivacyPolicyUrl;
 
         /// <summary>
         /// Gets or sets the list of custom banner identifiers.
@@ -97,6 +101,12 @@
 
         [SerializeField] [LabelText("Mediation Debugger")]
         private bool mMediationDebugger;
+
+        [SerializeField] [LabelText("EnableUmp")]
+        private bool mEnableUmp;
+
+        [SerializeField] [LabelText("Privacy Policy Url")] [ShowIf("mEnableUmp")]
+        private string mPrivacyPolicyUrl;
 
         [SerializeField] [LabelText("SDK Key")]
         private string mSDKKey;

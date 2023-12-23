@@ -25,7 +25,6 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         public void Request()
         {
-            if (!this.thirdPartiesConfig.AdSettings.EnableUmp) return;
             if (!RegionHelper.IsEUAndEEACountry())
             {
                 this.logService.LogWithColor("Not EU country, no need to request consent", Color.red);
