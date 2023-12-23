@@ -5,7 +5,8 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
     using ServiceImplementation.Configs;
-    using ServiceImplementation.Configs.Ads;
+    using UnityEngine;
+    using Utilities.Utils;
 
     public class UmpConsentInformation : IConsentInformation
     {
@@ -22,10 +23,14 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             this.thirdPartiesConfig = thirdPartiesConfig;
         }
 
-        public async void Request()
+        public void Request()
         {
-            // await UniTask.WaitUntil(() => this.miscConfig.IsFetchSucceeded);
-            // if (!this.miscConfig.EnableUMP) return;
+            if (!this.thirdPartiesConfig.AdSettings.EnableUmp) return;
+            if (!RegionHelper.IsEUAndEEACountry())
+            {
+                this.logService.LogWithColor("Not EU country, no need to request consent", Color.red);
+                return;
+            }
 
             var request = new ConsentRequestParameters
             {
@@ -40,7 +45,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             if (consentError != null)
             {
                 // Handle the error.
-                this.logService.Error(consentError.Message);
+                this.logService.Error($"onelog: OnConsentInfoUpdated Error {consentError.Message}");
                 return;
             }
 
@@ -50,11 +55,12 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 if (formError != null)
                 {
                     // Consent gathering failed.
-                    this.logService.Error(formError.Message);
+                    this.logService.Error($"onelog: ConsentForm.LoadAndShowConsentFormIfRequired Error {formError.Message}");
                     return;
                 }
 
                 // Consent has been gathered.
+                this.logService.Log($"onelog: ConsentForm.LoadAndShowConsentFormIfRequired Success");
             });
 #endif
         }
