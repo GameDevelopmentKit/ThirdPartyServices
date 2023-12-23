@@ -20,6 +20,7 @@ namespace Core.AnalyticServices
             this.Container.DeclareSignal<EventTrackedSignal>();
             this.Container.DeclareSignal<SetUserIdSignal>();
             this.Container.DeclareSignal<AdRevenueSignal>();
+            this.Container.DeclareSignal<DoAnalyticSignal>();
         }
     }
 }

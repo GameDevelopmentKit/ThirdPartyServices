@@ -63,7 +63,9 @@ namespace Core.AnalyticServices.Data
         /// </summary>
         /// <param name="userId"></param>
         protected abstract void SetUserId(string userId);
-
+        
+        private bool isInit;
+        
         /// <summary>
         /// base constructor for trackers which sets up when/how events and states should be tracked
         /// </summary>
@@ -72,10 +74,15 @@ namespace Core.AnalyticServices.Data
             this.analyticConfig = analyticConfig;
             signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);
             signalBus.Subscribe<SetUserIdSignal>(signal => this.SetUserId(signal.UserId));
-            this.Init();
+            signalBus.Subscribe<DoAnalyticSignal>(this.Init);
         }
 
-        private async void Init() { await this.TrackerSetup(); }
+        protected void Init()
+        {
+            if (this.isInit) return;
+            this.isInit = true;
+            this.TrackerSetup();
+        }
 
         private async void EventTracked(EventTrackedSignal trackedData)
         {

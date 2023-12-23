@@ -42,6 +42,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void Initialize()
         {
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
+            if (this.thirdPartiesConfig.AdSettings.EnableUmp)
+            {
+                IronSource.Agent.setConsent(true);
+            }
+            this.signalBus.Fire(new DoAnalyticSignal());
 
             IronSourceEvents.onImpressionDataReadyEvent += this.ImpressionDataReadyEvent;
             //Add AdInfo Rewarded Video Events

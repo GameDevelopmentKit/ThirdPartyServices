@@ -5,6 +5,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
+    using Core.AnalyticServices.Signal;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs;
@@ -73,6 +74,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnSDKInitializedHandler(MaxSdkBase.SdkConfiguration obj)
         {
+            this.signalBus.Fire(new DoAnalyticSignal());
+            
 #if THEONE_ADS_DEBUG
             // Show Mediation Debugger
             MaxSdk.ShowMediationDebugger();
