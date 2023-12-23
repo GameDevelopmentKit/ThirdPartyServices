@@ -8,8 +8,6 @@ namespace ServiceImplementation.Configs.Ads
     {
         public bool IsFetchSucceeded { get; private set; }
 
-        public bool EnableUMP { get; set; }
-
         #region Inject
 
         private readonly SignalBus           signalBus;
@@ -35,11 +33,10 @@ namespace ServiceImplementation.Configs.Ads
 
         public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnFetchRemoteConfig); }
 
-        private void InitDefaultValue() { this.EnableUMP = RemoteConfigHelpers.GetBoolDefaultValue(this.remoteConfigSetting, RemoteConfigKey.EnableUmp); }
+        private void InitDefaultValue() { }
 
         private void OnFetchRemoteConfig()
         {
-            this.EnableUMP        = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableUmp);
             this.IsFetchSucceeded = true;
         }
     }
