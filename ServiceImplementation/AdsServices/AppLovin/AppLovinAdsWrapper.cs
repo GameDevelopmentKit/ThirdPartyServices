@@ -110,29 +110,29 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             return pos switch
             {
-                BannerAdsPosition.Top         => MaxSdkBase.BannerPosition.TopCenter,
-                BannerAdsPosition.Bottom      => MaxSdkBase.BannerPosition.BottomCenter,
-                BannerAdsPosition.TopLeft     => MaxSdkBase.BannerPosition.TopLeft,
-                BannerAdsPosition.TopRight    => MaxSdkBase.BannerPosition.TopRight,
-                BannerAdsPosition.BottomLeft  => MaxSdkBase.BannerPosition.BottomLeft,
+                BannerAdsPosition.Top => MaxSdkBase.BannerPosition.TopCenter,
+                BannerAdsPosition.Bottom => MaxSdkBase.BannerPosition.BottomCenter,
+                BannerAdsPosition.TopLeft => MaxSdkBase.BannerPosition.TopLeft,
+                BannerAdsPosition.TopRight => MaxSdkBase.BannerPosition.TopRight,
+                BannerAdsPosition.BottomLeft => MaxSdkBase.BannerPosition.BottomLeft,
                 BannerAdsPosition.BottomRight => MaxSdkBase.BannerPosition.BottomRight,
-                _                             => MaxSdkBase.BannerPosition.Centered
+                _ => MaxSdkBase.BannerPosition.Centered
             };
         }
 
         protected MaxSdkBase.AdViewPosition ConvertAdViewPosition(AdViewPosition adViewPosition) =>
             adViewPosition switch
             {
-                AdViewPosition.TopLeft      => MaxSdkBase.AdViewPosition.TopLeft,
-                AdViewPosition.TopCenter    => MaxSdkBase.AdViewPosition.TopCenter,
-                AdViewPosition.TopRight     => MaxSdkBase.AdViewPosition.TopRight,
-                AdViewPosition.CenterLeft   => MaxSdkBase.AdViewPosition.CenterLeft,
-                AdViewPosition.Centered     => MaxSdkBase.AdViewPosition.Centered,
-                AdViewPosition.CenterRight  => MaxSdkBase.AdViewPosition.CenterRight,
-                AdViewPosition.BottomLeft   => MaxSdkBase.AdViewPosition.BottomLeft,
+                AdViewPosition.TopLeft => MaxSdkBase.AdViewPosition.TopLeft,
+                AdViewPosition.TopCenter => MaxSdkBase.AdViewPosition.TopCenter,
+                AdViewPosition.TopRight => MaxSdkBase.AdViewPosition.TopRight,
+                AdViewPosition.CenterLeft => MaxSdkBase.AdViewPosition.CenterLeft,
+                AdViewPosition.Centered => MaxSdkBase.AdViewPosition.Centered,
+                AdViewPosition.CenterRight => MaxSdkBase.AdViewPosition.CenterRight,
+                AdViewPosition.BottomLeft => MaxSdkBase.AdViewPosition.BottomLeft,
                 AdViewPosition.BottomCenter => MaxSdkBase.AdViewPosition.BottomCenter,
-                AdViewPosition.BottomRight  => MaxSdkBase.AdViewPosition.BottomRight,
-                _                           => MaxSdkBase.AdViewPosition.BottomCenter
+                AdViewPosition.BottomRight => MaxSdkBase.AdViewPosition.BottomRight,
+                _ => MaxSdkBase.AdViewPosition.BottomCenter
             };
 
         protected AdInfo ConvertAdInfo(MaxSdkBase.AdInfo maxAdInfo)
@@ -243,6 +243,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             id = placement == AdPlacement.Default
                 ? this.AppLovinSetting.DefaultBannerAdId.Id
                 : this.FindIdForPlacement(this.AppLovinSetting.CustomBannerAdIds, placement);
+
             return !string.IsNullOrEmpty(id);
         }
 
@@ -267,15 +268,17 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.ShowBanner(id);
         }
 
-        protected virtual void InternalCreateBanner(string id, BannerAdsPosition position, BannerSize bannerSize) { this.CreateAdBanner(id, position); }
+        protected virtual void InternalCreateBanner(string id, BannerAdsPosition position, BannerSize bannerSize) { this.CreateAdBanner(id, position, bannerSize); }
 
-        protected void CreateAdBanner(string id, BannerAdsPosition position)
+        protected void CreateAdBanner(string id, BannerAdsPosition position, BannerSize bannerSize)
         {
             MaxSdk.CreateBanner(id, this.ConvertToBannerAdPosition(position));
             if (!this.AppLovinSetting.IsAdaptiveBanner)
             {
                 MaxSdk.SetBannerExtraParameter(id, "adaptive_banner", "false");
             }
+
+            MaxSdk.SetBannerWidth(id, bannerSize.width);
             MaxSdk.SetBannerBackgroundColor(id, new Color(1, 1, 1, 0));
         }
 
@@ -317,6 +320,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public bool IsInterstitialAdReady(string place)
         {
             var isPlacementReady = this.IsInterstitialPlacementReady(place, out var id);
+
             return isPlacementReady && MaxSdk.IsInterstitialReady(id);
         }
 
@@ -332,6 +336,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             id = placement == AdPlacement.Default
                 ? this.AppLovinSetting.DefaultInterstitialAdId.Id
                 : this.FindIdForPlacement(this.AppLovinSetting.CustomInterstitialAdIds, placement);
+
             return !string.IsNullOrEmpty(id);
         }
 
@@ -397,7 +402,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.IsShowingAOAAd = true;
         }
 
-        private void OnAppOpenClickedEvent(string arg1, MaxSdkBase.AdInfo arg2)       { this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(arg1)); }
+        private void OnAppOpenClickedEvent(string arg1, MaxSdkBase.AdInfo arg2) { this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(arg1)); }
+
         private void OnAppOpenLoadFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2) { this.signalBus.Fire(new AppOpenLoadFailedSignal(arg1)); }
 
         private void OnAppOpenLoadedEvent(string arg1, MaxSdkBase.AdInfo arg2) { this.signalBus.Fire(new AppOpenLoadedSignal(arg1)); }
@@ -405,6 +411,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public bool IsAOAReady()
         {
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return false;
+
             return MaxSdk.IsAppOpenAdReady(this.AppLovinSetting.DefaultAOAAdId.Id) && !this.IsShowingAOAAd;
         }
 
@@ -457,6 +464,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 {
                     this.OnRewardCompleted(this.currentShowingRewarded);
                     this.signalBus.Fire(new RewardedAdClosedSignal(this.currentShowingRewarded.Name));
+
                     return;
                 }
             }
@@ -489,12 +497,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
             id = placement == AdPlacement.Default
                 ? this.AppLovinSetting.DefaultRewardedAdId.Id
                 : this.FindIdForPlacement(this.AppLovinSetting.CustomRewardedAdIds, placement);
+
             return !string.IsNullOrEmpty(id);
         }
 
         public bool IsRewardedAdReady(string place)
         {
             var isPlacementReady = this.IsRewardedPlacementReady(place, out var id);
+
             return isPlacementReady && MaxSdk.IsRewardedAdReady(id);
         }
 
@@ -600,7 +610,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #region IAOAServices
 
-        public  bool IsShowingAOAAd          { get; set; } = false;
+        public bool IsShowingAOAAd { get; set; } = false;
+
         private void InternalLoadAppOpenAd() { MaxSdk.LoadAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.Id); }
 
         #endregion
