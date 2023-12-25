@@ -276,9 +276,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (!this.AppLovinSetting.IsAdaptiveBanner)
             {
                 MaxSdk.SetBannerExtraParameter(id, "adaptive_banner", "false");
+                MaxSdk.SetBannerWidth(id, bannerSize.width);
             }
 
-            MaxSdk.SetBannerWidth(id, bannerSize.width);
             MaxSdk.SetBannerBackgroundColor(id, new Color(1, 1, 1, 0));
         }
 
