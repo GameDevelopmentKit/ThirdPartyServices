@@ -95,19 +95,19 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 this.bannerAdRequest.onFailedWithError += error =>
                 {
                     MaxSdk.SetBannerLocalExtraParameter(id, AmazonErrorMessage, error.GetAdError());
-                    this.CreateAdBanner(id, position);
+                    this.CreateAdBanner(id, position, bannerSize);
                 };
 
                 this.bannerAdRequest.onSuccess += response =>
                 {
                     MaxSdk.SetBannerLocalExtraParameter(id, AmazonResponseMessage, response.GetResponse());
-                    this.CreateAdBanner(id, position);
+                    this.CreateAdBanner(id, position, bannerSize);
                 };
                 this.bannerAdRequest.LoadAd();
             }
             else
             {
-                this.CreateAdBanner(id, position);
+                this.CreateAdBanner(id, position, bannerSize);
             }
         }
 
