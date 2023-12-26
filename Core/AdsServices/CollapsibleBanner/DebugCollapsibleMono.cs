@@ -13,22 +13,22 @@ namespace Core.AdsServices.CollapsibleBanner
         private void OnGUI()
         {
             if (this.collapsibleBanner == null) return;
-            if (GUI.Button(new Rect(Screen.width / 2f - 100f, 100f, 200f, 120f), "Load Ad"))
+            if (GUI.Button(new Rect(200f, 100f, 200f, 120f), "Load Ad"))
             {
                 this.collapsibleBanner.LoadBanner();
             }
 
-            if (GUI.Button(new Rect(Screen.width / 2f - 100f, 100f, 200f, 120f), "Show Ad"))
+            if (GUI.Button(new Rect(200f, 300f, 200f, 120f), "Show Ad"))
             {
                 this.collapsibleBanner.ShowBanner();
             }
 
-            if (GUI.Button(new Rect(Screen.width / 2f - 100f, 100f, 200f, 120f), "Hide Ad"))
+            if (GUI.Button(new Rect(Screen.width - 400f, 100f, 200f, 120f), "Hide Ad"))
             {
                 this.collapsibleBanner.HideBanner();
             }
 
-            if (GUI.Button(new Rect(Screen.width / 2f - 100f, 100f, 200f, 120f), "Destroy Ad"))
+            if (GUI.Button(new Rect(Screen.width - 400f, 300f, 200f, 120f), "Destroy Ad"))
             {
                 this.collapsibleBanner.DestroyCollapsibleBanner();
             }
