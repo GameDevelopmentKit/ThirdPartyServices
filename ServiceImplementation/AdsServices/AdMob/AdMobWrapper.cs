@@ -6,6 +6,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System.Linq;
     using System.Runtime.CompilerServices;
     using Core.AdsServices;
+    using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -21,7 +22,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AdsServices.Native;
 #endif
 
-    public class AdMobWrapper : IAOAAdService, IMRECAdService, IInitializable
+    public class AdMobWrapper : IAOAAdService, IMRECAdService, IInitializable, ICollapsibleBanner
 #if ADMOB_NATIVE_ADS
         , INativeAdsService
 #endif
@@ -107,15 +108,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region AOA
 
-        public bool IsShowingAOAAd           { get; set; } = false;
+        public bool IsShowingAOAAd { get; set; } = false;
 
         public float LoadingTimeToShowAOA => this.thirdPartiesConfig.AdSettings.AOAThreshHold;
 
 
-        public bool IsAOAReady()
-        {
-            return this.aoaAdLoadedInstance.IsAoaAdAvailable && !this.IsShowingAOAAd;
-        }
+        public bool IsAOAReady() { return this.aoaAdLoadedInstance.IsAoaAdAvailable && !this.IsShowingAOAAd; }
         public void ShowAOAAds()
         {
             this.aoaAdLoadedInstance.Show();
@@ -433,6 +431,45 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             this.logService.Log($"Received paid event. (currency: {args.CurrencyCode}, value: {args.Value}");
         }
+
+        #region Collapsible Banner
+
+        private BannerView collapsibleBanner;
+
+        private void CreateBanner()
+        {
+            if (this.collapsibleBanner != null)
+            {
+                this.DestroyCollapsibleBanner();
+            }
+            this.collapsibleBanner = new BannerView(this.ADMobSettings.CollapsibleBannerAdId.Id, AdSize.Banner, AdPosition.Bottom);
+        }
+        
+        public void LoadBanner()
+        {
+            if (this.collapsibleBanner == null)
+            {
+                this.CreateBanner();
+            }
+
+            var request = new AdRequest();
+            request.Extras.Add("collapsible", "bottom");
+            this.collapsibleBanner?.LoadAd(request);
+        }
+
+        public void ShowBanner()
+        {
+            if (this.collapsibleBanner != null)
+            {
+                this.collapsibleBanner.Show();
+            }
+        }
+
+        public void HideBanner() { this.collapsibleBanner?.Hide(); }
+
+        public void DestroyCollapsibleBanner() { this.collapsibleBanner?.Destroy(); }
+
+        #endregion
     }
 #endif
 }

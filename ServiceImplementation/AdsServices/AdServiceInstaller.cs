@@ -15,6 +15,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.AppLovin;
 #endif
 #if ADMOB
+    using Core.AdsServices.CollapsibleBanner;
     using ServiceImplementation.AdsServices.AdMob;
 #endif
 
@@ -41,7 +42,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInterfacesAndSelfTo<AdMobWrapper>().AsCached().NonLazy();
             if (!this.Container.HasBinding<IBackFillAdsService>())
             {
-                this.Container.Bind(typeof(IInitializable), typeof(IAdLoadService), typeof(IBackFillAdsService)).To<AdMobAdService>().AsCached();
+                this.Container.Bind(typeof(IInitializable), typeof(ICollapsibleBanner), typeof(IAdLoadService), typeof(IBackFillAdsService)).To<AdMobAdService>().AsCached();
             }
 #else
             #if !APPLOVIN
