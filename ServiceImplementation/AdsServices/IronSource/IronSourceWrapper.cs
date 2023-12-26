@@ -37,6 +37,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private Action onRewardFailed;
         
         private bool isGotRewarded;
+        private bool isLoadedAdaptiveBanner;
 
         public void Initialize()
         {
@@ -235,6 +236,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 _                     => IronSourceBannerPosition.BOTTOM
             };
             IronSource.Agent.loadBanner(this.GetBannerSize(), position);
+            this.isLoadedAdaptiveBanner = true;
         }
 
         private IronSourceBannerSize GetBannerSize()
@@ -242,7 +244,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             var bannerSize = IronSourceBannerSize.BANNER;
 
 #if ADMOB
-            if (this.thirdPartiesConfig.AdSettings.IronSource.IsAdaptiveBanner)
+            if (this.thirdPartiesConfig.AdSettings.IronSource.IsAdaptiveBanner && !this.isLoadedAdaptiveBanner)
             {
                 var width = (int)(Screen.width / GoogleMobileAds.Api.MobileAds.Utils.GetDeviceScale());
                 bannerSize = new IronSourceBannerSize(width, 60);
