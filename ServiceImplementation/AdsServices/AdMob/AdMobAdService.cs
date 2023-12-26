@@ -248,7 +248,14 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         public void HideBanner() { this.collapsibleBanner?.Hide(); }
 
-        public void DestroyCollapsibleBanner() { this.collapsibleBanner?.Destroy(); }
+        public void DestroyCollapsibleBanner()
+        {
+            if (this.collapsibleBanner != null)
+            {
+                this.collapsibleBanner.Destroy();
+                this.collapsibleBanner = null;
+            }
+        }
 
         #endregion
     }
