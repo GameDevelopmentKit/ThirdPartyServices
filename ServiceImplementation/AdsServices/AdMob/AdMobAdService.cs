@@ -3,6 +3,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 {
     using System;
     using Core.AdsServices;
+    using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -12,7 +13,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using UnityEngine;
     using Zenject;
 
-    public class AdMobAdService : IAdServices, IAdLoadService, IBackFillAdsService, IInitializable
+    public class AdMobAdService : IAdServices, IAdLoadService, IBackFillAdsService, IInitializable, ICollapsibleBanner
     {
         #region Constructor
 
@@ -211,6 +212,45 @@ namespace ServiceImplementation.AdsServices.AdMob
                 Revenue            = adValue.Value / 1e6,
             });
         }
+        
+        #region Collapsible Banner
+
+        private BannerView collapsibleBanner;
+
+        private void CreateBanner()
+        {
+            if (this.collapsibleBanner != null)
+            {
+                this.DestroyCollapsibleBanner();
+            }
+            this.collapsibleBanner = new BannerView(this.config.CollapsibleBannerAdId.Id, AdSize.Banner, AdPosition.Bottom);
+        }
+        
+        public void LoadBanner()
+        {
+            if (this.collapsibleBanner == null)
+            {
+                this.CreateBanner();
+            }
+
+            var request = new AdRequest();
+            request.Extras.Add("collapsible", "bottom");
+            this.collapsibleBanner?.LoadAd(request);
+        }
+
+        public void ShowBanner()
+        {
+            if (this.collapsibleBanner != null)
+            {
+                this.collapsibleBanner.Show();
+            }
+        }
+
+        public void HideBanner() { this.collapsibleBanner?.Hide(); }
+
+        public void DestroyCollapsibleBanner() { this.collapsibleBanner?.Destroy(); }
+
+        #endregion
     }
 }
 #endif

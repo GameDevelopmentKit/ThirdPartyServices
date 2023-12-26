@@ -22,7 +22,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AdsServices.Native;
 #endif
 
-    public class AdMobWrapper : IAOAAdService, IMRECAdService, IInitializable, ICollapsibleBanner
+    public class AdMobWrapper : IAOAAdService, IMRECAdService, IInitializable
 #if ADMOB_NATIVE_ADS
         , INativeAdsService
 #endif
@@ -431,45 +431,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             this.logService.Log($"Received paid event. (currency: {args.CurrencyCode}, value: {args.Value}");
         }
-
-        #region Collapsible Banner
-
-        private BannerView collapsibleBanner;
-
-        private void CreateBanner()
-        {
-            if (this.collapsibleBanner != null)
-            {
-                this.DestroyCollapsibleBanner();
-            }
-            this.collapsibleBanner = new BannerView(this.ADMobSettings.CollapsibleBannerAdId.Id, AdSize.Banner, AdPosition.Bottom);
-        }
-        
-        public void LoadBanner()
-        {
-            if (this.collapsibleBanner == null)
-            {
-                this.CreateBanner();
-            }
-
-            var request = new AdRequest();
-            request.Extras.Add("collapsible", "bottom");
-            this.collapsibleBanner?.LoadAd(request);
-        }
-
-        public void ShowBanner()
-        {
-            if (this.collapsibleBanner != null)
-            {
-                this.collapsibleBanner.Show();
-            }
-        }
-
-        public void HideBanner() { this.collapsibleBanner?.Hide(); }
-
-        public void DestroyCollapsibleBanner() { this.collapsibleBanner?.Destroy(); }
-
-        #endregion
     }
 #endif
 }
