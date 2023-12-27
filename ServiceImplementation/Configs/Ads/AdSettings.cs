@@ -3,6 +3,7 @@
     using System;
     using Sirenix.OdinInspector;
     using UnityEngine;
+    using UnityEngine.Serialization;
 #if UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
 #endif
@@ -29,7 +30,7 @@
         
         public bool EnableUmp { get { return this.enableUmp; } }
 
-        public bool ShowBannerWhenOpen { get { return this.showBannerWhenOpen; } }
+        public bool ShowFirstBanner { get { return this.showFirstBanner; } }
 
         /// <summary>
         /// AOA threshold
@@ -45,8 +46,8 @@
         [SerializeField] [LabelText("Enable UMP", SdfIconType.QuestionDiamondFill)] [FoldoutGroup("Misc")]
         private bool enableUmp;
 
-        [SerializeField] [LabelText("Show Banner When Open", SdfIconType.PatchQuestionFill)] [FoldoutGroup("Misc")]
-        private bool showBannerWhenOpen = true;
+        [SerializeField] [LabelText("Show First Banner", SdfIconType.PatchQuestionFill)] [FoldoutGroup("Misc")]
+        private bool showFirstBanner = true;
 
         [SerializeField] [LabelText("AdMob", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdMob")]
         private bool enableAdMob;

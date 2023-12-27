@@ -252,7 +252,6 @@ namespace ServiceImplementation.AdsServices.AdMob
                 #endregion
             }
 
-            this.collapsibleBannerView.Show();
             var request = new AdRequest();
             request.Extras.Add("collapsible", "bottom");
             this.collapsibleBannerView.LoadAd(request);
