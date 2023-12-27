@@ -13,7 +13,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using UnityEngine;
     using Zenject;
 
-    public class AdMobAdService : IAdServices, IAdLoadService, IBackFillAdsService, IInitializable, ICollapsibleBanner
+    public class AdMobAdService : IAdServices, IAdLoadService, IBackFillAdsService, IInitializable, ICollapsibleBannerAd
     {
         #region Constructor
 
@@ -212,48 +212,60 @@ namespace ServiceImplementation.AdsServices.AdMob
                 Revenue            = adValue.Value / 1e6,
             });
         }
-        
+
         #region Collapsible Banner
 
-        private BannerView collapsibleBanner;
+        private BannerView collapsibleBannerView;
 
         private void CreateBanner()
         {
-            if (this.collapsibleBanner != null)
+            if (this.collapsibleBannerView != null)
             {
-                this.DestroyCollapsibleBanner();
-            }
-            this.collapsibleBanner = new BannerView(this.config.CollapsibleBannerAdId.Id, AdSize.Banner, AdPosition.Bottom);
-        }
-        
-        public void LoadBanner()
-        {
-            if (this.collapsibleBanner == null)
-            {
-                this.CreateBanner();
+                this.DestroyCollapsibleBannerAd();
             }
 
+            this.collapsibleBannerView = new BannerView(this.config.CollapsibleBannerAdId.Id, AdSize.Banner, AdPosition.Bottom);
+        }
+
+        public void ShowCollapsibleBannerAd()
+        {
+            const string PLACEMENT = "CollapsibleBanner";
+
+            if (string.IsNullOrEmpty(this.config.CollapsibleBannerAdId.Id))
+            {
+                return;
+            }
+
+            if (this.collapsibleBannerView == null)
+            {
+                this.collapsibleBannerView = new BannerView(this.config.CollapsibleBannerAdId.Id, AdSize.Banner, AdPosition.Bottom);
+
+                #region Events
+
+                this.collapsibleBannerView.OnBannerAdLoaded            += () => this.signalBus.Fire<CollapsibleBannerAdLoadedSignal>(new(PLACEMENT));
+                this.collapsibleBannerView.OnBannerAdLoadFailed        += (error) => this.signalBus.Fire<CollapsibleBannerAdLoadFailedSignal>(new(PLACEMENT, error.GetMessage()));
+                this.collapsibleBannerView.OnAdFullScreenContentOpened += () => this.signalBus.Fire<CollapsibleBannerAdPresentedSignal>(new(PLACEMENT));
+                this.collapsibleBannerView.OnAdFullScreenContentClosed += () => this.signalBus.Fire<CollapsibleBannerAdDismissedSignal>(new(PLACEMENT));
+                this.collapsibleBannerView.OnAdClicked                 += () => this.signalBus.Fire<CollapsibleBannerAdClickedSignal>(new(PLACEMENT));
+                this.collapsibleBannerView.OnAdPaid                    += this.TrackAdRevenue("CollapsibleBanner", PLACEMENT);
+
+                #endregion
+            }
+
+            this.collapsibleBannerView.Show();
             var request = new AdRequest();
             request.Extras.Add("collapsible", "bottom");
-            this.collapsibleBanner?.LoadAd(request);
+            this.collapsibleBannerView.LoadAd(request);
         }
 
-        public void ShowBanner()
-        {
-            if (this.collapsibleBanner != null)
-            {
-                this.collapsibleBanner.Show();
-            }
-        }
+        public void HideCollapsibleBannerAd() { this.collapsibleBannerView?.Hide(); }
 
-        public void HideBanner() { this.collapsibleBanner?.Hide(); }
-
-        public void DestroyCollapsibleBanner()
+        public void DestroyCollapsibleBannerAd()
         {
-            if (this.collapsibleBanner != null)
+            if (this.collapsibleBannerView != null)
             {
-                this.collapsibleBanner.Destroy();
-                this.collapsibleBanner = null;
+                this.collapsibleBannerView.Destroy();
+                this.collapsibleBannerView = null;
             }
         }
 

@@ -5,32 +5,27 @@ namespace Core.AdsServices.CollapsibleBanner
 
     public class DebugCollapsibleMono : MonoBehaviour
     {
-        private ICollapsibleBanner collapsibleBanner;
+        private ICollapsibleBannerAd collapsibleBannerAd;
 
         [Inject]
-        private void Init(ICollapsibleBanner collapsibleBanner) { this.collapsibleBanner = collapsibleBanner; }
+        private void Init(ICollapsibleBannerAd collapsibleBannerAd) { this.collapsibleBannerAd = collapsibleBannerAd; }
 
         private void OnGUI()
         {
-            if (this.collapsibleBanner == null) return;
-            if (GUI.Button(new Rect(200f, 100f, 200f, 120f), "Load Ad"))
-            {
-                this.collapsibleBanner.LoadBanner();
-            }
-
+            if (this.collapsibleBannerAd == null) return;
             if (GUI.Button(new Rect(200f, 300f, 200f, 120f), "Show Ad"))
             {
-                this.collapsibleBanner.ShowBanner();
+                this.collapsibleBannerAd.ShowCollapsibleBannerAd();
             }
 
             if (GUI.Button(new Rect(Screen.width - 400f, 100f, 200f, 120f), "Hide Ad"))
             {
-                this.collapsibleBanner.HideBanner();
+                this.collapsibleBannerAd.HideCollapsibleBannerAd();
             }
 
             if (GUI.Button(new Rect(Screen.width - 400f, 300f, 200f, 120f), "Destroy Ad"))
             {
-                this.collapsibleBanner.DestroyCollapsibleBanner();
+                this.collapsibleBannerAd.DestroyCollapsibleBannerAd();
             }
         }
     }
