@@ -1,4 +1,4 @@
-#if THEONE_IAP
+#if UNITY_IAP
 namespace ServiceImplementation.IAPServices
 {
     using System;
