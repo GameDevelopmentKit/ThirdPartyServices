@@ -37,7 +37,7 @@ namespace Core.AdsServices
         bool IsRewardedAdReady(string place);
 
         // void ShowRewardedAd(string    place);
-        void ShowRewardedAd(string place, Action onCompleted, Action onFailed);
+        void ShowRewardedAd(string place, Action onCompleted, Action onFailed = null);
 
         #endregion
 
