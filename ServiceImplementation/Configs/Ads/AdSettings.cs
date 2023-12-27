@@ -3,10 +3,16 @@
     using System;
     using Sirenix.OdinInspector;
     using UnityEngine;
-    using UnityEngine.Serialization;
 #if UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
 #endif
+
+    public enum BannerLoadStrategy
+    {
+        Instantiate,
+        AfterLoading,
+        Manually
+    }
 
     [Serializable]
     public class AdSettings
@@ -27,10 +33,10 @@
         public IronSourceSettings IronSource { get { return this.mIronSource; } }
 
         public bool EnableBreakAds { get { return this.enableBreakAds; } }
-        
+
         public bool EnableUmp { get { return this.enableUmp; } }
 
-        public bool ShowFirstBanner { get { return this.showFirstBanner; } }
+        public BannerLoadStrategy BannerLoadStrategy { get { return this.bannerLoadStrategy; } }
 
         /// <summary>
         /// AOA threshold
@@ -46,8 +52,8 @@
         [SerializeField] [LabelText("Enable UMP", SdfIconType.QuestionDiamondFill)] [FoldoutGroup("Misc")]
         private bool enableUmp;
 
-        [SerializeField] [LabelText("Show First Banner", SdfIconType.PatchQuestionFill)] [FoldoutGroup("Misc")]
-        private bool showFirstBanner = true;
+        [SerializeField] [LabelText("Banner Load Strategy", SdfIconType.BookmarkFill)] [FoldoutGroup("Misc")]
+        private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.Instantiate;
 
         [SerializeField] [LabelText("AdMob", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdMob")]
         private bool enableAdMob;
