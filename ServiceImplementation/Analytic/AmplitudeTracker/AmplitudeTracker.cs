@@ -79,7 +79,7 @@ namespace ServiceImplementation.AmplitudeTracker
                 return;
             }
 
-            var sku     = iapTransaction.PriceSku;
+            var sku     = iapTransaction.OfferSku;
             var rev     = iapTransaction.Price;
             var iso     = iapTransaction.CurrencyCode;
             var receipt = iapTransaction.Receipt;

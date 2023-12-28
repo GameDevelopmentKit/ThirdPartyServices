@@ -74,10 +74,9 @@ namespace ServiceImplementation.IAPServices
 
         private void AddAllProduct(ConfigurationBuilder builder)
         {
-            for (var i = 0; i < this.iapPacks.Count; i++)
+            foreach (var iapPack in this.iapPacks.Values)
             {
-                var current = this.iapPacks.ElementAt(i);
-                builder.AddProduct(current.Value.Id, this.ConvertToUnityProductType(current.Value.ProductType));
+                builder.AddProduct(iapPack.Id, this.ConvertToUnityProductType(iapPack.ProductType));
             }
         }
 
@@ -336,11 +335,8 @@ namespace ServiceImplementation.IAPServices
             }
             else
             {
-                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal()
-                {
-                    ProductId        = args.purchasedProduct.definition.id,
-                    PurchasedProduct = args.purchasedProduct
-                });
+                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal() { ProductId = args.purchasedProduct.definition.id });
+                this.signalBus.Fire(new OnUnityIAPPurchaseSuccessSignal(args.purchasedProduct) );
             }
 
             this.onPurchaseComplete?.Invoke(args.purchasedProduct.definition.id);
