@@ -34,8 +34,6 @@
 
         public bool EnableBreakAds { get { return this.enableBreakAds; } }
 
-        public bool EnableUmp { get { return this.enableUmp; } }
-        
         public bool CollapsibleRefreshOnScreenShow => this.mCollapsibleRefreshOnScreenShow;
 
         public BannerLoadStrategy BannerLoadStrategy { get { return this.bannerLoadStrategy; } }
@@ -50,9 +48,6 @@
 
         [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)] [FoldoutGroup("Misc")]
         private bool enableBreakAds;
-
-        [SerializeField] [LabelText("Enable UMP", SdfIconType.QuestionDiamondFill)] [FoldoutGroup("Misc")]
-        private bool enableUmp;
 
         [SerializeField] [LabelText("Banner Load Strategy", SdfIconType.BookmarkFill)] [FoldoutGroup("Misc")]
         private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.Instantiate;
