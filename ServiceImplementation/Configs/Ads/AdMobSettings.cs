@@ -53,6 +53,8 @@
         /// Enables or disables test mode.
         /// </summary>
         public bool EnableTestMode { get => this.mEnableTestMode; set => this.mEnableTestMode = value; }
+        
+        public bool CollapsibleRefreshOnScreenShow { get => this.mCollapsibleRefreshOnScreenShow; set => this.mCollapsibleRefreshOnScreenShow = value; }
 
         /// <summary>
         /// Gets or sets the list of custom banner identifiers.
@@ -146,6 +148,9 @@
         [SerializeField] [LabelText("Enable Test Mode")]
         private bool mEnableTestMode;
 
+        [SerializeField] [LabelText("Collapsible Auto Refresh")] [Tooltip("Collapsible Banner will auto refresh on Screen Show")] [ShowIf("HasCollapsibleAdId")]
+        private bool mCollapsibleRefreshOnScreenShow = true;
+
         [SerializeField] [LabelText("Banner")] [BoxGroup("Default Id")]
         private AdId mDefaultBannerAdId;
 
@@ -183,6 +188,7 @@
         [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomRewardedInterstitialAdIds;
         
-        
+        // use by Odin
+        private bool HasCollapsibleAdId() => this.mCollapsibleBannerAdId != null && !string.IsNullOrEmpty(this.mCollapsibleBannerAdId.Id);
     }
 }
