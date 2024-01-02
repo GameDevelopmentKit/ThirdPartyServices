@@ -1,10 +1,11 @@
 ﻿namespace ServiceImplementation.Configs.Ads
 {
-    using System;
-    using System.Collections.Generic;
 #if APS_ENABLE
     using AmazonAds;
 #endif
+    using System;
+    using System.Collections.Generic;
+    using AppLovinMax.Scripts.IntegrationManager.Editor;
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
@@ -19,7 +20,7 @@
         /// Gets or sets the AppLovin SDKKey.
         /// </summary>
         public string SDKKey { get { return this.mSDKKey; } set { this.mSDKKey = value; } }
-        
+
         public bool IsAdaptiveBanner => this.isAdaptiveBanner;
 
         /// <summary>
@@ -53,11 +54,11 @@
         public bool AgeRestrictMode { get { return this.mAgeRestrictMode; } set { this.mAgeRestrictMode = value; } }
 
         public bool CreativeDebugger => this.mCreatveiDebugger;
-        
+
         public bool MediationDebugger => this.mMediationDebugger;
-        
+
         public bool EnableUmp => this.mEnableUmp;
-        
+
         public string PrivacyPolicyUrl => this.mPrivacyPolicyUrl;
 
         /// <summary>
@@ -102,10 +103,10 @@
         [SerializeField] [LabelText("Mediation Debugger")]
         private bool mMediationDebugger;
 
-        [SerializeField] [LabelText("EnableUmp")]
+        [SerializeField] [ReadOnly] [LabelText("EnableUmp")] [BoxGroup("UMP")] [OnValueChanged("OnEnableUmpChanged")]
         private bool mEnableUmp;
 
-        [SerializeField] [LabelText("Privacy Policy Url")] [ShowIf("mEnableUmp")]
+        [SerializeField] [LabelText("Privacy Policy Url")] [ShowIf("mEnableUmp")] [BoxGroup("UMP")] [OnValueChanged("OnPrivacyPolicyUrlChanged")] [ValidateInput("ValidatePrivacyPolicyUrl", "Privacy Policy Url is invalid")]
         private string mPrivacyPolicyUrl;
 
         [SerializeField] [LabelText("SDK Key")]
@@ -141,6 +142,36 @@
             const string APSSymbol = "APS_ENABLE";
             DefineSymbolEditorUtils.SetDefineSymbol(APSSymbol, this.mEnableAPS);
         }
+
+        private void OnEnableUmpChanged()
+        {
+            AppLovinInternalSettings.Instance.ConsentFlowEnabled = this.mEnableUmp;
+            AppLovinInternalSettings.Instance.Save();
+        }
+
+        private void OnPrivacyPolicyUrlChanged()
+        {
+            AppLovinInternalSettings.Instance.ConsentFlowPrivacyPolicyUrl = this.mPrivacyPolicyUrl;
+            AppLovinInternalSettings.Instance.Save();
+        }
+
+        [OnInspectorInit]
+        private void LoadAdmobSetting()
+        {
+            this.mPrivacyPolicyUrl = AppLovinInternalSettings.Instance.ConsentFlowPrivacyPolicyUrl;
+            this.mEnableUmp        = true;
+
+            AppLovinInternalSettings.Instance.ConsentFlowEnabled = true;
+            AppLovinInternalSettings.Instance.Save();
+        }
+
+        private bool ValidatePrivacyPolicyUrl()
+        {
+            Uri uriResult;
+            var result = Uri.TryCreate(this.mPrivacyPolicyUrl, UriKind.Absolute, out uriResult)
+                         && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+            return result;
+        }
 #endif
     }
 
@@ -149,13 +180,13 @@
     {
         #region Amazon
 
-        public bool               EnableTesting  => this.enableTesting;
-        public bool               EnableLogging  => this.enableLogging;
-        public bool               UseGeoLocation => this.useGeoLocation;
-        
-        #if APS_ENABLE
+        public bool EnableTesting  => this.enableTesting;
+        public bool EnableLogging  => this.enableLogging;
+        public bool UseGeoLocation => this.useGeoLocation;
+
+#if APS_ENABLE
         public Amazon.MRAIDPolicy MRAIDPolicy    => this.mraidPolicy;
-        #endif
+#endif
 
         public string AppId                  => this.appId;
         public AdId   AmazonBannerAdId       { get => this.amazonBannerAdId;       set => this.amazonBannerAdId = value; }
@@ -163,13 +194,12 @@
         public AdId   AmazonInterstitialAdId { get => this.amazonInterstitialAdId; set => this.amazonInterstitialAdId = value; }
         public AdId   AmazonRewardedAdId     { get => this.amazonRewardedAdId;     set => this.amazonRewardedAdId = value; }
 
-        [SerializeField] private bool               enableTesting  = true;
-        [SerializeField] private bool               enableLogging  = true;
-        [SerializeField] private bool               useGeoLocation = true;
-        #if APS_ENABLE
-
-        [SerializeField] private Amazon.MRAIDPolicy mraidPolicy    = Amazon.MRAIDPolicy.CUSTOM;
-        #endif
+        [SerializeField] private bool enableTesting  = true;
+        [SerializeField] private bool enableLogging  = true;
+        [SerializeField] private bool useGeoLocation = true;
+#if APS_ENABLE
+        [SerializeField] private Amazon.MRAIDPolicy mraidPolicy = Amazon.MRAIDPolicy.CUSTOM;
+#endif
 
 
         [SerializeField] [BoxGroup("Amazon Id")]
