@@ -35,6 +35,8 @@
         public bool EnableBreakAds { get { return this.enableBreakAds; } }
 
         public bool EnableUmp { get { return this.enableUmp; } }
+        
+        public bool CollapsibleRefreshOnScreenShow => this.mCollapsibleRefreshOnScreenShow;
 
         public BannerLoadStrategy BannerLoadStrategy { get { return this.bannerLoadStrategy; } }
 
@@ -54,6 +56,12 @@
 
         [SerializeField] [LabelText("Banner Load Strategy", SdfIconType.BookmarkFill)] [FoldoutGroup("Misc")]
         private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.Instantiate;
+
+        [SerializeField] [LabelText("Enable")] [OnValueChanged("OnChangeCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
+        private bool mEnableCollapsibleBanner;
+        
+        [SerializeField] [LabelText("Auto Refresh")] [Tooltip("Collapsible Banner will auto refresh on Screen Show")] [ShowIf("mEnableCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
+        private bool mCollapsibleRefreshOnScreenShow = true;
 
         [SerializeField] [LabelText("AdMob", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdMob")]
         private bool enableAdMob;
@@ -75,15 +83,18 @@
 
 #if UNITY_EDITOR
 
-        private const string AdModSymbol      = "ADMOB";
-        private const string AppLovinSymbol   = "APPLOVIN";
-        private const string IronSourceSymbol = "IRONSOURCE";
+        private const string AdModSymbol             = "ADMOB";
+        private const string AppLovinSymbol          = "APPLOVIN";
+        private const string IronSourceSymbol        = "IRONSOURCE";
+        private const string CollapsibleBannerSymbol = "THEONE_COLLAPSIBLE_BANNER";
 
         private void OnChangeAdMob() { DefineSymbolEditorUtils.SetDefineSymbol(AdModSymbol, this.enableAdMob); }
 
         private void OnChangeAppLovin() { DefineSymbolEditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin); }
 
         private void OnChangeIronSource() { DefineSymbolEditorUtils.SetDefineSymbol(IronSourceSymbol, this.enableIronSource); }
+        
+        private void OnChangeCollapsibleBanner() { DefineSymbolEditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner); }
 #endif
     }
 }
