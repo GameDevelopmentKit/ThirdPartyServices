@@ -81,9 +81,6 @@
         [SerializeField] [ShowIf("enableIronSource")] [HideLabel] [FoldoutGroup("IronSource")]
         private IronSourceSettings mIronSource = null;
 
-        [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)]
-        private bool enableBreakAds;
-
 #if UNITY_EDITOR
 
         private const string AdModSymbol             = "ADMOB";
