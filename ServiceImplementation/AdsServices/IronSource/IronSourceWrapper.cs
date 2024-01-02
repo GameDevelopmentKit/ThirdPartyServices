@@ -41,6 +41,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void Initialize()
         {
+            IronSource.Agent.setConsent(true);
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
             if (this.thirdPartiesConfig.AdSettings.EnableUmp)
             {
