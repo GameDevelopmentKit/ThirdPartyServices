@@ -57,10 +57,10 @@
         [SerializeField] [LabelText("Banner Load Strategy", SdfIconType.BookmarkFill)] [FoldoutGroup("Misc")]
         private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.Instantiate;
 
-        [SerializeField] [LabelText("Collapsible Banner")] [OnValueChanged("OnChangeCollapsibleBanner")] [BoxGroup("Misc/Collapsible")]
+        [SerializeField] [LabelText("Enable")] [OnValueChanged("OnChangeCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
         private bool mEnableCollapsibleBanner;
         
-        [SerializeField] [LabelText("Collapsible Auto Refresh")] [Tooltip("Collapsible Banner will auto refresh on Screen Show")] [ShowIf("mEnableCollapsibleBanner")] [BoxGroup("Misc/Collapsible")]
+        [SerializeField] [LabelText("Auto Refresh")] [Tooltip("Collapsible Banner will auto refresh on Screen Show")] [ShowIf("mEnableCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
         private bool mCollapsibleRefreshOnScreenShow = true;
 
         [SerializeField] [LabelText("AdMob", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdMob")]
