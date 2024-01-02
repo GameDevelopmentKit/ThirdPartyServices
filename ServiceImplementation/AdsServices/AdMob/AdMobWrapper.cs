@@ -6,6 +6,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System.Linq;
     using System.Runtime.CompilerServices;
     using Core.AdsServices;
+    using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -107,15 +108,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region AOA
 
-        public bool IsShowingAOAAd           { get; set; } = false;
+        public bool IsShowingAOAAd { get; set; } = false;
 
         public float LoadingTimeToShowAOA => this.thirdPartiesConfig.AdSettings.AOAThreshHold;
 
 
-        public bool IsAOAReady()
-        {
-            return this.aoaAdLoadedInstance.IsAoaAdAvailable && !this.IsShowingAOAAd;
-        }
+        public bool IsAOAReady() { return this.aoaAdLoadedInstance.IsAoaAdAvailable && !this.IsShowingAOAAd; }
         public void ShowAOAAds()
         {
             this.aoaAdLoadedInstance.Show();
