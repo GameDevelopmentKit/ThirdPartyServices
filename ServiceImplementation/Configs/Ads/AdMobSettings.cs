@@ -17,6 +17,8 @@
         /// </summary>
         public AdId DefaultBannerAdId { get => this.mDefaultBannerAdId; set => this.mDefaultBannerAdId = value; }
 
+        public AdId CollapsibleBannerAdId { get => this.mCollapsibleBannerAdId; set => this.mCollapsibleBannerAdId = value; }
+
         /// <summary>
         /// Gets or sets the default interstitial ad identifier.
         /// </summary>
@@ -147,6 +149,9 @@
         [SerializeField] [LabelText("Banner")] [BoxGroup("Default Id")]
         private AdId mDefaultBannerAdId;
 
+        [SerializeField] [LabelText("Collapsible Banner")] [BoxGroup("Default Id")]
+        private AdId mCollapsibleBannerAdId;
+
         [SerializeField] [LabelText("Interstitial")] [BoxGroup("Default Id")]
         private AdId mDefaultInterstitialAdId;
 
@@ -177,5 +182,7 @@
 
         [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomRewardedInterstitialAdIds;
+        
+        
     }
 }

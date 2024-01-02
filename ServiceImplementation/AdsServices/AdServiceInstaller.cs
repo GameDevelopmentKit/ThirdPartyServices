@@ -15,6 +15,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.AppLovin;
 #endif
 #if ADMOB
+    using Core.AdsServices.CollapsibleBanner;
     using ServiceImplementation.AdsServices.AdMob;
 #endif
 
@@ -41,9 +42,10 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInterfacesAndSelfTo<AdMobWrapper>().AsCached().NonLazy();
             if (!this.Container.HasBinding<IBackFillAdsService>())
             {
-                this.Container.Bind(typeof(IInitializable), typeof(IAdLoadService), typeof(IBackFillAdsService)).To<AdMobAdService>().AsCached();
+                this.Container.Bind(typeof(IInitializable), typeof(ICollapsibleBannerAd), typeof(IAdLoadService), typeof(IBackFillAdsService)).To<AdMobAdService>().AsCached();
             }
 #else
+            this.Container.Bind<ICollapsibleBannerAd>().To<DummyCollapsibleBannerAdAdService>().AsCached();
             #if !APPLOVIN
             this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();
             #endif
@@ -62,6 +64,12 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<BannerAdLoadedSignal>();
             this.Container.DeclareSignal<BannerAdLoadFailedSignal>();
             this.Container.DeclareSignal<BannerAdClickedSignal>();
+
+            this.Container.DeclareSignal<CollapsibleBannerAdPresentedSignal>();
+            this.Container.DeclareSignal<CollapsibleBannerAdDismissedSignal>();
+            this.Container.DeclareSignal<CollapsibleBannerAdLoadedSignal>();
+            this.Container.DeclareSignal<CollapsibleBannerAdLoadFailedSignal>();
+            this.Container.DeclareSignal<CollapsibleBannerAdClickedSignal>();
 
             this.Container.DeclareSignal<MRecAdLoadedSignal>();
             this.Container.DeclareSignal<MRecAdLoadFailedSignal>();

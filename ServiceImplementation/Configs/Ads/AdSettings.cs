@@ -7,6 +7,13 @@
     using ServiceImplementation.Configs.Editor;
 #endif
 
+    public enum BannerLoadStrategy
+    {
+        Instantiate,
+        AfterLoading,
+        Manually
+    }
+
     [Serializable]
     public class AdSettings
     {
@@ -26,40 +33,45 @@
         public IronSourceSettings IronSource { get { return this.mIronSource; } }
 
         public bool EnableBreakAds { get { return this.enableBreakAds; } }
-        
+
         public bool EnableUmp { get { return this.enableUmp; } }
+
+        public BannerLoadStrategy BannerLoadStrategy { get { return this.bannerLoadStrategy; } }
 
         /// <summary>
         /// AOA threshold
         /// </summary>
         public float AOAThreshHold { get { return this.mAOAThreshHold; } }
 
-        [SerializeField] [LabelText("AOA ThreshHold", SdfIconType.Download)]
+        [SerializeField] [LabelText("AOA ThreshHold", SdfIconType.Download)] [FoldoutGroup("Misc")]
         private float mAOAThreshHold = 5f;
+
+        [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)] [FoldoutGroup("Misc")]
+        private bool enableBreakAds;
+
+        [SerializeField] [LabelText("Enable UMP", SdfIconType.QuestionDiamondFill)] [FoldoutGroup("Misc")]
+        private bool enableUmp;
+
+        [SerializeField] [LabelText("Banner Load Strategy", SdfIconType.BookmarkFill)] [FoldoutGroup("Misc")]
+        private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.Instantiate;
 
         [SerializeField] [LabelText("AdMob", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdMob")]
         private bool enableAdMob;
 
-        [SerializeField] [ShowIf("enableAdMob")] [HideLabel] [BoxGroup("AdMob")]
+        [SerializeField] [ShowIf("enableAdMob")] [HideLabel] [FoldoutGroup("AdMob")]
         private AdMobSettings mAdMob = null;
 
         [SerializeField] [LabelText("AppLovin", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppLovin")]
         private bool enableAppLovin;
 
-        [SerializeField] [ShowIf("enableAppLovin")] [HideLabel] [BoxGroup("AppLovin")]
+        [SerializeField] [ShowIf("enableAppLovin")] [HideLabel] [FoldoutGroup("AppLovin")]
         private AppLovinSettings mAppLovin = null;
 
         [SerializeField] [LabelText("IronSource", SdfIconType.Youtube)] [OnValueChanged("OnChangeIronSource")]
         private bool enableIronSource;
 
-        [SerializeField] [ShowIf("enableIronSource")] [HideLabel] [BoxGroup("IronSource")]
+        [SerializeField] [ShowIf("enableIronSource")] [HideLabel] [FoldoutGroup("IronSource")]
         private IronSourceSettings mIronSource = null;
-
-        [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)]
-        private bool enableBreakAds;
-
-        [SerializeField] [LabelText("Enable UMP", SdfIconType.QuestionDiamondFill)]
-        private bool enableUmp;
 
 #if UNITY_EDITOR
 
