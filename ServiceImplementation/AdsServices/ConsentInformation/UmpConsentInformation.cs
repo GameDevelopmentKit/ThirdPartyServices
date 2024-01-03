@@ -1,14 +1,12 @@
 #if ADMOB
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
-    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
     using ServiceImplementation.Configs;
-    using UnityEngine;
-    using Utilities.Utils;
+    using Zenject;
 
-    public class UmpConsentInformation : IConsentInformation
+    public class UmpConsentInformation : IConsentInformation, IInitializable
     {
         #region Inject
 
@@ -21,6 +19,11 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         {
             this.logService         = logService;
             this.thirdPartiesConfig = thirdPartiesConfig;
+        }
+        
+        public void Initialize()
+        {
+            this.Request();
         }
 
         public void Request()
