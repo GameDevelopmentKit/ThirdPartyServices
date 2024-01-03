@@ -44,9 +44,6 @@ namespace ServiceImplementation.AdsServices
             {
                 this.Container.Bind(typeof(IInitializable), typeof(ICollapsibleBannerAd), typeof(IAdLoadService), typeof(IBackFillAdsService)).To<AdMobAdService>().AsCached();
             }
-
-#if THEONE_ADS_DEBUG && THEONE_COLLAPSIBLE_BANNER
-            this.Container.Bind<CollapsibleBannerAdDebug>().FromNewComponentOnNewGameObject().WithGameObjectName("Collapsible Debug").AsSingle().NonLazy();
 #endif
 
 #else
