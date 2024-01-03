@@ -242,11 +242,11 @@ namespace ServiceImplementation.AdsServices.AdMob
 
                 #region Events
 
-                this.collapsibleBannerView.OnBannerAdLoaded            += () => this.signalBus.Fire<CollapsibleBannerAdLoadedSignal>(new(PLACEMENT));
-                this.collapsibleBannerView.OnBannerAdLoadFailed        += (error) => this.signalBus.Fire<CollapsibleBannerAdLoadFailedSignal>(new(PLACEMENT, error.GetMessage()));
-                this.collapsibleBannerView.OnAdFullScreenContentOpened += () => this.signalBus.Fire<CollapsibleBannerAdPresentedSignal>(new(PLACEMENT));
-                this.collapsibleBannerView.OnAdFullScreenContentClosed += () => this.signalBus.Fire<CollapsibleBannerAdDismissedSignal>(new(PLACEMENT));
-                this.collapsibleBannerView.OnAdClicked                 += () => this.signalBus.Fire<CollapsibleBannerAdClickedSignal>(new(PLACEMENT));
+                this.collapsibleBannerView.OnBannerAdLoaded            += () => this.OnCollapsibleBannerLoaded((PLACEMENT));
+                this.collapsibleBannerView.OnBannerAdLoadFailed        += error => this.OnCollapsibleBannerLoadFailed(PLACEMENT, error);
+                this.collapsibleBannerView.OnAdFullScreenContentOpened += () => this.OnCollapsibleBannerPresented((PLACEMENT));
+                this.collapsibleBannerView.OnAdFullScreenContentClosed += () => this.OnCollapsibleBannerDismissed((PLACEMENT));
+                this.collapsibleBannerView.OnAdClicked                 += () => this.OnCollapsibleBannerClicked(PLACEMENT);
                 this.collapsibleBannerView.OnAdPaid                    += this.TrackAdRevenue("CollapsibleBanner", PLACEMENT);
 
                 #endregion
@@ -267,6 +267,20 @@ namespace ServiceImplementation.AdsServices.AdMob
                 this.collapsibleBannerView = null;
             }
         }
+
+        private void OnCollapsibleBannerLoaded(string placement)
+        {
+            this.collapsibleBannerView.Show();
+            this.signalBus.Fire(new CollapsibleBannerAdLoadedSignal(placement));
+        }
+
+        private void OnCollapsibleBannerLoadFailed(string placement, AdError adError) { this.signalBus.Fire(new CollapsibleBannerAdLoadFailedSignal(placement, adError.GetMessage())); }
+
+        private void OnCollapsibleBannerPresented(string placement) { this.signalBus.Fire(new CollapsibleBannerAdPresentedSignal(placement)); }
+
+        private void OnCollapsibleBannerDismissed(string placement) { this.signalBus.Fire(new CollapsibleBannerAdDismissedSignal(placement)); }
+
+        private void OnCollapsibleBannerClicked(string placement) { this.signalBus.Fire(new CollapsibleBannerAdClickedSignal(placement)); }
 
         #endregion
     }
