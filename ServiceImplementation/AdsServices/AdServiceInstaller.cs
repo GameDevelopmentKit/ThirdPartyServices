@@ -44,8 +44,6 @@ namespace ServiceImplementation.AdsServices
             {
                 this.Container.Bind(typeof(IInitializable), typeof(ICollapsibleBannerAd), typeof(IAdLoadService), typeof(IBackFillAdsService)).To<AdMobAdService>().AsCached();
             }
-#endif
-
 #else
             this.Container.Bind<ICollapsibleBannerAd>().To<DummyCollapsibleBannerAdAdService>().AsCached();
             #if !APPLOVIN
