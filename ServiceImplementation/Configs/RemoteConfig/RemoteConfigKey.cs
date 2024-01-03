@@ -21,5 +21,6 @@
         public const string ResetInterAdIntervalAfterRewardAd = "reset_inter_ad_interval_after_reward_ad";
         public const string CollapsibleBannerADInterval       = "colapsible_banner_ad_interval";
         public const string EnableCollapsibleBannerFallback   = "enable_collapsible_banner_fallback";
+        public const string UseAoaAdmob                       = "use_aoa_admob";
     }
 }
