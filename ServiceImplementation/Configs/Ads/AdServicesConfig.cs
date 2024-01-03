@@ -38,6 +38,7 @@ namespace ServiceImplementation.Configs.Ads
         public bool     ResetInterAdIntervalAfterRewardAd { get; set; } //Reset the interstitial ad interval after showing a rewarded ad
         public int      CollapsibleBannerADInterval       { get; set; } //The interval between two banner ads
         public bool     EnableCollapsibleBannerFallback   { get; set; } //Enable fallback to banner ad when collapsible banner ad is not available
+        public bool     UseAoaAdmob                       { get; set; }
 
         public AdServicesConfig(SignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
         {
@@ -54,7 +55,10 @@ namespace ServiceImplementation.Configs.Ads
             this.InitDefaultValue();
         }
 
-        public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetchedSucceeded); }
+        public void Dispose()
+        {
+            this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetchedSucceeded);
+        }
 
         private void InitDefaultValue()
         {
@@ -77,6 +81,7 @@ namespace ServiceImplementation.Configs.Ads
             this.ResetInterAdIntervalAfterRewardAd = RemoteConfigHelpers.GetBoolDefaultValue(this.remoteConfigSetting, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd);
             this.CollapsibleBannerADInterval       = RemoteConfigHelpers.GetIntDefaultValue(this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerADInterval);
             this.EnableCollapsibleBannerFallback   = RemoteConfigHelpers.GetBoolDefaultValue(this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBannerFallback);
+            this.UseAoaAdmob                       = RemoteConfigHelpers.GetBoolDefaultValue(this.remoteConfigSetting, RemoteConfigKey.UseAoaAdmob);
         }
 
         private void OnRemoteConfigFetchedSucceeded()
@@ -98,6 +103,7 @@ namespace ServiceImplementation.Configs.Ads
             this.DelayFirstInterstitialAdInterval  = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersADInterval);
             this.DelayFirstInterNewSession         = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersNewSession);
             this.ResetInterAdIntervalAfterRewardAd = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd);
+            this.UseAoaAdmob                       = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.UseAoaAdmob);
             this.CollapsibleBannerADInterval       = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerADInterval);
             this.EnableCollapsibleBannerFallback   = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBannerFallback);
         }
