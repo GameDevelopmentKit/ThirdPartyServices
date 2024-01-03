@@ -215,8 +215,8 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         #region Collapsible Banner
 
+        private bool       isAvailableShowCollapsibleBanner;
         private BannerView collapsibleBannerView;
-        private bool       isShowCollapsibleBanner;
 
         public void ShowCollapsibleBannerAd()
         {
@@ -243,9 +243,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                 #endregion
             }
 
-            if (!this.isShowCollapsibleBanner) this.collapsibleBannerView.Show();
-
-            this.isShowCollapsibleBanner = true;
+            this.isAvailableShowCollapsibleBanner = true;
             var request = new AdRequest();
             request.Extras.Add("collapsible", "bottom");
             this.collapsibleBannerView.LoadAd(request);
@@ -253,7 +251,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         public void HideCollapsibleBannerAd()
         {
-            this.isShowCollapsibleBanner = false;
+            this.isAvailableShowCollapsibleBanner = false;
             this.collapsibleBannerView?.Hide();
         }
 
@@ -266,7 +264,14 @@ namespace ServiceImplementation.AdsServices.AdMob
             }
         }
 
-        private void OnCollapsibleBannerLoaded(string placement) { this.signalBus.Fire(new CollapsibleBannerAdLoadedSignal(placement)); }
+        private void OnCollapsibleBannerLoaded(string placement)
+        {
+            this.signalBus.Fire(new CollapsibleBannerAdLoadedSignal(placement));
+            if (this.isAvailableShowCollapsibleBanner)
+            {
+                this.collapsibleBannerView?.Show();
+            }
+        }
 
         private void OnCollapsibleBannerLoadFailed(string placement, AdError adError) { this.signalBus.Fire(new CollapsibleBannerAdLoadFailedSignal(placement, adError.GetMessage())); }
 
