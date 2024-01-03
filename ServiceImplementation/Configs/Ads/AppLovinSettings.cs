@@ -5,11 +5,11 @@
 #endif
     using System;
     using System.Collections.Generic;
-    using AppLovinMax.Scripts.IntegrationManager.Editor;
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
 #if UNITY_EDITOR
+    using AppLovinMax.Scripts.IntegrationManager.Editor;
     using ServiceImplementation.Configs.Editor;
 #endif
 
