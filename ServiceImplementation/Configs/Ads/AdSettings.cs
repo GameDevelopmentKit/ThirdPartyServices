@@ -3,7 +3,6 @@
     using System;
     using Sirenix.OdinInspector;
     using UnityEngine;
-    using UnityEngine.Serialization;
 #if UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
 #endif
@@ -37,7 +36,9 @@
 
         public bool EnableUmp { get { return this.enableUmp; } }
         
-        public bool EnableCollapsibleAds => this.mEnableCollapsibleBanner;
+        public bool EnableCollapsibleBanner { get { return this.mEnableCollapsibleBanner; } }
+        
+        public bool CollapsibleRefreshOnScreenShow => this.mCollapsibleRefreshOnScreenShow;
 
         public BannerLoadStrategy BannerLoadStrategy { get { return this.bannerLoadStrategy; } }
 
@@ -58,7 +59,6 @@
         [SerializeField] [LabelText("Banner Load Strategy", SdfIconType.BookmarkFill)] [FoldoutGroup("Misc")]
         private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.Instantiate;
 
-        [FormerlySerializedAs("mEnableEnableCollapsibleBanner")]
         [SerializeField] [LabelText("Enable")] [OnValueChanged("OnChangeCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
         private bool mEnableCollapsibleBanner;
         
