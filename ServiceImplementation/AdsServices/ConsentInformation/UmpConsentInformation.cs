@@ -11,14 +11,12 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         #region Inject
 
         private readonly ILogService        logService;
-        private readonly ThirdPartiesConfig thirdPartiesConfig;
 
         #endregion
 
-        public UmpConsentInformation(ILogService logService, ThirdPartiesConfig thirdPartiesConfig)
+        public UmpConsentInformation(ILogService logService)
         {
             this.logService         = logService;
-            this.thirdPartiesConfig = thirdPartiesConfig;
         }
         
         public void Initialize()
@@ -28,8 +26,6 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         public void Request()
         {
-            if (!this.thirdPartiesConfig.AdSettings.EnableUmp) return;
-
             var request = new ConsentRequestParameters
             {
                 TagForUnderAgeOfConsent = false
