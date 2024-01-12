@@ -2,6 +2,7 @@ namespace ServiceImplementation.AdsServices
 {
     using System.Collections.Generic;
     using Core.AdsServices;
+    using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
@@ -15,7 +16,6 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.AppLovin;
 #endif
 #if ADMOB
-    using Core.AdsServices.CollapsibleBanner;
     using ServiceImplementation.AdsServices.AdMob;
 #endif
 
