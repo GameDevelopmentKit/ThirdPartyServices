@@ -16,7 +16,6 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.AppLovin;
 #endif
 #if ADMOB
-    using Core.AdsServices.CollapsibleBanner;
     using ServiceImplementation.AdsServices.AdMob;
 #endif
 
