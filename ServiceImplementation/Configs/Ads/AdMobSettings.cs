@@ -17,12 +17,27 @@
         /// </summary>
         public AdId DefaultBannerAdId { get => this.mDefaultBannerAdId; set => this.mDefaultBannerAdId = value; }
 
-        public AdId CollapsibleBannerAdId { get => this.mCollapsibleBannerAdId; set => this.mCollapsibleBannerAdId = value; }
+        public AdId CollapsibleBannerAdId {
+#if THEONE_ADS_DEBUG
+            get => string.IsNullOrEmpty(this.mCollapsibleBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/8388050270","ca-app-pub-3940256099942544/2014213617") : this.mCollapsibleBannerAdId; 
+#else
+            get => this.mCollapsibleBannerAdId; 
+#endif
+            set => this.mCollapsibleBannerAdId = value; 
+        }
 
         /// <summary>
         /// Gets or sets the default interstitial ad identifier.
         /// </summary>
-        public AdId DefaultInterstitialAdId { get => this.mDefaultInterstitialAdId; set => this.mDefaultInterstitialAdId = value; }
+        public AdId DefaultInterstitialAdId
+        {
+#if THEONE_ADS_DEBUG
+            get => string.IsNullOrEmpty(this.mDefaultInterstitialAdId.Id) ? new AdId("ca-app-pub-3940256099942544/4411468910","ca-app-pub-3940256099942544/1033173712") : this.mDefaultInterstitialAdId; 
+#else
+            get => this.mDefaultInterstitialAdId; 
+#endif
+            set => this.mDefaultInterstitialAdId = value;
+        }
 
         /// <summary>
         /// Gets or sets the default rewarded ad identifier.
@@ -37,7 +52,16 @@
         /// <summary>
         /// Gets or sets the default AOA ad identifier.
         /// </summary>
-        public AdId AOAAdId { get => this.mAoaAdId; set => this.mAoaAdId = value; }
+        public AdId AOAAdId
+        {
+            
+#if THEONE_ADS_DEBUG
+            get => string.IsNullOrEmpty(this.mAoaAdId.Id) ? new AdId("ca-app-pub-3940256099942544/5575463023","ca-app-pub-3940256099942544/9257395921") : this.mAoaAdId; 
+#else
+            get => this.mAoaAdId; 
+#endif
+            set => this.mAoaAdId = value;
+        }
 
         /// <summary>
         /// Gets or sets the default native ad identifier.
