@@ -7,6 +7,7 @@
         public const string EnableMrecAD                      = "enable_mrec_ad";
         public const string EnableAoaAD                       = "enable_aoa_ad";
         public const string EnableRewardedAD                  = "enable_rewarded_ad";
+        public const string EnableCollapsibleBanner           = "enable_collapsible_banner";
         public const string EnableRewardedInterstitialAD      = "enable_rewarded_interstitial_ad";
         public const string EnableNativeAD                    = "enable_native_ad";
         public const string IntervalLoadAds                   = "interval_load_ads";
