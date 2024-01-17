@@ -34,8 +34,6 @@
 
         public bool EnableBreakAds { get { return this.enableBreakAds; } }
 
-        public bool EnableCollapsibleBanner { get { return this.mEnableCollapsibleBanner; } }
-        
         public bool CollapsibleRefreshOnScreenShow => this.mCollapsibleRefreshOnScreenShow;
 
         public BannerLoadStrategy BannerLoadStrategy { get { return this.bannerLoadStrategy; } }

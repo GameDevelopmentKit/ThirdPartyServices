@@ -24,6 +24,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             new RemoteConfig(RemoteConfigKey.EnableRewardedAD, RemoteConfigKey.EnableRewardedAD, "true"),
             new RemoteConfig(RemoteConfigKey.EnableRewardedInterstitialAD, RemoteConfigKey.EnableRewardedInterstitialAD, "true"),
             new RemoteConfig(RemoteConfigKey.EnableNativeAD, RemoteConfigKey.EnableNativeAD, "true"),
+            new RemoteConfig(RemoteConfigKey.EnableCollapsibleBanner, RemoteConfigKey.EnableCollapsibleBanner, "false"),
 
             new RemoteConfig(RemoteConfigKey.IntervalLoadAds, RemoteConfigKey.IntervalLoadAds, "5"),
             new RemoteConfig(RemoteConfigKey.MinPauseSecondToShowAoaAD, RemoteConfigKey.MinPauseSecondToShowAoaAD, "0"),
