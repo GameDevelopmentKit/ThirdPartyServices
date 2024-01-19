@@ -236,32 +236,30 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
-            var bannerView = new BannerView(this.ADMobSettings.MRECAdIds[adViewPosition].Id, AdSize.MediumRectangle, adViewPosition.ToAdMobAdPosition());
+            var mrecBannerView = new BannerView(this.ADMobSettings.MRECAdIds[adViewPosition].Id, AdSize.MediumRectangle, adViewPosition.ToAdMobAdPosition());
 
             var adRequest = new AdRequest.Builder().Build();
 
             // send the request to load the ad.
-            bannerView.LoadAd(adRequest);
+            mrecBannerView.LoadAd(adRequest);
             this.positionToMRECToIsLoading[adViewPosition] = true;
-#if UNITY_EDITOR
-            OnBannerViewOnOnBannerAdLoaded();
-#endif
-            bannerView.OnBannerAdLoaded     += OnBannerViewOnOnBannerAdLoaded;
-            bannerView.OnBannerAdLoadFailed += _ => { this.positionToMRECToIsLoading[adViewPosition] = false; };
+// #if UNITY_EDITOR
+//             OnBannerViewOnOnBannerAdLoaded();
+// #endif
+//             mrecBannerView.OnBannerAdLoaded     += OnBannerViewOnOnBannerAdLoaded;
+            mrecBannerView.OnBannerAdLoadFailed += _ => { this.positionToMRECToIsLoading[adViewPosition] = false; };
 
-            bannerView.OnBannerAdLoaded            += this.BannerViewOnAdLoaded;
-            bannerView.OnBannerAdLoadFailed        += this.BannerViewOnAdLoadFailed;
-            bannerView.OnAdClicked                 += this.BannerViewOnAdClicked;
-            bannerView.OnAdPaid                    += this.MRECAdHandlePaid;
-            bannerView.OnAdFullScreenContentOpened += this.BannerViewOnAdFullScreenContentOpened;
-            bannerView.OnAdFullScreenContentClosed += this.BannerViewOnAdFullScreenContentClosed;
+            mrecBannerView.OnBannerAdLoaded            += this.BannerViewOnAdLoaded;
+            mrecBannerView.OnBannerAdLoadFailed        += this.BannerViewOnAdLoadFailed;
+            mrecBannerView.OnAdClicked                 += this.BannerViewOnAdClicked;
+            mrecBannerView.OnAdPaid                    += this.MRECAdHandlePaid;
 
-            void OnBannerViewOnOnBannerAdLoaded()
-            {
-                bannerView.Hide();
-                this.positionToMRECToIsLoading[adViewPosition] = false;
-                this.positionToMRECBannerView.Add(adViewPosition, bannerView);
-            }
+            // void OnBannerViewOnOnBannerAdLoaded()
+            // {
+            //     mrecBannerView.Hide();
+            //     this.positionToMRECToIsLoading[adViewPosition] = false;
+            //     this.positionToMRECBannerView.Add(adViewPosition, mrecBannerView);
+            // }
         }
 
         public bool IsMRECReady(AdViewPosition adViewPosition) { return this.positionToMRECBannerView.ContainsKey(adViewPosition); }
