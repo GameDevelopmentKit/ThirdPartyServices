@@ -269,7 +269,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        public bool IsMRECReady(AdViewPosition adViewPosition) { return this.positionToMRECBannerView.ContainsKey(adViewPosition); }
+        public bool IsMRECReady(AdViewPosition adViewPosition) { return this.positionToMRECBannerView.ContainsKey(adViewPosition) && !this.positionToMRECToIsLoading[adViewPosition]; }
 
         public void HideAllMREC()
         {
