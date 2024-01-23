@@ -31,7 +31,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public AmazonApplovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig,
             ThirdPartiesConfig thirdPartiesConfig)
-            : base(logService, signalBus, adServicesConfig, thirdPartiesConfig)
+            : base(logService, signalBus, thirdPartiesConfig)
         {
             this.amazonSetting = thirdPartiesConfig.AdSettings.AppLovin.AmazonApplovinSetting;
         }
