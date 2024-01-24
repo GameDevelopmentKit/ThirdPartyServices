@@ -7,6 +7,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
+    using Core.AnalyticServices.Signal;
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
@@ -202,15 +203,22 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private Action<AdValue> TrackAdRevenue(string format, string placement)
         {
-            return adValue => this.analyticService.Track(new AdsRevenueEvent
+            return adValue =>
             {
-                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
-                AdNetwork          = "AdMob",
-                AdFormat           = format,
-                Placement          = placement,
-                Currency           = "USD",
-                Revenue            = adValue.Value / 1e6,
-            });
+                var adsRevenueEvent = new AdsRevenueEvent
+                {
+                    AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
+                    AdNetwork          = "AdMob",
+                    AdFormat           = format,
+                    Placement          = placement,
+                    Currency           = "USD",
+                    Revenue            = adValue.Value / 1e6,
+                };
+                
+                this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
+
+                this.analyticService.Track(adsRevenueEvent);
+            };
         }
 
         #region Collapsible Banner
