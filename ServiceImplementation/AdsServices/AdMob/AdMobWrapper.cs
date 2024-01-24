@@ -6,7 +6,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System.Linq;
     using System.Runtime.CompilerServices;
     using Core.AdsServices;
-    using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -221,9 +220,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private Dictionary<AdViewPosition, BannerView> positionToMRECBannerView  = new();
         private Dictionary<AdViewPosition, bool>       positionToMRECToIsLoading = new();
 
-        public void ShowMREC(AdViewPosition adViewPosition) { this.positionToMRECBannerView[adViewPosition].Show(); }
+        public void ShowMREC(AdViewPosition adViewPosition)
+        {
+            this.positionToMRECBannerView[adViewPosition].Show();
+            this.MrecBannerViewDisplay();
+        }
 
-        public void HideMREC(AdViewPosition adViewPosition) { this.positionToMRECBannerView[adViewPosition].Hide(); }
+        public void HideMREC(AdViewPosition adViewPosition)
+        {
+            this.positionToMRECBannerView[adViewPosition].Hide();
+            this.MrecBannerViewDismissed();
+        }
 
         public void StopMRECAutoRefresh(AdViewPosition adViewPosition) { }
 
@@ -236,35 +243,33 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
-            var bannerView = new BannerView(this.ADMobSettings.MRECAdIds[adViewPosition].Id, AdSize.MediumRectangle, adViewPosition.ToAdMobAdPosition());
+            var mrecBannerView = new BannerView(this.ADMobSettings.MRECAdIds[adViewPosition].Id, AdSize.MediumRectangle, adViewPosition.ToAdMobAdPosition());
 
             var adRequest = new AdRequest.Builder().Build();
 
             // send the request to load the ad.
-            bannerView.LoadAd(adRequest);
+            mrecBannerView.LoadAd(adRequest);
             this.positionToMRECToIsLoading[adViewPosition] = true;
 #if UNITY_EDITOR
-            OnBannerViewOnOnBannerAdLoaded();
+            HideMrecWhenLoaded();
 #endif
-            bannerView.OnBannerAdLoaded     += OnBannerViewOnOnBannerAdLoaded;
-            bannerView.OnBannerAdLoadFailed += _ => { this.positionToMRECToIsLoading[adViewPosition] = false; };
+            mrecBannerView.OnBannerAdLoaded     += HideMrecWhenLoaded;
+            mrecBannerView.OnBannerAdLoadFailed += _ => { this.positionToMRECToIsLoading[adViewPosition] = false; };
 
-            bannerView.OnBannerAdLoaded            += this.BannerViewOnAdLoaded;
-            bannerView.OnBannerAdLoadFailed        += this.BannerViewOnAdLoadFailed;
-            bannerView.OnAdClicked                 += this.BannerViewOnAdClicked;
-            bannerView.OnAdPaid                    += this.MRECAdHandlePaid;
-            bannerView.OnAdFullScreenContentOpened += this.BannerViewOnAdFullScreenContentOpened;
-            bannerView.OnAdFullScreenContentClosed += this.BannerViewOnAdFullScreenContentClosed;
+            mrecBannerView.OnBannerAdLoaded     += this.BannerViewOnAdLoaded;
+            mrecBannerView.OnBannerAdLoadFailed += this.BannerViewOnAdLoadFailed;
+            mrecBannerView.OnAdClicked          += this.BannerViewOnAdClicked;
+            mrecBannerView.OnAdPaid             += this.MRECAdHandlePaid;
 
-            void OnBannerViewOnOnBannerAdLoaded()
+            void HideMrecWhenLoaded()
             {
-                bannerView.Hide();
+                mrecBannerView.Hide();
                 this.positionToMRECToIsLoading[adViewPosition] = false;
-                this.positionToMRECBannerView.Add(adViewPosition, bannerView);
+                this.positionToMRECBannerView.Add(adViewPosition, mrecBannerView);
             }
         }
 
-        public bool IsMRECReady(AdViewPosition adViewPosition) { return this.positionToMRECBannerView.ContainsKey(adViewPosition); }
+        public bool IsMRECReady(AdViewPosition adViewPosition) { return this.positionToMRECBannerView.ContainsKey(adViewPosition) && !this.positionToMRECToIsLoading[adViewPosition]; }
 
         public void HideAllMREC()
         {
@@ -282,9 +287,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private void BannerViewOnAdFullScreenContentClosed() { this.signalBus.Fire(new MRecAdDismissedSignal("")); }
+        private void MrecBannerViewDismissed() { this.signalBus.Fire(new MRecAdDismissedSignal("")); }
 
-        private void BannerViewOnAdFullScreenContentOpened() { this.signalBus.Fire(new MRecAdDisplayedSignal("")); }
+        private void MrecBannerViewDisplay() { this.signalBus.Fire(new MRecAdDisplayedSignal("")); }
 
         private void BannerViewOnAdClicked() { this.signalBus.Fire(new MRecAdClickedSignal("")); }
 
