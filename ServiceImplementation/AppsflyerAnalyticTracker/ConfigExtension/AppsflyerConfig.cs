@@ -25,6 +25,7 @@ namespace Core.AnalyticServices
 #elif UNITY_WSA_10_0
                     return this.appsflyerDevKeyUwp;
 #endif
+                return null;
             }
         }
 
