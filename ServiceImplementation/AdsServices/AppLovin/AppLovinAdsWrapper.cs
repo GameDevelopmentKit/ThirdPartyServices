@@ -28,6 +28,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private            AdPlacement                   currentShowingRewarded;
         private            Dictionary<AdPlacement, bool> rewardedCompleted = new();
 
+        private readonly List<string>                                                         idMRecCreating    = new();
+        private readonly Dictionary<string, bool>                                             idToMRecLoaded    = new();
         private readonly Dictionary<AdPlacement, KeyValuePair<BannerAdsPosition, BannerSize>> placementToBanner = new();
 
         private bool         isInit;
@@ -37,7 +39,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         #endregion
 
         public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus,
-            AdServicesConfig adServicesConfig,
             ThirdPartiesConfig thirdPartiesConfig)
         {
             this.logService      = logService;
@@ -157,17 +158,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitMRECAds()
         {
-            foreach (var (position, adUnitId) in this.AppLovinSetting.MRECAdIds)
-            {
-                this.logService.Log($"Check max init {MaxSdk.IsInitialized()}");
-                MaxSdk.CreateMRec(adUnitId.Id, this.ConvertAdViewPosition(position));
-            }
-
+            this.CreateAllMRec();
             MaxSdkCallbacks.MRec.OnAdLoadedEvent     += this.OnMRecAdLoadedEvent;
             MaxSdkCallbacks.MRec.OnAdLoadFailedEvent += this.OnMRecAdLoadFailedEvent;
             MaxSdkCallbacks.MRec.OnAdClickedEvent    += this.OnMRecAdClickedEvent;
-            MaxSdkCallbacks.MRec.OnAdExpandedEvent   += this.OnMRecExpandEvent;
-            MaxSdkCallbacks.MRec.OnAdCollapsedEvent  += this.OnMRecAdCollapseEvent;
         }
 
         private void DisposeMRECAds()
@@ -175,33 +169,62 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.MRec.OnAdLoadedEvent     -= this.OnMRecAdLoadedEvent;
             MaxSdkCallbacks.MRec.OnAdLoadFailedEvent -= this.OnMRecAdLoadFailedEvent;
             MaxSdkCallbacks.MRec.OnAdClickedEvent    -= this.OnMRecAdClickedEvent;
-            MaxSdkCallbacks.MRec.OnAdExpandedEvent   -= this.OnMRecExpandEvent;
-            MaxSdkCallbacks.MRec.OnAdCollapsedEvent  -= this.OnMRecAdCollapseEvent;
+        }
+
+        private void CreateAllMRec()
+        {
+            foreach (var (position, adUnitId) in this.AppLovinSetting.MRECAdIds)
+            {
+                var adsId = adUnitId.Id;
+                if (this.idMRecCreating.Contains(adsId)) continue;
+                this.idMRecCreating.Add(adsId);
+
+                this.logService.Log($"Check max init {MaxSdk.IsInitialized()}");
+                MaxSdk.CreateMRec(adUnitId.Id, this.ConvertAdViewPosition(position));
+            }
         }
 
         public void ShowMREC(AdViewPosition adViewPosition) { this.InternalShowMREC(adViewPosition); }
 
         protected virtual void InternalShowMREC(AdViewPosition adViewPosition)
         {
-            MaxSdk.UpdateMRecPosition(this.AppLovinSetting.MRECAdIds[adViewPosition].Id, this.ConvertAdViewPosition(adViewPosition));
+            var adsId = this.AppLovinSetting.MRECAdIds[adViewPosition].Id;
+            this.OnMRecAdDisplayed(adsId);
+            MaxSdk.UpdateMRecPosition(adsId, this.ConvertAdViewPosition(adViewPosition));
             MaxSdk.ShowMRec(this.AppLovinSetting.MRECAdIds[adViewPosition].Id);
         }
 
-        public void HideMREC(AdViewPosition adViewPosition) { MaxSdk.HideMRec(this.AppLovinSetting.MRECAdIds[adViewPosition].Id); }
+        public void HideMREC(AdViewPosition adViewPosition)
+        {
+            var adsId = this.AppLovinSetting.MRECAdIds[adViewPosition].Id;
+            this.HideMREC(adsId);
+        }
 
-        public void StopMRECAutoRefresh(AdViewPosition adViewPosition) { MaxSdk.StopMRecAutoRefresh(this.AppLovinSetting.MRECAdIds[adViewPosition].Id); }
+        public void HideMREC(string adUnitId)
+        {
+            this.OnMRecAdDismissed(adUnitId);
+            MaxSdk.HideMRec(adUnitId);
+        }
 
-        public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { MaxSdk.StartMRecAutoRefresh(this.AppLovinSetting.MRECAdIds[adViewPosition].Id); }
+        public void StopMRECAutoRefresh(AdViewPosition adViewPosition) { this.StopMRECAutoRefresh(this.AppLovinSetting.MRECAdIds[adViewPosition].Id); }
 
-        public void LoadMREC(AdViewPosition adViewPosition) { MaxSdk.LoadMRec(this.AppLovinSetting.MRECAdIds[adViewPosition].Id); }
+        public void StopMRECAutoRefresh(string adUnitId) { MaxSdk.StopMRecAutoRefresh(adUnitId); }
 
-        public bool IsMRECReady(AdViewPosition adViewPosition) { return this.AppLovinSetting.MRECAdIds.ContainsKey(adViewPosition); }
+        public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { this.StartMRECAutoRefresh(this.AppLovinSetting.MRECAdIds[adViewPosition].Id); }
+
+        public void StartMRECAutoRefresh(string adUnitId) { MaxSdk.StartMRecAutoRefresh(adUnitId); }
+
+        public void LoadMREC(AdViewPosition adViewPosition) { this.LoadMREC(this.AppLovinSetting.MRECAdIds[adViewPosition].Id); }
+
+        public void LoadMREC(string adUnitId) { MaxSdk.LoadMRec(adUnitId); }
+
+        public bool IsMRECReady(AdViewPosition adViewPosition) { return this.idToMRecLoaded[this.AppLovinSetting.MRECAdIds[adViewPosition].Id]; }
 
         public void HideAllMREC()
         {
-            foreach (var (adViewPosition, adUnitId) in this.AppLovinSetting.MRECAdIds)
+            foreach (var adUnitId in this.idMRecCreating)
             {
-                this.HideMREC(adViewPosition);
+                this.HideMREC(adUnitId);
             }
         }
 
@@ -580,15 +603,26 @@ namespace ServiceImplementation.AdsServices.AppLovin
         // MREC
         //.............
 
-        private void OnMRecAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { this.signalBus.Fire(new MRecAdLoadedSignal(adUnitId)); }
+        private void OnMRecAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        {
+            this.StartMRECAutoRefresh(adUnitId);
+            this.idToMRecLoaded[adUnitId] = true;
+            this.signalBus.Fire(new MRecAdLoadedSignal(adUnitId));
+        }
 
-        private void OnMRecAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo error) { this.signalBus.Fire(new MRecAdLoadFailedSignal(adUnitId)); }
+        private void OnMRecAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo error)
+        {
+            this.StopMRECAutoRefresh(adUnitId);
+            this.LoadMREC(adUnitId);
+            this.idToMRecLoaded[adUnitId] = false;
+            this.signalBus.Fire(new MRecAdLoadFailedSignal(adUnitId));
+        }
 
         private void OnMRecAdClickedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { this.signalBus.Fire(new MRecAdClickedSignal(adUnitId)); }
 
-        private void OnMRecAdCollapseEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { this.signalBus.Fire(new MRecAdDismissedSignal(adUnitId)); }
+        private void OnMRecAdDismissed(string adUnitId) { this.signalBus.Fire(new MRecAdDismissedSignal(adUnitId)); }
 
-        private void OnMRecExpandEvent(string adUnitId, MaxSdkBase.AdInfo info) { this.signalBus.Fire(new MRecAdDisplayedSignal(adUnitId)); }
+        private void OnMRecAdDisplayed(string adUnitId) { this.signalBus.Fire(new MRecAdDisplayedSignal(adUnitId)); }
 
         #endregion
 
