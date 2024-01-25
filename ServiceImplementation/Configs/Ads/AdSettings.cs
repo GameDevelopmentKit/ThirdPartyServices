@@ -1,6 +1,7 @@
 ﻿namespace ServiceImplementation.Configs.Ads
 {
     using System;
+    using System.Collections.Generic;
     using Sirenix.OdinInspector;
     using UnityEngine;
 #if UNITY_EDITOR
@@ -32,11 +33,17 @@
         /// </summary>
         public IronSourceSettings IronSource { get { return this.mIronSource; } }
 
+        #region Misc
+
         public bool EnableBreakAds { get { return this.enableBreakAds; } }
 
         public bool CollapsibleRefreshOnScreenShow => this.mCollapsibleRefreshOnScreenShow;
+        
+        public List<string> CollapsibleIgnoreRefreshOnScreens => this.mCollapsibleIgnoreRefreshOnScreens;
 
         public BannerLoadStrategy BannerLoadStrategy { get { return this.bannerLoadStrategy; } }
+
+        #endregion
 
         /// <summary>
         /// AOA threshold
@@ -57,6 +64,9 @@
         
         [SerializeField] [LabelText("Auto Refresh")] [Tooltip("Collapsible Banner will auto refresh on Screen Show")] [ShowIf("mEnableCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
         private bool mCollapsibleRefreshOnScreenShow = true;
+
+        [SerializeField] [LabelText("Screens Ignore Auto Refresh")] [Tooltip("Collapsible Banner will ignore auto refresh on screens")] [ShowIf("mEnableCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
+        private List<string> mCollapsibleIgnoreRefreshOnScreens = new List<string>();
 
         [SerializeField] [LabelText("AdMob", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdMob")]
         private bool enableAdMob;
