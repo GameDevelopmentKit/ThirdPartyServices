@@ -110,46 +110,46 @@ namespace ServiceImplementation.AdsServices.AppLovin
         protected MaxSdkBase.BannerPosition ConvertToBannerAdPosition(BannerAdsPosition pos)
         {
             return pos switch
-            {
-                BannerAdsPosition.Top => MaxSdkBase.BannerPosition.TopCenter,
-                BannerAdsPosition.Bottom => MaxSdkBase.BannerPosition.BottomCenter,
-                BannerAdsPosition.TopLeft => MaxSdkBase.BannerPosition.TopLeft,
-                BannerAdsPosition.TopRight => MaxSdkBase.BannerPosition.TopRight,
-                BannerAdsPosition.BottomLeft => MaxSdkBase.BannerPosition.BottomLeft,
-                BannerAdsPosition.BottomRight => MaxSdkBase.BannerPosition.BottomRight,
-                _ => MaxSdkBase.BannerPosition.Centered
-            };
+                   {
+                       BannerAdsPosition.Top         => MaxSdkBase.BannerPosition.TopCenter,
+                       BannerAdsPosition.Bottom      => MaxSdkBase.BannerPosition.BottomCenter,
+                       BannerAdsPosition.TopLeft     => MaxSdkBase.BannerPosition.TopLeft,
+                       BannerAdsPosition.TopRight    => MaxSdkBase.BannerPosition.TopRight,
+                       BannerAdsPosition.BottomLeft  => MaxSdkBase.BannerPosition.BottomLeft,
+                       BannerAdsPosition.BottomRight => MaxSdkBase.BannerPosition.BottomRight,
+                       _                             => MaxSdkBase.BannerPosition.Centered
+                   };
         }
 
         protected MaxSdkBase.AdViewPosition ConvertAdViewPosition(AdViewPosition adViewPosition) =>
             adViewPosition switch
             {
-                AdViewPosition.TopLeft => MaxSdkBase.AdViewPosition.TopLeft,
-                AdViewPosition.TopCenter => MaxSdkBase.AdViewPosition.TopCenter,
-                AdViewPosition.TopRight => MaxSdkBase.AdViewPosition.TopRight,
-                AdViewPosition.CenterLeft => MaxSdkBase.AdViewPosition.CenterLeft,
-                AdViewPosition.Centered => MaxSdkBase.AdViewPosition.Centered,
-                AdViewPosition.CenterRight => MaxSdkBase.AdViewPosition.CenterRight,
-                AdViewPosition.BottomLeft => MaxSdkBase.AdViewPosition.BottomLeft,
+                AdViewPosition.TopLeft      => MaxSdkBase.AdViewPosition.TopLeft,
+                AdViewPosition.TopCenter    => MaxSdkBase.AdViewPosition.TopCenter,
+                AdViewPosition.TopRight     => MaxSdkBase.AdViewPosition.TopRight,
+                AdViewPosition.CenterLeft   => MaxSdkBase.AdViewPosition.CenterLeft,
+                AdViewPosition.Centered     => MaxSdkBase.AdViewPosition.Centered,
+                AdViewPosition.CenterRight  => MaxSdkBase.AdViewPosition.CenterRight,
+                AdViewPosition.BottomLeft   => MaxSdkBase.AdViewPosition.BottomLeft,
                 AdViewPosition.BottomCenter => MaxSdkBase.AdViewPosition.BottomCenter,
-                AdViewPosition.BottomRight => MaxSdkBase.AdViewPosition.BottomRight,
-                _ => MaxSdkBase.AdViewPosition.BottomCenter
+                AdViewPosition.BottomRight  => MaxSdkBase.AdViewPosition.BottomRight,
+                _                           => MaxSdkBase.AdViewPosition.BottomCenter
             };
 
         protected AdInfo ConvertAdInfo(MaxSdkBase.AdInfo maxAdInfo)
         {
             return new AdInfo()
-            {
-                AdUnitIdentifier   = maxAdInfo.AdUnitIdentifier,
-                AdFormat           = maxAdInfo.AdFormat,
-                NetworkName        = maxAdInfo.NetworkName,
-                NetworkPlacement   = maxAdInfo.NetworkPlacement,
-                Placement          = maxAdInfo.NetworkPlacement,
-                CreativeIdentifier = maxAdInfo.CreativeIdentifier,
-                Revenue            = maxAdInfo.Revenue,
-                RevenuePrecision   = maxAdInfo.RevenuePrecision,
-                DspName            = maxAdInfo.DspName
-            };
+                   {
+                       AdUnitIdentifier   = maxAdInfo.AdUnitIdentifier,
+                       AdFormat           = maxAdInfo.AdFormat,
+                       NetworkName        = maxAdInfo.NetworkName,
+                       NetworkPlacement   = maxAdInfo.NetworkPlacement,
+                       Placement          = maxAdInfo.NetworkPlacement,
+                       CreativeIdentifier = maxAdInfo.CreativeIdentifier,
+                       Revenue            = maxAdInfo.Revenue,
+                       RevenuePrecision   = maxAdInfo.RevenuePrecision,
+                       DspName            = maxAdInfo.DspName
+                   };
         }
 
         #endregion
@@ -218,7 +218,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void LoadMREC(string adUnitId) { MaxSdk.LoadMRec(adUnitId); }
 
-        public bool IsMRECReady(AdViewPosition adViewPosition) { return this.idToMRecLoaded[this.AppLovinSetting.MRECAdIds[adViewPosition].Id]; }
+        public bool IsMRECReady(AdViewPosition adViewPosition)
+        {
+            return this.idToMRecLoaded.TryGetValue(this.AppLovinSetting.MRECAdIds[adViewPosition].Id, out _)
+                   && this.idToMRecLoaded[this.AppLovinSetting.MRECAdIds[adViewPosition].Id];
+        }
 
         public void HideAllMREC()
         {
@@ -264,8 +268,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             var placement = AdPlacement.PlacementWithName(place);
             id = placement == AdPlacement.Default
-                ? this.AppLovinSetting.DefaultBannerAdId.Id
-                : this.FindIdForPlacement(this.AppLovinSetting.CustomBannerAdIds, placement);
+                     ? this.AppLovinSetting.DefaultBannerAdId.Id
+                     : this.FindIdForPlacement(this.AppLovinSetting.CustomBannerAdIds, placement);
 
             return !string.IsNullOrEmpty(id);
         }
@@ -275,7 +279,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (!this.IsBannerPlacementReady(adPlacement.Name, out var id)) return;
 
             var shouldCreateBanner = !this.placementToBanner.ContainsKey(adPlacement)
-                                     || this.placementToBanner[adPlacement].Key != position
+                                     || this.placementToBanner[adPlacement].Key   != position
                                      || this.placementToBanner[adPlacement].Value != bannerSize;
 
             if (shouldCreateBanner)
@@ -357,8 +361,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             var placement = AdPlacement.PlacementWithName(place);
             id = placement == AdPlacement.Default
-                ? this.AppLovinSetting.DefaultInterstitialAdId.Id
-                : this.FindIdForPlacement(this.AppLovinSetting.CustomInterstitialAdIds, placement);
+                     ? this.AppLovinSetting.DefaultInterstitialAdId.Id
+                     : this.FindIdForPlacement(this.AppLovinSetting.CustomInterstitialAdIds, placement);
 
             return !string.IsNullOrEmpty(id);
         }
@@ -434,7 +438,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public bool IsAOAReady()
         {
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return false;
-
             return MaxSdk.IsAppOpenAdReady(this.AppLovinSetting.DefaultAOAAdId.Id) && !this.IsShowingAOAAd;
         }
 
@@ -481,9 +484,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnRewardedHidden(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            if (this.rewardedCompleted.ContainsKey(this.currentShowingRewarded))
+            if (this.rewardedCompleted.TryGetValue(this.currentShowingRewarded, out var status))
             {
-                if (this.rewardedCompleted[this.currentShowingRewarded])
+                if (status)
                 {
                     this.OnRewardCompleted(this.currentShowingRewarded);
                     this.signalBus.Fire(new RewardedAdClosedSignal(this.currentShowingRewarded.Name));
@@ -518,8 +521,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             var placement = AdPlacement.PlacementWithName(place);
             id = placement == AdPlacement.Default
-                ? this.AppLovinSetting.DefaultRewardedAdId.Id
-                : this.FindIdForPlacement(this.AppLovinSetting.CustomRewardedAdIds, placement);
+                     ? this.AppLovinSetting.DefaultRewardedAdId.Id
+                     : this.FindIdForPlacement(this.AppLovinSetting.CustomRewardedAdIds, placement);
 
             return !string.IsNullOrEmpty(id);
         }
@@ -549,11 +552,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             if (!this.IsRewardedPlacementReady(placement.Name, out var id)) return;
 
-            if (!this.rewardedCompleted.ContainsKey(placement))
-            {
-                this.rewardedCompleted.Add(placement, false);
-            }
-
+            this.rewardedCompleted.TryAdd(placement, false);
             this.rewardedCompleted[placement] = false;
             MaxSdk.ShowRewardedAd(id);
             this.currentShowingRewarded = placement;
