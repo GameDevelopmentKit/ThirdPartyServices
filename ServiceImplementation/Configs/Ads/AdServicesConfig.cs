@@ -36,6 +36,7 @@ namespace ServiceImplementation.Configs.Ads
         public int      DelayFirstInterstitialAdInterval  { get; set; } //This delay will be applied for the first session
         public int      DelayFirstInterNewSession         { get; set; } //From the second session, this delay will be applied
         public bool     ResetInterAdIntervalAfterRewardAd { get; set; } //Reset the interstitial ad interval after showing a rewarded ad
+        public int      CollapsibleBannerADInterval       { get; set; } //The interval between two collapsible banner ads
 
         public AdServicesConfig(SignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
         {
@@ -52,10 +53,7 @@ namespace ServiceImplementation.Configs.Ads
             this.InitDefaultValue();
         }
 
-        public void Dispose()
-        {
-            this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetchedSucceeded);
-        }
+        public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetchedSucceeded); }
 
         private void InitDefaultValue()
         {
@@ -76,6 +74,7 @@ namespace ServiceImplementation.Configs.Ads
             this.DelayFirstInterstitialAdInterval  = RemoteConfigHelpers.GetIntDefaultValue(this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersADInterval);
             this.DelayFirstInterNewSession         = RemoteConfigHelpers.GetIntDefaultValue(this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersNewSession);
             this.ResetInterAdIntervalAfterRewardAd = RemoteConfigHelpers.GetBoolDefaultValue(this.remoteConfigSetting, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd);
+            this.CollapsibleBannerADInterval       = RemoteConfigHelpers.GetIntDefaultValue(this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerADInterval);
         }
 
         private void OnRemoteConfigFetchedSucceeded()
@@ -97,6 +96,7 @@ namespace ServiceImplementation.Configs.Ads
             this.DelayFirstInterstitialAdInterval  = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersADInterval);
             this.DelayFirstInterNewSession         = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersNewSession);
             this.ResetInterAdIntervalAfterRewardAd = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd);
+            this.CollapsibleBannerADInterval       = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerADInterval);
         }
     }
 }
