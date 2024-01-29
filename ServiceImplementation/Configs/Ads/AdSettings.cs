@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using Core.AdsServices;
     using Sirenix.OdinInspector;
     using UnityEngine;
 #if UNITY_EDITOR
@@ -49,6 +50,11 @@
         /// AOA threshold
         /// </summary>
         public float AOAThreshHold { get { return this.mAOAThreshHold; } }
+
+        public BannerAdsPosition BannerPosition => this.mBannerPosition;
+
+        [SerializeField] [FoldoutGroup("Misc")] [LabelText("Banner Position", SdfIconType.BookmarkFill)]
+        private BannerAdsPosition mBannerPosition = BannerAdsPosition.Bottom;
 
         [SerializeField] [LabelText("AOA ThreshHold", SdfIconType.Download)] [FoldoutGroup("Misc")]
         private float mAOAThreshHold = 5f;
