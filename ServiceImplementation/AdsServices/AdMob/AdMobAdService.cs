@@ -214,7 +214,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     Currency           = "USD",
                     Revenue            = adValue.Value / 1e6,
                 };
-                
+
                 this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
 
                 this.analyticService.Track(adsRevenueEvent);
@@ -225,8 +225,9 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private bool       isAvailableShowCollapsibleBanner;
         private BannerView collapsibleBannerView;
+        private string     collapsibleBannerGuid = GetNewGuid();
 
-        public void ShowCollapsibleBannerAd()
+        public void ShowCollapsibleBannerAd(bool useNewGuid, BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom)
         {
             const string PLACEMENT = "CollapsibleBanner";
 
@@ -234,6 +235,8 @@ namespace ServiceImplementation.AdsServices.AdMob
             {
                 return;
             }
+
+            this.collapsibleBannerGuid = useNewGuid ? GetNewGuid() : this.collapsibleBannerGuid;
 
             if (this.collapsibleBannerView == null)
             {
@@ -253,9 +256,12 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             this.isAvailableShowCollapsibleBanner = true;
             var request = new AdRequest();
-            request.Extras.Add("collapsible", "bottom");
+            request.Extras.Add("collapsible_request_id", this.collapsibleBannerGuid);
+            request.Extras.Add("collapsible", bannerAdsPosition == BannerAdsPosition.Bottom ? "bottom" : "top");
             this.collapsibleBannerView.LoadAd(request);
         }
+
+        private static string GetNewGuid() => Guid.NewGuid().ToString();
 
         public void HideCollapsibleBannerAd()
         {
