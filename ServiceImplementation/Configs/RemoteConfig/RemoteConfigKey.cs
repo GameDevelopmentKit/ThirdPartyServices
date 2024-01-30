@@ -20,5 +20,6 @@
         public const string DelayFirstIntersNewSession        = "delay_first_inters_new_session";
         public const string ResetInterAdIntervalAfterRewardAd = "reset_inter_ad_interval_after_reward_ad";
         public const string CollapsibleBannerADInterval       = "colapsible_banner_ad_interval";
+        public const string EnableCollapsibleBannerFallback   = "enable_collapsible_banner_fallback";
     }
 }

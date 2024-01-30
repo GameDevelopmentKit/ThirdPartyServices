@@ -37,6 +37,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             new RemoteConfig(RemoteConfigKey.DelayFirstIntersNewSession, RemoteConfigKey.DelayFirstIntersNewSession, "0"),
             new RemoteConfig(RemoteConfigKey.ResetInterAdIntervalAfterRewardAd, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd, "true"),
             new RemoteConfig(RemoteConfigKey.CollapsibleBannerADInterval, RemoteConfigKey.CollapsibleBannerADInterval, "0"),
+            new RemoteConfig(RemoteConfigKey.EnableCollapsibleBannerFallback, RemoteConfigKey.EnableCollapsibleBannerFallback, "false")
         };
 
         [TableList] [LabelText("Misc Remote Configs")] [SerializeField]
