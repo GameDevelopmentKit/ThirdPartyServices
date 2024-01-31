@@ -26,10 +26,12 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private void InitFirebase()
         {
+            this.logger.Log("onelog: firebase|| Init firebase");
             FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
             {
                 var dependencyStatus = task.Result;
 
+                this.logger.Log("onelog: firebase|| Init CheckAndFixDependenciesAsync "+dependencyStatus);
                 if (dependencyStatus == DependencyStatus.Available)
                 {
                     this.FetchDataAsync();
@@ -52,20 +54,22 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private void FetchComplete(Task fetchTask)
         {
+            this.logger.Log("onelog: firebase|| Init CheckAndFixDependenciesAsync "+fetchTask.Status);
             if (fetchTask.IsCanceled)
             {
-                this.logger.Log("Fetch canceled.");
+                this.logger.Log("onelog: firebase|| Fetch canceled.");
             }
             else if (fetchTask.IsFaulted)
             {
-                this.logger.Log("Fetch encountered an error.");
+                this.logger.Log("onelog: firebase|| Fetch encountered an error.");
             }
             else if (fetchTask.IsCompleted)
             {
-                this.logger.Log("Fetch completed successfully!");
+                this.logger.Log("onelog: firebase|| Fetch completed successfully!");
             }
 
             var info = FirebaseRemoteConfig.DefaultInstance.Info;
+            this.logger.Log("onelog: firebase|| Fetch data info "+info.LastFetchStatus);
 
             switch (info.LastFetchStatus)
             {
@@ -82,11 +86,11 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                     switch (info.LastFetchFailureReason)
                     {
                         case FetchFailureReason.Error:
-                            this.logger.Log("Fetch failed for unknown reason");
+                            this.logger.Log("onelog: firebase|| Fetch failed for unknown reason");
 
                             break;
                         case FetchFailureReason.Throttled:
-                            this.logger.Log("Fetch throttled until " + info.ThrottledEndTime);
+                            this.logger.Log("onelog: firebase|| Fetch throttled until " + info.ThrottledEndTime);
 
                             break;
                         case FetchFailureReason.Invalid:
@@ -97,7 +101,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
                     break;
                 case LastFetchStatus.Pending:
-                    this.logger.Log("Latest Fetch call still pending.");
+                    this.logger.Log("onelog: firebase|| Latest Fetch call still pending.");
 
                     break;
                 default:
