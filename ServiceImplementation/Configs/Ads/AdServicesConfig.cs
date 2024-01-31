@@ -2,6 +2,7 @@ namespace ServiceImplementation.Configs.Ads
 {
     using System;
     using ServiceImplementation.FireBaseRemoteConfig;
+    using UnityEngine;
     using Zenject;
 
     public class AdServicesConfig : IInitializable, IDisposable
@@ -77,6 +78,7 @@ namespace ServiceImplementation.Configs.Ads
             this.ResetInterAdIntervalAfterRewardAd = RemoteConfigHelpers.GetBoolDefaultValue(this.remoteConfigSetting, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd);
             this.CollapsibleBannerADInterval       = RemoteConfigHelpers.GetIntDefaultValue(this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerADInterval);
             this.EnableCollapsibleBannerFallback   = RemoteConfigHelpers.GetBoolDefaultValue(this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBannerFallback);
+            Debug.Log($"onelog: remote init {CollapsibleBannerADInterval} || {EnableCollapsibleBannerFallback} || {RemoteConfigHelpers.GetIntDefaultValue(this.remoteConfigSetting, "testconfig")}");
         }
 
         private void OnRemoteConfigFetchedSucceeded()
@@ -100,6 +102,8 @@ namespace ServiceImplementation.Configs.Ads
             this.ResetInterAdIntervalAfterRewardAd = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd);
             this.CollapsibleBannerADInterval       = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerADInterval);
             this.EnableCollapsibleBannerFallback   = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBannerFallback);
+            Debug.Log($"onelog: remote succeed1: {CollapsibleBannerADInterval} || {EnableCollapsibleBannerFallback} || {RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, "testconfig")}");
+            Debug.Log($"onelog: remote succeed2: {this.remoteConfig.GetRemoteConfigIntValue("TestRC", 1)}");
         }
     }
 }
