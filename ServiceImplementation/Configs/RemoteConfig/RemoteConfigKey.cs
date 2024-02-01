@@ -11,6 +11,7 @@
         public const string EnableRewardedInterstitialAD      = "enable_rewarded_interstitial_ad";
         public const string EnableNativeAD                    = "enable_native_ad";
         public const string IntervalLoadAds                   = "interval_load_ads";
+        public const string DelayLoadBanner                   = "delay_load_banner";
         public const string MinPauseSecondToShowAoaAD         = "min_pause_second_to_show_aoa_ad";
         public const string AoaStartSession                   = "aoa_start_session";
         public const string InterstitialADInterval            = "interstitial_ad_interval";
