@@ -240,7 +240,8 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             if (this.collapsibleBannerView == null)
             {
-                this.collapsibleBannerView = new BannerView(this.config.CollapsibleBannerAdId.Id, AdSize.Banner, AdPosition.Bottom);
+                var adSize = this.config.IsAdaptiveBannerEnabled ? AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth) : AdSize.Banner;
+                this.collapsibleBannerView = new BannerView(this.config.CollapsibleBannerAdId.Id, adSize, bannerAdsPosition.ToAdMobAdPosition());
 
                 #region Events
 
@@ -256,9 +257,19 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             this.isAvailableShowCollapsibleBanner = true;
             var request = new AdRequest();
-            request.Extras.Add("collapsible_request_id", this.collapsibleBannerGuid);
-            request.Extras.Add("collapsible", bannerAdsPosition == BannerAdsPosition.Bottom ? "bottom" : "top");
+#if UNITY_IOS
+            if(useNewGuid) AddPramsCollapsible();
+#else
+            AddPramsCollapsible();
+#endif
             this.collapsibleBannerView.LoadAd(request);
+            return;
+
+            void AddPramsCollapsible()
+            {
+                request.Extras.Add("collapsible_request_id", this.collapsibleBannerGuid);
+                request.Extras.Add("collapsible", bannerAdsPosition == BannerAdsPosition.Bottom ? "bottom" : "top");
+            }
         }
 
         private static string GetNewGuid() => Guid.NewGuid().ToString();

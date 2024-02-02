@@ -12,6 +12,8 @@
     [Serializable]
     public class AdMobSettings : AdNetworkSettings
     {
+        public bool IsAdaptiveBannerEnabled { get => this.mIsAdaptiveBannerEnabled; set => this.mIsAdaptiveBannerEnabled = value; }
+        
         /// <summary>
         /// Gets or sets the default banner identifier.
         /// </summary>
@@ -206,6 +208,8 @@
 
         [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomRewardedInterstitialAdIds;
-        
+
+        [SerializeField] [LabelText("Is Adaptive Banner")] [BoxGroup("Admob Settings")]
+        private bool mIsAdaptiveBannerEnabled = true;
     }
 }
