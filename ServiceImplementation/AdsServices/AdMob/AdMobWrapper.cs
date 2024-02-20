@@ -9,6 +9,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
+    using Core.AnalyticServices.Signal;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
@@ -424,7 +425,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void AdMobHandlePaidEvent(AdValue args, string adFormat)
         {
-            this.analyticService.Track(new AdsRevenueEvent()
+            var adsRevenueEvent = new AdsRevenueEvent()
             {
                 AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
                 Revenue            = args.Value / 1e6,
@@ -432,9 +433,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 Placement          = "AOA",
                 AdNetwork          = "AdMob",
                 AdFormat           = adFormat,
-            });
-
-            this.logService.Log($"Received paid event. (currency: {args.CurrencyCode}, value: {args.Value}");
+            };
+            
+            this.analyticService.Track(adsRevenueEvent);
+            this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
         }
     }
 #endif
