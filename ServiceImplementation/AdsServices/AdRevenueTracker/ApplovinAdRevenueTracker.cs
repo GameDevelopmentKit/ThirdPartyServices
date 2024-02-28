@@ -24,9 +24,6 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
             MaxSdkCallbacks.Interstitial.OnAdRevenuePaidEvent         += this.OnOnAdRevenuePaidEvent;
             MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent             += this.OnOnAdRevenuePaidEvent;
             MaxSdkCallbacks.AppOpen.OnAdRevenuePaidEvent              += this.OnOnAdRevenuePaidEvent;
-#if !MAX_SDK_UPPER_6_2_0
-            MaxSdkCallbacks.CrossPromo.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-#endif
             MaxSdkCallbacks.MRec.OnAdRevenuePaidEvent                 += this.OnOnAdRevenuePaidEvent;
             MaxSdkCallbacks.RewardedInterstitial.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
         }
