@@ -4,7 +4,6 @@ namespace ServiceImplementation.IAPServices
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.IAPServices.Signals;
@@ -12,10 +11,11 @@ namespace ServiceImplementation.IAPServices
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
+    using UnityEngine.Purchasing.Extension;
     using UnityEngine.Purchasing.Security;
     using Zenject;
 
-    public class UnityIapServices : IIapServices, IStoreListener
+    public class UnityIapServices : IIapServices, IDetailedStoreListener
     {
         private Action<string>     onPurchaseComplete, onPurchaseFailed;
         private IStoreController   mStoreController;
@@ -319,7 +319,10 @@ namespace ServiceImplementation.IAPServices
             this.mStoreExtensionProvider = extensions;
         }
 
-        public void OnInitializeFailed(InitializationFailureReason error, string message) { }
+        public void OnInitializeFailed(InitializationFailureReason error, string message)
+        {
+            this.logger.Error("InitializationFailureReason:" + error + " message: " + message);
+        }
 
         public void OnInitializeFailed(InitializationFailureReason error)
         {
@@ -344,13 +347,15 @@ namespace ServiceImplementation.IAPServices
 
             return PurchaseProcessingResult.Complete;
         }
+        
+        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason) {  }
 
-        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
+        public void OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
         {
             this.onPurchaseFailed?.Invoke(product.definition.storeSpecificId);
             this.onPurchaseFailed = null;
             this.signalBus.Fire(new OnIAPPurchaseFailedSignal() { ProductId = product.definition.storeSpecificId });
-            this.logger.Log($"OnPurchaseFailed: FAIL. Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureReason}");
+            this.logger.Log($"OnPurchaseFailed: FAIL. Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureDescription}");
         }
     }
 }
