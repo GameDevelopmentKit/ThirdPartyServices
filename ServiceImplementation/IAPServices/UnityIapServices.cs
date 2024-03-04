@@ -32,8 +32,8 @@ namespace ServiceImplementation.IAPServices
 
         public UnityIapServices(ILogService log, SignalBus signalBus)
         {
-            this.logger        = log;
-            this.signalBus     = signalBus;
+            this.logger    = log;
+            this.signalBus = signalBus;
         }
 
         public async void InitIapServices(Dictionary<string, IAPModel> iapPack, string environment = "production")
@@ -120,7 +120,7 @@ namespace ServiceImplementation.IAPServices
             if (this.IsInitialized)
             {
                 this.signalBus.Fire<OnStartDoingIAPSignal>();
-                
+
                 var product = this.mStoreController.products.WithID(productId);
 
                 if (product is { availableToPurchase: true })
@@ -225,10 +225,11 @@ namespace ServiceImplementation.IAPServices
 #endif
             return true;
         }
-        
+
         public ProductData GetProductData(string productId)
         {
             var product = this.mStoreController.products.WithID(productId);
+
             return new ProductData()
             {
                 Id           = productId,
@@ -335,7 +336,11 @@ namespace ServiceImplementation.IAPServices
             }
             else
             {
-                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal() { ProductId = args.purchasedProduct.definition.id });
+                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal()
+                {
+                    ProductId        = args.purchasedProduct.definition.id,
+                    PurchasedProduct = args.purchasedProduct
+                });
             }
 
             this.onPurchaseComplete?.Invoke(args.purchasedProduct.definition.id);
