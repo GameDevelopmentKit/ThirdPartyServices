@@ -21,7 +21,7 @@
 
         public AdId CollapsibleBannerAdId 
         {
-#if THEONE_ADS_DEBUG
+#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => !string.IsNullOrEmpty(this.mCollapsibleBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/8388050270","ca-app-pub-3940256099942544/2014213617") : this.mCollapsibleBannerAdId; 
 #else
             get => this.mCollapsibleBannerAdId; 
@@ -34,7 +34,7 @@
         /// </summary>
         public AdId DefaultInterstitialAdId
         {
-#if THEONE_ADS_DEBUG
+#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => !string.IsNullOrEmpty(this.mDefaultInterstitialAdId.Id) ? new AdId("ca-app-pub-3940256099942544/4411468910","ca-app-pub-3940256099942544/1033173712") : this.mDefaultInterstitialAdId; 
 #else
             get => this.mDefaultInterstitialAdId; 
@@ -57,7 +57,7 @@
         /// </summary>
         public AdId AOAAdId
         {
-#if THEONE_ADS_DEBUG
+#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => !string.IsNullOrEmpty(this.mAoaAdId.Id) ? new AdId("ca-app-pub-3940256099942544/5575463023","ca-app-pub-3940256099942544/9257395921") : this.mAoaAdId; 
 #else
             get => this.mAoaAdId; 
