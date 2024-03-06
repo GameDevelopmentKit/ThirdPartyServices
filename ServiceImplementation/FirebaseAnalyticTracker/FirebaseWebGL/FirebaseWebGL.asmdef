@@ -2,19 +2,15 @@
     "name": "FirebaseWebGL",
     "rootNamespace": "",
     "references": [],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "WebGL"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "com.gdk.3rd",
-            "expression": "",
-            "define": "FIREBASE_WEBGL"
-        }
-    ],
+    "versionDefines": [],
     "noEngineReferences": false
 }

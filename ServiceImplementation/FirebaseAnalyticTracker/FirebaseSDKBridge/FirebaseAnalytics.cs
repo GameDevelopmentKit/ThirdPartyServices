@@ -4,7 +4,6 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
     using System.Collections.Generic;
     using Firebase.Analytics;
     using Newtonsoft.Json;
-    using UnityEngine;
 
     /// <summary>
     /// Wrap main functions from Firebase.Analytics.FirebaseAnalytics
