@@ -5,6 +5,9 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     using GoogleMobileAds.Ump.Api;
     using ServiceImplementation.Configs;
     using Zenject;
+#if UNITY_IOS
+    using Unity.Advertisement.IosSupport;
+#endif
 
     public class UmpConsentInformation : IConsentInformation, IInitializable
     {
@@ -44,6 +47,9 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             }
 
 #if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
+#if UNITY_IOS
+            if(ATTrackingStatusBinding.GetAuthorizationTrackingStatus() == ATTrackingStatusBinding.AuthorizationTrackingStatus.DENIED) return;
+#endif
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
             {
                 if (formError != null)
