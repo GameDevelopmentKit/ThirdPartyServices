@@ -15,6 +15,7 @@ namespace Core.AdsServices
         public bool IsAOAReady()
         {
             return true;
+            
         }
         
         public void ShowAOAAds()
