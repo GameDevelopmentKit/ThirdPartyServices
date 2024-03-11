@@ -15,7 +15,8 @@
         "Unity.TextMeshPro",
         "FBInstant",
         "3rd.Configs",
-        "Amazon.Scripts"
+        "Amazon.Scripts",
+        "Unity.Advertisement.IosSupport"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
