@@ -7,25 +7,20 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     using Zenject;
 #if UNITY_IOS
     using Unity.Advertisement.IosSupport;
+    using Cysharp.Threading.Tasks;
 #endif
 
     public class UmpConsentInformation : IConsentInformation, IInitializable
     {
         #region Inject
 
-        private readonly ILogService        logService;
+        private readonly ILogService logService;
 
         #endregion
 
-        public UmpConsentInformation(ILogService logService)
-        {
-            this.logService         = logService;
-        }
-        
-        public void Initialize()
-        {
-            this.Request();
-        }
+        public UmpConsentInformation(ILogService logService) { this.logService = logService; }
+
+        public void Initialize() { this.Request(); }
 
         public void Request()
         {
@@ -37,7 +32,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             ConsentInformation.Update(request, this.OnConsentInfoUpdated);
         }
 
-        private void OnConsentInfoUpdated(FormError consentError)
+        private async void OnConsentInfoUpdated(FormError consentError)
         {
             if (consentError != null)
             {
@@ -48,7 +43,15 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
 #if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
 #if UNITY_IOS
-            if(ATTrackingStatusBinding.GetAuthorizationTrackingStatus() == ATTrackingStatusBinding.AuthorizationTrackingStatus.DENIED) return;
+            if (ATTrackingStatusBinding.GetAuthorizationTrackingStatus() == ATTrackingStatusBinding.AuthorizationTrackingStatus.DENIED)
+            {
+                return;
+            }
+
+            if (ATTrackingStatusBinding.GetAuthorizationTrackingStatus() == ATTrackingStatusBinding.AuthorizationTrackingStatus.NOT_DETERMINED)
+            {
+                await UniTask.WaitUntil(() => ATTrackingStatusBinding.GetAuthorizationTrackingStatus() != ATTrackingStatusBinding.AuthorizationTrackingStatus.NOT_DETERMINED);
+            }
 #endif
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
             {
