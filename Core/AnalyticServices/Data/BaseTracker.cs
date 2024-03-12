@@ -30,6 +30,8 @@ namespace Core.AnalyticServices.Data
         /// </summary>
         protected virtual HashSet<Type> IgnoreEvents { get; }
 
+        protected virtual HashSet<string> IncludeEvents { get; }
+
         /// <summary>
         /// mapping of analytic event name or parameter which require specific mapping to the tracker
         /// </summary>
@@ -75,7 +77,10 @@ namespace Core.AnalyticServices.Data
             this.Init();
         }
 
-        private async void Init() { await this.TrackerSetup(); }
+        private async void Init()
+        {
+            await this.TrackerSetup();
+        }
 
         private async void EventTracked(EventTrackedSignal trackedData)
         {
@@ -117,6 +122,7 @@ namespace Core.AnalyticServices.Data
                 }
 
                 if (string.IsNullOrEmpty(eventName)) return;
+                if (this.IncludeEvents.Count > 0 && !this.IncludeEvents.Contains(eventName)) return;
 
                 this.OnEvent(eventName, eventData);
             }

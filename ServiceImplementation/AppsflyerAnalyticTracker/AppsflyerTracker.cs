@@ -43,6 +43,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         }
 
         protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
+        protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
 
         protected override Task TrackerSetup()
@@ -58,7 +59,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             {
                 throw new Exception("Appsflyer can't be initialized, Appsflyer AppId not found");
             }
-            
+
             if (string.IsNullOrEmpty(devKey))
             {
                 throw new Exception("Appsflyer can't be initialized, Appsflyer DevKey not found");
@@ -77,7 +78,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             AppsFlyer.waitForATTUserAuthorizationWithTimeoutInterval(60);
 #endif
             AppsFlyer.setIsDebug(this.analyticConfig.AppsflyerIsDebug);
-            
+
             //IAP Revenue connector
 #if THEONE_IAP
             AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
@@ -90,16 +91,19 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             //Start SDK
             AppsFlyer.startSDK();
-            
+
             //Ads Revenue connector
             AppsFlyerAdRevenue.start();
-            
+
             this.TrackerReady.SetResult(true);
 
             return this.TrackerReady.Task;
         }
 
-        protected override void SetUserId(string userId) { AppsFlyer.setCustomerUserId(userId); }
+        protected override void SetUserId(string userId)
+        {
+            AppsFlyer.setCustomerUserId(userId);
+        }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
         {
@@ -113,7 +117,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value.ToJson());
             AppsFlyer.sendEvent(name, convertedData);
         }
-        
+
         //we don't need it anymore because we use AppsFlyer Purchase Connector instead
         private void TrackIAP(IEvent trackedEvent, Dictionary<string, object> data)
         {
@@ -152,10 +156,10 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             AppsFlyerAdRevenueMediationNetworkType mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
             {
                 AdRevenueConstants.ARSourceAppLovinMAX => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax,
-                AdRevenueConstants.ARSourceIronSource => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeIronSource,
-                AdRevenueConstants.ARSourceAdMob => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob,
-                AdRevenueConstants.ARSourceUnity => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeUnity,
-                _ => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeCustomMediation
+                AdRevenueConstants.ARSourceIronSource  => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeIronSource,
+                AdRevenueConstants.ARSourceAdMob       => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob,
+                AdRevenueConstants.ARSourceUnity       => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeUnity,
+                _                                      => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeCustomMediation
             };
 
             AppsFlyerAdRevenue.logAdRevenue(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Revenue, adsRevenueEvent.Currency, dic);
