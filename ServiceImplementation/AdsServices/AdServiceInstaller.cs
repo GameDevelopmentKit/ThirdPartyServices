@@ -6,6 +6,7 @@ namespace ServiceImplementation.AdsServices
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
+    using ServiceImplementation.AdsServices.AppTracking;
     using ServiceImplementation.AdsServices.ConsentInformation;
     using ServiceImplementation.AdsServices.EasyMobile;
     using ServiceImplementation.AdsServices.PreloadService;
@@ -55,6 +56,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInterfacesAndSelfTo<PreloadAdService>().AsCached().NonLazy();
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
 
+            this.Container.BindInterfacesAndSelfTo<AppTrackingServices>().AsCached().NonLazy();
             ConsentInformationInstaller.Install(this.Container);
 
             #region Ads signal
