@@ -12,7 +12,6 @@ namespace Core.AdsServices.Native
 
     public class NativeAdsView : MonoBehaviour
     {
-        public Texture2D loadingTexture;
         public RawImage  iconImage;
         public RawImage  adChoicesImage;
         public TMP_Text  headlineText;
@@ -29,8 +28,8 @@ namespace Core.AdsServices.Native
             this.nativeAdsService = nativeAdsService;
             this.activeScreenList = activeScreenList;
 
-            this.iconImage.texture      = this.loadingTexture;
-            this.adChoicesImage.texture = this.loadingTexture;
+            this.iconImage.gameObject.SetActive(false);
+            this.adChoicesImage.gameObject.SetActive(false);
             this.IntervalCall();
             await UniTask.WaitUntil(() => screenManager.CurrentActiveScreen.HasValue);
             screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreenHandler);
@@ -38,7 +37,12 @@ namespace Core.AdsServices.Native
 
         private void OnChangeScreenHandler(IScreenPresenter obj)
         {
-            var isAdsActive = obj != null && this.activeScreenList.Contains(obj.GetType());
+            if (obj == null)
+            {
+                this.gameObject.SetActive(false);
+                return;
+            }
+            var isAdsActive = this.activeScreenList.Contains(obj.GetType());
             //TODO change to set active for ads elements
 #if CREATIVE
             isAdsActive = false;
