@@ -84,7 +84,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
             AppsFlyerPurchaseConnector.setIsSandbox(this.analyticConfig.AppsflyerIsDebug);
             AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
-            AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();
 #endif
