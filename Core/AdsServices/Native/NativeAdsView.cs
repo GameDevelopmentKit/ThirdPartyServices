@@ -11,10 +11,12 @@ namespace Core.AdsServices.Native
 
     public class NativeAdsView : MonoBehaviour
     {
-        public RawImage iconImage;
-        public RawImage adChoicesImage;
-        public TMP_Text headlineText;
-        public TMP_Text advertiserText;
+        public Texture2D loadingTexture;
+        public RawImage  iconImage;
+        public RawImage  adChoicesImage;
+        public TMP_Text  headlineText;
+        public TMP_Text  advertiserText;
+        public TMP_Text  callToActionText;
 
         private SignalBus         signalBus;
         private INativeAdsService nativeAdsService;
@@ -24,11 +26,11 @@ namespace Core.AdsServices.Native
         public void Init(INativeAdsService nativeAdsService, SignalBus signalBus, List<Type> activeScreenList)
         {
             this.nativeAdsService = nativeAdsService;
-            this.signalBus = signalBus;
+            this.signalBus        = signalBus;
             this.activeScreenList = activeScreenList;
 
-            this.iconImage.gameObject.SetActive(false);
-            this.adChoicesImage.gameObject.SetActive(false);
+            this.iconImage.texture      = this.loadingTexture;
+            this.adChoicesImage.texture = this.loadingTexture;
             this.IntervalCall();
             this.signalBus.Subscribe<ScreenShowSignal>(this.OnScreenShowHandler);
         }

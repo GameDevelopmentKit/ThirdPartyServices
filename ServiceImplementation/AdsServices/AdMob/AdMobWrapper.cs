@@ -309,6 +309,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private HashSet<string>                     loadingNativeAdsIds     { get; } = new();
         private Dictionary<NativeAdsView, NativeAd> nativeAdsViewToNativeAd { get; } = new();
 
+        private const string PrefixNativeAdsText = "loading...";
+        
         private void LoadNativeAds(string adsId)
         {
             if (this.loadingNativeAdsIds.Contains(adsId) || this.nativeAdsIdToNativeAd.ContainsKey(adsId)) return;
@@ -353,10 +355,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
 
             this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
+            this.logService.Log($"native call to action text: {nativeAd.GetCallToActionText()}");
             this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
 
             // Get Texture2D for icon asset of native ad.
-            nativeAdsView.headlineText.text = nativeAd.GetHeadlineText();
+            nativeAdsView.headlineText.text     = nativeAd.GetHeadlineText();
 
             if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
             {
@@ -368,8 +371,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.advertiserText.gameObject))
             {
+                nativeAdsView.advertiserText.text = PrefixNativeAdsText;
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register advertiser text for native ad: {nativeAdsView.name}");
+            }
+
+            nativeAdsView.callToActionText.text = nativeAd.GetCallToActionText();
+
+            if (!nativeAd.RegisterCallToActionGameObject(nativeAdsView.callToActionText.gameObject))
+            {
+                nativeAdsView.callToActionText.text = PrefixNativeAdsText;
+                this.logService.Log($"Failed to register call to action text for native ad: {nativeAdsView.name}");
             }
 
             if (nativeAd.GetIconTexture() != null)
