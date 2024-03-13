@@ -3,11 +3,12 @@ namespace Core.AdsServices.Native
     using System;
     using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
-    using GameFoundation.Scripts.UIModule.ScreenFlow.Signals;
+    using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
+    using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using TMPro;
+    using UniRx;
     using UnityEngine;
     using UnityEngine.UI;
-    using Zenject;
 
     public class NativeAdsView : MonoBehaviour
     {
@@ -18,28 +19,26 @@ namespace Core.AdsServices.Native
         public TMP_Text  advertiserText;
         public TMP_Text  callToActionText;
 
-        private SignalBus         signalBus;
         private INativeAdsService nativeAdsService;
+        private IScreenManager    screenManager;
         private List<Type>        activeScreenList;
 
 #if ADMOB_NATIVE_ADS
-        public void Init(INativeAdsService nativeAdsService, SignalBus signalBus, List<Type> activeScreenList)
+        public async void Init(INativeAdsService nativeAdsService,IScreenManager screenManager, List<Type> activeScreenList)
         {
             this.nativeAdsService = nativeAdsService;
-            this.signalBus        = signalBus;
             this.activeScreenList = activeScreenList;
 
             this.iconImage.texture      = this.loadingTexture;
             this.adChoicesImage.texture = this.loadingTexture;
             this.IntervalCall();
-            this.signalBus.Subscribe<ScreenShowSignal>(this.OnScreenShowHandler);
+            await UniTask.WaitUntil(() => screenManager.CurrentActiveScreen.HasValue);
+            screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreenHandler);
         }
 
-        private void OnDestroy() { this.signalBus.Unsubscribe<ScreenShowSignal>(this.OnScreenShowHandler); }
-
-        private void OnScreenShowHandler(ScreenShowSignal obj)
+        private void OnChangeScreenHandler(IScreenPresenter obj)
         {
-            var isAdsActive = this.activeScreenList.Contains(obj.ScreenPresenter.GetType());
+            var isAdsActive = obj != null && this.activeScreenList.Contains(obj.GetType());
             //TODO change to set active for ads elements
 #if CREATIVE
             isAdsActive = false;
