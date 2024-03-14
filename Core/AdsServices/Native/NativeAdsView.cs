@@ -19,35 +19,15 @@ namespace Core.AdsServices.Native
         public TMP_Text  callToActionText;
 
         private INativeAdsService nativeAdsService;
-        private IScreenManager    screenManager;
-        private List<Type>        activeScreenList;
 
 #if ADMOB_NATIVE_ADS
-        public async void Init(INativeAdsService nativeAdsService,IScreenManager screenManager, List<Type> activeScreenList)
+        public void Init(INativeAdsService nativeAdsService)
         {
             this.nativeAdsService = nativeAdsService;
-            this.activeScreenList = activeScreenList;
 
             this.iconImage.gameObject.SetActive(false);
             this.adChoicesImage.gameObject.SetActive(false);
             this.IntervalCall();
-            await UniTask.WaitUntil(() => screenManager.CurrentActiveScreen.HasValue);
-            screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreenHandler);
-        }
-
-        private void OnChangeScreenHandler(IScreenPresenter obj)
-        {
-            if (obj == null)
-            {
-                this.gameObject.SetActive(false);
-                return;
-            }
-            var isAdsActive = this.activeScreenList.Contains(obj.GetType());
-            //TODO change to set active for ads elements
-#if CREATIVE
-            isAdsActive = false;
-#endif
-            this.gameObject.SetActive(isAdsActive);
         }
 
         private async void IntervalCall()
