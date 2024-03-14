@@ -1,12 +1,8 @@
 namespace Core.AdsServices.Native
 {
     using System;
-    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
-    using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
-    using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using TMPro;
-    using UniRx;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -32,6 +28,7 @@ namespace Core.AdsServices.Native
 
         private async void IntervalCall()
         {
+            if (this == null) return;
             await UniTask.SwitchToMainThread();
             this.nativeAdsService?.DrawNativeAds(this);
             await UniTask.Delay(TimeSpan.FromSeconds(1));
