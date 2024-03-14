@@ -27,7 +27,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
         {
-            { typeof(IapTransactionDidSucceed), TrackIAP },
+            { typeof(IapTransactionDidSucceed), this.TrackIAP },
             { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
         };
 
@@ -118,9 +118,9 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         }
 
         //we don't need it anymore because we use AppsFlyer Purchase Connector instead
+        //new update: appsflyer connector still not work, we need to use this method to track IAP
         private void TrackIAP(IEvent trackedEvent, Dictionary<string, object> data)
         {
-            return;
             if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
             {
                 Debug.LogError("trackedEvent in TrackIAP is not of correct type");
@@ -133,6 +133,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 { AFInAppEvents.CURRENCY, iapTransaction.CurrencyCode },
                 { AFInAppEvents.PRICE, iapTransaction.Price.ToString(CultureInfo.InvariantCulture) },
                 { AFInAppEvents.PURCHASE, iapTransaction.Price.ToString(CultureInfo.InvariantCulture) },
+                { AFInAppEvents.REVENUE, iapTransaction.Price.ToString(CultureInfo.InvariantCulture) },
                 { AFInAppEvents.CONTENT_ID, iapTransaction.OfferSku }
             };
 
