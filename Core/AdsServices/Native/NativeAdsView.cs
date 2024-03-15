@@ -1,18 +1,15 @@
 namespace Core.AdsServices.Native
 {
-    using System;
-    using Cysharp.Threading.Tasks;
-    using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
 
     public class NativeAdsView : MonoBehaviour
     {
-        public RawImage  iconImage;
-        public RawImage  adChoicesImage;
-        public TMP_Text  headlineText;
-        public TMP_Text  advertiserText;
-        public TMP_Text  callToActionText;
+        public RawImage iconImage;
+        public RawImage adChoicesImage;
+        public Text     headlineText;
+        public Text     advertiserText;
+        public Text     callToActionText;
 
         private INativeAdsService nativeAdsService;
 
