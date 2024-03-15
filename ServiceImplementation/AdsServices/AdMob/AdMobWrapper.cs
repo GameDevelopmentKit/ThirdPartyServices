@@ -24,7 +24,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
     public class AdMobWrapper : IAOAAdService, IMRECAdService, IInitializable
 #if ADMOB_NATIVE_ADS
-        , INativeAdsService
+      , INativeAdsService
 #endif
     {
         #region inject
@@ -38,8 +38,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
-        public AdMobWrapper(ILogService logService, SignalBus signalBus, IAdServices adServices, IAnalyticServices analyticService,
-            ThirdPartiesConfig thirdPartiesConfig, AdServicesConfig adServicesConfig)
+        public AdMobWrapper(ILogService logService,         SignalBus        signalBus, IAdServices adServices, IAnalyticServices analyticService,
+            ThirdPartiesConfig          thirdPartiesConfig, AdServicesConfig adServicesConfig)
         {
             this.logService         = logService;
             this.signalBus          = signalBus;
@@ -79,11 +79,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #endif
             this.logService.Log("AOA start init");
             MobileAds.Initialize(_ =>
-            {
-                this.logService.Log("AOA finished init");
-                this.LoadAppOpenAd();
-                this.IntervalCall(5);
-            });
+                                 {
+                                     this.logService.Log("AOA finished init");
+                                     this.LoadAppOpenAd();
+                                     this.IntervalCall(5);
+                                 });
         }
 
         // Temporarily disable this
@@ -309,6 +309,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private HashSet<string>                     loadingNativeAdsIds     { get; } = new();
         private Dictionary<NativeAdsView, NativeAd> nativeAdsViewToNativeAd { get; } = new();
 
+        private const string PrefixNativeAdsText = "loading...";
+
         private void LoadNativeAds(string adsId)
         {
             if (this.loadingNativeAdsIds.Contains(adsId) || this.nativeAdsIdToNativeAd.ContainsKey(adsId)) return;
@@ -324,10 +326,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             adLoader.OnAdFailedToLoad += (_, _) => { this.loadingNativeAdsIds.Remove(adsId); };
 
-            adLoader.OnNativeAdLoaded += this.HandleNativeAdLoaded;
-            adLoader.OnAdFailedToLoad += this.HandleAdFailedToLoad;
+            adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
+            adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
+            adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
             adLoader.LoadAd(new AdRequest.Builder().Build());
         }
+
+        private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e) { this.logService.Log("native ad clicked"); }
 
         private NativeAd GetAvailableNativeAd()
         {
@@ -353,6 +358,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
 
             this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
+            this.logService.Log($"native call to action text: {nativeAd.GetCallToActionText()}");
             this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
 
             // Get Texture2D for icon asset of native ad.
@@ -368,8 +374,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.advertiserText.gameObject))
             {
+                nativeAdsView.advertiserText.text = PrefixNativeAdsText;
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register advertiser text for native ad: {nativeAdsView.name}");
+            }
+
+            nativeAdsView.callToActionText.text = nativeAd.GetCallToActionText();
+
+            if (!nativeAd.RegisterCallToActionGameObject(nativeAdsView.callToActionText.gameObject))
+            {
+                nativeAdsView.callToActionText.text = PrefixNativeAdsText;
+                this.logService.Log($"Failed to register call to action text for native ad: {nativeAdsView.name}");
             }
 
             if (nativeAd.GetIconTexture() != null)
@@ -398,10 +413,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
-        {
-            this.logService.Log($"Native ad failed to load: {e.LoadAdError.GetMessage()}");
-        }
+        private void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e) { this.logService.Log($"Native ad failed to load: {e.LoadAdError.GetMessage()}"); }
 
         private void HandleNativeAdLoaded(object sender, NativeAdEventArgs e)
         {
@@ -426,15 +438,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void AdMobHandlePaidEvent(AdValue args, string adFormat)
         {
             var adsRevenueEvent = new AdsRevenueEvent()
-            {
-                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
-                Revenue            = args.Value / 1e6,
-                Currency           = "USD",
-                Placement          = "AOA",
-                AdNetwork          = "AdMob",
-                AdFormat           = adFormat,
-            };
-            
+                                  {
+                                      AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
+                                      Revenue            = args.Value / 1e6,
+                                      Currency           = "USD",
+                                      Placement          = "AOA",
+                                      AdNetwork          = "AdMob",
+                                      AdFormat           = adFormat,
+                                  };
+
             this.analyticService.Track(adsRevenueEvent);
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
         }
