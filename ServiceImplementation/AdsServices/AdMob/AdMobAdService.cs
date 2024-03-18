@@ -280,6 +280,7 @@ namespace ServiceImplementation.AdsServices.AdMob
         {
             this.isAvailableShowCollapsibleBanner = false;
             this.collapsibleBannerView?.Hide();
+            Debug.Log("onelog: HideCollapsibleBannerAd");
         }
 
         public void DestroyCollapsibleBannerAd()
@@ -289,6 +290,8 @@ namespace ServiceImplementation.AdsServices.AdMob
                 this.collapsibleBannerView.Destroy();
                 this.collapsibleBannerView = null;
             }
+
+            Debug.Log("onelog: DestroyCollapsibleBannerAd");
         }
 
         private void OnCollapsibleBannerLoaded(string placement)
@@ -298,11 +301,21 @@ namespace ServiceImplementation.AdsServices.AdMob
             {
                 this.collapsibleBannerView?.Show();
             }
+
+            Debug.Log("onelog: OnCollapsibleBannerLoaded");
         }
 
-        private void OnCollapsibleBannerLoadFailed(string placement, AdError adError) { this.signalBus.Fire(new CollapsibleBannerAdLoadFailedSignal(placement, adError.GetMessage())); }
+        private void OnCollapsibleBannerLoadFailed(string placement, AdError adError)
+        {
+            Debug.Log("onelog: OnCollapsibleBannerLoadFailed");
+            this.signalBus.Fire(new CollapsibleBannerAdLoadFailedSignal(placement, adError.GetMessage()));
+        }
 
-        private void OnCollapsibleBannerPresented(string placement) { this.signalBus.Fire(new CollapsibleBannerAdPresentedSignal(placement)); }
+        private void OnCollapsibleBannerPresented(string placement)
+        {
+            Debug.Log("onelog: OnCollapsibleBannerPresented");
+            this.signalBus.Fire(new CollapsibleBannerAdPresentedSignal(placement));
+        }
 
         private void OnCollapsibleBannerDismissed(string placement) { this.signalBus.Fire(new CollapsibleBannerAdDismissedSignal(placement)); }
 
