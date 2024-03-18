@@ -233,6 +233,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             if (string.IsNullOrEmpty(this.config.CollapsibleBannerAdId.Id))
             {
+                Debug.Log("onelog: ShowCollapsibleBannerAd - CollapsibleBannerAdId is null or empty. Please check the AdMob settings.");
                 return;
             }
 
@@ -262,6 +263,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 #else
             AddPramsCollapsible();
 #endif
+            Debug.Log("onelog: ShowCollapsibleBannerAd - Load CollapsibleBanner.");
             this.collapsibleBannerView.LoadAd(request);
             return;
 
