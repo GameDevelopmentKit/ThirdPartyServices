@@ -5,8 +5,9 @@
 
     public class AnalyticsEventCustomizationConfig
     {
-        public HashSet<Type>              IgnoreEvents    { get; set; } = new();
-        public HashSet<string>            IncludeEvents   { get; set; } = new();
-        public Dictionary<string, string> CustomEventKeys { get; set; } = new();
+        public HashSet<Type>              IgnoreEvents        { get; set; } = new();
+        public HashSet<string>            IncludeEvents       { get; set; } = new();
+        public Dictionary<string, string> CustomEventKeys     { get; set; } = new();
+        public HashSet<string>            UntrackUserProperties { get; set; } = new();
     }
 }

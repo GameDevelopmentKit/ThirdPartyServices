@@ -21,9 +21,10 @@
             this.customizationConfig = customizationConfig;
         }
 
-        protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
-        protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
-        protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
+        protected override HashSet<Type>              IgnoreEvents          => this.customizationConfig.IgnoreEvents;
+        protected override HashSet<string>            IncludeEvents         => this.customizationConfig.IncludeEvents;
+        protected override Dictionary<string, string> CustomEventKeys       => this.customizationConfig.CustomEventKeys;
+        protected override HashSet<string>            UntrackUserProperties => this.customizationConfig.UntrackUserProperties;
 
         protected override Task TrackerSetup()
         {
@@ -34,9 +35,18 @@
             return this.TrackerReady.Task;
         }
 
-        protected override void SetUserId(string userId) { FirebaseAnalytics.SetUserId(userId); }
+        protected override void SetUserId(string userId)
+        {
+            FirebaseAnalytics.SetUserId(userId);
+        }
 
-        protected override void OnChangedProps(Dictionary<string, object> changedProps) { FirebaseAnalytics.SetUserProperty(changedProps); }
+        protected override void OnChangedProps(Dictionary<string, object> changedProps)
+        {
+            var actualChangeProps = changedProps
+                                    .Where(kv => !this.UntrackUserProperties.Contains(kv.Key))
+                                    .ToDictionary(kv => kv.Key, kv => kv.Value);
+            FirebaseAnalytics.SetUserProperty(actualChangeProps);
+        }
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {

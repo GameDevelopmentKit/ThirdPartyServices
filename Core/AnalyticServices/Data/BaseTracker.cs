@@ -36,6 +36,11 @@ namespace Core.AnalyticServices.Data
         /// mapping of analytic event name or parameter which require specific mapping to the tracker
         /// </summary>
         protected virtual Dictionary<string, string> CustomEventKeys { get; }
+        
+        /// <summary>
+        /// user properties are ignored by special require from tracker
+        /// </summary>
+        protected virtual HashSet<string> UntrackUserProperties { get; }
 
         /// <summary>
         /// mapping of analytic events which require specific mapping to the tracker
