@@ -42,9 +42,10 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             }
         }
 
-        protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
-        protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
-        protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
+        protected override HashSet<Type>              IgnoreEvents          => this.customizationConfig.IgnoreEvents;
+        protected override HashSet<string>            IncludeEvents         => this.customizationConfig.IncludeEvents;
+        protected override Dictionary<string, string> CustomEventKeys       => this.customizationConfig.CustomEventKeys;
+        protected override HashSet<string>            UntrackUserProperties => this.customizationConfig.UntrackUserProperties;
 
         protected override Task TrackerSetup()
         {
