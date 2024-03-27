@@ -14,13 +14,14 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
     public class AdjustTracker : BaseTracker
     {
-        private readonly   ILogService                       logger;
+        private readonly ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
-        public AdjustTracker(ILogService logger,SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig) 
+        public AdjustTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus,
+            analyticConfig)
         {
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
-            this.logger              = logger;
+            this.logger                            = logger;
             if (analyticsEventCustomizationConfig.CustomEventKeys.Count == 0)
             {
                 this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
@@ -28,6 +29,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         }
 
         protected override HashSet<Type>              IgnoreEvents    => this.analyticsEventCustomizationConfig.IgnoreEvents;
+        protected override HashSet<string>            IncludeEvents   => this.analyticsEventCustomizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
         protected override TaskCompletionSource<bool> TrackerReady    { get; } = new();
 
@@ -49,7 +51,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                 {
                     if (key == null || value == null) continue;
                     adjustEvent.addCallbackParameter(key, value.ToString());
-                } 
+                }
             }
 
             Adjust.trackEvent(adjustEvent);
