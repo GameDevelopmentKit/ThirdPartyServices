@@ -246,7 +246,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             var mrecBannerView = new BannerView(this.ADMobSettings.MRECAdIds[adViewPosition].Id, AdSize.MediumRectangle, adViewPosition.ToAdMobAdPosition());
 
+#if ADMOB_UPPER_8_7_0
+            var adRequest = new AdRequest();
+#else
             var adRequest = new AdRequest.Builder().Build();
+#endif
 
             // send the request to load the ad.
             mrecBannerView.LoadAd(adRequest);
