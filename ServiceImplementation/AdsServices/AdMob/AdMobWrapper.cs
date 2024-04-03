@@ -333,7 +333,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
             adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
             adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
+#if ADMOB_UPPER_8_7_0
+            adLoader.LoadAd(new AdRequest());
+#else
             adLoader.LoadAd(new AdRequest.Builder().Build());
+#endif
         }
 
         private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e) { this.logService.Log("native ad clicked"); }
