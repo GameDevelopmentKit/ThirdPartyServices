@@ -202,6 +202,9 @@
 
         [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomInterstitialAdIds;
+        
+        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")]
+        private Dictionary<AdPlacement, CustomCappingTime> mCustomInterstitialCappingTime;
 
         [SerializeField] [LabelText("Rewarded")] [BoxGroup("Custom Placement Id")]
         private Dictionary_AdPlacement_AdId mCustomRewardedAdIds;

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using Core.AdsServices;
+    using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
 #if UNITY_EDITOR
@@ -64,6 +65,9 @@
 
         [SerializeField] [LabelText("Banner Load Strategy", SdfIconType.BookmarkFill)] [FoldoutGroup("Misc")]
         private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.Instantiate;
+        
+        [SerializeField] [LabelText("Custom Interstitial capping time")] [FoldoutGroup("Misc")]
+        public Dictionary_AdPlacement_CappingTime CustomInterstitialCappingTime;
 
         [SerializeField] [LabelText("Enable")] [OnValueChanged("OnChangeCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
         private bool mEnableCollapsibleBanner;
