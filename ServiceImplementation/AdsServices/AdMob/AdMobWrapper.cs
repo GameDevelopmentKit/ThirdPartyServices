@@ -246,10 +246,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             var mrecBannerView = new BannerView(this.ADMobSettings.MRECAdIds[adViewPosition].Id, AdSize.MediumRectangle, adViewPosition.ToAdMobAdPosition());
 
-#if ADMOB_UPPER_8_7_0
-            var adRequest = new AdRequest();
-#else
+#if ADMOB_BELLOW_8_7_0
             var adRequest = new AdRequest.Builder().Build();
+#else
+            var adRequest = new AdRequest();
 #endif
 
             // send the request to load the ad.
@@ -333,10 +333,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
             adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
             adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
-#if ADMOB_UPPER_8_7_0
-            adLoader.LoadAd(new AdRequest());
-#else
+#if ADMOB_BELLOW_8_7_0
             adLoader.LoadAd(new AdRequest.Builder().Build());
+#else
+            adLoader.LoadAd(new AdRequest());
 #endif
         }
 
