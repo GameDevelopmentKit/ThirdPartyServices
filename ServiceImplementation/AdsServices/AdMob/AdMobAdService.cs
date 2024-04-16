@@ -307,7 +307,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private void OnCollapsibleBannerLoadFailed(string placement, AdError adError)
         {
-            Debug.Log("onelog: OnCollapsibleBannerLoadFailed");
+            Debug.Log($"onelog: OnCollapsibleBannerLoadFailed {placement} - {adError.GetMessage()}");
             this.signalBus.Fire(new CollapsibleBannerAdLoadFailedSignal(placement, adError.GetMessage()));
         }
 
