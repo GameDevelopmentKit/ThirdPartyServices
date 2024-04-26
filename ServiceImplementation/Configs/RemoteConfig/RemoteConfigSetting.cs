@@ -1,5 +1,6 @@
 namespace ServiceImplementation.FireBaseRemoteConfig
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Sirenix.OdinInspector;
@@ -17,28 +18,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         [TableList] [LabelText("Ads Remote Configs")] [SerializeField]
         private List<RemoteConfig> mAdsRemoteConfigs = new()
         {
-            new RemoteConfig(RemoteConfigKey.EnableBannerAD, RemoteConfigKey.EnableBannerAD, "true"),
-            new RemoteConfig(RemoteConfigKey.EnableInterstitialAD, RemoteConfigKey.EnableInterstitialAD, "true"),
-            new RemoteConfig(RemoteConfigKey.EnableMrecAD, RemoteConfigKey.EnableMrecAD, "true"),
-            new RemoteConfig(RemoteConfigKey.EnableAoaAD, RemoteConfigKey.EnableAoaAD, "true"),
-            new RemoteConfig(RemoteConfigKey.EnableRewardedAD, RemoteConfigKey.EnableRewardedAD, "true"),
-            new RemoteConfig(RemoteConfigKey.EnableRewardedInterstitialAD, RemoteConfigKey.EnableRewardedInterstitialAD, "true"),
-            new RemoteConfig(RemoteConfigKey.EnableNativeAD, RemoteConfigKey.EnableNativeAD, "true"),
-            new RemoteConfig(RemoteConfigKey.EnableCollapsibleBanner, RemoteConfigKey.EnableCollapsibleBanner, "false"),
-
-            new RemoteConfig(RemoteConfigKey.IntervalLoadAds, RemoteConfigKey.IntervalLoadAds, "5"),
-            new RemoteConfig(RemoteConfigKey.MinPauseSecondToShowAoaAD, RemoteConfigKey.MinPauseSecondToShowAoaAD, "0"),
-            new RemoteConfig(RemoteConfigKey.AoaStartSession, RemoteConfigKey.AoaStartSession, "2"),
-
-            new RemoteConfig(RemoteConfigKey.InterstitialADInterval, RemoteConfigKey.InterstitialADInterval, "15"),
-            new RemoteConfig(RemoteConfigKey.InterstitialADStartLevel, RemoteConfigKey.InterstitialADStartLevel, "1"),
-            new RemoteConfig(RemoteConfigKey.InterstitialAdActivePlacements, RemoteConfigKey.InterstitialAdActivePlacements, ""),
-            new RemoteConfig(RemoteConfigKey.DelayFirstIntersADInterval, RemoteConfigKey.DelayFirstIntersADInterval, "0"),
-            new RemoteConfig(RemoteConfigKey.DelayFirstIntersNewSession, RemoteConfigKey.DelayFirstIntersNewSession, "0"),
-            new RemoteConfig(RemoteConfigKey.ResetInterAdIntervalAfterRewardAd, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd, "true"),
-            new RemoteConfig(RemoteConfigKey.CollapsibleBannerADInterval, RemoteConfigKey.CollapsibleBannerADInterval, "0"),
-            new RemoteConfig(RemoteConfigKey.EnableCollapsibleBannerFallback, RemoteConfigKey.EnableCollapsibleBannerFallback, "false"),
-            new RemoteConfig(RemoteConfigKey.UseAoaAdmob, RemoteConfigKey.UseAoaAdmob, "true"),
+            
         };
 
         [TableList] [LabelText("Misc Remote Configs")] [SerializeField]
@@ -50,6 +30,48 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         private List<RemoteConfig> mGameRemoteConfigs = new()
         {
         };
+
+        private bool TryAddAddsConfig(string key, string value)
+        {
+            if (this.mAdsRemoteConfigs.Any(x => x.key.Equals(key)))
+            {
+                return false;
+            }
+            
+            this.mAdsRemoteConfigs.Add(new RemoteConfig(key, key, value));
+            return true;
+        }
+
+        private void OnEnable()
+        {
+            #region ads config
+
+            this.TryAddAddsConfig(RemoteConfigKey.EnableBannerAD, "true");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableInterstitialAD, "true");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableMrecAD, "true");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableAoaAD, "true");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableRewardedAD, "true");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableRewardedInterstitialAD, "true");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableNativeAD, "true");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableCollapsibleBanner, "false");
+
+            this.TryAddAddsConfig(RemoteConfigKey.IntervalLoadAds, "5");
+            this.TryAddAddsConfig(RemoteConfigKey.MinPauseSecondToShowAoaAD, "0");
+            this.TryAddAddsConfig(RemoteConfigKey.AoaStartSession, "2");
+
+            this.TryAddAddsConfig(RemoteConfigKey.InterstitialADInterval, "15");
+            this.TryAddAddsConfig(RemoteConfigKey.InterstitialADStartLevel, "1");
+            this.TryAddAddsConfig(RemoteConfigKey.InterstitialAdActivePlacements, "");
+            this.TryAddAddsConfig(RemoteConfigKey.RewardedAdFreePlacements, "");
+            this.TryAddAddsConfig(RemoteConfigKey.DelayFirstIntersADInterval, "0");
+            this.TryAddAddsConfig(RemoteConfigKey.DelayFirstIntersNewSession, "0");
+            this.TryAddAddsConfig(RemoteConfigKey.ResetInterAdIntervalAfterRewardAd, "true");
+            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleBannerADInterval, "0");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableCollapsibleBannerFallback, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.UseAoaAdmob, "true");
+
+            #endregion
+        }
 
         public RemoteConfig GetRemoteConfig(string key)
         {
