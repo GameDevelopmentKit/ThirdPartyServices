@@ -16,6 +16,7 @@
         public const string InterstitialADInterval            = "interstitial_ad_interval";
         public const string InterstitialADStartLevel          = "interstitial_ad_start_level";
         public const string InterstitialAdActivePlacements    = "interstitial_ad_active_placements";
+        public const string RewardedAdFreePlacements          = "Rewared_ad_free_placements";
         public const string DelayFirstIntersADInterval        = "delay_first_inters_ad_interval";
         public const string DelayFirstIntersNewSession        = "delay_first_inters_new_session";
         public const string ResetInterAdIntervalAfterRewardAd = "reset_inter_ad_interval_after_reward_ad";
