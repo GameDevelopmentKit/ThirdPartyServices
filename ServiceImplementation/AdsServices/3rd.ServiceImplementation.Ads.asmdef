@@ -6,7 +6,7 @@
         "EasyMobile.Scripts",
         "3rdCore.Analytic",
         "GameFoundation.Utilities",
-        "Zenject-Source",
+        "Zenject",
         "Zenject-Signals",
         "MaxSdk.Scripts",
         "UniTask",
