@@ -3,7 +3,7 @@
   "rootNamespace": "",
   "references": [
     "Zenject-Signals",
-    "Zenject-Source",
+    "Zenject",
     "GameFoundation.Utilities",
     "GameFoundation.Models"
   ],

@@ -2,7 +2,7 @@
     "name": "FirebaseRemoteConfig",
     "rootNamespace": "",
     "references": [
-        "Zenject-Source",
+        "Zenject",
         "UniTask",
         "Zenject-Signals",
         "GameFoundation.Utilities"

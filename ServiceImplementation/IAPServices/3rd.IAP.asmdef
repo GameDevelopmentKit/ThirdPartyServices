@@ -8,7 +8,7 @@
     "Unity.Services.Core.Environments",
     "GameFoundation.Utilities",
     "3rdCore.Ads",
-    "Zenject-Source",
+    "Zenject",
     "Zenject-Signals",
     "UnityEngine.Purchasing.Security",
     "UnityEngine.Purchasing.SecurityCore",
