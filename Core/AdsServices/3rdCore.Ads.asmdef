@@ -4,13 +4,12 @@
     "references": [
         "3rdCore.Analytic",
         "GameFoundation.Utilities",
-        "Zenject-Source",
+        "Zenject",
         "Unity.TextMeshPro",
         "UniTask",
         "Zenject-Signals",
         "GameFoundation.UIModule",
-        "FirebaseRemoteConfig",
-        "UniRx"
+        "FirebaseRemoteConfig"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
