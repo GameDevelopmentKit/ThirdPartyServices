@@ -127,7 +127,6 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.interstitialAd.OnAdFullScreenContentClosed += () => this.signalBus.Fire<InterstitialAdClosedSignal>(new(place));
             this.interstitialAd.OnAdFullScreenContentFailed += (_) => this.signalBus.Fire<InterstitialAdDisplayedFailedSignal>(new(place));
             this.interstitialAd.OnAdClicked                 += () => this.signalBus.Fire<InterstitialAdClickedSignal>(new(place));
-            this.interstitialAd.OnAdPaid                    += (_) => this.signalBus.Fire<InterstitialAdEligibleSignal>(new(place));
             this.interstitialAd.OnAdPaid                    += this.TrackAdRevenue("Interstitial", place);
 
             #endregion
