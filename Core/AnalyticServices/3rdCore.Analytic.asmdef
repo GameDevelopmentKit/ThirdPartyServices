@@ -5,7 +5,8 @@
     "Zenject-Signals",
     "Zenject",
     "GameFoundation.Utilities",
-    "GameFoundation.Models"
+    "GameFoundation.Models",
+    "ByteBrew"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

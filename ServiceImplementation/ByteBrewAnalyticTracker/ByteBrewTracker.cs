@@ -1,3 +1,4 @@
+#if BYTEBREW
 namespace ServiceImplementation.ByteBrewAnalyticTracker
 {
     using System;
@@ -8,11 +9,12 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
     using GameFoundation.Scripts.Utilities.Extension;
+    using UnityEngine;
     using Zenject;
 
-    public class ByteBrewTrackern : BaseTracker
+    public class ByteBrewTracker : BaseTracker
     {
-        public ByteBrewTrackern(SignalBus signalBus, AnalyticConfig analyticConfig) : base(signalBus, analyticConfig)
+        public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig) : base(signalBus, analyticConfig)
         {
         }
 
@@ -20,6 +22,8 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates                                    { get; } = new();
         protected override Task TrackerSetup()
         {
+            var byteBrewGameObject = new GameObject("ByteBrew");
+            byteBrewGameObject.AddComponent<ByteBrew>();
             ByteBrew.InitializeByteBrew();
             return Task.CompletedTask;
         }
@@ -37,8 +41,25 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
         {
-            var convertedData = changedProps.ToDictionary(pair => pair.Key, pair => pair.Value.ToJson());
-            // changedProps.ForEach(pair => ByteBrew.SetCustomUserDataAttribute(pair.Key, pair.Value));
+            foreach (var (key, value) in changedProps)
+            {
+                switch (value)
+                {
+                    case int intValue:
+                        ByteBrew.SetCustomUserDataAttribute(key, intValue);
+                        break;
+                    case double doubleValue:
+                        ByteBrew.SetCustomUserDataAttribute(key, doubleValue);
+                        break;
+                    case string stringValue:
+                        ByteBrew.SetCustomUserDataAttribute(key, stringValue);
+                        break;
+                    case bool boolValue:
+                        ByteBrew.SetCustomUserDataAttribute(key, boolValue);
+                        break;
+                }
+            }
         }
     }
 }
+#endif
