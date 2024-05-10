@@ -1,6 +1,6 @@
 ﻿namespace ServiceImplementation.FireBaseRemoteConfig
 {
-    public class FirebaseRemoteConfigDummyManager : IRemoteConfig
+    public class DummyRemoteConfig : IRemoteConfig
     {
         public bool   IsConfigFetchedSucceed                                     => true;
         public string GetRemoteConfigStringValue(string key,string defaultValue) { return ""; }

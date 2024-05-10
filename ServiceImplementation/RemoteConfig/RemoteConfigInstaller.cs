@@ -2,7 +2,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 {
     using Zenject;
 
-    public class FirebaseRemoteConfigInstaller : Installer<FirebaseRemoteConfigInstaller>
+    public class RemoteConfigInstaller : Installer<RemoteConfigInstaller>
     {
         public override void InstallBindings()
         {
