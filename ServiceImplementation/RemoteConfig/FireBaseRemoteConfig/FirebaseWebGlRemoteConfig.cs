@@ -4,7 +4,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using System.Runtime.InteropServices;
     using Zenject;
 
-    public class FirebaseWebGlRemoteConfig : IInitializable, IRemoteConfig
+    internal class FirebaseWebGlRemoteConfig : IInitializable, IRemoteConfig
     {
         private bool isFirebaseReady = false;
         public FirebaseWebGlRemoteConfig() { }

@@ -13,7 +13,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 #elif FIREBASE_REMOTE_CONFIG
             this.Container.BindInterfacesAndSelfTo<FirebaseRemoteConfigMobile>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
 #elif BYTEBREW_REMOTE_CONFIG
-            this.Container.BindInterfacesAndSelfTo<ByteBrewRemoteConfig>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
+            this.Container.BindInterfacesAndSelfTo<ByteBrewRemoteConfig>().AsCached().NonLazy();
 #else
             this.Container.BindInterfacesAndSelfTo<DummyRemoteConfig>().AsCached().NonLazy();
 #endif

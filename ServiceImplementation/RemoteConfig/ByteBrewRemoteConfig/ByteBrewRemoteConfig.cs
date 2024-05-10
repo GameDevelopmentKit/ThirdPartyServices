@@ -3,18 +3,24 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
     using System.Globalization;
     using ByteBrewSDK;
     using Cysharp.Threading.Tasks;
+    using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.FireBaseRemoteConfig;
     using Zenject;
 
-    public class ByteBrewRemoteConfig : IRemoteConfig, IInitializable
+    internal class ByteBrewRemoteConfig : IRemoteConfig, IInitializable
     {
         #region Inject
 
-        private readonly SignalBus signalBus;
+        private readonly SignalBus   signalBus;
+        private readonly ILogService logService;
 
         #endregion
 
-        public ByteBrewRemoteConfig(SignalBus signalBus) { this.signalBus = signalBus; }
+        public ByteBrewRemoteConfig(SignalBus signalBus, ILogService logService)
+        {
+            this.signalBus  = signalBus;
+            this.logService = logService;
+        }
 
         public bool IsConfigFetchedSucceed { get; }
 
@@ -28,7 +34,12 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
         public async void Initialize()
         {
             await UniTask.WaitUntil(() => ByteBrew.IsInitilized);
-            ByteBrew.RemoteConfigsUpdated(() => { this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal()); });
+            await UniTask.SwitchToMainThread();
+            ByteBrew.RemoteConfigsUpdated(() =>
+            {
+                this.logService.Log("Byte brew remote config updated");
+                this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal());
+            });
         }
     }
 }
