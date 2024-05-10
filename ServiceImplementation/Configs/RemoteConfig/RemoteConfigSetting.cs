@@ -1,9 +1,10 @@
 namespace ServiceImplementation.FireBaseRemoteConfig
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
+#if UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
+#endif
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -16,7 +17,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public static string ResourcePath = $"GameConfigs/{nameof(RemoteConfigSetting)}";
 
-        [OnValueChanged("OnRemoteConfigProviderTypeChanged")] [LabelText("Remote Config Provider Type")] [LabelWidth(300)]
+        [OnValueChanged("OnRemoteConfigProviderTypeChanged")] [LabelText("Remote Config Provider Type")] [LabelWidth(200)] [GUIColor(1,1,0)]
         public RemoteConfigProviderType RemoteConfigProviderType = RemoteConfigProviderType.FireBase;
         public List<RemoteConfig> AdsRemoteConfigs  => this.mAdsRemoteConfigs;
         public List<RemoteConfig> MiscRemoteConfigs => this.mMiscRemoteConfigs;
@@ -94,6 +95,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             return result;
         }
 
+#if UNITY_EDITOR
         [OnInspectorInit]
         public void OnRemoteConfigProviderTypeChanged()
         {
@@ -104,5 +106,6 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                 DefineSymbolEditorUtils.SetDefineSymbol(ByteBrewSymbol, true);
             }
         }
+#endif
     }
 }
