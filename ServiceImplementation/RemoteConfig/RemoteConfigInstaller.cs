@@ -1,5 +1,6 @@
 namespace ServiceImplementation.FireBaseRemoteConfig
 {
+    using ServiceImplementation.ByteBrewRemoteConfig;
     using Zenject;
 
     public class RemoteConfigInstaller : Installer<RemoteConfigInstaller>
@@ -11,9 +12,10 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.Container.BindInterfacesAndSelfTo<FirebaseWebGlRemoteConfig>().AsCached();
 #elif FIREBASE_REMOTE_CONFIG
             this.Container.BindInterfacesAndSelfTo<FirebaseRemoteConfigMobile>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
+#elif BYTEBREW_REMOTE_CONFIG
+            this.Container.BindInterfacesAndSelfTo<ByteBrewRemoteConfig>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
 #else
-            this.Container.BindInterfacesAndSelfTo<FirebaseRemoteConfigDummyManager>().AsCached().NonLazy();
-
+            this.Container.BindInterfacesAndSelfTo<DummyRemoteConfig>().AsCached().NonLazy();
 #endif
         }
     }
