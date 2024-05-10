@@ -3,14 +3,21 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using ServiceImplementation.Configs.Editor;
     using Sirenix.OdinInspector;
     using UnityEngine;
 
     [CreateAssetMenu(fileName = nameof(RemoteConfigSetting), menuName = "ScriptableObjects/SpawnRemoteConfigSetting", order = 1)]
     public class RemoteConfigSetting : ScriptableObject
     {
+        private const string FireBaseRemoteConfigSymbol = "FIREBASE_REMOTE_CONFIG";
+        private const string ByteBrewRemoteConfigSymbol = "BYTEBREW_REMOTE_CONFIG";
+        private const string ByteBrewSymbol = "BYTEBREW";
+
         public static string ResourcePath = $"GameConfigs/{nameof(RemoteConfigSetting)}";
 
+        [OnValueChanged("OnRemoteConfigProviderTypeChanged")] [LabelText("Remote Config Provider Type")] [LabelWidth(300)]
+        public RemoteConfigProviderType RemoteConfigProviderType = RemoteConfigProviderType.FireBase;
         public List<RemoteConfig> AdsRemoteConfigs  => this.mAdsRemoteConfigs;
         public List<RemoteConfig> MiscRemoteConfigs => this.mMiscRemoteConfigs;
         public List<RemoteConfig> GameRemoteConfigs => this.mGameRemoteConfigs;
@@ -85,6 +92,17 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             }
 
             return result;
+        }
+
+        [OnInspectorInit]
+        public void OnRemoteConfigProviderTypeChanged()
+        {
+            DefineSymbolEditorUtils.SetDefineSymbol(FireBaseRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.FireBase);
+            DefineSymbolEditorUtils.SetDefineSymbol(ByteBrewRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew);
+            if (this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew)
+            {
+                DefineSymbolEditorUtils.SetDefineSymbol(ByteBrewSymbol, true);
+            }
         }
     }
 }
