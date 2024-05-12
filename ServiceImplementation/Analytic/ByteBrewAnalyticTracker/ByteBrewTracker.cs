@@ -9,6 +9,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
     using GameFoundation.Scripts.Utilities.Extension;
+    using Newtonsoft.Json;
     using UnityEngine;
     using Zenject;
 
@@ -53,8 +54,17 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
+            if (data == null)
+            {
+                ByteBrew.NewCustomEvent(name);
+                Debug.Log($"ByteBrew: OnEvent - {name}");
+                
+                return;
+            }
+            
             var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value.ToJson());
             ByteBrew.NewCustomEvent(name, convertedData);
+            Debug.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
         }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
