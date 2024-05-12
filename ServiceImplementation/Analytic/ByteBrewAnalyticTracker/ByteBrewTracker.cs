@@ -38,10 +38,13 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
             
+            Debug.Log($"ByteBrew: Create ByteBrew GameObject");
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
+            Debug.Log($"ByteBrew: Initialize ByteBrew");
             ByteBrew.InitializeByteBrew();
-            
+            Debug.Log($"ByteBrew: Initialize Finished");
+
             this.TrackerReady.SetResult(true);
             
             return this.TrackerReady.Task;
