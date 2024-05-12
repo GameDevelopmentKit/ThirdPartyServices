@@ -22,7 +22,7 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
             this.logService = logService;
         }
 
-        public bool IsConfigFetchedSucceed { get; }
+        public bool IsConfigFetchedSucceed { get; private set; }
 
         public string GetRemoteConfigStringValue(string key, string defaultValue = "") { return ByteBrew.GetRemoteConfigForKey(key, defaultValue); }
         public bool   GetRemoteConfigBoolValue(string key, bool defaultValue) { return bool.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString())); }
@@ -33,11 +33,12 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
 
         public async void Initialize()
         {
-            await UniTask.WaitUntil(() => ByteBrew.IsInitilized);
+            await UniTask.WaitUntil(ByteBrew.IsByteBrewInitialized);
             await UniTask.SwitchToMainThread();
             ByteBrew.RemoteConfigsUpdated(() =>
             {
-                this.logService.Log("Byte brew remote config updated");
+                this.logService.Log("ByteBrew remote config updated");
+                this.IsConfigFetchedSucceed = true;
                 this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal());
             });
         }

@@ -14,18 +14,36 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
     public class ByteBrewTracker : BaseTracker
     {
-        public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig) : base(signalBus, analyticConfig)
+        #region inject
+
+        private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
+
+        #endregion
+
+        protected override HashSet<Type>              IgnoreEvents    => this.analyticsEventCustomizationConfig.IgnoreEvents;
+        protected override HashSet<string>            IncludeEvents   => this.analyticsEventCustomizationConfig.IncludeEvents;
+        protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
+
+        public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig)
         {
+            this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
         }
 
         protected override TaskCompletionSource<bool>      TrackerReady                                            { get; } = new();
+        
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates                                    { get; } = new();
+        
         protected override Task TrackerSetup()
         {
+            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
+            
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
             ByteBrew.InitializeByteBrew();
-            return Task.CompletedTask;
+            
+            this.TrackerReady.SetResult(true);
+            
+            return this.TrackerReady.Task;
         }
         
         protected override void SetUserId(string userId)
