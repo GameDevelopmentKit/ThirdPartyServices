@@ -1,11 +1,12 @@
 {
-    "name": "FirebaseRemoteConfig",
+    "name": "3rd.RemoteConfig",
     "rootNamespace": "",
     "references": [
-        "Zenject",
         "UniTask",
+        "ByteBrew",
+        "GameFoundation.Utilities",
         "Zenject-Signals",
-        "GameFoundation.Utilities"
+        "Zenject"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
