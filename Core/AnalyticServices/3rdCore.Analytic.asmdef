@@ -6,7 +6,8 @@
     "Zenject",
     "GameFoundation.Utilities",
     "GameFoundation.Models",
-    "ByteBrew"
+    "ByteBrew",
+    "3rd.Configs.Editor"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

@@ -1,6 +1,6 @@
-#if BYTEBREW
 namespace Core.AnalyticServices
 {
+    using ServiceImplementation.Configs.Editor;
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -9,6 +9,17 @@ namespace Core.AnalyticServices
     /// </summary>
     public partial class AnalyticConfig
     {
+        private const string ByteBrewSymbol = "BYTEBREW";
+        
+        [BoxGroup("ByteBrew")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeByteBrewEnabled")]
+        [SerializeField] private bool isByteBrewEnabled;
+
+        private void OnChangeByteBrewEnabled()
+        {
+            DefineSymbolEditorUtils.SetDefineSymbol(ByteBrewSymbol, this.isByteBrewEnabled);
+        }
+#if BYTEBREW
+
         [OnValueChanged("SaveByteBrewSetting")] [Header("Android")] [SerializeField] [BoxGroup("ByteBrew")]
         private bool androidEnabled;
 
@@ -53,6 +64,6 @@ namespace Core.AnalyticServices
             byteBrewSettings.iosGameID  = this.byteBrewAppIdIos;
             byteBrewSettings.iosSDKKey  = this.byteBrewDevKeyIos;
         }
+#endif
     }
 }
-#endif

@@ -1,16 +1,25 @@
-#if APPSFLYER
 namespace Core.AnalyticServices
 {
-    using System;
+    using ServiceImplementation.Configs.Editor;
     using Sirenix.OdinInspector;
-    using Sirenix.Serialization;
     using UnityEngine;
 
     /// <summary>
     /// Contains all the constants, the configuration of Analytic service
     /// </summary>
-    public partial class AnalyticConfig 
+    public partial class AnalyticConfig
     {
+        private const string AppsflyerSymbol = "APPSFLYER";
+        
+        [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")]
+        [SerializeField] private bool isAppsflyerEnabled;
+
+        private void OnChangeAppsflyerEnabled()
+        {
+            DefineSymbolEditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
+        }
+#if APPSFLYER
+
         /// <summary>
         /// 
         /// </summary>
@@ -58,6 +67,6 @@ namespace Core.AnalyticServices
         [SerializeField] private bool appsflyerIsDebug;
 
         private bool ValidateAppIdIos(string value) { return string.IsNullOrEmpty(value) || this.appsflyerAppIdIos.StartsWith("id"); }
+#endif
     }
 }
-#endif

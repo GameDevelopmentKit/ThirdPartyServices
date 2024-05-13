@@ -1,6 +1,7 @@
-#if ADJUST
 namespace Core.AnalyticServices
 {
+    using ServiceImplementation.Configs.Editor;
+    using Sirenix.OdinInspector;
     using UnityEngine;
 
     /// <summary>
@@ -8,6 +9,13 @@ namespace Core.AnalyticServices
     /// </summary>
     public partial class AnalyticConfig
     {
+        private const string AdjustSymbol = "ADJUST";
+
+        [BoxGroup("Adjust")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdjustEnabled")] [SerializeField]
+        private bool isAdjustEnabled;
+
+        private void OnChangeAdjustEnabled() { DefineSymbolEditorUtils.SetDefineSymbol(AdjustSymbol, this.isAdjustEnabled); }
+#if ADJUST
 #if UNITY_ANDROID
         public string AdjustAppToken      => this.adjustAndroidAppToken;
         public string AdjustPurchaseToken => this.adjustAndroidPurchaseToken;
@@ -25,6 +33,6 @@ namespace Core.AnalyticServices
         [SerializeField] private string adjustAndroidPurchaseToken;
         [SerializeField] private string adjustIOSPurchaseToken;
         [SerializeField] private bool   adjustIsDebug;
+#endif
     }
 }
-#endif
