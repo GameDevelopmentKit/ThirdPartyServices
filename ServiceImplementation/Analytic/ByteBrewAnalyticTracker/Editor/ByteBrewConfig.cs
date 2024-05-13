@@ -1,6 +1,8 @@
 namespace Core.AnalyticServices
 {
+#if  UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
+#endif
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -16,7 +18,9 @@ namespace Core.AnalyticServices
 
         private void OnChangeByteBrewEnabled()
         {
+#if  UNITY_EDITOR
             DefineSymbolEditorUtils.SetDefineSymbol(ByteBrewSymbol, this.isByteBrewEnabled);
+#endif
         }
 #if BYTEBREW
 
