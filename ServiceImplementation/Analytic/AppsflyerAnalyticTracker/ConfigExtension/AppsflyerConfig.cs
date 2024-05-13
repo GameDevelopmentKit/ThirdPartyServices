@@ -26,6 +26,13 @@ namespace Core.AnalyticServices
         [OnInspectorInit]
         private void InitAppsflyerSetting()
         {
+#if APPSFLYER && UNITY_EDITOR
+            if (!string.IsNullOrEmpty(this.appsflyerDevKeyAndroid) || !string.IsNullOrEmpty(this.appsflyerDevKeyIos))
+            {
+                this.isAppsflyerEnabled = true;
+                return;
+            }
+#endif
             this.OnChangeAppsflyerEnabled();
         }
 #if APPSFLYER

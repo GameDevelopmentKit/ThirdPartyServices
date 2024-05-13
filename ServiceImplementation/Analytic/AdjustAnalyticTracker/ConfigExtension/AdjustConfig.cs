@@ -26,6 +26,13 @@ namespace Core.AnalyticServices
         [OnInspectorInit]
         private void InitAdjustSetting()
         {
+#if ADJUST && UNITY_EDITOR
+            if (!string.IsNullOrEmpty(this.adjustAndroidAppToken) || !string.IsNullOrEmpty(this.adjustIOSAppToken))
+            {
+                this.isAdjustEnabled = true;
+                return;
+            }
+#endif
             this.OnChangeAdjustEnabled();
         }
 #if ADJUST
