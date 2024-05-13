@@ -1,16 +1,42 @@
-#if APPSFLYER
 namespace Core.AnalyticServices
 {
-    using System;
+#if UNITY_EDITOR
+    using ServiceImplementation.Configs.Editor;
+#endif
     using Sirenix.OdinInspector;
-    using Sirenix.Serialization;
     using UnityEngine;
 
     /// <summary>
     /// Contains all the constants, the configuration of Analytic service
     /// </summary>
-    public partial class AnalyticConfig 
+    public partial class AnalyticConfig
     {
+        private const string AppsflyerSymbol = "APPSFLYER";
+        
+        [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")]
+        [SerializeField] private bool isAppsflyerEnabled;
+
+        private void OnChangeAppsflyerEnabled()
+        {
+#if UNITY_EDITOR
+            DefineSymbolEditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
+#endif
+        }
+        
+        [OnInspectorInit]
+        private void InitAppsflyerSetting()
+        {
+#if APPSFLYER && UNITY_EDITOR
+            if (!string.IsNullOrEmpty(this.appsflyerDevKeyAndroid) || !string.IsNullOrEmpty(this.appsflyerDevKeyIos))
+            {
+                this.isAppsflyerEnabled = true;
+                return;
+            }
+#endif
+            this.OnChangeAppsflyerEnabled();
+        }
+#if APPSFLYER
+
         /// <summary>
         /// 
         /// </summary>
@@ -45,17 +71,19 @@ namespace Core.AnalyticServices
 
         public bool AppsflyerIsDebug           => this.appsflyerIsDebug;
 
-        [Header("DevKey")]
+        [Header("DevKey")][BoxGroup("Appsflyer")]
         [SerializeField] private string appsflyerDevKeyIos;
+        [BoxGroup("Appsflyer")]
         [SerializeField] private string appsflyerDevKeyAndroid;
 
         [Header("App Id")]
+        [BoxGroup("Appsflyer")]
         [ValidateInput("ValidateAppIdIos", "Appsflyer App Id must start with 'id'", InfoMessageType.Error)]
         [SerializeField] private string appsflyerAppIdIos;
-
+        [BoxGroup("Appsflyer")]
         [SerializeField] private bool appsflyerIsDebug;
 
         private bool ValidateAppIdIos(string value) { return string.IsNullOrEmpty(value) || this.appsflyerAppIdIos.StartsWith("id"); }
+#endif
     }
 }
-#endif
