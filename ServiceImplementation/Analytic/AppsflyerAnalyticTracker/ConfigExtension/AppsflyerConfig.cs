@@ -1,6 +1,8 @@
 namespace Core.AnalyticServices
 {
+#if UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
+#endif
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -16,7 +18,9 @@ namespace Core.AnalyticServices
 
         private void OnChangeAppsflyerEnabled()
         {
+#if UNITY_EDITOR
             DefineSymbolEditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
+#endif
         }
 #if APPSFLYER
 

@@ -1,8 +1,10 @@
 namespace Core.AnalyticServices
 {
-    using ServiceImplementation.Configs.Editor;
     using Sirenix.OdinInspector;
     using UnityEngine;
+#if UNITY_EDITOR
+    using ServiceImplementation.Configs.Editor;
+#endif
 
     /// <summary>
     /// Contains all the constants, the configuration of Analytic service
@@ -14,7 +16,12 @@ namespace Core.AnalyticServices
         [BoxGroup("Adjust")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdjustEnabled")] [SerializeField]
         private bool isAdjustEnabled;
 
-        private void OnChangeAdjustEnabled() { DefineSymbolEditorUtils.SetDefineSymbol(AdjustSymbol, this.isAdjustEnabled); }
+        private void OnChangeAdjustEnabled()
+        {
+#if UNITY_EDITOR
+            DefineSymbolEditorUtils.SetDefineSymbol(AdjustSymbol, this.isAdjustEnabled);
+#endif
+        }
 #if ADJUST
 #if UNITY_ANDROID
         public string AdjustAppToken      => this.adjustAndroidAppToken;
