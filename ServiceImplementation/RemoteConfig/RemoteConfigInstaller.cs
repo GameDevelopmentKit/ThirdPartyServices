@@ -1,6 +1,8 @@
 namespace ServiceImplementation.FireBaseRemoteConfig
 {
+#if BYTEBREW_REMOTE_CONFIG
     using ServiceImplementation.ByteBrewRemoteConfig;
+#endif
     using Zenject;
 
     public class RemoteConfigInstaller : Installer<RemoteConfigInstaller>

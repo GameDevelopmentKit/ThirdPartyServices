@@ -1,3 +1,4 @@
+#if BYTEBREW_REMOTE_CONFIG
 namespace ServiceImplementation.ByteBrewRemoteConfig
 {
     using System.Globalization;
@@ -44,3 +45,4 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
         }
     }
 }
+#endif
