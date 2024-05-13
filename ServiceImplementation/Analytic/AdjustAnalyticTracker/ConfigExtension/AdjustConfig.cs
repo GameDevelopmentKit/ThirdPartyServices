@@ -22,6 +22,12 @@ namespace Core.AnalyticServices
             DefineSymbolEditorUtils.SetDefineSymbol(AdjustSymbol, this.isAdjustEnabled);
 #endif
         }
+        
+        [OnInspectorInit]
+        private void InitAdjustSetting()
+        {
+            this.OnChangeAdjustEnabled();
+        }
 #if ADJUST
 #if UNITY_ANDROID
         public string AdjustAppToken      => this.adjustAndroidAppToken;

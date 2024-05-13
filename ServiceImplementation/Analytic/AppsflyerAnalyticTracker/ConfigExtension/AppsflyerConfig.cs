@@ -22,6 +22,12 @@ namespace Core.AnalyticServices
             DefineSymbolEditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
 #endif
         }
+        
+        [OnInspectorInit]
+        private void InitAppsflyerSetting()
+        {
+            this.OnChangeAppsflyerEnabled();
+        }
 #if APPSFLYER
 
         /// <summary>
