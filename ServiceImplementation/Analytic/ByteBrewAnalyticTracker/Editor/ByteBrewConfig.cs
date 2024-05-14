@@ -88,7 +88,7 @@ namespace Core.AnalyticServices
         private string byteBrewAppIdAndroid;
 
         [OnValueChanged("SaveByteBrewSetting")] [BoxGroup("ByteBrew")] [ShowIf("androidEnabled")] [SerializeField]
-        private string byteBrewDevKeyAndroid;
+        private string byteBrewSDKKeyAndroid;
 
         [OnValueChanged("SaveByteBrewSetting")] [Header("IOS")] [SerializeField] [BoxGroup("ByteBrew")]
         private bool iosEnabled;
@@ -97,7 +97,7 @@ namespace Core.AnalyticServices
         private string byteBrewAppIdIos;
 
         [OnValueChanged("SaveByteBrewSetting")] [BoxGroup("ByteBrew")] [ShowIf("iosEnabled")] [SerializeField]
-        private string byteBrewDevKeyIos;
+        private string byteBrewSDKKeyIos;
 
         [OnInspectorInit]
         private void LoadByteBrewSetting()
@@ -106,11 +106,11 @@ namespace Core.AnalyticServices
 
             this.androidEnabled        = byteBrewSettings.androidEnabled;
             this.byteBrewAppIdAndroid  = byteBrewSettings.androidGameID;
-            this.byteBrewDevKeyAndroid = byteBrewSettings.androidSDKKey;
+            this.byteBrewSDKKeyAndroid = byteBrewSettings.androidSDKKey;
 
             this.iosEnabled        = byteBrewSettings.iosEnabled;
             this.byteBrewAppIdIos  = byteBrewSettings.iosGameID;
-            this.byteBrewDevKeyIos = byteBrewSettings.iosSDKKey;
+            this.byteBrewSDKKeyIos = byteBrewSettings.iosSDKKey;
         }
 
         private void SaveByteBrewSetting()
@@ -119,11 +119,11 @@ namespace Core.AnalyticServices
 
             byteBrewSettings.androidEnabled = this.androidEnabled;
             byteBrewSettings.androidGameID  = this.byteBrewAppIdAndroid;
-            byteBrewSettings.androidSDKKey  = this.byteBrewDevKeyAndroid;
+            byteBrewSettings.androidSDKKey  = this.byteBrewSDKKeyAndroid;
             
             byteBrewSettings.iosEnabled = this.iosEnabled;
             byteBrewSettings.iosGameID  = this.byteBrewAppIdIos;
-            byteBrewSettings.iosSDKKey  = this.byteBrewDevKeyIos;
+            byteBrewSettings.iosSDKKey  = this.byteBrewSDKKeyIos;
         }
 #endif
     }
