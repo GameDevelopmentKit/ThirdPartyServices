@@ -5,6 +5,9 @@ namespace Core.AnalyticServices
     using UnityEditor.PackageManager;
 #endif
     using System.IO;
+#if BYTEBREW
+    using ByteBrewSDK;
+#endif
     using Newtonsoft.Json.Linq;
     using Sirenix.OdinInspector;
     using UnityEngine;
@@ -17,7 +20,7 @@ namespace Core.AnalyticServices
         private const string ByteBrewSymbol = "BYTEBREW";
         
         [BoxGroup("ByteBrew")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeByteBrewEnabled")]
-        [SerializeField] private bool isByteBrewEnabled;
+        [SerializeField] private bool isByteBrewEnabled = true;
 
         private void OnChangeByteBrewEnabled()
         {
@@ -102,6 +105,9 @@ namespace Core.AnalyticServices
         [OnInspectorInit]
         private void LoadByteBrewSetting()
         {
+#if UNITY_EDITOR
+            ByteBrewSettingsManager.EnsureByteBrewSettings();
+#endif
             var byteBrewSettings = Resources.Load<ByteBrewSettings>("ByteBrewSettings");
 
             this.androidEnabled        = byteBrewSettings.androidEnabled;
@@ -111,6 +117,13 @@ namespace Core.AnalyticServices
             this.iosEnabled        = byteBrewSettings.iosEnabled;
             this.byteBrewAppIdIos  = byteBrewSettings.iosGameID;
             this.byteBrewSDKKeyIos = byteBrewSettings.iosSDKKey;
+
+#if UNITY_EDITOR
+            if (!this.androidEnabled || string.IsNullOrEmpty(this.byteBrewAppIdAndroid) || string.IsNullOrEmpty(this.byteBrewSDKKeyAndroid))
+            {
+                Debug.LogError("ByteBrew Android settings are not set properly.");
+            }
+#endif
         }
 
         private void SaveByteBrewSetting()

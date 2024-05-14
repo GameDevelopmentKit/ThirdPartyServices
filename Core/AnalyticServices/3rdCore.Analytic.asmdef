@@ -1,21 +1,22 @@
 {
-  "name": "3rdCore.Analytic",
-  "rootNamespace": "",
-  "references": [
-    "Zenject-Signals",
-    "Zenject",
-    "GameFoundation.Utilities",
-    "GameFoundation.Models",
-    "ByteBrew",
-    "3rd.Configs.Editor"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [],
-  "noEngineReferences": false
+    "name": "3rdCore.Analytic",
+    "rootNamespace": "",
+    "references": [
+        "Zenject-Signals",
+        "Zenject",
+        "GameFoundation.Utilities",
+        "GameFoundation.Models",
+        "ByteBrew",
+        "3rd.Configs.Editor",
+        "ByteBrew.Editor"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
