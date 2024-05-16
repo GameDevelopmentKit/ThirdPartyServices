@@ -67,7 +67,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             
             var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value.ToJson());
             ByteBrew.NewCustomEvent(name, convertedData);
-            Debug.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
+            Debug.Log($"ByteBrew: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
         }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
