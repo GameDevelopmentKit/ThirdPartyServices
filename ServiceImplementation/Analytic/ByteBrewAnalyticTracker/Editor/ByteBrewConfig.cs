@@ -21,11 +21,12 @@ namespace Core.AnalyticServices
         
         [BoxGroup("ByteBrew")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeByteBrewEnabled")]
         [SerializeField] private bool isByteBrewEnabled = true;
-
+        
+        [OnInspectorInit]
         private void OnChangeByteBrewEnabled()
         {
 #if  UNITY_EDITOR
-            this.ModifyPackage(this.isByteBrewEnabled, "com.theone.bytebrew", "https://github.com/The1Studio/ByteBrew.git?path=Assets/Src/ByteBrewSDK#");
+            this.ModifyPackage(this.isByteBrewEnabled, "com.theone.bytebrew", "1.0.2");
             DefineSymbolEditorUtils.SetDefineSymbol(ByteBrewSymbol, this.isByteBrewEnabled);
 #endif
         }
@@ -53,7 +54,12 @@ namespace Core.AnalyticServices
                     }
                     else
                     {
-                        Debug.LogWarning($"Package {packageName} already exists. No action taken.");
+                        if (packageToken.ToString().Equals(packagePath))
+                        {
+                            Debug.LogWarning($"Package {packageName} already exists. No action taken.");
+                        }
+                        manifestJson["dependencies"][packageName] = packagePath;
+                        Debug.LogWarning($"Update package path for {packageName}.");
                     }
                 }
                 else
@@ -105,6 +111,7 @@ namespace Core.AnalyticServices
         [OnInspectorInit]
         private void LoadByteBrewSetting()
         {
+            Debug.Log("OnInspectorInit");
 #if UNITY_EDITOR
             ByteBrewSettingsManager.EnsureByteBrewSettings();
 #endif
