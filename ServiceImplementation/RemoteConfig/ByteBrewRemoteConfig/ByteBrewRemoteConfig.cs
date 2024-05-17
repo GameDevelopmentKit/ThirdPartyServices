@@ -35,6 +35,7 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
 
         public async void Initialize()
         {
+            this.logService.Log("ByteBrew remote config Initialize");
             await UniTask.WaitUntil(ByteBrew.IsByteBrewInitialized);
             await UniTask.SwitchToMainThread();
             ByteBrew.RemoteConfigsUpdated(() =>
