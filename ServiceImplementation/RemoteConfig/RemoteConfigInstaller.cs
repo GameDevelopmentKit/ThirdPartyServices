@@ -22,8 +22,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.Container.BindInterfacesAndSelfTo<DummyRemoteConfig>().AsCached().NonLazy();
 #endif
 #if BYTEBREW && !BYTEBREW_REMOTE_CONFIG
-            Debug.Log("ByteBrew: Bind");
-            this.Container.Bind<IInGameRemoteConfig>().To<ByteBrewRemoteConfig>().AsCached().NonLazy();
+            this.Container.Bind(typeof(IInitializable), typeof(IInGameRemoteConfig)).To<ByteBrewRemoteConfig>().AsSingle().NonLazy();
 #endif
         }
     }
