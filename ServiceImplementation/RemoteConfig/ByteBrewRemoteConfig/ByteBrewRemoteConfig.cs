@@ -1,4 +1,4 @@
-#if BYTEBREW_REMOTE_CONFIG
+#if BYTEBREW
 namespace ServiceImplementation.ByteBrewRemoteConfig
 {
     using System.Globalization;
@@ -6,9 +6,10 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.FireBaseRemoteConfig;
+    using ServiceImplementation.RemoteConfig;
     using Zenject;
 
-    internal class ByteBrewRemoteConfig : IRemoteConfig, IInitializable
+    internal class ByteBrewRemoteConfig : IInGameRemoteConfig, IInitializable
     {
         #region Inject
 
@@ -40,7 +41,7 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
             {
                 this.logService.Log("ByteBrew remote config updated");
                 this.IsConfigFetchedSucceed = true;
-                this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal());
+                this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal(this));
             });
         }
     }

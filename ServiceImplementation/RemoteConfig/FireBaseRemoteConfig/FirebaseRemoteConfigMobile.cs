@@ -77,7 +77,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                     {
                         this.logger.Log($"onelog: FirebaseRemoteConfig Remote data loaded and ready (last fetch time {info.FetchTime}).");
                         this.IsConfigFetchedSucceed = true;
-                        this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal());
+                        this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal(this));
                     });
 
                     break;
