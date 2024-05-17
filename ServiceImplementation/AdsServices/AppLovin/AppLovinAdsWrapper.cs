@@ -376,7 +376,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void InternalShowInterstitialAd(AdPlacement adPlacement)
         {
             if (!this.IsInterstitialPlacementReady(adPlacement.Name, out var id)) return;
-            MaxSdk.ShowInterstitial(id);
+            MaxSdk.ShowInterstitial(id, adPlacement.Name);
             this.currentShowingInterstitial = adPlacement;
         }
 
@@ -554,7 +554,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
             this.rewardedCompleted.TryAdd(placement, false);
             this.rewardedCompleted[placement] = false;
-            MaxSdk.ShowRewardedAd(id);
+            MaxSdk.ShowRewardedAd(id, placement.Name);
             this.currentShowingRewarded = placement;
         }
 
