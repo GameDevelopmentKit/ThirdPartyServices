@@ -41,7 +41,8 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
             {
                 this.logService.Log("ByteBrew remote config updated");
                 this.IsConfigFetchedSucceed = true;
-                this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal());
+                this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal(this));
+                this.logService.Log($"Bytebrew Remote config test_key value: {this.GetRemoteConfigStringValue("test_key", "abc")}");
             });
         }
     }
