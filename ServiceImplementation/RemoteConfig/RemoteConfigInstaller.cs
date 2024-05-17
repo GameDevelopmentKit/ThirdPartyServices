@@ -1,8 +1,9 @@
 namespace ServiceImplementation.FireBaseRemoteConfig
 {
-#if BYTEBREW_REMOTE_CONFIG
+#if BYTEBREW
     using ServiceImplementation.ByteBrewRemoteConfig;
 #endif
+    using ServiceImplementation.RemoteConfig;
     using Zenject;
 
     public class RemoteConfigInstaller : Installer<RemoteConfigInstaller>
@@ -18,6 +19,9 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.Container.BindInterfacesAndSelfTo<ByteBrewRemoteConfig>().AsCached().NonLazy();
 #else
             this.Container.BindInterfacesAndSelfTo<DummyRemoteConfig>().AsCached().NonLazy();
+#endif
+#if BYTEBREW && !BYTEBREW_REMOTE_CONFIG
+            this.Container.Bind<IInGameRemoteConfig>().To<ByteBrewRemoteConfig>().AsCached().NonLazy();
 #endif
         }
     }
