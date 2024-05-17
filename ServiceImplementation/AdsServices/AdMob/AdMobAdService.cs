@@ -168,7 +168,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             this.rewardedAd.OnAdFullScreenContentOpened += () => this.signalBus.Fire<RewardedAdDisplayedSignal>(new(place));
             this.rewardedAd.OnAdFullScreenContentFailed += (_) => OnAdFullScreenContentFailed();
-            this.rewardedAd.OnAdClicked                 += () => this.signalBus.Fire<RewardedAdLoadClickedSignal>(new(place));
+            this.rewardedAd.OnAdClicked                 += () => this.signalBus.Fire<RewardedAdClickedSignal>(new(place));
             this.rewardedAd.OnAdPaid                    += (_) => this.signalBus.Fire<RewardedAdEligibleSignal>(new(place));
             this.rewardedAd.OnAdPaid                    += this.TrackAdRevenue("Rewarded", place);
 
