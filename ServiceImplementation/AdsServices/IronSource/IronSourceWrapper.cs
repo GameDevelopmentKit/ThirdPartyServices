@@ -36,8 +36,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private Action onRewardComplete;
         private Action onRewardFailed;
         
-        private bool isGotRewarded;
-        private bool isLoadedAdaptiveBanner;
+        private bool   isGotRewarded;
+        private bool   isLoadedAdaptiveBanner;
+        private string interstitialPlacement, rewardedPlacement;
 
         public void Initialize()
         {
@@ -111,7 +112,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.isGotRewarded = true;
             this.onRewardComplete?.Invoke();
             this.onRewardComplete = null;
-            this.signalBus.Fire(new RewardedAdCompletedSignal(""));
+            this.signalBus.Fire(new RewardedAdCompletedSignal(this.rewardedPlacement));
         }
 
         private void RewardedVideoOnAdUnavailable()                   { this.signalBus.Fire(new RewardedAdLoadFailedSignal("", "")); }
@@ -123,38 +124,38 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             {
                 this.onRewardFailed?.Invoke();
                 this.onRewardFailed = null;
-                this.signalBus.Fire(new RewardedSkippedSignal(""));
+                this.signalBus.Fire(new RewardedSkippedSignal(this.rewardedPlacement));
             }
-            this.signalBus.Fire(new RewardedAdClosedSignal(""));
+            this.signalBus.Fire(new RewardedAdClosedSignal(this.rewardedPlacement));
         }
 
         private void RewardedVideoOnAdShowFailedEvent(IronSourceError obj, IronSourceAdInfo info)
         {
             this.onRewardFailed?.Invoke();
             this.onRewardFailed = null;
-            this.signalBus.Fire(new RewardedAdShowFailedSignal(""));
+            this.signalBus.Fire(new RewardedAdShowFailedSignal(this.rewardedPlacement));
         }
 
-        private void RewardedVideoOnAdClickedEvent(IronSourcePlacement obj, IronSourceAdInfo info) { this.signalBus.Fire(new RewardedAdLoadClickedSignal(obj.getPlacementName())); }
+        private void RewardedVideoOnAdClickedEvent(IronSourcePlacement obj, IronSourceAdInfo info) { this.signalBus.Fire(new RewardedAdClickedSignal(this.rewardedPlacement)); }
 
-        private void RewardedVideoOnAdOpenedEvent(IronSourceAdInfo info) { this.signalBus.Fire(new RewardedAdDisplayedSignal("")); }
+        private void RewardedVideoOnAdOpenedEvent(IronSourceAdInfo info) { this.signalBus.Fire(new RewardedAdDisplayedSignal(this.rewardedPlacement)); }
 
         #endregion
 
 
         #region Interstitial
 
-        private void InterstitialOnAdClosedEvent(IronSourceAdInfo obj)                            { this.signalBus.Fire(new InterstitialAdClosedSignal("")); }
-        private void InterstitialOnAdShowFailedEvent(IronSourceError arg1, IronSourceAdInfo arg2) { this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal("")); }
-        private void InterstitialOnAdShowSucceededEvent(IronSourceAdInfo obj)                     { this.signalBus.Fire(new InterstitialAdDisplayedSignal("")); }
+        private void InterstitialOnAdClosedEvent(IronSourceAdInfo obj)                            { this.signalBus.Fire(new InterstitialAdClosedSignal(this.interstitialPlacement)); }
+        private void InterstitialOnAdShowFailedEvent(IronSourceError arg1, IronSourceAdInfo arg2) { this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(this.interstitialPlacement)); }
+        private void InterstitialOnAdShowSucceededEvent(IronSourceAdInfo obj)                     { this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.interstitialPlacement)); }
 
         private void InterstitialOnAdLoadFailed(IronSourceError obj) { this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription())); }
 
         private void InterstitialOnAdReadyEvent(IronSourceAdInfo info) { this.signalBus.Fire(new InterstitialAdDownloadedSignal("")); }
 
-        private void InterstitialOnAdOpenedEvent(IronSourceAdInfo info) { this.signalBus.Fire(new InterstitialAdDisplayedSignal("")); }
+        private void InterstitialOnAdOpenedEvent(IronSourceAdInfo info) { this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.interstitialPlacement)); }
 
-        private void InterstitialOnAdClickedEvent(IronSourceAdInfo info) { this.signalBus.Fire(new InterstitialAdClickedSignal("")); }
+        private void InterstitialOnAdClickedEvent(IronSourceAdInfo info) { this.signalBus.Fire(new InterstitialAdClickedSignal(this.interstitialPlacement)); }
 
         #endregion
 
@@ -258,12 +259,18 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void              HideBannedAd()                      { IronSource.Agent.hideBanner(); }
         public void              DestroyBannerAd()                   { IronSource.Agent.destroyBanner(); }
         public bool              IsInterstitialAdReady(string place) { return IronSource.Agent.isInterstitialReady(); }
-        public void              ShowInterstitialAd(string place)    { IronSource.Agent.showInterstitial(place); }
+
+        public void ShowInterstitialAd(string place)
+        {
+            this.interstitialPlacement = place;
+            IronSource.Agent.showInterstitial(place);
+        }
         public AdNetworkSettings AdNetworkSettings                   => this.thirdPartiesConfig.AdSettings.IronSource;
         public bool              IsRewardedAdReady(string place)     { return IronSource.Agent.isRewardedVideoAvailable(); }
 
         public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
+            this.rewardedPlacement = place;
             this.isGotRewarded = false;
             IronSource.Agent.showRewardedVideo(place);
             this.onRewardComplete = onCompleted;
