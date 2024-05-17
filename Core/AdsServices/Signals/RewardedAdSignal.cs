@@ -11,9 +11,9 @@
         public RewardedAdLoadFailedSignal(string placement, string message) : base(placement) { this.Message = message; }
     }
 
-    public class RewardedAdLoadClickedSignal : BaseAdsSignal
+    public class RewardedAdClickedSignal : BaseAdsSignal
     {
-        public RewardedAdLoadClickedSignal(string placement) : base(placement) { }
+        public RewardedAdClickedSignal(string placement) : base(placement) { }
     }
 
     public class RewardedAdDisplayedSignal : BaseAdsSignal

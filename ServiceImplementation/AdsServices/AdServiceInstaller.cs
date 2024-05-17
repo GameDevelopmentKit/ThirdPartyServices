@@ -92,7 +92,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<RewardInterstitialAdClosedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadedSignal>();
             this.Container.DeclareSignal<RewardedAdLoadFailedSignal>();
-            this.Container.DeclareSignal<RewardedAdLoadClickedSignal>();
+            this.Container.DeclareSignal<RewardedAdClickedSignal>();
             this.Container.DeclareSignal<RewardedAdDisplayedSignal>();
             this.Container.DeclareSignal<RewardedAdCompletedSignal>();
             this.Container.DeclareSignal<RewardedSkippedSignal>();
