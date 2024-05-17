@@ -16,7 +16,8 @@
         "FBInstant",
         "3rd.Configs",
         "Amazon.Scripts",
-        "Unity.Advertisement.IosSupport"
+        "Unity.Advertisement.IosSupport",
+        "Unity.LevelPlay"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
