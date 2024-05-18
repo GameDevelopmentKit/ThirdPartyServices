@@ -99,11 +99,11 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         [OnInspectorInit]
         public void OnRemoteConfigProviderTypeChanged()
         {
-            DefineSymbolEditorUtils.SetDefineSymbol(FireBaseRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.FireBase);
-            DefineSymbolEditorUtils.SetDefineSymbol(ByteBrewRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew);
+            EditorUtils.SetDefineSymbol(FireBaseRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.FireBase);
+            EditorUtils.SetDefineSymbol(ByteBrewRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew);
             if (this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew)
             {
-                DefineSymbolEditorUtils.SetDefineSymbol(ByteBrewSymbol, true);
+                EditorUtils.SetDefineSymbol(ByteBrewSymbol, true);
             }
         }
 #endif
