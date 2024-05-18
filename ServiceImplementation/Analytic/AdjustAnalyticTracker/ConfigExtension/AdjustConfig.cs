@@ -19,7 +19,7 @@ namespace Core.AnalyticServices
         private void OnChangeAdjustEnabled()
         {
 #if UNITY_EDITOR
-            DefineSymbolEditorUtils.SetDefineSymbol(AdjustSymbol, this.isAdjustEnabled);
+            EditorUtils.SetDefineSymbol(AdjustSymbol, this.isAdjustEnabled);
 #endif
         }
         

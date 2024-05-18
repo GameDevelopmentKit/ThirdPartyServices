@@ -19,7 +19,7 @@ namespace Core.AnalyticServices
         private void OnChangeAppsflyerEnabled()
         {
 #if UNITY_EDITOR
-            DefineSymbolEditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
+            EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
 #endif
         }
         

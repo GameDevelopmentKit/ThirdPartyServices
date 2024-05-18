@@ -129,7 +129,7 @@
         private void OnSetEnableAPS()
         {
             const string APSSymbol = "APS_ENABLE";
-            DefineSymbolEditorUtils.SetDefineSymbol(APSSymbol, this.mEnableAPS);
+            EditorUtils.SetDefineSymbol(APSSymbol, this.mEnableAPS);
         }
 #endif
     }

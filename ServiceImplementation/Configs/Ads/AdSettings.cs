@@ -103,13 +103,21 @@
         private const string IronSourceSymbol        = "IRONSOURCE";
         private const string CollapsibleBannerSymbol = "THEONE_COLLAPSIBLE_BANNER";
 
-        private void OnChangeAdMob() { DefineSymbolEditorUtils.SetDefineSymbol(AdModSymbol, this.enableAdMob); }
+        private void OnChangeAdMob()
+        {
+            EditorUtils.SetDefineSymbol(AdModSymbol, this.enableAdMob);
+            EditorUtils.ModifyPackage(this.enableAdMob, "com.google.ads.mobile", "9.1.0");
+        }
 
-        private void OnChangeAppLovin() { DefineSymbolEditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin); }
+        private void OnChangeAppLovin() { EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin); }
 
-        private void OnChangeIronSource() { DefineSymbolEditorUtils.SetDefineSymbol(IronSourceSymbol, this.enableIronSource); }
+        private void OnChangeIronSource()
+        {
+            EditorUtils.SetDefineSymbol(IronSourceSymbol, this.enableIronSource);
+            EditorUtils.ModifyPackage(this.enableIronSource, "com.unity.services.levelplay", "8.0.0");
+        }
         
-        private void OnChangeCollapsibleBanner() { DefineSymbolEditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner); }
+        private void OnChangeCollapsibleBanner() { EditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner); }
 #endif
     }
 }
