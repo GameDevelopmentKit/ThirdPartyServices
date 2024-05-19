@@ -112,7 +112,6 @@
         private void OnChangeAppLovin()
         {
             EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin); 
-            EditorUtils.ModifyPackage(this.enableAppLovin, "com.theone.folk.max-unity", "6.5.1");
         }
 
         private void OnChangeIronSource()
