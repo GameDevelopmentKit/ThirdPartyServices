@@ -20,6 +20,8 @@ namespace Core.AnalyticServices
         {
 #if UNITY_EDITOR
             EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
+            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "com.theone.appsflyer-ads-connector-unity-plugin", "6.14.3");
+            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "com.theone.appsflyer-unity-plugin", "6.14.3");
 #endif
         }
         

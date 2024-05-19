@@ -20,6 +20,7 @@ namespace Core.AnalyticServices
         {
 #if UNITY_EDITOR
             EditorUtils.SetDefineSymbol(AdjustSymbol, this.isAdjustEnabled);
+            EditorUtils.ModifyPackage(this.isAdjustEnabled, "com.theone.folk.adjust-unity", "4.38.1");
 #endif
         }
         
