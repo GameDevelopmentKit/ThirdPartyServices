@@ -109,7 +109,11 @@
             EditorUtils.ModifyPackage(this.enableAdMob, "com.google.ads.mobile", "9.1.0");
         }
 
-        private void OnChangeAppLovin() { EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin); }
+        private void OnChangeAppLovin()
+        {
+            EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin); 
+            EditorUtils.ModifyPackage(this.enableAppLovin, "com.theone.folk.max-unity", "6.5.1");
+        }
 
         private void OnChangeIronSource()
         {
