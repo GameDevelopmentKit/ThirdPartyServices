@@ -20,9 +20,7 @@ namespace Core.AnalyticServices
         {
 #if UNITY_EDITOR
             EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
-            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "appsflyer-unity-plugin", "https://github.com/AppsFlyerSDK/appsflyer-unity-plugin.git#upm");
-            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "appsflyer-unity-adrevenue-generic-connector", "https://github.com/AppsFlyerSDK/appsflyer-unity-adrevenue-generic-connector.git#upm");
-            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "appsflyer-unity-purchase-connector", "https://github.com/The1Studio/appsflyer-unity-purchase-connector.git?path=Assets/AppsFlyer#");
+            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "com.theone.appsflyer-unity-plugin", "https://github.com/The1Studio/appsflyer.git?path=Assets/AppsFlyer#");
 #endif
         }
         
