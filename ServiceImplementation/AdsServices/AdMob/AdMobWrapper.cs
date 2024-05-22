@@ -83,6 +83,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                      this.logService.Log("AOA finished init");
                                      this.LoadAppOpenAd();
                                      this.IntervalCall(5);
+#if ADMOB_ADS_DEBUG
+                                     MobileAds.OpenAdInspector(_ => {});
+#endif
                                  });
         }
 
