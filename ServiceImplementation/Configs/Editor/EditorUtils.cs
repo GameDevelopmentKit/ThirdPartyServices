@@ -39,17 +39,6 @@ namespace ServiceImplementation.Configs.Editor
             PlayerSettings.SetScriptingDefineSymbols(buildTarget, string.Join(Delemiter, defineSymbols));
         }
         
-        public static string GetLatestPackageVersion(string packageName)
-        {
-            using (var webClient = new WebClient())
-            {
-                var json          = webClient.DownloadString($"https://package.openupm.com/api/package/{packageName}");
-                var packageInfo   = JObject.Parse(json);
-                var latestVersion = packageInfo["versions"]["latest"].ToString();
-                return latestVersion;
-            }
-        }
-        
         // Modify the package in the manifest.json
         // add: true to add a package, false to remove a package
         // packageName: the package name to add or remove
