@@ -2,13 +2,11 @@ namespace Core.AnalyticServices
 {
 #if  UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
-    using UnityEditor.PackageManager;
+    using UnityEditor;
 #endif
-    using System.IO;
 #if BYTEBREW
     using ByteBrewSDK;
 #endif
-    using Newtonsoft.Json.Linq;
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -87,6 +85,11 @@ namespace Core.AnalyticServices
             byteBrewSettings.iosEnabled = this.iosEnabled;
             byteBrewSettings.iosGameID  = this.byteBrewAppIdIos;
             byteBrewSettings.iosSDKKey  = this.byteBrewSDKKeyIos;
+            
+#if UNITY_EDITOR
+            EditorUtility.SetDirty(byteBrewSettings);
+            AssetDatabase.SaveAssets();
+#endif
         }
 #endif
     }
