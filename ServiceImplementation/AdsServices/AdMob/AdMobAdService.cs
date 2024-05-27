@@ -2,6 +2,7 @@
 namespace ServiceImplementation.AdsServices.AdMob
 {
     using System;
+    using System.Diagnostics;
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
@@ -13,6 +14,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
     using Zenject;
+    using Debug = UnityEngine.Debug;
 
     public class AdMobAdService : IAdServices, IAdLoadService, IBackFillAdsService, IInitializable, ICollapsibleBannerAd
     {
@@ -146,15 +148,17 @@ namespace ServiceImplementation.AdsServices.AdMob
         {
             if (this.IsRewardedAdReady(place)) return;
 
-            RewardedAd.Load(this.config.DefaultRewardedAdId.Id, new(), (ad, error) =>
+            var stopwatch = Stopwatch.StartNew();
+            RewardedAd.Load(this.config.DefaultRewardedAdId.Id, new AdRequest(), (ad, error) =>
             {
+                stopwatch.Stop();
                 if (error is not null)
                 {
-                    this.signalBus.Fire<RewardedAdLoadFailedSignal>(new(place, error.GetMessage()));
+                    this.signalBus.Fire(new RewardedAdLoadFailedSignal(place, error.GetMessage(), stopwatch.ElapsedMilliseconds));
                     return;
                 }
 
-                this.signalBus.Fire<RewardedAdLoadedSignal>(new(place));
+                this.signalBus.Fire(new RewardedAdLoadedSignal(place, stopwatch.ElapsedMilliseconds));
                 this.rewardedAd?.Destroy();
                 this.rewardedAd = ad;
             });

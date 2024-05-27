@@ -2,6 +2,7 @@
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
     using System;
+    using System.Diagnostics;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
@@ -115,8 +116,18 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Fire(new RewardedAdCompletedSignal(this.rewardedPlacement));
         }
 
-        private void RewardedVideoOnAdUnavailable()                   { this.signalBus.Fire(new RewardedAdLoadFailedSignal("", "")); }
-        private void RewardedVideoOnAdAvailable(IronSourceAdInfo obj) { this.signalBus.Fire(new RewardedAdLoadedSignal("")); }
+        private Stopwatch rewardedStopwatch;
+
+        private void RewardedVideoOnAdUnavailable()
+        {
+            this.rewardedStopwatch.Stop();
+            this.signalBus.Fire(new RewardedAdLoadFailedSignal("", "", this.rewardedStopwatch.ElapsedMilliseconds));
+        }
+        private void RewardedVideoOnAdAvailable(IronSourceAdInfo obj)
+        {
+            this.rewardedStopwatch.Stop();
+            this.signalBus.Fire(new RewardedAdLoadedSignal("", this.rewardedStopwatch.ElapsedMilliseconds));
+        }
 
         private void RewardedVideoOnAdClosedEvent(IronSourceAdInfo obj)
         {
@@ -285,7 +296,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
-        public void LoadRewardAds(string place)      { IronSource.Agent.loadRewardedVideo(); }
+        public void LoadRewardAds(string place)
+        {
+            this.rewardedStopwatch = Stopwatch.StartNew();
+            IronSource.Agent.loadRewardedVideo();
+        }
         public void LoadInterstitialAd(string place) { IronSource.Agent.loadInterstitial(); }
     }
 }
