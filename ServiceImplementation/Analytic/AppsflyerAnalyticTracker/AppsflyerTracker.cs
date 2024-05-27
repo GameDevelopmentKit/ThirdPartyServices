@@ -106,14 +106,14 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
         {
-            var convertedData = changedProps.ToDictionary(pair => pair.Key, pair => pair.Value.ToJson());
+            var convertedData = changedProps.ToDictionary(pair => pair.Key, pair => pair.Value.ToString());
             AppsFlyer.setAdditionalData(convertedData);
         }
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
             Debug.Log($"Appsflyer: On Event {name}");
-            var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value.ToJson());
+            var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value.ToString());
             AppsFlyer.sendEvent(name, convertedData);
         }
 

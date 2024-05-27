@@ -65,7 +65,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
                 return;
             }
             
-            var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value.ToJson());
+            var convertedData = data.ToDictionary(pair => pair.Key, pair => pair.Value.ToString());
             ByteBrew.NewCustomEvent(name, convertedData);
             Debug.Log($"ByteBrew: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
         }

@@ -24,7 +24,8 @@
         
         [OnValueChanged("SaveApplovinSetting")]
         public bool EnableMAXAdReview;
-#if UNITY_EDITOR
+        
+#if UNITY_EDITOR && APPLOVIN
         [OnInspectorInit]
         private void LoadApplovinSetting()
         {
