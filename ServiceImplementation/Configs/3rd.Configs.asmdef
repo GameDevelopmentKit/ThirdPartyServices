@@ -5,7 +5,8 @@
         "3rdCore.Ads",
         "Zenject-Signals",
         "3rd.RemoteConfig",
-        "3rd.Configs.Editor"
+        "3rd.Configs.Editor",
+        "MaxSdk.Scripts.IntegrationManager.Editor"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

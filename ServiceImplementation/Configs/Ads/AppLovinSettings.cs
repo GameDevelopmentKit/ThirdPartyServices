@@ -9,6 +9,7 @@
     using Sirenix.OdinInspector;
     using UnityEngine;
 #if UNITY_EDITOR
+    using UnityEditor;
     using ServiceImplementation.Configs.Editor;
 #endif
 
@@ -18,7 +19,62 @@
         /// <summary>
         /// Gets or sets the AppLovin SDKKey.
         /// </summary>
+        [OnValueChanged("SaveApplovinSetting")]
         public string SDKKey { get { return this.mSDKKey; } set { this.mSDKKey = value; } }
+        
+        [OnValueChanged("SaveApplovinSetting")]
+        public bool EnableMAXAdReview;
+#if UNITY_EDITOR
+        [OnInspectorInit]
+        private void LoadApplovinSetting()
+        {
+            this.SDKKey            = appLovinSettings.SdkKey;
+            if (string.IsNullOrEmpty(this.SDKKey))
+            {
+                this.EnableMAXAdReview = appLovinSettings.QualityServiceEnabled = true; //Default by true
+                EditorUtility.SetDirty(appLovinSettings);
+                AssetDatabase.SaveAssets();
+            }
+            else
+            {
+                this.EnableMAXAdReview = appLovinSettings.QualityServiceEnabled;
+            }
+        }
+        
+        private void SaveApplovinSetting()
+        {
+
+            appLovinSettings.SdkKey                = this.SDKKey;
+            appLovinSettings.QualityServiceEnabled = this.EnableMAXAdReview;
+            
+            EditorUtility.SetDirty(appLovinSettings);
+            AssetDatabase.SaveAssets();
+        }
+
+        private static global::AppLovinSettings m_AppLovinSettings;
+
+        public static global::AppLovinSettings appLovinSettings
+        {
+            get
+            {
+                if (m_AppLovinSettings == null)
+                {
+                    m_AppLovinSettings = Resources.Load<global::AppLovinSettings>("AppLovinSettings");
+                }
+
+                return m_AppLovinSettings;
+            }
+        }
+
+        public static void UpdateGoogleAdsId(string androidAppId, string iosAppId)
+        {
+            appLovinSettings.AdMobAndroidAppId = androidAppId;
+            appLovinSettings.AdMobIosAppId     = iosAppId;
+
+            EditorUtility.SetDirty(appLovinSettings);
+            AssetDatabase.SaveAssets();
+        }
+#endif
         
         public bool IsAdaptiveBanner => this.isAdaptiveBanner;
 
@@ -160,8 +216,7 @@
 
         [SerializeField] private Amazon.MRAIDPolicy mraidPolicy    = Amazon.MRAIDPolicy.CUSTOM;
         #endif
-
-
+        
         [SerializeField] [BoxGroup("Amazon Id")]
         private string appId;
 

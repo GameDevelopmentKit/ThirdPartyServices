@@ -5,10 +5,12 @@
     using System.Reflection;
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
     using UnityEngine;
     using UnityEngine.Events;
     using UnityEngine.Serialization;
-    using Object = UnityEngine.Object;
 
     [Serializable]
     public class AdMobSettings : AdNetworkSettings
@@ -112,14 +114,18 @@
         [OnInspectorInit]
         private void LoadAdmobSetting()
         {
-            var googleMobileAdsSettings = Resources.Load<Object>("GoogleMobileAdsSettings");
+            var googleMobileAdsSettings = Resources.Load<ScriptableObject>("GoogleMobileAdsSettings");
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
             var settingType  = googleMobileAdsSettings.GetType();
 
             this.mIOSAppId     = settingType.GetField("adMobIOSAppId", bindingFlags).GetValue(googleMobileAdsSettings) as string;
             this.mAndroidAppId = settingType.GetField("adMobAndroidAppId", bindingFlags).GetValue(googleMobileAdsSettings) as string;
-
+            
+            #if APPLOVIN && UNITY_EDITOR
+            AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
+            #endif
+            
             this.mOptimizeInitialization = (bool)settingType.GetField("optimizeInitialization", bindingFlags).GetValue(googleMobileAdsSettings);
 
             this.mOptimizeAdLoading = (bool)settingType.GetField("optimizeAdLoading", bindingFlags).GetValue(googleMobileAdsSettings);
@@ -144,6 +150,9 @@
 
             settingType.GetField("adMobIOSAppId", bindingFlags).SetValue(googleMobileAdsSettings, this.mIOSAppId);
             settingType.GetField("adMobAndroidAppId", bindingFlags).SetValue(googleMobileAdsSettings, this.mAndroidAppId);
+#if APPLOVIN && UNITY_EDITOR
+            AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
+#endif
             settingType.GetField("optimizeInitialization", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeInitialization);
             settingType.GetField("optimizeAdLoading", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeAdLoading);
 #if ADMOB_BELLOW_9_0_0
@@ -155,6 +164,10 @@
             settingType.GetField("userTrackingUsageDescription", bindingFlags).SetValue(googleMobileAdsSettings, this.mUserTrackingUsageDescription);
             
             this.OnDataChange?.Invoke(googleMobileAdsSettings);
+#if UNITY_EDITOR
+            EditorUtility.SetDirty(googleMobileAdsSettings);
+            AssetDatabase.SaveAssets();
+#endif
         }
 
         private void AppIdChanged() { Debug.Log("Admob app id changed"); }
