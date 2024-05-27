@@ -2,13 +2,22 @@
 {
     public class RewardedAdLoadedSignal : BaseAdsSignal
     {
-        public RewardedAdLoadedSignal(string placement) : base(placement) { }
+        public long LoadingTime;
+        public RewardedAdLoadedSignal(string placement, long loadingTime) : base(placement)
+        {
+            this.LoadingTime = loadingTime;
+        }
     }
 
     public class RewardedAdLoadFailedSignal : BaseAdsSignal
     {
+        public float LoadingTime;
         public string Message;
-        public RewardedAdLoadFailedSignal(string placement, string message) : base(placement) { this.Message = message; }
+        public RewardedAdLoadFailedSignal(string placement, string message, float loadingTime) : base(placement)
+        {
+            this.Message     = message;
+            this.LoadingTime = loadingTime;
+        }
     }
 
     public class RewardedAdClickedSignal : BaseAdsSignal

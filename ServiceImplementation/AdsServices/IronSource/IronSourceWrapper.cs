@@ -2,6 +2,7 @@
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
     using System;
+    using System.Diagnostics;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
@@ -86,10 +87,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceRewardedVideoEvents.onAdRewardedEvent    -= this.RewardedVideoOnAdRewardedEvent;
             IronSourceRewardedVideoEvents.onAdClickedEvent     -= this.RewardedVideoOnAdClickedEvent;
 
-
             //Add AdInfo Interstitial Events
-            IronSourceInterstitialEvents.onAdReadyEvent         -= this.InterstitialOnAdReadyEvent;
-            IronSourceInterstitialEvents.onAdLoadFailedEvent    -= this.InterstitialOnAdLoadFailed;
+            IronSourceInterstitialEvents.onAdReadyEvent      -= this.InterstitialOnAdReadyEvent;
+            IronSourceInterstitialEvents.onAdLoadFailedEvent -= this.InterstitialOnAdLoadFailed;
             IronSourceInterstitialEvents.onAdOpenedEvent        -= this.InterstitialOnAdOpenedEvent;
             IronSourceInterstitialEvents.onAdClickedEvent       -= this.InterstitialOnAdClickedEvent;
             IronSourceInterstitialEvents.onAdShowSucceededEvent -= this.InterstitialOnAdShowSucceededEvent;
@@ -115,8 +115,18 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.signalBus.Fire(new RewardedAdCompletedSignal(this.rewardedPlacement));
         }
 
-        private void RewardedVideoOnAdUnavailable()                   { this.signalBus.Fire(new RewardedAdLoadFailedSignal("", "")); }
-        private void RewardedVideoOnAdAvailable(IronSourceAdInfo obj) { this.signalBus.Fire(new RewardedAdLoadedSignal("")); }
+        private Stopwatch rewardedStopwatch;
+
+        private void RewardedVideoOnAdUnavailable()
+        {
+            this.rewardedStopwatch.Stop();
+            this.signalBus.Fire(new RewardedAdLoadFailedSignal("", "", this.rewardedStopwatch.ElapsedMilliseconds));
+        }
+        private void RewardedVideoOnAdAvailable(IronSourceAdInfo obj)
+        {
+            this.rewardedStopwatch.Stop();
+            this.signalBus.Fire(new RewardedAdLoadedSignal("", this.rewardedStopwatch.ElapsedMilliseconds));
+        }
 
         private void RewardedVideoOnAdClosedEvent(IronSourceAdInfo obj)
         {
@@ -149,9 +159,18 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void InterstitialOnAdShowFailedEvent(IronSourceError arg1, IronSourceAdInfo arg2) { this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(this.interstitialPlacement)); }
         private void InterstitialOnAdShowSucceededEvent(IronSourceAdInfo obj)                     { this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.interstitialPlacement)); }
 
-        private void InterstitialOnAdLoadFailed(IronSourceError obj) { this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription())); }
+        private Stopwatch stopwatchInterstitial;
+        private void InterstitialOnAdLoadFailed(IronSourceError obj)
+        {
+            this.stopwatchInterstitial.Stop();
+            this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription(), this.stopwatchInterstitial.ElapsedMilliseconds));
+        }
 
-        private void InterstitialOnAdReadyEvent(IronSourceAdInfo info) { this.signalBus.Fire(new InterstitialAdDownloadedSignal("")); }
+        private void InterstitialOnAdReadyEvent(IronSourceAdInfo info)
+        {
+            this.stopwatchInterstitial.Stop();
+            this.signalBus.Fire(new InterstitialAdLoadedSignal("",  this.stopwatchInterstitial.ElapsedMilliseconds));
+        }
 
         private void InterstitialOnAdOpenedEvent(IronSourceAdInfo info) { this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.interstitialPlacement)); }
 
@@ -285,8 +304,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
-        public void LoadRewardAds(string place)      { IronSource.Agent.loadRewardedVideo(); }
-        public void LoadInterstitialAd(string place) { IronSource.Agent.loadInterstitial(); }
+        public void LoadRewardAds(string place)
+        {
+            this.rewardedStopwatch = Stopwatch.StartNew();
+            IronSource.Agent.loadRewardedVideo();
+        }
+        public void LoadInterstitialAd(string place)
+        {
+            this.stopwatchInterstitial = Stopwatch.StartNew();
+            IronSource.Agent.loadInterstitial();
+        }
     }
 }
 #endif

@@ -117,7 +117,7 @@
         private void OnChangeIronSource()
         {
             EditorUtils.SetDefineSymbol(IronSourceSymbol, this.enableIronSource);
-            EditorUtils.ModifyPackage(this.enableIronSource, "com.unity.services.levelplay", "8.0.0");
+            EditorUtils.ModifyPackage(this.enableIronSource, "com.unity.services.levelplay", "8.1.0");
         }
         
         private void OnChangeCollapsibleBanner() { EditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner); }
