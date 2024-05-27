@@ -77,7 +77,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<MRecAdDisplayedSignal>();
             this.Container.DeclareSignal<MRecAdDismissedSignal>();
 
-            this.Container.DeclareSignal<InterstitialAdDownloadedSignal>();
+            this.Container.DeclareSignal<InterstitialAdLoadedSignal>();
             this.Container.DeclareSignal<InterstitialAdLoadFailedSignal>();
             this.Container.DeclareSignal<InterstitialAdClickedSignal>();
             this.Container.DeclareSignal<InterstitialAdDisplayedFailedSignal>();

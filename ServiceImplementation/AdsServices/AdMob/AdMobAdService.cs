@@ -2,6 +2,7 @@
 namespace ServiceImplementation.AdsServices.AdMob
 {
     using System;
+    using System.Diagnostics;
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
@@ -13,6 +14,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
     using Zenject;
+    using Debug = UnityEngine.Debug;
 
     public class AdMobAdService : IAdServices, IAdLoadService, IBackFillAdsService, IInitializable, ICollapsibleBannerAd
     {
@@ -67,20 +69,20 @@ namespace ServiceImplementation.AdsServices.AdMob
                 return;
             }
 
-            this.bannerView = new(this.config.DefaultBannerAdId.Id, size, position);
+            this.bannerView = new BannerView(this.config.DefaultBannerAdId.Id, size, position);
 
             #region Events
 
-            this.bannerView.OnBannerAdLoaded            += () => this.signalBus.Fire<BannerAdLoadedSignal>(new(PLACEMENT));
-            this.bannerView.OnBannerAdLoadFailed        += (error) => this.signalBus.Fire<BannerAdLoadFailedSignal>(new(PLACEMENT, error.GetMessage()));
-            this.bannerView.OnAdFullScreenContentOpened += () => this.signalBus.Fire<BannerAdPresentedSignal>(new(PLACEMENT));
-            this.bannerView.OnAdFullScreenContentClosed += () => this.signalBus.Fire<BannerAdDismissedSignal>(new(PLACEMENT));
-            this.bannerView.OnAdClicked                 += () => this.signalBus.Fire<BannerAdClickedSignal>(new(PLACEMENT));
+            this.bannerView.OnBannerAdLoaded            += () => this.signalBus.Fire(new BannerAdLoadedSignal(PLACEMENT));
+            this.bannerView.OnBannerAdLoadFailed        += (error) => this.signalBus.Fire(new BannerAdLoadFailedSignal(PLACEMENT, error.GetMessage()));
+            this.bannerView.OnAdFullScreenContentOpened += () => this.signalBus.Fire(new BannerAdPresentedSignal(PLACEMENT));
+            this.bannerView.OnAdFullScreenContentClosed += () => this.signalBus.Fire(new BannerAdDismissedSignal(PLACEMENT));
+            this.bannerView.OnAdClicked                 += () => this.signalBus.Fire(new BannerAdClickedSignal(PLACEMENT));
             this.bannerView.OnAdPaid                    += this.TrackAdRevenue("Banner", PLACEMENT);
 
             #endregion
 
-            this.bannerView.LoadAd(new());
+            this.bannerView.LoadAd(new AdRequest());
         }
 
         public void HideBannedAd() { this.bannerView?.Hide(); }
@@ -103,15 +105,17 @@ namespace ServiceImplementation.AdsServices.AdMob
         {
             if (this.IsInterstitialAdReady(place)) return;
 
-            InterstitialAd.Load(this.config.DefaultInterstitialAdId.Id, new(), (ad, error) =>
+            var stopwatch = Stopwatch.StartNew();
+            InterstitialAd.Load(this.config.DefaultInterstitialAdId.Id, new AdRequest(), (ad, error) =>
             {
+                stopwatch.Stop();
                 if (error is not null)
                 {
-                    this.signalBus.Fire<InterstitialAdLoadFailedSignal>(new(place, error.GetMessage()));
+                    this.signalBus.Fire(new InterstitialAdLoadFailedSignal(place, error.GetMessage(), stopwatch.ElapsedMilliseconds));
                     return;
                 }
 
-                this.signalBus.Fire<InterstitialAdDownloadedSignal>(new(place));
+                this.signalBus.Fire(new InterstitialAdLoadedSignal(place, stopwatch.ElapsedMilliseconds));
                 this.interstitialAd?.Destroy();
                 this.interstitialAd = ad;
             });
@@ -123,10 +127,10 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             #region Events
 
-            this.interstitialAd.OnAdFullScreenContentOpened += () => this.signalBus.Fire<InterstitialAdDisplayedSignal>(new(place));
-            this.interstitialAd.OnAdFullScreenContentClosed += () => this.signalBus.Fire<InterstitialAdClosedSignal>(new(place));
-            this.interstitialAd.OnAdFullScreenContentFailed += (_) => this.signalBus.Fire<InterstitialAdDisplayedFailedSignal>(new(place));
-            this.interstitialAd.OnAdClicked                 += () => this.signalBus.Fire<InterstitialAdClickedSignal>(new(place));
+            this.interstitialAd.OnAdFullScreenContentOpened += () => this.signalBus.Fire(new InterstitialAdDisplayedSignal(place));
+            this.interstitialAd.OnAdFullScreenContentClosed += () => this.signalBus.Fire(new InterstitialAdClosedSignal(place));
+            this.interstitialAd.OnAdFullScreenContentFailed += (_) => this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(place));
+            this.interstitialAd.OnAdClicked                 += () => this.signalBus.Fire(new InterstitialAdClickedSignal(place));
             this.interstitialAd.OnAdPaid                    += this.TrackAdRevenue("Interstitial", place);
 
             #endregion
@@ -146,15 +150,17 @@ namespace ServiceImplementation.AdsServices.AdMob
         {
             if (this.IsRewardedAdReady(place)) return;
 
-            RewardedAd.Load(this.config.DefaultRewardedAdId.Id, new(), (ad, error) =>
+            var stopwatch = Stopwatch.StartNew();
+            RewardedAd.Load(this.config.DefaultRewardedAdId.Id, new AdRequest(), (ad, error) =>
             {
+                stopwatch.Stop();
                 if (error is not null)
                 {
-                    this.signalBus.Fire<RewardedAdLoadFailedSignal>(new(place, error.GetMessage()));
+                    this.signalBus.Fire(new RewardedAdLoadFailedSignal(place, error.GetMessage(), stopwatch.ElapsedMilliseconds));
                     return;
                 }
 
-                this.signalBus.Fire<RewardedAdLoadedSignal>(new(place));
+                this.signalBus.Fire(new RewardedAdLoadedSignal(place, stopwatch.ElapsedMilliseconds));
                 this.rewardedAd?.Destroy();
                 this.rewardedAd = ad;
             });
@@ -166,25 +172,25 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             #region Events
 
-            this.rewardedAd.OnAdFullScreenContentOpened += () => this.signalBus.Fire<RewardedAdDisplayedSignal>(new(place));
+            this.rewardedAd.OnAdFullScreenContentOpened += () => this.signalBus.Fire(new RewardedAdDisplayedSignal(place));
             this.rewardedAd.OnAdFullScreenContentFailed += (_) => OnAdFullScreenContentFailed();
-            this.rewardedAd.OnAdClicked                 += () => this.signalBus.Fire<RewardedAdClickedSignal>(new(place));
-            this.rewardedAd.OnAdPaid                    += (_) => this.signalBus.Fire<RewardedAdEligibleSignal>(new(place));
+            this.rewardedAd.OnAdClicked                 += () => this.signalBus.Fire(new RewardedAdClickedSignal(place));
+            this.rewardedAd.OnAdPaid                    += (_) => this.signalBus.Fire(new RewardedAdEligibleSignal(place));
             this.rewardedAd.OnAdPaid                    += this.TrackAdRevenue("Rewarded", place);
 
             #endregion
 
             this.rewardedAd.Show(_ =>
             {
-                this.signalBus.Fire<RewardedAdCompletedSignal>(new(place));
-                this.signalBus.Fire<RewardedAdClosedSignal>(new(place));
+                this.signalBus.Fire(new RewardedAdCompletedSignal(place));
+                this.signalBus.Fire(new RewardedAdClosedSignal(place));
                 onCompleted?.Invoke();
             });
-            this.signalBus.Fire<RewardedAdCalledSignal>(new(place));
+            this.signalBus.Fire(new RewardedAdCalledSignal(place));
 
             void OnAdFullScreenContentFailed()
             {
-                this.signalBus.Fire<RewardedSkippedSignal>(new(place));
+                this.signalBus.Fire(new RewardedSkippedSignal(place));
                 onFailed?.Invoke();
                 onFailed = null;
             }

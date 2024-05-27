@@ -4,24 +4,28 @@
     {
         public InterstitialAdCalledSignal(string placement) : base(placement) { }
     }
-    
-    public class InterstitialAdDownloadedSignal : BaseAdsSignal
+
+    public class InterstitialAdLoadedSignal : BaseAdsSignal
     {
-        public InterstitialAdDownloadedSignal(string placement) : base(placement) { }
+        public long LoadingMilis;
+        public InterstitialAdLoadedSignal(string placement, long loadingMilis) : base(placement) { this.LoadingMilis = loadingMilis; }
     }
-    
+
     public class InterstitialAdEligibleSignal : BaseAdsSignal
     {
-        public InterstitialAdEligibleSignal(string placement) : base(placement)
-        {
-        }
+        public InterstitialAdEligibleSignal(string placement) : base(placement) { }
     }
 
     public class InterstitialAdLoadFailedSignal : BaseAdsSignal
     {
         public string Message;
+        public long   LoadingMilis;
 
-        public InterstitialAdLoadFailedSignal(string placement, string message) : base(placement) { this.Message = message; }
+        public InterstitialAdLoadFailedSignal(string placement, string message, long loadingMilis) : base(placement)
+        {
+            this.Message      = message;
+            this.LoadingMilis = loadingMilis;
+        }
     }
 
     public class InterstitialAdClickedSignal : BaseAdsSignal
@@ -33,7 +37,7 @@
     {
         public InterstitialAdDisplayedSignal(string placement) : base(placement) { }
     }
-    
+
     public class InterstitialAdDisplayedFailedSignal : BaseAdsSignal
     {
         public InterstitialAdDisplayedFailedSignal(string placement) : base(placement) { }
