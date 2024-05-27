@@ -330,6 +330,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             MaxSdkCallbacks.Interstitial.OnAdHiddenEvent     += this.OnInterstitialCompleted;
             MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent  += this.InterstitialAdDisplayedSignal;
+            MaxSdkCallbacks.Interstitial.OnAdLoadedEvent     += this.OnInterstitialAdLoadedHandler;
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent += this.OnInterstitialAdLoadFailedHandler;
             MaxSdkCallbacks.Interstitial.OnAdClickedEvent    += this.OnInterstitialAdClickedHandler;
 
@@ -340,13 +341,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             MaxSdkCallbacks.Interstitial.OnAdHiddenEvent     -= this.OnInterstitialCompleted;
             MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent  -= this.InterstitialAdDisplayedSignal;
+            MaxSdkCallbacks.Interstitial.OnAdLoadedEvent     -= this.OnInterstitialAdLoadedHandler;
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent -= this.OnInterstitialAdLoadFailedHandler;
             MaxSdkCallbacks.Interstitial.OnAdClickedEvent    -= this.OnInterstitialAdClickedHandler;
         }
 
         public bool IsInterstitialAdReady(string place)
         {
-            var isPlacementReady = this.IsInterstitialPlacementReady(place, out var id);
+            var isPlacementReady = this.TryGetInterstitialPlacementId(place, out var id);
 
             return isPlacementReady && MaxSdk.IsInterstitialReady(id);
         }
@@ -357,7 +359,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InternalShowInterstitialAd(placement);
         }
 
-        protected bool IsInterstitialPlacementReady(string place, out string id)
+        protected bool TryGetInterstitialPlacementId(string place, out string id)
         {
             var placement = AdPlacement.PlacementWithName(place);
             id = placement == AdPlacement.Default
@@ -369,13 +371,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         protected virtual void InternalLoadInterstitialAd(AdPlacement adPlacement)
         {
-            if (!this.IsInterstitialPlacementReady(adPlacement.Name, out var id)) return;
+            if (!this.TryGetInterstitialPlacementId(adPlacement.Name, out var id)) return;
             MaxSdk.LoadInterstitial(id);
         }
 
         private void InternalShowInterstitialAd(AdPlacement adPlacement)
         {
-            if (!this.IsInterstitialPlacementReady(adPlacement.Name, out var id)) return;
+            if (!this.TryGetInterstitialPlacementId(adPlacement.Name, out var id)) return;
             MaxSdk.ShowInterstitial(id, adPlacement.Name);
             this.currentShowingInterstitial = adPlacement;
         }
@@ -581,8 +583,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
         //.............
 
         private void OnInterstitialAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2) { this.signalBus.Fire(new InterstitialAdClickedSignal(arg2.Placement)); }
+        
+        private void OnInterstitialAdLoadedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+            this.signalBus.Fire(new InterstitialAdLoadedSignal(arg2.Placement, arg2.LatencyMillis));
+        }
 
-        private void OnInterstitialAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2) { this.signalBus.Fire(new InterstitialAdLoadFailedSignal("empty", arg2.Message)); }
+        private void OnInterstitialAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2) { this.signalBus.Fire(new InterstitialAdLoadFailedSignal(arg1, arg2.Message, arg2.LatencyMillis)); }
 
         private void InterstitialAdDisplayedSignal(string arg1, MaxSdkBase.AdInfo arg2) { this.signalBus.Fire(new InterstitialAdDisplayedSignal(arg2.Placement)); }
 
