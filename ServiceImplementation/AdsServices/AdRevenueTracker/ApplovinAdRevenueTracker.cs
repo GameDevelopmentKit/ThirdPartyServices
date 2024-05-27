@@ -35,7 +35,7 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
             var adsRevenueEvent = new AdsRevenueEvent()
             {
                 AdsRevenueSourceId = AdRevenueConstants.ARSourceAppLovinMAX,
-                AdUnit             = adUnitIdentify,
+                AdUnit             = adInfo.AdUnitIdentifier,
                 Revenue            = adInfo.Revenue,
                 Currency           = "USD",
                 Placement          = adInfo.Placement,
