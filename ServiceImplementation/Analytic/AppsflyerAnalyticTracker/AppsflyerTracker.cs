@@ -106,11 +106,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
         {
-            var convertedData = changedProps.ToDictionary(pair => pair.Key, pair =>
-            {
-                var value = pair.Value?.ToString();
-                return string.IsNullOrEmpty(value) ? "empty" : value;
-            });
+            var convertedData = changedProps.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             AppsFlyer.setAdditionalData(convertedData);
         }
 
