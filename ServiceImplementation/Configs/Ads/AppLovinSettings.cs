@@ -19,7 +19,6 @@
         /// <summary>
         /// Gets or sets the AppLovin SDKKey.
         /// </summary>
-        [OnValueChanged("SaveApplovinSetting")]
         public string SDKKey { get { return this.mSDKKey; } set { this.mSDKKey = value; } }
         
         [OnValueChanged("SaveApplovinSetting")]
@@ -44,7 +43,6 @@
         
         private void SaveApplovinSetting()
         {
-
             appLovinSettings.SdkKey                = this.SDKKey;
             appLovinSettings.QualityServiceEnabled = this.EnableMAXAdReview;
             
@@ -155,7 +153,7 @@
         [SerializeField] [LabelText("Mediation Debugger")]
         private bool mMediationDebugger;
 
-        [SerializeField] [LabelText("SDK Key")]
+        [SerializeField] [LabelText("SDK Key")] [OnValueChanged("SaveApplovinSetting")]
         private string mSDKKey;
 
         [SerializeField] [LabelText("Banner")] [BoxGroup("Default Id")]
