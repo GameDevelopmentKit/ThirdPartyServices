@@ -5,6 +5,7 @@ namespace Core.AnalyticServices
     using Core.AnalyticServices.Tools;
     using GameFoundation.Scripts.Utilities.Extension;
     using Models;
+    using UnityEngine;
     using Zenject;
 
     public class AnalyticServicesInstaller : Installer<AnalyticServicesInstaller>
@@ -20,6 +21,9 @@ namespace Core.AnalyticServices
             this.Container.DeclareSignal<EventTrackedSignal>();
             this.Container.DeclareSignal<SetUserIdSignal>();
             this.Container.DeclareSignal<AdRevenueSignal>();
+            var unScaleInGameTimerManager = new GameObject("UnScaleInGameTimerManager").AddComponent<UnScaleInGameStopWatchManager>();
+            Object.DontDestroyOnLoad(unScaleInGameTimerManager);
+            this.Container.Bind<UnScaleInGameStopWatchManager>().FromInstance(unScaleInGameTimerManager).AsSingle();
         }
     }
 }
