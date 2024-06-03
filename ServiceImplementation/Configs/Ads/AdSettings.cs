@@ -24,12 +24,13 @@
     [Serializable]
     public class AdSettings
     {
-        public AdMobSettings      AdMob      => this.mAdMob;
-        public AppLovinSettings   AppLovin   => this.mAppLovin;
-        public IronSourceSettings IronSource => this.mIronSource;
-        public YandexSettings     Yandex     => this.mYandex;
+        public AdMobSettings       AdMob        => this.mAdMob;
+        public AppLovinSettings    AppLovin     => this.mAppLovin;
+        public IronSourceSettings  IronSource   => this.mIronSource;
+        public YandexSettings      Yandex       => this.mYandex;
+        public ImmersiveAdsSetting ImmersiveAds => this.mImmersiveAds;
 
-        #region Misc
+#region Misc
 
         public bool EnableBreakAds { get { return this.enableBreakAds; } }
 
@@ -113,6 +114,12 @@
         [SerializeField] [ShowIf("enableYandex")] [HideLabel] [FoldoutGroup("Yandex")]
         private YandexSettings mYandex = null;
 
+        [SerializeField] [LabelText("ImmersiveAds", SdfIconType.Youtube)] [OnValueChanged("OnChangeImmersiveAds")]
+        private bool enableImmersiveAds;
+
+        [SerializeField] [ShowIf("enableImmersiveAds")] [HideLabel] [FoldoutGroup("ImmersiveAds")]
+        private ImmersiveAdsSetting mImmersiveAds;
+
 #if UNITY_EDITOR
 
         private const string AdModSymbol             = "ADMOB";
@@ -120,6 +127,7 @@
         private const string IronSourceSymbol        = "IRONSOURCE";
         private const string YandexSymbol            = "YANDEX";
         private const string CollapsibleBannerSymbol = "THEONE_COLLAPSIBLE_BANNER";
+        private const string ImmersiveAdsSymbol      = "IMMERSIVE_ADS";
 
         private void OnChangeAdMob()
         {
@@ -166,6 +174,7 @@
 
         private void OnChangeCollapsibleBanner() { EditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner); }
 
+        private void OnChangeImmersiveAds()      { EditorUtils.SetDefineSymbol(ImmersiveAdsSymbol,      this.enableImmersiveAds);}
 
         private static bool DeleteFolderIfExists(string folderPath)
         {
