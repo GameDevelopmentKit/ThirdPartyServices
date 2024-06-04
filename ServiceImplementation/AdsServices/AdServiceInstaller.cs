@@ -1,10 +1,10 @@
 namespace ServiceImplementation.AdsServices
 {
-    using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
+    using global::PubScale.SdkOne;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
     using ServiceImplementation.AdsServices.EasyMobile;
@@ -13,8 +13,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.Configs.Ads;
     using Zenject;
 #if IMMERSIVE_ADS
-    using Core.AdsServices.ImmersiveAds;
-    using PubScale.SdkOne;
+    using ServiceImplementation.AdsServices.PubScale;
 #endif
 #if APPLOVIN
     using ServiceImplementation.AdsServices.AppLovin;
@@ -36,7 +35,7 @@ namespace ServiceImplementation.AdsServices
 
 #if IMMERSIVE_ADS
             this.Container.Bind<PubScaleManager>().FromNewComponentOnNewGameObject().WithGameObjectName("PubScaleManager").AsSingle().NonLazy();
-            this.Container.BindInterfacesTo<ImmersiveAdsService>().AsCached();          
+            this.Container.BindInterfacesTo<PubScaleWrapper>().AsCached();          
 #endif            
 #if APPLOVIN
             ApplovinAdsInstaller.Install(this.Container);
