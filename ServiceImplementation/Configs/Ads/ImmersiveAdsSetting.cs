@@ -69,6 +69,7 @@ namespace ServiceImplementation.Configs.Ads
 #endif
         }
 
+#if UNITY_EDITOR
         [PostProcessBuild(int.MaxValue)]
         public static void OnPostProcessBuild(BuildTarget target, string pathToBuildProject)
         {
@@ -83,5 +84,6 @@ namespace ServiceImplementation.Configs.Ads
 #endif
 #endif
         }
+#endif
     }
 }
