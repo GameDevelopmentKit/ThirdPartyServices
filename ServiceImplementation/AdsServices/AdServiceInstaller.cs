@@ -4,7 +4,6 @@ namespace ServiceImplementation.AdsServices
     using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
-    using global::PubScale.SdkOne;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
     using ServiceImplementation.AdsServices.EasyMobile;
@@ -13,6 +12,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.Configs.Ads;
     using Zenject;
 #if IMMERSIVE_ADS
+    using global::PubScale.SdkOne;
     using ServiceImplementation.AdsServices.PubScale;
 #endif
 #if APPLOVIN
