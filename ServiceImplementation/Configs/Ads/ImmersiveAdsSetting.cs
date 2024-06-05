@@ -6,7 +6,6 @@ namespace ServiceImplementation.Configs.Ads
 #if UNITY_EDITOR
     using UnityEditor;
     using System.Reflection;
-    using UnityEditor.Callbacks;
 #endif
 
     [Serializable]
@@ -68,22 +67,5 @@ namespace ServiceImplementation.Configs.Ads
             AssetDatabase.SaveAssets();
 #endif
         }
-
-#if UNITY_EDITOR
-        [PostProcessBuild(int.MaxValue)]
-        public static void OnPostProcessBuild(BuildTarget target, string pathToBuildProject)
-        {
-#if IMMERSIVE_ADS && UNITY_EDITOR
-            var pubScaleSetting = Resources.Load<ScriptableObject>("PubScaleSettings");
-            var bindingFlags    = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
-            var settingType     = pubScaleSetting.GetType();
-#if THEONE_ADS_DEBUG
-            settingType.GetField("UseTestMode", bindingFlags).SetValue(pubScaleSetting, true);
-#else
-            settingType.GetField("UseTestMode", bindingFlags).SetValue(pubScaleSetting, false);
-#endif
-#endif
-        }
-#endif
     }
 }
