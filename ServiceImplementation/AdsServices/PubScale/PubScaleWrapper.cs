@@ -49,7 +49,8 @@ namespace ServiceImplementation.AdsServices.PubScale
             if (!worldSpace)
             {
                 var canvas = this.cacheCanvas ?? this.screenManager.RootUICanvas.GetComponentInChildren<Canvas>();
-                nativeAdHolder.canvas = canvas;
+                this.cacheCanvas      = canvas;
+                nativeAdHolder.canvas = this.cacheCanvas;
             }
 
             nativeAdHolder.adTag = placement;
