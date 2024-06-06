@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
@@ -71,7 +72,15 @@
         /// <summary>
         /// Gets or sets the default native ad identifier.
         /// </summary>
-        public List<AdId> NativeAdIds { get => this.mNativeAdIds; set => this.mNativeAdIds = value; }
+        public List<AdId> NativeAdIds
+        {
+#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => this.mNativeAdIds.Select(x => new AdId("ca-app-pub-3940256099942544/3986624511", "ca-app-pub-3940256099942544/2247696110")).ToList();
+#else
+            get => this.mNativeAdIds; 
+#endif
+            set => this.mNativeAdIds = value;
+        }
 
         /// <summary>
         /// Gets or sets the default MREC ad identifier.
