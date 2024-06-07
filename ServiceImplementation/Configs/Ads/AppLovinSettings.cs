@@ -2,12 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using Cysharp.Threading.Tasks;
 #if APS_ENABLE
     using AmazonAds;
 #endif
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
+    using UnityEngine.Networking;
 #if UNITY_EDITOR
     using UnityEditor;
     using ServiceImplementation.Configs.Editor;
@@ -16,6 +19,43 @@
     [Serializable]
     public class AppLovinSettings : AdNetworkSettings
     {
+#if UNITY_EDITOR
+        public static async void DownloadApplovin()
+        {
+            var downloadURL     = "https://artifacts.applovin.com/unity/com/applovin/applovin-sdk/AppLovin-MAX-Unity-Plugin-6.5.2-Android-12.5.0-iOS-12.5.0.unitypackage";
+            var path            = Path.Combine(Application.temporaryCachePath, "MaxSDK.unitypackage");
+            var downloadHandler = new DownloadHandlerFile(path);
+            var webRequest      = new UnityWebRequest(downloadURL) { method = UnityWebRequest.kHttpVerbGET, downloadHandler = downloadHandler };
+
+            var operation =  webRequest.SendWebRequest();
+
+            await operation;
+
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                AssetDatabase.ImportPackage(path, false);
+            }
+
+            webRequest.Dispose();
+        }
+        
+        public static bool DeleteFolderIfExists(string folderPath)
+        {
+            // Check if the folder exists
+            if (AssetDatabase.IsValidFolder(folderPath))
+            {
+                // Delete the folder
+                AssetDatabase.DeleteAsset(folderPath);
+
+                Debug.Log($"Folder '{folderPath}' has been deleted.");
+
+                return true;
+            }
+
+            return false;
+        }
+#endif
+        
         /// <summary>
         /// Gets or sets the AppLovin SDKKey.
         /// </summary>

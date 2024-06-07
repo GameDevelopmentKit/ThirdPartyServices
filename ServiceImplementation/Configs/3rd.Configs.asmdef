@@ -6,7 +6,8 @@
         "Zenject-Signals",
         "3rd.RemoteConfig",
         "3rd.Configs.Editor",
-        "MaxSdk.Scripts.IntegrationManager.Editor"
+        "MaxSdk.Scripts.IntegrationManager.Editor",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

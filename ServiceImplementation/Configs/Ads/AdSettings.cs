@@ -111,7 +111,15 @@
 
         private void OnChangeAppLovin()
         {
-            EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin); 
+            EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin);
+            if (this.enableAppLovin)
+            {
+                AppLovinSettings.DownloadApplovin();
+            }
+            else
+            {
+                AppLovinSettings.DeleteFolderIfExists("Assets/MaxSdk");
+            }
         }
 
         private void OnChangeIronSource()
