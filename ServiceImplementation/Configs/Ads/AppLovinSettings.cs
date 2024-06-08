@@ -38,22 +38,6 @@
 
             webRequest.Dispose();
         }
-        
-        public static bool DeleteFolderIfExists(string folderPath)
-        {
-            // Check if the folder exists
-            if (AssetDatabase.IsValidFolder(folderPath))
-            {
-                // Delete the folder
-                AssetDatabase.DeleteAsset(folderPath);
-
-                Debug.Log($"Folder '{folderPath}' has been deleted.");
-
-                return true;
-            }
-
-            return false;
-        }
 #endif
         
         /// <summary>
