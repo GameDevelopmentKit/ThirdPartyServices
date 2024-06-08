@@ -90,20 +90,7 @@
             AssetDatabase.SaveAssets();
         }
 
-        private static global::AppLovinSettings m_AppLovinSettings;
-
-        public static global::AppLovinSettings appLovinSettings
-        {
-            get
-            {
-                if (m_AppLovinSettings == null)
-                {
-                    m_AppLovinSettings = Resources.Load<global::AppLovinSettings>("AppLovinSettings");
-                }
-
-                return m_AppLovinSettings;
-            }
-        }
+        private static global::AppLovinSettings appLovinSettings => global::AppLovinSettings.Instance;
 
         public static void UpdateGoogleAdsId(string androidAppId, string iosAppId)
         {
