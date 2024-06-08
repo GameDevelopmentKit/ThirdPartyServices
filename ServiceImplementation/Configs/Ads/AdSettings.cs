@@ -7,6 +7,7 @@
     using Sirenix.OdinInspector;
     using UnityEngine;
 #if UNITY_EDITOR
+    using UnityEditor;
     using ServiceImplementation.Configs.Editor;
 #endif
 
@@ -118,7 +119,7 @@
             }
             else
             {
-                AppLovinSettings.DeleteFolderIfExists("Assets/MaxSdk");
+                DeleteFolderIfExists("Assets/MaxSdk");
             }
         }
 
@@ -126,9 +127,30 @@
         {
             EditorUtils.SetDefineSymbol(IronSourceSymbol, this.enableIronSource);
             EditorUtils.ModifyPackage(this.enableIronSource, "com.unity.services.levelplay", "8.1.0");
+            if (!this.enableIronSource)
+            {
+                DeleteFolderIfExists("Assets/LevelPlay");
+            }
         }
         
         private void OnChangeCollapsibleBanner() { EditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner); }
+
+
+        private static bool DeleteFolderIfExists(string folderPath)
+        {
+            // Check if the folder exists
+            if (AssetDatabase.IsValidFolder(folderPath))
+            {
+                // Delete the folder
+                AssetDatabase.DeleteAsset(folderPath);
+
+                Debug.Log($"Folder '{folderPath}' has been deleted.");
+
+                return true;
+            }
+
+            return false;
+        }
 #endif
     }
 }
