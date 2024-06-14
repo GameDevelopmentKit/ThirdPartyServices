@@ -91,6 +91,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             this.TryAddAddsConfig(RemoteConfigKey.CollapsibleBannerADInterval, "0");
             this.TryAddAddsConfig(RemoteConfigKey.EnableCollapsibleBannerFallback, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleBannerAutoRefreshEnabled, "true");
             this.TryAddAddsConfig(RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled, "false");
 
             #endregion
