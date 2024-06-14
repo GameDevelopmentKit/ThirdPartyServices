@@ -41,7 +41,7 @@
         public bool EnableBreakAds { get { return this.enableBreakAds; } }
 
         public bool CollapsibleRefreshOnScreenShow => this.mCollapsibleRefreshOnScreenShow;
-        
+
         public List<string> CollapsibleIgnoreRefreshOnScreens => this.mCollapsibleIgnoreRefreshOnScreens;
 
         public BannerLoadStrategy BannerLoadStrategy { get { return this.bannerLoadStrategy; } }
@@ -65,14 +65,14 @@
         private bool enableBreakAds;
 
         [SerializeField] [LabelText("Banner Load Strategy", SdfIconType.BookmarkFill)] [FoldoutGroup("Misc")]
-        private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.Instantiate;
-        
+        private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.AfterLoading;
+
         [SerializeField] [LabelText("Custom Interstitial capping time")] [FoldoutGroup("Misc")]
         public Dictionary_AdPlacement_CappingTime CustomInterstitialCappingTime;
 
         [SerializeField] [LabelText("Enable")] [OnValueChanged("OnChangeCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
         private bool mEnableCollapsibleBanner;
-        
+
         [SerializeField] [LabelText("Auto Refresh")] [Tooltip("Collapsible Banner will auto refresh on Screen Show")] [ShowIf("mEnableCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
         private bool mCollapsibleRefreshOnScreenShow = true;
 
@@ -132,7 +132,7 @@
                 DeleteFolderIfExists("Assets/LevelPlay");
             }
         }
-        
+
         private void OnChangeCollapsibleBanner() { EditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner); }
 
 
