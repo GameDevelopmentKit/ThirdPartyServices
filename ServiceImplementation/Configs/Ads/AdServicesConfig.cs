@@ -111,6 +111,11 @@ namespace ServiceImplementation.Configs.Ads
         public bool EnableCollapsibleBannerFallback { get; private set; }
 
         /// <summary>
+        ///     Auto refresh collapsible banner ad each <see cref="CollapsibleBannerADInterval"/>
+        /// </summary>
+        public bool CollapsibleBannerAutoRefreshEnabled { get; private set; }
+
+        /// <summary>
         ///     Auto expand collapsible banner ad when refresh
         /// </summary>
         public bool CollapsibleBannerExpandOnRefreshEnabled { get; private set; }
@@ -164,6 +169,7 @@ namespace ServiceImplementation.Configs.Ads
 
             this.CollapsibleBannerADInterval             = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerADInterval);
             this.EnableCollapsibleBannerFallback         = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBannerFallback);
+            this.CollapsibleBannerAutoRefreshEnabled     = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerAutoRefreshEnabled);
             this.CollapsibleBannerExpandOnRefreshEnabled = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled);
 
             #endregion
