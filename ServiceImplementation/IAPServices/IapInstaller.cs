@@ -9,7 +9,7 @@
     {
         public override void InstallBindings()
         {
-            #if THEONE_IAP
+            #if IAP
             this.Container.Bind<IIapServices>()
                 .To<UnityIapServices>()
                 .AsCached()

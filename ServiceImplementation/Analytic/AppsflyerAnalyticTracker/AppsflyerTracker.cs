@@ -15,7 +15,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using Zenject;
-#if THEONE_IAP
+#if IAP
     using AppsFlyerConnector;
 #endif
 
@@ -82,7 +82,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 #endif
 
             //IAP Revenue connector
-#if THEONE_IAP
+#if IAP
             AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
 #if THEONE_MMP_DEBUG && !PRODUCTION
             AppsFlyerPurchaseConnector.setIsSandbox(true); 

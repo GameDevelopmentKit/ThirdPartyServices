@@ -3,7 +3,8 @@
     "references": [
         "FirebaseWebGL",
         "3rdCore.Analytic",
-        "Zenject-Signals"
+        "Zenject-Signals",
+        "GameFoundation.Utilities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -8,6 +8,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
     using Core.AnalyticServices;
     using Core.AnalyticServices.Tools;
     using Cysharp.Threading.Tasks;
+    using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs.Ads;
     using Zenject;
     using Debug = UnityEngine.Debug;
@@ -16,11 +17,12 @@ namespace ServiceImplementation.AdsServices.PreloadService
     {
         #region inject
 
-        private readonly List<IAdLoadService>      adLoadServices;
-        private readonly AdServicesConfig          adServicesConfig;
-        private readonly SignalBus                 signalBus;
-        private readonly IAnalyticServices         analyticServices;
-        private readonly List<IAOAAdService>       aOaAdServices;
+        private readonly List<IAdLoadService>          adLoadServices;
+        private readonly ILogService                   logger;
+        private readonly AdServicesConfig              adServicesConfig;
+        private readonly SignalBus                     signalBus;
+        private readonly IAnalyticServices             analyticServices;
+        private readonly List<IAOAAdService>           aOaAdServices;
         private readonly UnScaleInGameStopWatchManager unScaleInGameStopWatchManager;
 
         #endregion
@@ -29,13 +31,14 @@ namespace ServiceImplementation.AdsServices.PreloadService
         private Dictionary<(IAdLoadService, string), UnScaleInGameStopWatch> rewardAdStopwatch       = new();
         private Dictionary<IAOAAdService, UnScaleInGameStopWatch>            aoaAdStartTime          = new();
         
-        public PreloadAdService(List<IAdLoadService> adLoadServices, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices, List<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
+        public PreloadAdService(List<IAdLoadService> adLoadServices,ILogService logger, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices, List<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
         {
-            this.adLoadServices            = adLoadServices;
-            this.adServicesConfig          = adServicesConfig;
-            this.signalBus                 = signalBus;
-            this.analyticServices          = analyticServices;
-            this.aOaAdServices             = aOAAdServices;
+            this.adLoadServices                = adLoadServices;
+            this.logger                        = logger;
+            this.adServicesConfig              = adServicesConfig;
+            this.signalBus                     = signalBus;
+            this.analyticServices              = analyticServices;
+            this.aOaAdServices                 = aOAAdServices;
             this.unScaleInGameStopWatchManager = unScaleInGameStopWatchManager;
         }
         public void Initialize()
@@ -50,7 +53,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private async void LoadAdsInterval()
         {
-            Debug.Log("load ads interval");
+            this.logger.Log("load ads interval");
             this.adLoadServices.ForEach(this.LoadAdsOneTime);
             await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.IntervalLoadAds));
             this.LoadAdsInterval();

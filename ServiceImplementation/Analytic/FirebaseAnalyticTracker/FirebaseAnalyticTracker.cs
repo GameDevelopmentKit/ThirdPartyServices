@@ -6,18 +6,21 @@
     using System.Threading.Tasks;
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
+    using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
     using UnityEngine;
     using Zenject;
 
     public class FirebaseAnalyticTracker : BaseTracker
     {
+        private readonly   ILogService                       logger;
         private readonly   AnalyticsEventCustomizationConfig customizationConfig;
         protected override TaskCompletionSource<bool>        TrackerReady         { get; } = new TaskCompletionSource<bool>();
         protected override Dictionary<Type, EventDelegate>   CustomEventDelegates { get; }
 
-        public FirebaseAnalyticTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
+        public FirebaseAnalyticTracker(SignalBus signalBus,ILogService logger, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
+            this.logger              = logger;
             this.customizationConfig = customizationConfig;
         }
 
@@ -42,7 +45,7 @@
         {
             if (!name.IsNameValid().Equals("Valid"))
             {
-                Debug.LogError($"Firebase: Event name error: {name} {name.IsNameValid()}");
+                this.logger.Error($"Firebase: Event name error: {name} {name.IsNameValid()}");
 
                 return;
             }
@@ -50,7 +53,7 @@
             if (data == null)
             {
                 FirebaseAnalytics.LogEvent(name);
-                Debug.Log($"Firebase: OnEvent - {name}");
+                this.logger.Log($"Firebase: OnEvent - {name}");
 
                 return;
             }
@@ -58,7 +61,7 @@
             if (!this.CheckConventions(data))
                 return;
 
-            Debug.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
+            this.logger.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
             switch (data.Count)
             {
                 case > 1:
@@ -110,14 +113,14 @@
             {
                 if (!entry.Key.IsNameValid().Equals("Valid"))
                 {
-                    Debug.LogError($"Parameter name error: {entry} {entry.Key.IsNameValid()}");
+                    this.logger.Error($"Parameter name error: {entry} {entry.Key.IsNameValid()}");
 
                     return false;
                 }
 
                 if (!entry.Value.IsParameterValueValid().Equals("Valid"))
                 {
-                    Debug.LogError($"Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}");
+                    this.logger.Error($"Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}");
 
                     return false;
                 }

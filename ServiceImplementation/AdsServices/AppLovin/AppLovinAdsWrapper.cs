@@ -54,7 +54,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public virtual async void Initialize()
         {
-#if THEONE_ADS_DEBUG
+#if ADS_DEBUG
             MaxSdk.SetCreativeDebuggerEnabled(true);
 #else
             MaxSdk.SetCreativeDebuggerEnabled(this.AppLovinSetting.CreativeDebugger);
@@ -79,7 +79,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnSDKInitializedHandler(MaxSdkBase.SdkConfiguration obj)
         {
-#if THEONE_ADS_DEBUG
+#if ADS_DEBUG
             // Show Mediation Debugger
             MaxSdk.ShowMediationDebugger();
 #endif

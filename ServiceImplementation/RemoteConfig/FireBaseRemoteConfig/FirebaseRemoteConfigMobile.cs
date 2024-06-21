@@ -26,12 +26,14 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private void InitFirebase()
         {
-            this.logger.Log($"onelog: FirebaseRemoteConfig InitFirebase");
-            FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+            this.logger.Log($"FirebaseRemoteConfig InitFirebase");
+
+            FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
             {
                 var dependencyStatus = task.Result;
 
-                this.logger.Log($"onelog: FirebaseRemoteConfig CheckAndFixDependenciesAsync {dependencyStatus}");
+                this.logger.Log($"FirebaseRemoteConfig CheckAndFixDependenciesAsync {dependencyStatus}");
+
                 if (dependencyStatus == DependencyStatus.Available)
                 {
                     this.FetchDataAsync();
@@ -43,39 +45,39 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             });
         }
 
-        private Task FetchDataAsync()
+        private void FetchDataAsync()
         {
             var fetchTask =
                 FirebaseRemoteConfig.DefaultInstance.FetchAsync(
                     TimeSpan.Zero);
 
-            return fetchTask.ContinueWithOnMainThread(this.FetchComplete);
+            fetchTask.ContinueWithOnMainThread(this.FetchComplete);
         }
 
         private void FetchComplete(Task fetchTask)
         {
             if (fetchTask.IsCanceled)
             {
-                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch canceled.");
+                this.logger.Log($"FirebaseRemoteConfig Fetch canceled.");
             }
             else if (fetchTask.IsFaulted)
             {
-                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch encountered an error.");
+                this.logger.Log($"FirebaseRemoteConfig Fetch encountered an error.");
             }
             else if (fetchTask.IsCompleted)
             {
-                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch completed successfully!");
+                this.logger.Log($"FirebaseRemoteConfig Fetch completed successfully!");
             }
 
             var info = FirebaseRemoteConfig.DefaultInstance.Info;
-            this.logger.Log($"onelog: FirebaseRemoteConfig FetchComplete {info.LastFetchStatus}");
+            this.logger.Log($"FirebaseRemoteConfig FetchComplete {info.LastFetchStatus}");
 
             switch (info.LastFetchStatus)
             {
                 case LastFetchStatus.Success:
                     FirebaseRemoteConfig.DefaultInstance.ActivateAsync().ContinueWithOnMainThread(task =>
                     {
-                        this.logger.Log($"onelog: FirebaseRemoteConfig Remote data loaded and ready (last fetch time {info.FetchTime}).");
+                        this.logger.Log($"FirebaseRemoteConfig Remote data loaded and ready (last fetch time {info.FetchTime}).");
                         this.IsConfigFetchedSucceed = true;
                         this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal(this));
                     });
@@ -85,11 +87,11 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                     switch (info.LastFetchFailureReason)
                     {
                         case FetchFailureReason.Error:
-                            this.logger.Log($"onelog: FirebaseRemoteConfig Fetch failed for unknown reason");
+                            this.logger.Log($"FirebaseRemoteConfig Fetch failed for unknown reason");
 
                             break;
                         case FetchFailureReason.Throttled:
-                            this.logger.Log($"onelog: FirebaseRemoteConfig Fetch throttled until " + info.ThrottledEndTime);
+                            this.logger.Log($"FirebaseRemoteConfig Fetch throttled until " + info.ThrottledEndTime);
 
                             break;
                         case FetchFailureReason.Invalid:
@@ -100,7 +102,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
                     break;
                 case LastFetchStatus.Pending:
-                    this.logger.Log($"onelog: FirebaseRemoteConfig Latest Fetch call still pending.");
+                    this.logger.Log($"FirebaseRemoteConfig Latest Fetch call still pending.");
 
                     break;
                 default:
@@ -172,7 +174,15 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             return float.TryParse(value, out var result) ? result : defaultValue;
         }
 
-        private bool HasKey(string key) { return FirebaseRemoteConfig.DefaultInstance.Keys != null && FirebaseRemoteConfig.DefaultInstance.Keys.Contains(key); }
+        private bool HasKey(string key)
+        {
+            if (FirebaseRemoteConfig.DefaultInstance == null)
+            {
+                return false;
+            }
+
+            return FirebaseRemoteConfig.DefaultInstance.Keys != null && FirebaseRemoteConfig.DefaultInstance.Keys.Contains(key);
+        }
 
         #endregion
     }
