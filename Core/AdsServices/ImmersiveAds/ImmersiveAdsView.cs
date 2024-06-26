@@ -4,6 +4,7 @@ namespace Core.AdsServices.ImmersiveAds
     using System.Threading.Tasks;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
+    using GameFoundation.Scripts.Utilities.Extension;
     using PubScale.SdkOne.NativeAds;
     using R3;
     using UnityEngine;
@@ -14,29 +15,21 @@ namespace Core.AdsServices.ImmersiveAds
     {
         [SerializeField] private NativeAdHolder nativeAdHolder;
 
-        private TaskCompletionSource<bool> isInjected = new(false);
-        private IDisposable                changeScreenDisposable;
+        private IDisposable changeScreenDisposable;
 
         private IScreenManager   screenManager;
         private IScreenPresenter visibleScreen;
-
-        [Inject]
-        private void Init(IScreenManager screenManager)
-        {
-            this.screenManager = screenManager;
-            this.isInjected.TrySetResult(true);
-        }
 
         private void OnValidate()
         {
             this.nativeAdHolder ??= this.GetComponent<NativeAdHolder>();
         }
 
-        private async void Awake()
+        private void Awake()
         {
-            this.nativeAdHolder ??= this.GetComponent<NativeAdHolder>();
-            await this.isInjected.Task;
-            this.changeScreenDisposable = this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
+            this.nativeAdHolder         ??= this.GetComponent<NativeAdHolder>();
+            this.screenManager          =   this.GetCurrentContainer().Resolve<IScreenManager>();
+            this.changeScreenDisposable =   this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
         }
 
         private void OnDestroy()
