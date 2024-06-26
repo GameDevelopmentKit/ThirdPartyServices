@@ -44,8 +44,9 @@ namespace ServiceImplementation.AdsServices.PubScale
 
 #region Immersive Ads
         [Obsolete("Obsolete")]
-        public void InitNativeAdHolder(NativeAdHolder nativeAdHolder, string placement, bool worldSpace = false)
+        public void InitNativeAdHolder(ImmersiveAdsView immersiveAdsView, string placement, bool worldSpace = false)
         {
+            var nativeAdHolder = immersiveAdsView.NativeAdHolder;
             if (!worldSpace)
             {
                 var canvas = this.cacheCanvas ?? this.screenManager.RootUICanvas.GetComponentInChildren<Canvas>();
