@@ -330,20 +330,17 @@ namespace ServiceImplementation.IAPServices
 
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
+            var productId = args.purchasedProduct.definition.id;
             if (this.onPurchaseComplete == null)
             {
-                this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(args.purchasedProduct.definition.id));
+                this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(productId));
             }
             else
             {
-                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal()
-                {
-                    ProductId        = args.purchasedProduct.definition.id,
-                    PurchasedProduct = args.purchasedProduct
-                });
+                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal(this.GetProductData(productId)));
             }
 
-            this.onPurchaseComplete?.Invoke(args.purchasedProduct.definition.id);
+            this.onPurchaseComplete?.Invoke(productId);
             this.onPurchaseComplete = null;
 
             return PurchaseProcessingResult.Complete;
@@ -351,10 +348,11 @@ namespace ServiceImplementation.IAPServices
 
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
         {
-            this.onPurchaseFailed?.Invoke(product.definition.storeSpecificId);
+            var productId = product.definition.id;
+            this.onPurchaseFailed?.Invoke(productId);
             this.onPurchaseFailed = null;
-            this.signalBus.Fire(new OnIAPPurchaseFailedSignal() { ProductId = product.definition.storeSpecificId });
-            this.logger.Log($"OnPurchaseFailed: FAIL. Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureReason}");
+            this.signalBus.Fire(new OnIAPPurchaseFailedSignal(productId, failureReason.ToString()));
+            this.logger.Log($"OnPurchaseFailed: FAIL. Product: '{productId}', PurchaseFailureReason: {failureReason}");
         }
     }
 }
