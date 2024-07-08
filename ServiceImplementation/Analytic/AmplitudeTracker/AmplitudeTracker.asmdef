@@ -1,18 +1,16 @@
 {
-    "name": "3rdCore.Analytic",
+    "name": "AmplitudeTracker",
     "rootNamespace": "",
     "references": [
+        "3rdCore.Analytic",
         "Zenject-Signals",
-        "Zenject",
         "GameFoundation.Utilities",
-        "GameFoundation.Models",
-        "3rd.Configs.Editor",
-        "Zenject-Source"
+        "Amplitude"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
+    "overrideReferences": true,
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],

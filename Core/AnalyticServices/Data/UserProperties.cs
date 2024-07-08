@@ -79,7 +79,7 @@ namespace Core.AnalyticServices.Data
         /// Tracking of location (screen) changes can provide you additional information about user behaviour.
         /// This data will be sent as soon as possible.
         /// </remarks>
-        public string Location
+        public string ScreenLocation
         {
             get => this.get<string>();
             set
@@ -92,19 +92,19 @@ namespace Core.AnalyticServices.Data
                 }
 
                 this.set(value);
-                this.LocationPrev = currentLocation;
-                this.analyticServices.Track(new LocationChange(value, currentLocation));
+                this.ScreenLocationPrev = currentLocation;
+                this.analyticServices.Track(new ScreenLocationChange(value, currentLocation));
             }
         }
 
         /// <summary>
         /// Use it to track previous ingame screen (ingame location).
-        /// (automatically updated with set <see cref="Location"/> ).
+        /// (automatically updated with set <see cref="ScreenLocation"/> ).
         /// </summary>
         /// <remarks>
         /// Tracking of screen changes can provide you additional information about user behaviour.
         /// </remarks>
-        public string LocationPrev { get => this.get<string>(); internal set => this.set(value); }
+        public string ScreenLocationPrev { get => this.get<string>(); internal set => this.set(value); }
 
         /*
          * Game
