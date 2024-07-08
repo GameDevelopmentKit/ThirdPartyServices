@@ -1,10 +1,9 @@
-#if THEONE_IAP
+#if UNITY_IAP
 namespace ServiceImplementation.IAPServices
 {
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.IAPServices.Signals;
@@ -12,10 +11,11 @@ namespace ServiceImplementation.IAPServices
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
+    using UnityEngine.Purchasing.Extension;
     using UnityEngine.Purchasing.Security;
     using Zenject;
 
-    public class UnityIapServices : IIapServices, IStoreListener
+    public class UnityIapServices : IIapServices, IDetailedStoreListener
     {
         private Action<string>     onPurchaseComplete, onPurchaseFailed;
         private IStoreController   mStoreController;
@@ -74,10 +74,9 @@ namespace ServiceImplementation.IAPServices
 
         private void AddAllProduct(ConfigurationBuilder builder)
         {
-            for (var i = 0; i < this.iapPacks.Count; i++)
+            foreach (var iapPack in this.iapPacks.Values)
             {
-                var current = this.iapPacks.ElementAt(i);
-                builder.AddProduct(current.Value.Id, this.ConvertToUnityProductType(current.Value.ProductType));
+                builder.AddProduct(iapPack.Id, this.ConvertToUnityProductType(iapPack.ProductType));
             }
         }
 
@@ -320,7 +319,10 @@ namespace ServiceImplementation.IAPServices
             this.mStoreExtensionProvider = extensions;
         }
 
-        public void OnInitializeFailed(InitializationFailureReason error, string message) { }
+        public void OnInitializeFailed(InitializationFailureReason error, string message)
+        {
+            this.logger.Error("InitializationFailureReason:" + error + " message: " + message);
+        }
 
         public void OnInitializeFailed(InitializationFailureReason error)
         {
@@ -336,11 +338,8 @@ namespace ServiceImplementation.IAPServices
             }
             else
             {
-                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal()
-                {
-                    ProductId        = args.purchasedProduct.definition.id,
-                    PurchasedProduct = args.purchasedProduct
-                });
+                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal() { ProductId = args.purchasedProduct.definition.id });
+                this.signalBus.Fire(new OnUnityIAPPurchaseSuccessSignal(args.purchasedProduct) );
             }
 
             this.onPurchaseComplete?.Invoke(args.purchasedProduct.definition.id);
@@ -348,13 +347,15 @@ namespace ServiceImplementation.IAPServices
 
             return PurchaseProcessingResult.Complete;
         }
+        
+        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason) {  }
 
-        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
+        public void OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
         {
             this.onPurchaseFailed?.Invoke(product.definition.storeSpecificId);
             this.onPurchaseFailed = null;
             this.signalBus.Fire(new OnIAPPurchaseFailedSignal() { ProductId = product.definition.storeSpecificId });
-            this.logger.Log($"OnPurchaseFailed: FAIL. Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureReason}");
+            this.logger.Log($"OnPurchaseFailed: FAIL. Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureDescription}");
         }
     }
 }
