@@ -5,9 +5,9 @@
         "Zenject-Signals",
         "Zenject",
         "GameFoundation.Utilities",
-        "GameFoundation.Models",
         "3rd.Configs.Editor",
-        "Zenject-Source"
+        "Zenject-Source",
+        "GameFoundation.GameConfigs"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

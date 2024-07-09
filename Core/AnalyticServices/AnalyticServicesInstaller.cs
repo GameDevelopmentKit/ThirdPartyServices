@@ -3,8 +3,8 @@ namespace Core.AnalyticServices
     using Core.AnalyticServices.Data;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
+    using GameConfigs;
     using GameFoundation.Scripts.Utilities.Extension;
-    using Models;
     using UnityEngine;
     using Zenject;
 

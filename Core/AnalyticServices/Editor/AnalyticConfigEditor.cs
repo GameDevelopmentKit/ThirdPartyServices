@@ -1,6 +1,5 @@
 ﻿namespace Core.AnalyticServices.Editor
 {
-    using Models;
     using UnityEditor;
     using UnityEngine.UIElements;
 

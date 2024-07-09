@@ -3,8 +3,8 @@
     "rootNamespace": "",
     "references": [
         "GameFoundation.Editor",
-        "GameFoundation.Models",
-        "3rdCore.Analytic"
+        "3rdCore.Analytic",
+        "GameFoundation.GameConfigs"
     ],
     "includePlatforms": [
         "Editor"
