@@ -1,7 +1,5 @@
 namespace ServiceImplementation.IAPServices.Signals
 {
-    using UnityEngine.Purchasing;
-
     public class OnRestorePurchaseCompleteSignal
     {
         public string ProductID { get; }
@@ -10,7 +8,9 @@ namespace ServiceImplementation.IAPServices.Signals
 
     public class OnUnityIAPPurchaseSuccessSignal
     {
-        public Product Product { get;}
-        public OnUnityIAPPurchaseSuccessSignal(Product product) { this.Product = product; }
+#if UNITY_IAP
+        public UnityEngine.Purchasing.Product Product { get; }
+        public OnUnityIAPPurchaseSuccessSignal(UnityEngine.Purchasing.Product product) { this.Product = product; }
+#endif
     }
 }
