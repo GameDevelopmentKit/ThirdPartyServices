@@ -53,9 +53,6 @@ namespace Core.AnalyticServices
         private void LoadByteBrewSetting()
         {
             Debug.Log("OnInspectorInit");
-#if UNITY_EDITOR
-            ByteBrewSettingsManager.EnsureByteBrewSettings();
-#endif
             var byteBrewSettings = Resources.Load<ByteBrewSettings>("ByteBrewSettings");
 
             this.androidEnabled        = byteBrewSettings.androidEnabled;
