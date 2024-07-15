@@ -230,7 +230,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 Revenue            = impressionData.revenue.Value,
                 Currency           = "USD",
                 Placement          = impressionData.placement,
-                AdNetwork          = impressionData.adNetwork
+                AdNetwork          = impressionData.adNetwork,
+                AdFormat           = impressionData.adUnit
             };
 
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
