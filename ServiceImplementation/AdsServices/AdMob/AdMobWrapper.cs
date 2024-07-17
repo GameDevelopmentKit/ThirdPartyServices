@@ -453,9 +453,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                       AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
                                       Revenue            = args.Value / 1e6,
                                       Currency           = "USD",
-                                      Placement          = "AOA",
+                                      Placement          = adFormat,
                                       AdNetwork          = "AdMob",
                                       AdFormat           = adFormat,
+                                      AdUnit             = adFormat
                                   };
 
             this.analyticService.Track(adsRevenueEvent);

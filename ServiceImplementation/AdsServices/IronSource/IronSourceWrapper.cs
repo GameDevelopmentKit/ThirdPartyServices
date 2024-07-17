@@ -43,8 +43,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void Initialize()
         {
-            IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
-
             IronSourceEvents.onImpressionDataReadyEvent += this.ImpressionDataReadyEvent;
             //Add AdInfo Rewarded Video Events
             IronSourceRewardedVideoEvents.onAdOpenedEvent      += this.RewardedVideoOnAdOpenedEvent;
@@ -72,6 +70,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceBannerEvents.onAdScreenPresentedEvent += this.BannerOnAdScreenPresentedEvent;
             IronSourceBannerEvents.onAdScreenDismissedEvent += this.BannerOnAdScreenDismissedEvent;
             IronSourceBannerEvents.onAdLeftApplicationEvent += this.BannerOnAdLeftApplicationEvent;
+            
+            IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
         }
 
         public void Dispose()
