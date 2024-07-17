@@ -43,7 +43,7 @@
   "defineConstraints": [],
   "versionDefines": [
     {
-      "name": "com.theone.ironsource-adquality",
+      "name": "com.ironsource-adquality",
       "expression": "",
       "define": "IRONSOURCE_AD_QUALITY"
     }

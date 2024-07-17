@@ -6,20 +6,24 @@
     using System.Threading.Tasks;
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
-    using UnityEngine;
+    using ServiceImplementation.FireBaseRemoteConfig;
     using Zenject;
 
     public class FirebaseAnalyticTracker : BaseTracker
     {
+        private readonly   IRemoteConfig                     remoteConfig;
         private readonly   ILogService                       logger;
         private readonly   AnalyticsEventCustomizationConfig customizationConfig;
         protected override TaskCompletionSource<bool>        TrackerReady         { get; } = new TaskCompletionSource<bool>();
         protected override Dictionary<Type, EventDelegate>   CustomEventDelegates { get; }
 
-        public FirebaseAnalyticTracker(SignalBus signalBus,ILogService logger, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
+        public FirebaseAnalyticTracker(SignalBus signalBus, IRemoteConfig remoteConfig, ILogService logger, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) :
+            base(signalBus, analyticConfig)
         {
+            this.remoteConfig        = remoteConfig;
             this.logger              = logger;
             this.customizationConfig = customizationConfig;
         }
@@ -37,11 +41,19 @@
             return this.TrackerReady.Task;
         }
 
-        protected override void SetUserId(string userId) { FirebaseAnalytics.SetUserId(userId); }
+        protected override async void SetUserId(string userId)
+        {
+            await UniTask.WaitUntil(() => this.remoteConfig.IsConfigFetchedSucceed);
+            FirebaseAnalytics.SetUserId(userId);
+        }
 
-        protected override void OnChangedProps(Dictionary<string, object> changedProps) { FirebaseAnalytics.SetUserProperty(changedProps); }
+        protected override async void OnChangedProps(Dictionary<string, object> changedProps)
+        {
+            await UniTask.WaitUntil(() => this.remoteConfig.IsConfigFetchedSucceed);
+            FirebaseAnalytics.SetUserProperty(changedProps);
+        }
 
-        protected override void OnEvent(string name, Dictionary<string, object> data)
+        protected override async void OnEvent(string name, Dictionary<string, object> data)
         {
             if (!name.IsNameValid().Equals("Valid"))
             {
@@ -49,6 +61,8 @@
 
                 return;
             }
+
+            await UniTask.WaitUntil(() => this.remoteConfig.IsConfigFetchedSucceed);
 
             if (data == null)
             {
@@ -62,6 +76,7 @@
                 return;
 
             this.logger.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
+
             switch (data.Count)
             {
                 case > 1:

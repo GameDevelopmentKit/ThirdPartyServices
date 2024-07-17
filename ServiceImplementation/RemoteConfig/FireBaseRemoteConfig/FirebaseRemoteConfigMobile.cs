@@ -176,7 +176,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private bool HasKey(string key)
         {
-            if (FirebaseRemoteConfig.DefaultInstance == null)
+            if (!this.IsConfigFetchedSucceed||FirebaseRemoteConfig.DefaultInstance == null)
             {
                 return false;
             }

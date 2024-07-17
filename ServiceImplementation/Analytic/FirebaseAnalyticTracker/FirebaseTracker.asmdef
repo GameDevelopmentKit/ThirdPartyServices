@@ -1,10 +1,13 @@
 {
     "name": "FirebaseTracker",
+    "rootNamespace": "",
     "references": [
         "FirebaseWebGL",
         "3rdCore.Analytic",
         "Zenject-Signals",
-        "GameFoundation.Utilities"
+        "GameFoundation.Utilities",
+        "3rd.RemoteConfig",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

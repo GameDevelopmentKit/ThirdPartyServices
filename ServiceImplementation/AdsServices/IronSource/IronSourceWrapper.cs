@@ -79,7 +79,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceBannerEvents.onAdLeftApplicationEvent += this.BannerOnAdLeftApplicationEvent;
 
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
-#if THEONE_ADS_DEBUG
+#if ADS_DEBUG
             IronSource.Agent.setAdaptersDebug(true);
             IronSource.Agent.validateIntegration();
 #endif
@@ -397,10 +397,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             };
 
             IronSourceAdQuality.Initialize(this.thirdPartiesConfig.AdSettings.IronSource.AppId, adQualityConfig);
-            this.logService.Log("onelog: IronSourceAdQuality debug initialize");
+            this.logService.Log(" IronSourceAdQuality debug initialize");
 #elif IRONSOURCE_AD_QUALITY
             IronSourceAdQuality.Initialize(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
-            this.logService.Log("onelog: IronSourceAdQuality initialize");
+            this.logService.Log(" IronSourceAdQuality initialize");
 #endif
         }
     }

@@ -31,7 +31,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         {
             if (consentError != null)
             {
-                this.logService.Error($"onelog: OnConsentInfoUpdated Error {consentError.Message}");
+                this.logService.Error($" OnConsentInfoUpdated Error {consentError.Message}");
                 return;
             }
             
@@ -45,12 +45,12 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 if (formError != null)
                 {
                     // Consent gathering failed.
-                    this.logService.Error($"onelog: ConsentForm.LoadAndShowConsentFormIfRequired Error {formError.Message}");
+                    this.logService.Error($" ConsentForm.LoadAndShowConsentFormIfRequired Error {formError.Message}");
                     return;
                 }
 
                 // Consent has been gathered.
-                this.logService.Log($"onelog: ConsentForm.LoadAndShowConsentFormIfRequired Success");
+                this.logService.Log($" ConsentForm.LoadAndShowConsentFormIfRequired Success");
             });
 #endif
         }

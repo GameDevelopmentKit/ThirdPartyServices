@@ -24,7 +24,7 @@ namespace Core.AnalyticServices
         private void OnChangeByteBrewEnabled()
         {
 #if  UNITY_EDITOR
-            EditorUtils.ModifyPackage(this.isByteBrewEnabled, "com.theone.bytebrew", "https://github.com/The1Studio/ByteBrew.git?path=Assets/Src/ByteBrewSDK#");
+            EditorUtils.ModifyPackage(this.isByteBrewEnabled, "com.3rd.bytebrew", "https://github.com/The1Studio/ByteBrew.git?path=Assets/Src/ByteBrewSDK#");
             EditorUtils.SetDefineSymbol(ByteBrewSymbol, this.isByteBrewEnabled);
 #endif
         }
