@@ -85,10 +85,10 @@ namespace ServiceImplementation.IAPServices
         {
             return productType switch
             {
-                ProductType.Consumable => UnityEngine.Purchasing.ProductType.Consumable,
-                ProductType.Subscription => UnityEngine.Purchasing.ProductType.Subscription,
+                ProductType.Consumable    => UnityEngine.Purchasing.ProductType.Consumable,
+                ProductType.Subscription  => UnityEngine.Purchasing.ProductType.Subscription,
                 ProductType.NonConsumable => UnityEngine.Purchasing.ProductType.NonConsumable,
-                _ => UnityEngine.Purchasing.ProductType.Consumable
+                _                         => UnityEngine.Purchasing.ProductType.Consumable
             };
         }
 
@@ -143,11 +143,11 @@ namespace ServiceImplementation.IAPServices
             }
         }
 
-        // Restore purchases previously made by this customer. Some platforms automatically restore purchases, like Google. 
+        // Restore purchases previously made by this customer. Some platforms automatically restore purchases, like Google.
         // Apple currently requires explicit purchase restoration for IAP, conditionally displaying a password prompt.
         public void RestorePurchases(Action onComplete = null)
         {
-#if FAKE_RESTORE_PURCHASE
+            #if FAKE_RESTORE_PURCHASE
             foreach (var iapPack in this.iapPacks)
             {
                 this.signalBus.Fire(new UnityIAPOnRestorePurchaseCompleteSignal(iapPack.Value.Id));
@@ -157,7 +157,7 @@ namespace ServiceImplementation.IAPServices
 
             return;
 
-#endif
+            #endif
 
             // If Purchasing has not yet been set up ...
             if (!this.IsInitialized)
@@ -168,7 +168,7 @@ namespace ServiceImplementation.IAPServices
                 return;
             }
 
-            // If we are running on an Apple device ... 
+            // If we are running on an Apple device ...
             if (Application.platform is RuntimePlatform.IPhonePlayer or RuntimePlatform.OSXPlayer)
             {
                 this.signalBus.Fire<OnStartDoingIAPSignal>();
@@ -179,11 +179,11 @@ namespace ServiceImplementation.IAPServices
                 // Fetch the Apple store-specific subsystem.
                 var apple = this.mStoreExtensionProvider.GetExtension<IAppleExtensions>();
 
-                // Begin the asynchronous process of restoring purchases. Expect a confirmation response in 
+                // Begin the asynchronous process of restoring purchases. Expect a confirmation response in
                 // the Action<bool> below, and ProcessPurchase if there are previously purchased products to restore.
                 apple.RestoreTransactions((result, _) =>
                 {
-                    // The first phase of restoration. If no more responses are received on ProcessPurchase then 
+                    // The first phase of restoration. If no more responses are received on ProcessPurchase then
                     // no purchases are available to be restored.
                     this.logger.Log("RestorePurchases continuing: " + result + ". If no further messages, no purchases available to restore.");
 
@@ -218,11 +218,11 @@ namespace ServiceImplementation.IAPServices
 
             if (!pd.hasReceipt) return false;
             // presume validity if not validate receipt.
-#if !UNITY_EDITOR
+            #if !UNITY_EDITOR
             var isValid = this.ValidateReceipt(pd.receipt, out var purchaseReceipts);
 
             return isValid;
-#endif
+            #endif
             return true;
         }
 
@@ -241,7 +241,7 @@ namespace ServiceImplementation.IAPServices
         //check Valid product
         private bool ValidateReceipt(string receipt, out IPurchaseReceipt[] purchaseReceipts, bool logReceiptContent = true)
         {
-            // default the out parameter to an empty array 
+            // default the out parameter to an empty array
             purchaseReceipts = Array.Empty<IPurchaseReceipt>();
 
             // Does the receipt has some content?
@@ -253,8 +253,8 @@ namespace ServiceImplementation.IAPServices
             }
 
             var isValidReceipt = true; // presume validity for platforms with no receipt validation.
-            // Unity IAP's receipt validation is only available for Apple app stores and Google Play store.   
-#if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS
+            // Unity IAP's receipt validation is only available for Apple app stores and Google Play store.
+            #if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS
 
             byte[] googlePlayTangleData = null;
             byte[] appleTangleData      = null;
@@ -263,13 +263,13 @@ namespace ServiceImplementation.IAPServices
             // Note that the code is disabled in the editor for it to not stop the EM editor code (due to ClassNotFound error)
             // from recreating the dummy AppleTangle and GoogleTangle classes if they were inadvertently removed.
 
-// #if UNITY_ANDROID && !UNITY_EDITOR
+            // #if UNITY_ANDROID && !UNITY_EDITOR
             // googlePlayTangleData = GooglePlayTangle.Data();
-// #endif
+            // #endif
 
-#if (UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS) && !UNITY_EDITOR
+            #if (UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS) && !UNITY_EDITOR
             appleTangleData = AppleTangle.Data();
-#endif
+            #endif
 
             // Prepare the validator with the secrets we prepared in the Editor obfuscation window.
             var validator = new CrossPlatformValidator(googlePlayTangleData, appleTangleData, Application.identifier);
@@ -308,7 +308,7 @@ namespace ServiceImplementation.IAPServices
             {
                 isValidReceipt = false;
             }
-#endif
+            #endif
 
             return isValidReceipt;
         }
@@ -330,20 +330,17 @@ namespace ServiceImplementation.IAPServices
 
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
+            var productId = args.purchasedProduct.definition.id;
             if (this.onPurchaseComplete == null)
             {
-                this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(args.purchasedProduct.definition.id));
+                this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(productId));
             }
             else
             {
-                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal()
-                {
-                    ProductId        = args.purchasedProduct.definition.id,
-                    PurchasedProduct = args.purchasedProduct
-                });
+                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal(this.GetProductData(productId)));
             }
 
-            this.onPurchaseComplete?.Invoke(args.purchasedProduct.definition.id);
+            this.onPurchaseComplete?.Invoke(productId);
             this.onPurchaseComplete = null;
 
             return PurchaseProcessingResult.Complete;
@@ -351,10 +348,11 @@ namespace ServiceImplementation.IAPServices
 
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
         {
-            this.onPurchaseFailed?.Invoke(product.definition.storeSpecificId);
+            var productId = product.definition.id;
+            this.onPurchaseFailed?.Invoke(productId);
             this.onPurchaseFailed = null;
-            this.signalBus.Fire(new OnIAPPurchaseFailedSignal() { ProductId = product.definition.storeSpecificId });
-            this.logger.Log($"OnPurchaseFailed: FAIL. Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureReason}");
+            this.signalBus.Fire(new OnIAPPurchaseFailedSignal(productId, failureReason.ToString()));
+            this.logger.Log($"OnPurchaseFailed: FAIL. Product: '{productId}', PurchaseFailureReason: {failureReason}");
         }
     }
 }

@@ -9,12 +9,19 @@
     {
         public override void InstallBindings()
         {
-#if THEONE_IAP
-            this.Container.Bind<IIapServices>().To<UnityIapServices>().AsCached().NonLazy();
-            this.Container.Resolve<ILogService>().LogWithColor("IAP Enable, don't forget to call IIapServices.InitIapServices in your game,ignore if already done!!", Color.red);
-#else
+            #if THEONE_IAP
+            this.Container.Bind<IIapServices>()
+                .To<UnityIapServices>()
+                .AsCached()
+                .OnInstantiated((ctx, _) =>
+                {
+                    ctx.Container.Resolve<ILogService>()
+                        .LogWithColor("IAP Enable, don't forget to call IIapServices.InitIapServices in your game,ignore if already done!!", Color.red);
+                })
+                .NonLazy();
+            #else
             this.Container.Bind<IIapServices>().To<DummyIapServices>().AsCached().NonLazy();
-#endif
+            #endif
 
             this.Container.DeclareSignal<OnRestorePurchaseCompleteSignal>();
             this.Container.DeclareSignal<OnStartDoingIAPSignal>();
