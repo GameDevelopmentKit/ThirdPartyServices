@@ -218,6 +218,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     Placement          = placement,
                     Currency           = "USD",
                     Revenue            = adValue.Value / 1e6,
+                    AdUnit             = format
                 };
 
                 this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
