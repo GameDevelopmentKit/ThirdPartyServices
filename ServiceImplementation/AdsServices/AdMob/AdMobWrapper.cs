@@ -343,7 +343,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #endif
         }
 
-        private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e) { this.logService.Log("native ad clicked"); }
+        private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e) { this.logService.Log($"onelog: native ad clicked {sender} - {e}"); }
 
         private NativeAd GetAvailableNativeAd()
         {
