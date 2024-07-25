@@ -38,6 +38,12 @@
     ],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.theone.ironsource-adquality",
+            "expression": "",
+            "define": "IRONSOURCE_AD_QUALITY"
+        }
+    ],
     "noEngineReferences": false
 }
