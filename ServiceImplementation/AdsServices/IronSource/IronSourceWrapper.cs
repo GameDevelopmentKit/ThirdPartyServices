@@ -72,6 +72,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceBannerEvents.onAdLeftApplicationEvent += this.BannerOnAdLeftApplicationEvent;
             
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
+            this.InitAdQuality();
         }
 
         public void Dispose()
@@ -314,6 +315,20 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.stopwatchInterstitial = Stopwatch.StartNew();
             IronSource.Agent.loadInterstitial();
+        }
+
+        private void InitAdQuality()
+        {
+#if IRONSOURCE_AD_QUALITY && IRONSOURCE_AD_QUALITY_DEBUG
+            var adQualityConfig = new ISAdQualityConfig
+            {
+                TestMode = true
+            };
+
+            IronSourceAdQuality.Initialize(this.thirdPartiesConfig.AdSettings.IronSource.AppId, adQualityConfig);
+#elif IRONSOURCE_AD_QUALITY
+            IronSourceAdQuality.Initialize(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
+#endif
         }
     }
 }
