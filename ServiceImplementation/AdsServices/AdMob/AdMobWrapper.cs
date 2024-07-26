@@ -18,12 +18,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
     using Zenject;
-#if ADMOB_NATIVE_ADS
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
     using Core.AdsServices.Native;
 #endif
 
     public class AdMobWrapper : IAOAAdService, IMRECAdService, IInitializable
-#if ADMOB_NATIVE_ADS
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
       , INativeAdsService
 #endif
     {
@@ -97,7 +97,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             if (this.adServices.IsRemoveAds()) return;
             this.LoadAllMRec();
-#if ADMOB_NATIVE_ADS
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
             this.LoadAllNativeAds();
 #endif
             await UniTask.Delay(TimeSpan.FromSeconds(intervalSecond));
@@ -311,7 +311,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region Native Ads
 
-#if ADMOB_NATIVE_ADS
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
         private Dictionary<string, NativeAd>        nativeAdsIdToNativeAd   { get; } = new();
         private HashSet<string>                     loadingNativeAdsIds     { get; } = new();
         private Dictionary<NativeAdsView, NativeAd> nativeAdsViewToNativeAd { get; } = new();

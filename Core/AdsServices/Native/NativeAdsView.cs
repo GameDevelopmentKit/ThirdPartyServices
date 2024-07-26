@@ -15,7 +15,7 @@ namespace Core.AdsServices.Native
 
         private INativeAdsService nativeAdsService;
 
-#if ADMOB_NATIVE_ADS
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
         public void Init(INativeAdsService nativeAdsService)
         {
             this.nativeAdsService = nativeAdsService;

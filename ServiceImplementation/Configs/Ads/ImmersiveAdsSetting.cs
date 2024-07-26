@@ -33,7 +33,7 @@ namespace ServiceImplementation.Configs.Ads
         [OnInspectorInit]
         private void LoadPubScaleSetting()
         {
-#if IMMERSIVE_ADS && UNITY_EDITOR
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS && UNITY_EDITOR
             var pubScaleSetting = Resources.Load<ScriptableObject>("PubScaleSettings");
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
@@ -51,7 +51,7 @@ namespace ServiceImplementation.Configs.Ads
 
         public void SavePubScaleSetting()
         {
-#if IMMERSIVE_ADS && UNITY_EDITOR
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS && UNITY_EDITOR
             var pubScaleSetting = Resources.Load<ScriptableObject>("PubScaleSettings");
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;

@@ -7,17 +7,17 @@ namespace Core.AdsServices.ImmersiveAds
     using GameFoundation.Scripts.Utilities.Extension;
     using R3;
     using UnityEngine;
-#if IMMERSIVE_ADS
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
     using PubScale.SdkOne.NativeAds;
 #endif
     using Zenject;
 
-#if IMMERSIVE_ADS
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
     [RequireComponent(typeof(NativeAdHolder))]
 #endif
     public class ImmersiveAdsView : MonoBehaviour
     {
-#if IMMERSIVE_ADS
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
         [SerializeField] private NativeAdHolder nativeAdHolder;
         public NativeAdHolder NativeAdHolder => this.nativeAdHolder;
 #endif
@@ -27,7 +27,7 @@ namespace Core.AdsServices.ImmersiveAds
         private IScreenManager   screenManager;
         private IScreenPresenter visibleScreen;
 
-#if IMMERSIVE_ADS && UNITY_EDITOR
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS && UNITY_EDITOR
         private void OnValidate()
         {
             this.nativeAdHolder ??= this.GetComponent<NativeAdHolder>();
@@ -36,7 +36,7 @@ namespace Core.AdsServices.ImmersiveAds
 
         private void Awake()
         {
-#if IMMERSIVE_ADS
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
             this.nativeAdHolder         ??= this.GetComponent<NativeAdHolder>();
 #endif
             this.screenManager          =   this.GetCurrentContainer().Resolve<IScreenManager>();
@@ -50,7 +50,7 @@ namespace Core.AdsServices.ImmersiveAds
 
         private void OnChangeScreen(IScreenPresenter screenPresenter)
         {
-#if IMMERSIVE_ADS
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
             this.nativeAdHolder.DisableAd(this.visibleScreen != screenPresenter);
 #endif
         }

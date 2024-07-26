@@ -11,7 +11,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs.Ads;
     using Zenject;
-#if IMMERSIVE_ADS
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
     using global::PubScale.SdkOne;
     using ServiceImplementation.AdsServices.PubScale;
 #endif
@@ -33,7 +33,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInterfacesAndSelfTo<AdServicesConfig>().AsCached();
             this.Container.BindInterfacesAndSelfTo<MiscConfig>().AsCached();
 
-#if IMMERSIVE_ADS
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
             this.Container.Bind<PubScaleManager>().FromNewComponentOnNewGameObject().WithGameObjectName("PubScaleManager").AsSingle().NonLazy();
             this.Container.BindInterfacesTo<PubScaleWrapper>().AsCached();          
 #endif            
