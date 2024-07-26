@@ -9,6 +9,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using Cysharp.Threading.Tasks;
+    using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
@@ -22,16 +23,18 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private readonly AdServicesConfig   adServicesConfig;
         private readonly SignalBus          signalBus;
         private readonly ThirdPartiesConfig thirdPartiesConfig;
+        private readonly ILogService        logService;
 
         #endregion
 
 
-        public IronSourceWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig)
+        public IronSourceWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig, ILogService logService)
         {
             this.analyticServices   = analyticServices;
             this.adServicesConfig   = adServicesConfig;
             this.signalBus          = signalBus;
             this.thirdPartiesConfig = thirdPartiesConfig;
+            this.logService         = logService;
         }
 
         private Action onRewardComplete;
@@ -326,8 +329,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             };
 
             IronSourceAdQuality.Initialize(this.thirdPartiesConfig.AdSettings.IronSource.AppId, adQualityConfig);
+            this.logService.Log("onelog: IronSourceAdQuality debug initialize");
 #elif IRONSOURCE_AD_QUALITY
             IronSourceAdQuality.Initialize(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
+            this.logService.Log("onelog: IronSourceAdQuality initialize");
 #endif
         }
     }
