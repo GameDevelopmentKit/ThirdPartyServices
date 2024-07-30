@@ -43,7 +43,6 @@ namespace ServiceImplementation.AdsServices.PubScale
         }
 
 #region Immersive Ads
-        [Obsolete("Obsolete")]
         public void InitNativeAdHolder(ImmersiveAdsView immersiveAdsView, string placement, bool worldSpace = false)
         {
             var nativeAdHolder = immersiveAdsView.NativeAdHolder;
@@ -55,6 +54,7 @@ namespace ServiceImplementation.AdsServices.PubScale
             }
 
             nativeAdHolder.adTag = placement;
+            nativeAdHolder.FetchAd();
 
             if (this.cacheNativeAdHolder.TryGetValue(nativeAdHolder, out _)) return;
 
@@ -71,7 +71,6 @@ namespace ServiceImplementation.AdsServices.PubScale
             this.logService.Log($"Immersive Ads Impression: {arg1}\n{arg2}");
         }
 
-        [Obsolete("Obsolete")]
         private void OnAdFailed(object arg1, AdFailedToLoadEventArgs arg2)
         {
             this.logService.Log($"Immersive Ads Failed: {arg1}\nError: {arg2.LoadAdError.GetResponseInfo()}");
@@ -101,7 +100,7 @@ namespace ServiceImplementation.AdsServices.PubScale
             this.analyticServices.Track(adsRevenueEvent);
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
         }
-#endregion"
+#endregion
     }
 }
 #endif
