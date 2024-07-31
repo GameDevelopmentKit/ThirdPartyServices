@@ -11,8 +11,7 @@ namespace ServiceImplementation.Configs.Ads
     [Serializable]
     public class ImmersiveAdsSetting
     {
-        [Header("PubScale Setting")]
-        [SerializeField, LabelText("Test Mode", SdfIconType.CheckSquare), OnValueChanged("SavePubScaleSetting")]
+        [Header("PubScale Setting")] [SerializeField, LabelText("Test Mode", SdfIconType.CheckSquare), OnValueChanged("SavePubScaleSetting")]
         private bool userTestMode;
 
         [SerializeField, LabelText("Fallback Native ID", SdfIconType.Google), OnValueChanged("SavePubScaleSetting")]
@@ -30,6 +29,30 @@ namespace ServiceImplementation.Configs.Ads
         [SerializeField, LabelText("App ID", SdfIconType.AppIndicator), OnValueChanged("SavePubScaleSetting")]
         private string appId;
 
+        public bool UserTestMode => this.userTestMode;
+
+        public string FallbackNativeAdId
+        {
+#if UNITY_ANDROID
+            get => this.fallbackNativeAdIdAndroid;
+#elif UNITY_IOS
+            get => this.fallbackNativeAdIdIos;
+#else
+            get => string.Empty;
+#endif
+        }
+
+        public string AppId
+        {
+#if UNITY_ANDROID
+            get => this.appIdAndroid;
+#elif UNITY_IOS
+            get => this.appIdIos;
+#else
+            get => this.appId;
+#endif
+        }
+
         [OnInspectorInit]
         private void LoadPubScaleSetting()
         {
@@ -39,13 +62,13 @@ namespace ServiceImplementation.Configs.Ads
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
             var settingType  = pubScaleSetting.GetType();
             this.userTestMode = (bool)settingType.GetField("UseTestMode", bindingFlags).GetValue(pubScaleSetting);
-            
+
             this.fallbackNativeAdIdAndroid = settingType.GetField("Fallback_NativeAdID_Android", bindingFlags).GetValue(pubScaleSetting) as string;
-            this.fallbackNativeAdIdIos     = settingType.GetField("Fallback_NativeAdID_IOS", bindingFlags).GetValue(pubScaleSetting) as string;
-            
+            this.fallbackNativeAdIdIos     = settingType.GetField("Fallback_NativeAdID_IOS",     bindingFlags).GetValue(pubScaleSetting) as string;
+
             this.appIdAndroid = settingType.GetField("AppID_Android", bindingFlags).GetValue(pubScaleSetting) as string;
-            this.appIdIos     = settingType.GetField("AppID_IOS", bindingFlags).GetValue(pubScaleSetting) as string;
-            this.appId        = settingType.GetField("AppID", bindingFlags).GetValue(pubScaleSetting) as string;
+            this.appIdIos     = settingType.GetField("AppID_IOS",     bindingFlags).GetValue(pubScaleSetting) as string;
+            this.appId        = settingType.GetField("AppID",         bindingFlags).GetValue(pubScaleSetting) as string;
 #endif
         }
 
@@ -56,12 +79,12 @@ namespace ServiceImplementation.Configs.Ads
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
             var settingType  = pubScaleSetting.GetType();
-            settingType.GetField("UseTestMode", bindingFlags).SetValue(pubScaleSetting, this.userTestMode);
+            settingType.GetField("UseTestMode",                 bindingFlags).SetValue(pubScaleSetting, this.userTestMode);
             settingType.GetField("Fallback_NativeAdID_Android", bindingFlags).SetValue(pubScaleSetting, this.fallbackNativeAdIdAndroid);
-            settingType.GetField("Fallback_NativeAdID_IOS", bindingFlags).SetValue(pubScaleSetting, this.fallbackNativeAdIdIos);
-            settingType.GetField("AppID_Android", bindingFlags).SetValue(pubScaleSetting, this.appIdAndroid);
-            settingType.GetField("AppID_IOS",     bindingFlags).SetValue(pubScaleSetting, this.appIdIos);
-            settingType.GetField("AppID",         bindingFlags).SetValue(pubScaleSetting, this.appId);
+            settingType.GetField("Fallback_NativeAdID_IOS",     bindingFlags).SetValue(pubScaleSetting, this.fallbackNativeAdIdIos);
+            settingType.GetField("AppID_Android",               bindingFlags).SetValue(pubScaleSetting, this.appIdAndroid);
+            settingType.GetField("AppID_IOS",                   bindingFlags).SetValue(pubScaleSetting, this.appIdIos);
+            settingType.GetField("AppID",                       bindingFlags).SetValue(pubScaleSetting, this.appId);
 
             EditorUtility.SetDirty(pubScaleSetting);
             AssetDatabase.SaveAssets();

@@ -11,6 +11,7 @@ namespace ServiceImplementation.AdsServices.PubScale
     using GameFoundation.Scripts.Utilities.LogService;
     using global::PubScale.SdkOne.NativeAds;
     using GoogleMobileAds.Api;
+    using ServiceImplementation.Configs;
     using UnityEngine;
     using Zenject;
 
@@ -18,10 +19,11 @@ namespace ServiceImplementation.AdsServices.PubScale
     {
 #region Inject
 
-        private readonly IScreenManager    screenManager;
-        private readonly SignalBus         signalBus;
-        private readonly IAnalyticServices analyticServices;
-        private readonly ILogService       logService;
+        private readonly IScreenManager     screenManager;
+        private readonly SignalBus          signalBus;
+        private readonly IAnalyticServices  analyticServices;
+        private readonly ILogService        logService;
+        private readonly ThirdPartiesConfig thirdPartiesConfig;
 
 #endregion
 
@@ -30,19 +32,22 @@ namespace ServiceImplementation.AdsServices.PubScale
 
         public PubScaleWrapper
         (
-            IScreenManager    screenManager,
-            SignalBus         signalBus,
-            IAnalyticServices analyticServices,
-            ILogService       logService
+            IScreenManager     screenManager,
+            SignalBus          signalBus,
+            IAnalyticServices  analyticServices,
+            ILogService        logService,
+            ThirdPartiesConfig thirdPartiesConfig
         )
         {
-            this.screenManager    = screenManager;
-            this.signalBus        = signalBus;
-            this.analyticServices = analyticServices;
-            this.logService       = logService;
+            this.screenManager      = screenManager;
+            this.signalBus          = signalBus;
+            this.analyticServices   = analyticServices;
+            this.logService         = logService;
+            this.thirdPartiesConfig = thirdPartiesConfig;
         }
 
 #region Immersive Ads
+
         public void InitNativeAdHolder(ImmersiveAdsView immersiveAdsView, string placement, bool worldSpace = false)
         {
             var nativeAdHolder = immersiveAdsView.NativeAdHolder;
@@ -51,6 +56,12 @@ namespace ServiceImplementation.AdsServices.PubScale
                 var canvas = this.cacheCanvas ?? this.screenManager.RootUICanvas.GetComponentInChildren<Canvas>();
                 this.cacheCanvas      = canvas;
                 nativeAdHolder.canvas = this.cacheCanvas;
+            }
+
+            immersiveAdsView.NativeAdStatusVisualiser.gameObject.SetActive(this.thirdPartiesConfig.AdSettings.ImmersiveAds.UserTestMode);
+            if (this.thirdPartiesConfig.AdSettings.ImmersiveAds.UserTestMode)
+            {
+                immersiveAdsView.NativeAdStatusVisualiser.AdTagDisplay.text = placement;
             }
 
             nativeAdHolder.adTag = placement;
@@ -100,6 +111,7 @@ namespace ServiceImplementation.AdsServices.PubScale
             this.analyticServices.Track(adsRevenueEvent);
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
         }
+
 #endregion
     }
 }

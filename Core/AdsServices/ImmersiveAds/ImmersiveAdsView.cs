@@ -18,8 +18,11 @@ namespace Core.AdsServices.ImmersiveAds
     public class ImmersiveAdsView : MonoBehaviour
     {
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
-        [SerializeField] private NativeAdHolder nativeAdHolder;
-        public NativeAdHolder NativeAdHolder => this.nativeAdHolder;
+        [SerializeField] private NativeAdHolder           nativeAdHolder;
+        [SerializeField] private NativeAdStatusVisualiser nativeAdStatusVisualiser;
+
+        public NativeAdStatusVisualiser NativeAdStatusVisualiser => this.nativeAdStatusVisualiser;
+        public NativeAdHolder           NativeAdHolder           => this.nativeAdHolder;
 #endif
 
         private IDisposable changeScreenDisposable;
@@ -30,14 +33,20 @@ namespace Core.AdsServices.ImmersiveAds
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS && UNITY_EDITOR
         private void OnValidate()
         {
-            this.nativeAdHolder ??= this.GetComponent<NativeAdHolder>();
+            this.ValidateField();
         }
 #endif
 
+        private void ValidateField()
+        {
+            this.nativeAdHolder           ??= this.GetComponent<NativeAdHolder>();
+            this.nativeAdStatusVisualiser ??= this.GetComponentInChildren<NativeAdStatusVisualiser>();
+        }
+        
         private void Awake()
         {
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
-            this.nativeAdHolder         ??= this.GetComponent<NativeAdHolder>();
+            this.ValidateField();
 #endif
             this.screenManager          =   this.GetCurrentContainer().Resolve<IScreenManager>();
             this.changeScreenDisposable =   this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
