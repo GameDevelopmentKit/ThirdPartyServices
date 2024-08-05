@@ -7,7 +7,6 @@
     using Sirenix.OdinInspector;
     using UnityEngine;
 #if UNITY_EDITOR
-    using UnityEditor;
     using ServiceImplementation.Configs.Editor;
 #endif
 
@@ -21,20 +20,10 @@
     [Serializable]
     public class AdSettings
     {
-        /// <summary>
-        /// Gets the AdMob settings.
-        /// </summary>
-        public AdMobSettings AdMob { get { return this.mAdMob; } }
-
-        /// <summary>
-        /// Gets the AppLovin settings.
-        /// </summary>
-        public AppLovinSettings AppLovin { get { return this.mAppLovin; } }
-
-        /// <summary>
-        /// Gets the IronSource settings.
-        /// </summary>
-        public IronSourceSettings IronSource { get { return this.mIronSource; } }
+        public AdMobSettings      AdMob      => this.mAdMob;
+        public AppLovinSettings   AppLovin   => this.mAppLovin;
+        public IronSourceSettings IronSource => this.mIronSource;
+        public YandexSettings     Yandex     => this.mYandex;
 
         #region Misc
 
@@ -76,7 +65,11 @@
         [SerializeField] [LabelText("Auto Refresh")] [Tooltip("Collapsible Banner will auto refresh on Screen Show")] [ShowIf("mEnableCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
         private bool mCollapsibleRefreshOnScreenShow = true;
 
-        [SerializeField] [LabelText("Screens Ignore Auto Refresh")] [Tooltip("Collapsible Banner will ignore auto refresh on screens")] [ShowIf("mEnableCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
+        [SerializeField]
+        [LabelText("Screens Ignore Auto Refresh")]
+        [Tooltip("Collapsible Banner will ignore auto refresh on screens")]
+        [ShowIf("mEnableCollapsibleBanner")]
+        [FoldoutGroup("Misc/Collapsible Banner")]
         private List<string> mCollapsibleIgnoreRefreshOnScreens = new List<string>();
 
         [SerializeField] [LabelText("AdMob", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdMob")]
@@ -97,11 +90,18 @@
         [SerializeField] [ShowIf("enableIronSource")] [HideLabel] [FoldoutGroup("IronSource")]
         private IronSourceSettings mIronSource = null;
 
+        [SerializeField] [LabelText("Yandex", SdfIconType.Youtube)] [OnValueChanged("OnChangeYandex")]
+        private bool enableYandex;
+
+        [SerializeField] [ShowIf("enableYandex")] [HideLabel] [FoldoutGroup("Yandex")]
+        private YandexSettings mYandex = null;
+
 #if UNITY_EDITOR
 
         private const string AdModSymbol             = "ADMOB";
         private const string AppLovinSymbol          = "APPLOVIN";
         private const string IronSourceSymbol        = "IRONSOURCE";
+        private const string YandexSymbol            = "YANDEX";
         private const string CollapsibleBannerSymbol = "THEONE_COLLAPSIBLE_BANNER";
 
         private void OnChangeAdMob()
@@ -119,7 +119,7 @@
             }
             else
             {
-                DeleteFolderIfExists("Assets/MaxSdk");
+                UnityPackageHelper.DeleteFolderIfExists("Assets/MaxSdk");
             }
         }
 
@@ -129,28 +129,24 @@
             EditorUtils.ModifyPackage(this.enableIronSource, "com.unity.services.levelplay", "8.1.0");
             if (!this.enableIronSource)
             {
-                DeleteFolderIfExists("Assets/LevelPlay");
+                UnityPackageHelper.DeleteFolderIfExists("Assets/LevelPlay");
+            }
+        }
+
+        private void OnChangeYandex()
+        {
+            EditorUtils.SetDefineSymbol(YandexSymbol, this.enableYandex);
+            if (this.enableYandex)
+            {
+                this.mYandex.DownloadSDK();
+            }
+            else
+            {
+                UnityPackageHelper.DeleteFolderIfExists("Assets/YandexMobileAds");
             }
         }
 
         private void OnChangeCollapsibleBanner() { EditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner); }
-
-
-        private static bool DeleteFolderIfExists(string folderPath)
-        {
-            // Check if the folder exists
-            if (AssetDatabase.IsValidFolder(folderPath))
-            {
-                // Delete the folder
-                AssetDatabase.DeleteAsset(folderPath);
-
-                Debug.Log($"Folder '{folderPath}' has been deleted.");
-
-                return true;
-            }
-
-            return false;
-        }
 #endif
     }
 }
