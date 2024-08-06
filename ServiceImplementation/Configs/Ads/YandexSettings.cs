@@ -74,14 +74,14 @@
 
         #region Import sdk
 
-        [ReadOnly, OnInspectorInit(nameof(UpdateVersionText)), HideLabel]
+        [ReadOnly, OnInspectorInit(nameof(UpdateVersionText)), HideLabel, MultiLineProperty(2), PropertyOrder(-2)]
         public string yandexVersion;
 
         public void UpdateVersionText()
         {
-            var path     = "Assets/YandexMobileAds/Editor/YandexMobileadsDependencies.xml";
-            var versions = UnityPackageHelper.ParseXmlFileGetPackageVersion(path);
-            this.yandexVersion = $"current version: android - {versions.androidVersion}, ios - {versions.iosVersion}";
+            const string path     = "Assets/YandexMobileAds/Editor/YandexMobileadsDependencies.xml";
+            var          versions = UnityPackageHelper.ParseXmlFileGetPackageVersion(path);
+            this.yandexVersion = $"current version: android-{versions.androidVersion} ios-{versions.iosVersion}\nlatest version: {YandexSdkVersion}";
         }
 
         public async void DownloadSDK()
@@ -158,7 +158,7 @@
 
         #region Network Adapters
 
-        [SerializeField, OnValueChanged("OnAdcolonyAdapterChanged"), FoldoutGroup("Network Adapters")]
+        [SerializeField, OnValueChanged("OnAdcolonyAdapterChanged"), FoldoutGroup("Network Adapters", -1)]
         private bool useAdcolonyAdapter;
 
         [SerializeField, OnValueChanged("OnApplovinAdapterChanged"), FoldoutGroup("Network Adapters")]

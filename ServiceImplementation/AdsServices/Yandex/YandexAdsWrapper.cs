@@ -285,12 +285,7 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.LoadAoaAd();
         }
 
-        private void LoadAoaAd()
-        {
-            if (this.IsRemoveAds()) return;
-
-            this.appOpenAdLoader.LoadAd(new AdRequestConfiguration.Builder(this.YandexSettings.AoaAdId.Id).Build());
-        }
+        private void LoadAoaAd() => this.appOpenAdLoader.LoadAd(new AdRequestConfiguration.Builder(this.YandexSettings.AoaAdId.Id).Build());
 
         private void DestroyAoaAd()
         {
@@ -345,12 +340,7 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         public bool IsAOAReady() => this.appOpenAd != null && !this.IsShowingAoaAd;
 
-        public void ShowAOAAds()
-        {
-            if (this.IsRemoveAds()) return;
-
-            this.appOpenAd?.Show();
-        }
+        public void ShowAOAAds() => this.appOpenAd?.Show();
 
         #endregion
 
