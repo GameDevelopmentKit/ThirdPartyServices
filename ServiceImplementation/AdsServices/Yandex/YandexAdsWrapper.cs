@@ -85,7 +85,21 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.banner.LoadAd(new AdRequest.Builder().Build());
         }
 
-        #region public
+        #region Events
+
+        private void HandleBannerAdLoaded(object sender, EventArgs args)
+        {
+            this.signalBus.Fire(new BannerAdLoadedSignal(""));
+            this.IsBannerAdLoaded = true;
+        }
+
+        private void HandleBannerAdFailedToLoad(object sender, AdFailureEventArgs args) => this.signalBus.Fire(new BannerAdLoadFailedSignal("", args.Message));
+
+        private void HandleBannerAdClicked(object sender, EventArgs args) => this.signalBus.Fire(new BannerAdClickedSignal(""));
+
+        #endregion
+
+        #region Public
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
@@ -103,20 +117,6 @@ namespace ServiceImplementation.AdsServices.Yandex
         public void HideBannedAd() => this.banner?.Hide();
 
         public void DestroyBannerAd() => this.banner?.Destroy();
-
-        #endregion
-
-        #region Events
-
-        private void HandleBannerAdLoaded(object sender, EventArgs args)
-        {
-            this.signalBus.Fire(new BannerAdLoadedSignal(""));
-            this.IsBannerAdLoaded = true;
-        }
-
-        private void HandleBannerAdFailedToLoad(object sender, AdFailureEventArgs args) => this.signalBus.Fire(new BannerAdLoadFailedSignal("", args.Message));
-
-        private void HandleBannerAdClicked(object sender, EventArgs args) => this.signalBus.Fire(new BannerAdClickedSignal(""));
 
         #endregion
 
@@ -187,7 +187,7 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         #endregion
 
-        #region public
+        #region Public
 
         public bool IsRewardedAdReady(string place) => this.rewardedAd != null;
 
@@ -258,7 +258,7 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         #endregion
 
-        #region public
+        #region Public
 
         public bool IsInterstitialAdReady(string place) => this.interstitialAd != null;
 
@@ -341,7 +341,7 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         #endregion
 
-        #region public
+        #region Public
 
         public bool IsAOAReady() => this.appOpenAd != null && !this.IsShowingAoaAd;
 
