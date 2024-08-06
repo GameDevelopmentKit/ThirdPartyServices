@@ -74,16 +74,17 @@
 
         #region Import sdk
 
-        [ReadOnly, OnInspectorInit(nameof(UpdateVersionText)), HideLabel, MultiLineProperty(2), PropertyOrder(-2)]
-        public string yandexVersion;
+        [ReadOnly, OnInspectorInit(nameof(UpdateVersionText)), HideLabel, DisplayAsString(TextAlignment.Center, true), PropertyOrder(-2), HorizontalGroup("YandexVersion")]
+        public string sCurrentVersion;
 
         public void UpdateVersionText()
         {
             const string path     = "Assets/YandexMobileAds/Editor/YandexMobileadsDependencies.xml";
             var          versions = UnityPackageHelper.ParseXmlFileGetPackageVersion(path);
-            this.yandexVersion = $"current version: android-{versions.androidVersion} ios-{versions.iosVersion}\nlatest version: {YandexSdkVersion}";
+            this.sCurrentVersion = $"current version: <color=yellow>{versions.androidVersion}</color> | latest version: <color=yellow>{YandexSdkVersion}</color>";
         }
 
+        [HorizontalGroup("YandexVersion", width: 100), Button("UpdateSDK", ButtonSizes.Medium), ShowIf(nameof(NeedUpdateSdkVersion))]
         public async void DownloadSDK()
         {
             var sdkUrl = $"https://github.com/yandexmobile/yandex-ads-unity-plugin/releases/download/{YandexSdkVersion}/yandex-mobileads-lite-{YandexSdkVersion}.unitypackage";
@@ -92,6 +93,12 @@
             CreateAsmDef();
             this.UpdateAllNetworkAdapters();
             this.UpdateVersionText();
+        }
+
+        private bool NeedUpdateSdkVersion()
+        {
+            var versions = UnityPackageHelper.ParseXmlFileGetPackageVersion("Assets/YandexMobileAds/Editor/YandexMobileadsDependencies.xml");
+            return versions.androidVersion != YandexSdkVersion;
         }
 
         private static void CreateAsmDef()
@@ -115,6 +122,7 @@
     ""noEngineReferences"": false
 }";
 
+            if (File.Exists(path)) return;
             Directory.CreateDirectory(dir);
             File.WriteAllText(path, content);
             AssetDatabase.Refresh();
