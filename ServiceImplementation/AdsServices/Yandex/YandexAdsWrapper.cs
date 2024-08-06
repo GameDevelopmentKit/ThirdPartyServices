@@ -115,29 +115,22 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.LoadAoaAd();
         }
 
-        public void LoadAoaAd()
+        private void LoadAoaAd()
         {
             if (this.IsRemoveAds()) return;
 
             this.appOpenAdLoader.LoadAd(new AdRequestConfiguration.Builder(this.YandexSettings.AoaAdId.Id).Build());
         }
 
-        public void DestroyAoaAd()
+        private void DestroyAoaAd()
         {
             this.appOpenAd?.Destroy();
             this.appOpenAd = null;
         }
 
-        public bool IsAOAReady() => this.appOpenAd != null && !this.IsShowingAoaAd;
+        #region Events
 
-        public void ShowAOAAds()
-        {
-            if (this.IsRemoveAds()) return;
-
-            this.appOpenAd?.Show();
-        }
-
-        public void HandleAoaAdLoaded(object sender, AppOpenAdLoadedEventArgs args)
+        private void HandleAoaAdLoaded(object sender, AppOpenAdLoadedEventArgs args)
         {
             this.logService.Log("onelog: Yandex Aoa: HandleAdLoaded event received");
             this.appOpenAd = args.AppOpenAd;
@@ -151,26 +144,26 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.signalBus.Fire(new AppOpenLoadedSignal(""));
         }
 
-        public void HandleAoaAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
+        private void HandleAoaAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
         {
             this.logService.Log("onelog: Yandex Aoa: HandleAdFailedToLoad event received with message: " + args.Message);
             this.signalBus.Fire(new AppOpenLoadFailedSignal(""));
         }
 
-        public void HandleAdClicked(object sender, EventArgs args)
+        private void HandleAdClicked(object sender, EventArgs args)
         {
             this.logService.Log("onelog: Yandex Aoa: HandleAdClicked event received");
             this.signalBus.Fire(new AppOpenClickedSignal(""));
         }
 
-        public void HandleAdShown(object sender, EventArgs args)
+        private void HandleAdShown(object sender, EventArgs args)
         {
             this.logService.Log("onelog: Yandex Aoa: Displayed app open ad");
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(""));
             this.IsShowingAoaAd = true;
         }
 
-        public void HandleAdDismissed(object sender, EventArgs args)
+        private void HandleAdDismissed(object sender, EventArgs args)
         {
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
             this.logService.Log("onelog: Yandex Aoa: HandleAdDismissed event received");
@@ -179,7 +172,7 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.IsShowingAoaAd = false;
         }
 
-        public void HandleAdFailedToShow(object sender, AdFailureEventArgs args)
+        private void HandleAdFailedToShow(object sender, AdFailureEventArgs args)
         {
             this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(""));
             this.logService.Log($"onelog: Yandex Aoa: HandleAdFailedToShow event received with message: {args.Message}");
@@ -187,14 +180,29 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.LoadAoaAd();
         }
 
-        #endregion
-
-        public void HandleImpression(object sender, ImpressionData impressionData)
+        private void HandleImpression(object sender, ImpressionData impressionData)
         {
             var data = impressionData == null ? "null" : impressionData.rawData;
             this.logService.Log($"onelog: Yandex Aoa: HandleImpression event received with data: {data}");
             // this.HandlePaidEvent(impressionData, "AppOpenAd");
         }
+
+        #endregion
+
+        #region public
+
+        public bool IsAOAReady() => this.appOpenAd != null && !this.IsShowingAoaAd;
+
+        public void ShowAOAAds()
+        {
+            if (this.IsRemoveAds()) return;
+
+            this.appOpenAd?.Show();
+        }
+
+        #endregion
+
+        #endregion
 
         #region Remove Ads
 
