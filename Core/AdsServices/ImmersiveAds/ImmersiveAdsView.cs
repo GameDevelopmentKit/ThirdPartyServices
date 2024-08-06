@@ -6,6 +6,7 @@ namespace Core.AdsServices.ImmersiveAds
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
+    using GoogleMobileAds.Api;
     using R3;
     using UnityEngine;
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
@@ -27,6 +28,7 @@ namespace Core.AdsServices.ImmersiveAds
         public NativeAdStatusVisualiser NativeAdStatusVisualiser => this.nativeAdStatusVisualiser;
         public NativeAdHolder           NativeAdHolder           => this.nativeAdHolder;
 
+        private bool                    isAdLoaded;
         private bool                    autoRefreshAd;
         private CancellationTokenSource source;
         private IDisposable             changeScreenDisposable;
@@ -53,6 +55,15 @@ namespace Core.AdsServices.ImmersiveAds
             this.changeScreenDisposable = this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
             this.signalBus.Subscribe<ScreenShowSignal>(this.OnScreenShow);
             this.signalBus.Subscribe<ScreenCloseSignal>(this.OnScreenClose);
+
+            this.nativeAdHolder.AutoFetch =   false;
+            this.nativeAdHolder.DisableAd(true);
+            this.nativeAdHolder.Event_AdLoaded += this.OnAdLoaded;
+        }
+
+        private void OnAdLoaded(object arg1, NativeAdEventArgs arg2)
+        {
+            this.isAdLoaded = true;
         }
 
         private void OnDestroy()
@@ -110,6 +121,7 @@ namespace Core.AdsServices.ImmersiveAds
         private void OnChangeScreen(IScreenPresenter screenPresenter)
         {
             if (this.visibleScreen == null) return;
+            if (!this.isAdLoaded) return;
             this.nativeAdHolder.DisableAd(this.visibleScreen != screenPresenter);
         }
 
