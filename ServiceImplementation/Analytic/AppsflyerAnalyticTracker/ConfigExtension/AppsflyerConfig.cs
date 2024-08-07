@@ -12,18 +12,18 @@ namespace Core.AnalyticServices
     public partial class AnalyticConfig
     {
         private const string AppsflyerSymbol = "APPSFLYER";
-        
-        [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")]
-        [SerializeField] private bool isAppsflyerEnabled;
+
+        [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")] [SerializeField]
+        private bool isAppsflyerEnabled;
 
         private void OnChangeAppsflyerEnabled()
         {
 #if UNITY_EDITOR
             EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
-            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "com.theone.appsflyer-unity-plugin", "https://github.com/The1Studio/appsflyer.git?path=Assets/AppsFlyer#");
+            if (this.autoImportPackages) EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "com.theone.appsflyer-unity-plugin", "https://github.com/The1Studio/appsflyer.git?path=Assets/AppsFlyer#");
 #endif
         }
-        
+
         [OnInspectorInit]
         private void InitAppsflyerSetting()
         {
@@ -37,7 +37,6 @@ namespace Core.AnalyticServices
             this.OnChangeAppsflyerEnabled();
         }
 #if APPSFLYER
-
         /// <summary>
         /// 
         /// </summary>

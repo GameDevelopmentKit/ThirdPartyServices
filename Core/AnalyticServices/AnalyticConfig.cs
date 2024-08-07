@@ -2,6 +2,7 @@ namespace Core.AnalyticServices
 {
     using System;
     using GameConfigs;
+    using Sirenix.OdinInspector;
     using UnityEngine;
 
     /// <summary>
@@ -10,6 +11,6 @@ namespace Core.AnalyticServices
     [Serializable]
     public partial class AnalyticConfig : ScriptableObject, IGameConfig
     {
-
+        [BoxGroup("General")] [SerializeField] private bool autoImportPackages = false;
     }
 }

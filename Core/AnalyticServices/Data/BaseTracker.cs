@@ -122,7 +122,7 @@ namespace Core.AnalyticServices.Data
                 }
 
                 if (string.IsNullOrEmpty(eventName)) return;
-                if (this.IncludeEvents.Count > 0 && !this.IncludeEvents.Contains(eventName)) return;
+                if (this.IncludeEvents != null && !this.IncludeEvents.Contains(eventName)) return;
 
                 this.OnEvent(eventName, eventData);
             }
