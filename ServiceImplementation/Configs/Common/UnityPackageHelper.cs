@@ -39,6 +39,7 @@
             else
             {
                 AssetDatabase.ImportPackage(path, false);
+                AssetDatabase.Refresh();
             }
 
             webRequest.Dispose();
@@ -82,6 +83,7 @@
             {
                 // Delete the folder
                 AssetDatabase.DeleteAsset(folderPath);
+                AssetDatabase.Refresh();
 
                 Debug.Log($"Folder '{folderPath}' has been deleted.");
 
@@ -98,6 +100,7 @@
             if (File.Exists(path))
             {
                 AssetDatabase.DeleteAsset(path);
+                AssetDatabase.Refresh();
 
                 Debug.Log($"File '{path}' has been deleted.");
 
@@ -142,6 +145,26 @@
             }
 
             return (androidPackages.Values.FirstOrDefault(), iosPods.Values.FirstOrDefault());
+        }
+
+        public static void CreateFileWithContent(string filePath, string content)
+        {
+#if UNITY_EDITOR
+            if (!File.Exists(filePath))
+            {
+                var dir = Path.GetDirectoryName(filePath) ?? ".";
+                Directory.CreateDirectory(dir);
+            }
+            File.WriteAllText(filePath, content);
+            AssetDatabase.Refresh();
+#endif
+        }
+
+        public static void CopyFile(string filePath, string sourcePath)
+        {
+#if UNITY_EDITOR
+            CreateFileWithContent(filePath, File.ReadAllText(sourcePath));
+#endif
         }
     }
 }

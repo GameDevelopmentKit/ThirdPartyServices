@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using Core.AdsServices;
+    using ServiceImplementation.Configs.Ads.Yandex;
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
@@ -138,7 +139,8 @@
             EditorUtils.SetDefineSymbol(YandexSymbol, this.enableYandex);
             if (this.enableYandex)
             {
-                this.mYandex.DownloadSDK();
+                this.mYandex.Dashboard.ResetCacheNetworkAdapters();
+                this.mYandex.Dashboard.DownloadSDK();
             }
             else
             {

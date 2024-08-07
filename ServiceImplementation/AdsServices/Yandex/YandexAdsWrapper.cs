@@ -8,6 +8,7 @@ namespace ServiceImplementation.AdsServices.Yandex
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
+    using ServiceImplementation.Configs.Ads.Yandex;
     using UnityEngine;
     using YandexMobileAds;
     using YandexMobileAds.Base;
