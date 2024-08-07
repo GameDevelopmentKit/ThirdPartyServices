@@ -59,11 +59,19 @@ namespace Core.AdsServices.ImmersiveAds
             this.nativeAdHolder.AutoFetch =   false;
             this.nativeAdHolder.DisableAd(true);
             this.nativeAdHolder.Event_AdLoaded += this.OnAdLoaded;
+            this.nativeAdHolder.Event_AdFailed += this.OnAdFailed;
         }
 
         private void OnAdLoaded(object arg1, NativeAdEventArgs arg2)
         {
             this.isAdLoaded = true;
+            this.nativeAdHolder.DisableAd(false);
+        }
+
+        private void OnAdFailed(object arg1, AdFailedToLoadEventArgs arg2)
+        {
+            this.nativeAdHolder.DisableAd(true);
+            this.isAdLoaded = false;
         }
 
         private void OnDestroy()
