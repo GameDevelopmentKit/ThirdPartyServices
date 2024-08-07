@@ -114,7 +114,7 @@ namespace Core.AdsServices.ImmersiveAds
             if (!this.autoRefreshAd) return;
             this.nativeAdHolder.FetchAd();
             this.source = new CancellationTokenSource();
-            Debug.Log("Refresh Immersive Ads");
+            Debug.Log($"Refresh Immersive Ads: {this.nativeAdHolder.placeholder}");
             try
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(refreshAdTime), DelayType.DeltaTime, cancellationToken: this.source.Token);
@@ -122,7 +122,7 @@ namespace Core.AdsServices.ImmersiveAds
             }
             catch (Exception)
             {
-                Debug.Log("Stop Refresh Immersive Ads");
+                Debug.Log($"Stop Refresh Immersive Ads: {this.nativeAdHolder.placeholder}\"");
             }
         }
 

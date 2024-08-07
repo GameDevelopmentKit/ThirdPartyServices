@@ -66,7 +66,7 @@ namespace ServiceImplementation.AdsServices.PubScale
 
             nativeAdHolder.adTag = placement;
             nativeAdHolder.StopRefresh();
-
+            nativeAdHolder.FetchAd();
             if (this.cacheNativeAdHolder.TryGetValue(nativeAdHolder, out _)) return;
 
             this.cacheNativeAdHolder.Add(nativeAdHolder);
