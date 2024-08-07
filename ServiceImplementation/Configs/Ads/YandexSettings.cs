@@ -23,7 +23,7 @@
         public AdId BannerAdId
         {
 #if THEONE_ADS_DEBUG
-            get => "demo-banner-yandex";
+            get => new ("demo-banner-yandex","demo-banner-yandex");
 #else
             get => this.mBannerAdId;
 #endif
@@ -33,7 +33,7 @@
         public AdId InterstitialAdId
         {
 #if THEONE_ADS_DEBUG
-            get => "demo-interstitial-yandex";
+            get => new ("demo-interstitial-yandex","demo-interstitial-yandex");
 #else
             get => this.mInterstitialAdId;
 #endif
@@ -43,7 +43,7 @@
         public AdId RewardedAdId
         {
 #if THEONE_ADS_DEBUG
-            get => "demo-rewarded-yandex";
+            get => new ("demo-rewarded-yandex","demo-rewarded-yandex");
 #else
             get => this.mRewardedAdId;
 #endif
@@ -53,7 +53,7 @@
         public AdId AoaAdId
         {
 #if THEONE_ADS_DEBUG
-            get => "demo-appopenad-yandex";
+            get => new ("demo-appopenad-yandex","demo-appopenad-yandex");
 #else
             get => this.mAoaAdId;
 #endif
