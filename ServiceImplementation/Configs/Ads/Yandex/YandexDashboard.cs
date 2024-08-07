@@ -13,14 +13,14 @@
     {
         public const string YandexSdkVersion = "7.2.0";
 
-        [ReadOnly, OnInspectorInit(nameof(UpdateVersionText)), HideLabel, DisplayAsString(TextAlignment.Center, true), PropertyOrder(-2), HorizontalGroup("YandexVersion")]
-        public string sCurrentVersion;
+        [OnInspectorInit(nameof(UpdateVersionText)), HideLabel, DisplayAsString(TextAlignment.Center, true), PropertyOrder(-2), HorizontalGroup("YandexVersion")]
+        private string CurrentVersion { get; set; }
 
         public void UpdateVersionText()
         {
             const string path     = "Assets/YandexMobileAds/Editor/YandexMobileadsDependencies.xml";
             var          versions = UnityPackageHelper.ParseXmlFileGetPackageVersion(path);
-            this.sCurrentVersion = $"current version: <color=yellow>{versions.androidVersion}</color> | latest version: <color=yellow>{YandexSdkVersion}</color>";
+            this.CurrentVersion = $"current version: <color=yellow>{versions.androidVersion}</color> | latest version: <color=yellow>{YandexSdkVersion}</color>";
         }
 
         [HorizontalGroup("YandexVersion", width: 100), Button("UpdateSDK", ButtonSizes.Medium), ShowIf(nameof(NeedUpdateSdkVersion))]
