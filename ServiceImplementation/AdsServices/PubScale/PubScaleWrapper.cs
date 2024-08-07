@@ -89,6 +89,11 @@ namespace ServiceImplementation.AdsServices.PubScale
 
         private void OnAdLoaded(object arg1, NativeAdEventArgs arg2)
         {
+            if (arg2?.nativeAd == null || arg1 == null)
+            {
+                this.logService.Log($"Immersive Ads Loaded: {arg1}\nNative Ads: NULL");
+                return;
+            }
             this.logService.Log($"Immersive Ads Loaded: {arg1}\nNative Ads: {arg2.nativeAd}");
         }
 
