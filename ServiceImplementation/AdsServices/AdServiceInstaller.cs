@@ -18,6 +18,9 @@ namespace ServiceImplementation.AdsServices
 #if ADMOB
     using ServiceImplementation.AdsServices.AdMob;
 #endif
+#if YANDEX
+    using ServiceImplementation.AdsServices.Yandex;
+#endif
 
     public class AdServiceInstaller : Installer<AdServiceInstaller>
     {

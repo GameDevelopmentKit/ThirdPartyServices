@@ -82,6 +82,7 @@
 
         public void ResetCacheNetworkAdapters()
         {
+            // must clear all network because can not auto import adapter after import yandex sdk
             foreach (var field in this.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
             {
                 if (field.FieldType == typeof(bool))
