@@ -35,11 +35,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             this.logger              = logger;
             this.customizationConfig = customizationConfig;
-
-            if (customizationConfig.CustomEventKeys.Count == 0)
-            {
-                this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
-            }
         }
 
         protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
@@ -121,6 +116,8 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         //new update: appsflyer connector still not work, we need to use this method to track IAP
         private void TrackIAP(IEvent trackedEvent, Dictionary<string, object> data)
         {
+            if (this.customizationConfig.IgnoreAllEvents) return;
+            
             if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
             {
                 Debug.LogError("trackedEvent in TrackIAP is not of correct type");
@@ -142,6 +139,8 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         private void TrackAdsRevenue(IEvent trackedEvent, Dictionary<string, object> data)
         {
+            if (this.customizationConfig.IgnoreAllEvents) return;
+
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
                 Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
