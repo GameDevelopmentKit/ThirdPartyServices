@@ -35,6 +35,11 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             this.logger              = logger;
             this.customizationConfig = customizationConfig;
+            
+            if (customizationConfig.CustomEventKeys.Count == 0)
+            {
+                this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
+            }
         }
 
         protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
@@ -107,6 +112,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
+            if (this.customizationConfig.IgnoreAllEvents) return;
             Debug.Log($"Appsflyer: On Event {name}");
             var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             AppsFlyer.sendEvent(name, convertedData);
