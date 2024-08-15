@@ -66,6 +66,10 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.InitInterstitialAd();
             this.InitRewardedAd();
             this.InitAoaAd();
+
+#if THEONE_ADS_DEBUG
+            MobileAds.ShowDebugPanel();
+#endif
         }
 
         #region Banner
