@@ -371,6 +371,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandlePaidEvent(ImpressionData data, string adFormat)
         {
             this.logService.Log($"HandleImpression event received with data: {data}");
+            throw new System.NotImplementedException();
             // var adsRevenueEvent = new AdsRevenueEvent()
             // {
             //     AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
