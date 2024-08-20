@@ -18,6 +18,9 @@ namespace ServiceImplementation.AdsServices
 #if ADMOB
     using ServiceImplementation.AdsServices.AdMob;
 #endif
+#if YANDEX
+    using ServiceImplementation.AdsServices.Yandex;
+#endif
 
     public class AdServiceInstaller : Installer<AdServiceInstaller>
     {
@@ -32,6 +35,8 @@ namespace ServiceImplementation.AdsServices
             // this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<AppLovinAdsWrapper>();
 #elif IRONSOURCE && !UNITY_EDITOR
             this.Container.BindInterfacesTo<IronSourceWrapper>().AsCached();
+#elif YANDEX && !UNITY_EDITOR
+            this.Container.BindInterfacesTo<YandexAdsWrapper>().AsCached();
 #elif ADMOB
             this.Container.BindInterfacesTo<AdMobAdService>().AsCached();
 #else
