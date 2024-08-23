@@ -75,6 +75,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceBannerEvents.onAdLeftApplicationEvent += this.BannerOnAdLeftApplicationEvent;
             
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
+#if THEONE_ADS_DEBUG
+            IronSource.Agent.setAdaptersDebug(true);
+            IronSource.Agent.validateIntegration();
+#endif
             this.InitAdQuality();
         }
 
