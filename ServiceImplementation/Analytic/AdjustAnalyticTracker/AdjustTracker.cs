@@ -64,7 +64,13 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             Debug.Log("setting up adjust tracker");
 
             var appToken    = this.analyticConfig.AdjustAppToken;
-            var environment = this.analyticConfig.AdjustIsDebug ? AdjustEnvironment.Sandbox : AdjustEnvironment.Production;
+
+#if MMP_DEBUG && !PRODUCTION
+            var environment = AdjustEnvironment.Sandbox;
+#else
+            var environment = AdjustEnvironment.Production;
+#endif
+            
 
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(appToken))
