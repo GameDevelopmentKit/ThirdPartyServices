@@ -6,7 +6,9 @@ namespace Core.AdsServices.ImmersiveAds
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
+#if ADMOB_NATIVE_ADS
     using GoogleMobileAds.Api;
+#endif
     using R3;
     using UnityEngine;
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
