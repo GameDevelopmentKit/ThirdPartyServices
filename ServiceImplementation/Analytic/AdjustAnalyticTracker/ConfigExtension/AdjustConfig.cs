@@ -47,7 +47,6 @@ namespace Core.AnalyticServices
         public string AdjustAppToken      => this.adjustAndroidAppToken;
         public string AdjustPurchaseToken => this.adjustAndroidPurchaseToken;
 #endif
-        public bool   AdjustIsDebug       => this.adjustIsDebug;
 
         [SerializeField] private string adjustAndroidAppToken;
         [SerializeField] private string adjustIOSAppToken;
