@@ -7,7 +7,7 @@
     // Disable collider when the screen is not active
     public class NativeAdsColliderUpdater : MonoBehaviour
     {
-        public  string        screenPresenterName;
+        public  string        screenPresenterNameToShow;
         private ScreenManager screenManager;
         private Collider[]    colliders;
 
@@ -20,7 +20,7 @@
         private void Update()
         {
             if (this.screenManager.CurrentActiveScreen == null) return;
-            var isActive = this.screenManager.CurrentActiveScreen.Value.GetType().Name == this.screenPresenterName;
+            var isActive = this.screenManager.CurrentActiveScreen.Value.GetType().Name == this.screenPresenterNameToShow;
             foreach (var col in this.colliders)
             {
                 col.enabled = isActive;
