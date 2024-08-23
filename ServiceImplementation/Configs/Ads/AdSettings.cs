@@ -2,12 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Core.AdsServices;
     using ServiceImplementation.Configs.Ads.Yandex;
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
 #if UNITY_EDITOR
+    using System.IO;
+    using UnityEditor;
     using ServiceImplementation.Configs.Editor;
 #endif
 
@@ -35,6 +38,19 @@
         public List<string> CollapsibleIgnoreRefreshOnScreens => this.mCollapsibleIgnoreRefreshOnScreens;
 
         public BannerLoadStrategy BannerLoadStrategy { get { return this.bannerLoadStrategy; } }
+
+        #region ATT (iOS only)
+
+        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Auto Request App Tracking Transparent for iOS")]
+        public bool autoRequestATT = true;
+
+        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Custom App Tracking Transparent for iOS")]
+        public bool customAtt;
+
+        [FoldoutGroup("Misc/ATT (iOS only)/Custom")] [Sirenix.OdinInspector.FilePath(Extensions = "unity")] [ShowIf(nameof(customAtt))]
+        public string attScenePath = "Assets/Scenes/ATTScene.unity";
+
+        #endregion
 
         #endregion
 
@@ -149,6 +165,40 @@
         }
 
         private void OnChangeCollapsibleBanner() { EditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner); }
+
+
+        private static bool DeleteFolderIfExists(string folderPath)
+        {
+            // Check if the folder exists
+            if (AssetDatabase.IsValidFolder(folderPath))
+            {
+                // Delete the folder
+                AssetDatabase.DeleteAsset(folderPath);
+
+                Debug.Log($"Folder '{folderPath}' has been deleted.");
+
+                return true;
+            }
+
+            return false;
+        }
+        
+        [FoldoutGroup("Misc/ATT (iOS only)/Custom")] [Button] [ShowIf(nameof(customAtt))]
+        private void SetupCustomAtt()
+        {
+            if (string.IsNullOrEmpty(this.attScenePath) || !File.Exists(this.attScenePath))
+            {
+                EditorWindow.focusedWindow.ShowNotification(new GUIContent("ATT Scene Path is not valid!"));
+                return;
+            }
+
+            var scenes = EditorBuildSettings.scenes.ToList();
+            scenes.RemoveAll(x => x.path == this.attScenePath);
+            scenes.Insert(0, new EditorBuildSettingsScene(this.attScenePath, true));
+            EditorBuildSettings.scenes = scenes.ToArray();
+            EditorWindow.focusedWindow.ShowNotification(new GUIContent("Setup ATT Scene Path successfully"));
+        }
+
 #endif
     }
 }

@@ -9,19 +9,13 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     {
         #region Inject
 
-        private readonly ILogService        logService;
+        private readonly ILogService logService;
 
         #endregion
 
-        public UmpConsentInformation(ILogService logService)
-        {
-            this.logService         = logService;
-        }
-        
-        public void Initialize()
-        {
-            this.Request();
-        }
+        public UmpConsentInformation(ILogService logService) { this.logService = logService; }
+
+        public void Initialize() { this.Request(); }
 
         public void Request()
         {
@@ -37,10 +31,11 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         {
             if (consentError != null)
             {
-                // Handle the error.
                 this.logService.Error($"onelog: OnConsentInfoUpdated Error {consentError.Message}");
                 return;
             }
+
+            if (AttHelper.IsRequestTrackingComplete()) return;
 
 #if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
