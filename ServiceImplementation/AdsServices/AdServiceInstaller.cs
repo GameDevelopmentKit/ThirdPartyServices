@@ -1,6 +1,5 @@
 namespace ServiceImplementation.AdsServices
 {
-    using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
@@ -12,6 +11,10 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs.Ads;
     using Zenject;
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
+    using global::PubScale.SdkOne;
+    using ServiceImplementation.AdsServices.PubScale;
+#endif
 #if APPLOVIN
     using ServiceImplementation.AdsServices.AppLovin;
 #endif
@@ -30,6 +33,10 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInterfacesAndSelfTo<AdServicesConfig>().AsCached();
             this.Container.BindInterfacesAndSelfTo<MiscConfig>().AsCached();
 
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
+            this.Container.Bind<PubScaleManager>().FromNewComponentOnNewGameObject().WithGameObjectName("PubScaleManager").AsSingle().NonLazy();
+            this.Container.BindInterfacesTo<PubScaleWrapper>().AsCached();          
+#endif            
 #if APPLOVIN
             ApplovinAdsInstaller.Install(this.Container);
             // this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<AppLovinAdsWrapper>();

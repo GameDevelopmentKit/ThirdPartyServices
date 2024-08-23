@@ -18,12 +18,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
     using Zenject;
-#if ADMOB_NATIVE_ADS
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
     using Core.AdsServices.Native;
 #endif
 
     public class AdMobWrapper : IAOAAdService, IMRECAdService, IInitializable
-#if ADMOB_NATIVE_ADS
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
       , INativeAdsService
 #endif
     {
@@ -97,7 +97,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             if (this.adServices.IsRemoveAds()) return;
             this.LoadAllMRec();
-#if ADMOB_NATIVE_ADS
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
             this.LoadAllNativeAds();
 #endif
             await UniTask.Delay(TimeSpan.FromSeconds(intervalSecond));
@@ -249,7 +249,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             var mrecBannerView = new BannerView(this.ADMobSettings.MRECAdIds[adViewPosition].Id, AdSize.MediumRectangle, adViewPosition.ToAdMobAdPosition());
 
-#if ADMOB_BELLOW_8_7_0
+#if ADMOB_BELLOW_9_0_0
             var adRequest = new AdRequest.Builder().Build();
 #else
             var adRequest = new AdRequest();
@@ -311,7 +311,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region Native Ads
 
-#if ADMOB_NATIVE_ADS
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
         private Dictionary<string, NativeAd>        nativeAdsIdToNativeAd   { get; } = new();
         private HashSet<string>                     loadingNativeAdsIds     { get; } = new();
         private Dictionary<NativeAdsView, NativeAd> nativeAdsViewToNativeAd { get; } = new();
@@ -336,7 +336,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
             adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
             adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
-#if ADMOB_BELLOW_8_7_0
+#if ADMOB_BELLOW_9_0_0
             adLoader.LoadAd(new AdRequest.Builder().Build());
 #else
             adLoader.LoadAd(new AdRequest());

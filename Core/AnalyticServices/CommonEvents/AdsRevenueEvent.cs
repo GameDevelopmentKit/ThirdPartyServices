@@ -32,6 +32,7 @@ namespace Core.AnalyticServices.CommonEvents
         public const string ARSourceUnity            = "unity_sdk";
         public const string ARSourceHeliumChartboost = "helium_chartboost_sdk";
         public const string ARSourcePublisher        = "publisher_sdk";
+        public const string ARSourceImmersiveAds     = "immersive_ads_sdk";
     }
 
     #endregion

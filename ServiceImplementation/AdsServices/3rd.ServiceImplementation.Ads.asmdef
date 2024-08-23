@@ -18,7 +18,8 @@
     "Amazon.Scripts",
     "Unity.Advertisement.IosSupport",
     "Unity.LevelPlay",
-    "YandexMobileAds.Scripts"
+    "YandexMobileAds.Scripts",
+    "GameFoundation.UIModule"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
@@ -35,7 +36,8 @@
     "GoogleMobileAdsNative.Android.dll",
     "GoogleMobileAdsNative.Common.dll",
     "GoogleMobileAdsNative.dll",
-    "Newtonsoft.Json.dll"
+    "Newtonsoft.Json.dll",
+    "PubScale.SdkOne.dll"
   ],
   "autoReferenced": true,
   "defineConstraints": [],
