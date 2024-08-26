@@ -4,7 +4,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using com.adjust.sdk;
+    using AdjustSdk;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
@@ -50,11 +50,11 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                 foreach (var (key, value) in data)
                 {
                     if (key == null || value == null) continue;
-                    adjustEvent.addCallbackParameter(key, value.ToString());
+                    adjustEvent.AddCallbackParameter(key, value.ToString());
                 }
             }
 
-            Adjust.trackEvent(adjustEvent);
+            Adjust.TrackEvent(adjustEvent);
         }
 
         protected override Task TrackerSetup()
@@ -82,8 +82,8 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 #endif
 
             var adjustConfig = new AdjustConfig(appToken, environment);
-            adjustConfig.setSendInBackground(true);
-            Adjust.start(adjustConfig);
+            adjustConfig.IsSendingInBackgroundEnabled = true;
+            Adjust.InitSdk(adjustConfig);
             this.TrackerReady.SetResult(true);
 
             return this.TrackerReady.Task;
@@ -101,9 +101,9 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             }
 
             var adjustEvent = new AdjustEvent(this.analyticConfig.AdjustPurchaseToken);
-            adjustEvent.setTransactionId(iapTransaction.TransactionId);
-            adjustEvent.setRevenue(iapTransaction.Price, iapTransaction.CurrencyCode);
-            Adjust.trackEvent(adjustEvent);
+            adjustEvent.TransactionId = iapTransaction.TransactionId;
+            adjustEvent.SetRevenue(iapTransaction.Price, iapTransaction.CurrencyCode);
+            Adjust.TrackEvent(adjustEvent);
         }
 
         private void TrackAdsRevenue(IEvent trackedEvent, Dictionary<string, object> data)
@@ -116,11 +116,11 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             }
 
             var adjustRevenue = new AdjustAdRevenue(adsRevenueEvent.AdsRevenueSourceId);
-            adjustRevenue.setRevenue(adsRevenueEvent.Revenue, adsRevenueEvent.Currency);
-            adjustRevenue.setAdRevenueNetwork(adsRevenueEvent.AdNetwork);
-            adjustRevenue.setAdRevenueUnit(adsRevenueEvent.AdUnit);
-            adjustRevenue.setAdRevenuePlacement(adsRevenueEvent.Placement);
-            Adjust.trackAdRevenue(adjustRevenue);
+            adjustRevenue.SetRevenue(adsRevenueEvent.Revenue, adsRevenueEvent.Currency);
+            adjustRevenue.AdRevenueNetwork = adsRevenueEvent.AdNetwork;
+            adjustRevenue.AdRevenueUnit = adsRevenueEvent.AdUnit;
+            adjustRevenue.AdRevenuePlacement = adsRevenueEvent.Placement;
+            Adjust.TrackAdRevenue(adjustRevenue);
         }
     }
 }

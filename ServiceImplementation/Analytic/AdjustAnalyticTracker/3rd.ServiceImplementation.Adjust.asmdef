@@ -5,7 +5,8 @@
     "3rdCore.Analytic",
     "Zenject-Signals",
     "GameFoundation.Utilities",
-    "AdjustSDK"
+    "AdjustSdk.Scripts",
+    "AdjustSdk.Editor"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
