@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using ServiceImplementation.Configs.Common;
+    using ServiceImplementation.Configs.Editor;
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -13,19 +14,29 @@
         {
             get
             {
-#if UNITY_ANDROID
+                #if UNITY_ANDROID
                 return this.mAppId.AndroidId;
-#else
+                #else
                 return this.mAppId.IosId;
-#endif
+                #endif
             }
         }
-        
+
         public bool IsAdaptiveBanner => this.isAdaptiveBanner;
 
         [SerializeField] [LabelText("App Id")] private AdId mAppId;
-        
+
         [SerializeField] private bool isAdaptiveBanner = true;
+
+        [SerializeField] [OnValueChanged("OnEnableAdQuality")]
+        private bool enableAdQuality = true;
+
+        #if UNITY_EDITOR
+        private void OnEnableAdQuality()
+        {
+            EditorUtils.ModifyPackage(this.enableAdQuality, "com.theone.ironsource-adquality", "git@github.com:The1Studio/UnityAdQualitySDK.git");
+        }
+        #endif
 
         public enum IronSourceBannerType
         {
@@ -53,6 +64,7 @@
             /// </summary>
             SmartBanner,
         }
+
         public override Dictionary<AdPlacement, AdId> CustomBannerAdIds       { get; set; }
         public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get; set; }
         public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds     { get; set; }
