@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+#if UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
+#endif
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -30,12 +32,12 @@
         [SerializeField] [OnValueChanged("OnEnableAdQuality")]
         private bool enableAdQuality = true;
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         private void OnEnableAdQuality()
         {
             EditorUtils.ModifyPackage(this.enableAdQuality, "com.theone.ironsource-adquality", "git@github.com:The1Studio/UnityAdQualitySDK.git");
         }
-        #endif
+#endif
 
         public enum IronSourceBannerType
         {
