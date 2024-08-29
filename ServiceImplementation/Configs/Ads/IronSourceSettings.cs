@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using ServiceImplementation.Configs.Common;
     using ServiceImplementation.Configs.Editor;
     using Sirenix.OdinInspector;
     using UnityEngine;
@@ -14,11 +13,11 @@
         {
             get
             {
-                #if UNITY_ANDROID
+#if UNITY_ANDROID
                 return this.mAppId.AndroidId;
-                #else
+#else
                 return this.mAppId.IosId;
-                #endif
+#endif
             }
         }
 
@@ -64,7 +63,6 @@
             /// </summary>
             SmartBanner,
         }
-
         public override Dictionary<AdPlacement, AdId> CustomBannerAdIds       { get; set; }
         public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get; set; }
         public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds     { get; set; }
