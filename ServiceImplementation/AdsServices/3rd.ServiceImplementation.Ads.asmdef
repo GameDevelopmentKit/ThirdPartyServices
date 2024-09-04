@@ -7,7 +7,7 @@
     "3rdCore.Analytic",
     "GameFoundation.Utilities",
     "Zenject",
-    "Zenject-Signals",
+    "GameFoundation.Signals",
     "MaxSdk.Scripts",
     "UniTask",
     "IronSource.Scripts",

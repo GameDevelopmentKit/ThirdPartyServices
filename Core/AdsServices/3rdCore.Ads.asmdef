@@ -7,7 +7,7 @@
         "Zenject",
         "Unity.TextMeshPro",
         "UniTask",
-        "Zenject-Signals",
+        "GameFoundation.Signals",
         "GameFoundation.UIModule",
         "FirebaseRemoteConfig"
     ],

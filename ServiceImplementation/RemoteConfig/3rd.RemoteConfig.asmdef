@@ -5,7 +5,7 @@
         "UniTask",
         "ByteBrew",
         "GameFoundation.Utilities",
-        "Zenject-Signals",
+        "GameFoundation.Signals",
         "Zenject"
     ],
     "includePlatforms": [],

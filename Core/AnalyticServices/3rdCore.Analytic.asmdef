@@ -2,7 +2,7 @@
     "name": "3rdCore.Analytic",
     "rootNamespace": "",
     "references": [
-        "Zenject-Signals",
+        "GameFoundation.Signals",
         "Zenject",
         "GameFoundation.Utilities",
         "GameFoundation.Models",

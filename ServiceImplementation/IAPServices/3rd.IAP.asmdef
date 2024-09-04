@@ -9,7 +9,7 @@
     "GameFoundation.Utilities",
     "3rdCore.Ads",
     "Zenject",
-    "Zenject-Signals",
+    "GameFoundation.Signals",
     "UnityEngine.Purchasing.Security",
     "UnityEngine.Purchasing.SecurityCore",
     "UnityEngine.Purchasing.SecurityStub",
