@@ -30,7 +30,7 @@
     [Serializable]
     public class YandexDashboard
     {
-        public const string YandexSdkVersion = "7.2.0";
+        public const string YandexSdkVersion = "7.3.0";
 
         [OnInspectorInit(nameof(UpdateVersionText)), HideLabel, DisplayAsString(TextAlignment.Center, true), PropertyOrder(-2), HorizontalGroup("YandexVersion")]
         private string CurrentVersion { get; set; }
