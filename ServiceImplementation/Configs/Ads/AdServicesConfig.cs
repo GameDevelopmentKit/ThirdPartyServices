@@ -120,6 +120,11 @@ namespace ServiceImplementation.Configs.Ads
         /// </summary>
         public bool CollapsibleBannerExpandOnRefreshEnabled { get; private set; }
 
+        /// <summary>
+        ///     This delay will be applied for the first session
+        /// </summary>
+        public int DelayFirstBanner { get; private set; }
+
         #endregion
 
         private void FetchRemoteConfig()
@@ -171,6 +176,7 @@ namespace ServiceImplementation.Configs.Ads
             this.EnableCollapsibleBannerFallback         = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBannerFallback);
             this.CollapsibleBannerAutoRefreshEnabled     = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerAutoRefreshEnabled);
             this.CollapsibleBannerExpandOnRefreshEnabled = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled);
+            this.DelayFirstBanner             = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstBanner);
 
             #endregion
         }
