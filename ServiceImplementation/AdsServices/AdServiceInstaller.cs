@@ -1,3 +1,4 @@
+#if GDK_ZENJECT
 namespace ServiceImplementation.AdsServices
 {
     using Core.AdsServices;
@@ -129,3 +130,4 @@ namespace ServiceImplementation.AdsServices
         }
     }
 }
+#endif

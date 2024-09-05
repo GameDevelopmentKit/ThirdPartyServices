@@ -11,6 +11,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
+    using GameFoundation.DI;
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;

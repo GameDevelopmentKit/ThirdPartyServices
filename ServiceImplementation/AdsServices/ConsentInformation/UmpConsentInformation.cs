@@ -1,9 +1,9 @@
 #if ADMOB
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
+    using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
-    using Zenject;
 
     public class UmpConsentInformation : IConsentInformation, IInitializable
     {

@@ -1,6 +1,7 @@
 namespace ServiceImplementation.Configs.Ads
 {
     using System;
+    using GameFoundation.DI;
     using ServiceImplementation.FireBaseRemoteConfig;
     using Zenject;
 

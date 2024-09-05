@@ -7,24 +7,27 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using Firebase;
     using Firebase.Extensions;
     using Firebase.RemoteConfig;
+    using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
-    using UnityEngine;
     using Zenject;
 
     /// <summary>
     /// We need to use MonoBehaviour to use Firebase Remote Config
     /// </summary>
-    internal class FirebaseRemoteConfigMobile : MonoBehaviour, IRemoteConfig, IInitializable
+    internal class FirebaseRemoteConfigMobile : IRemoteConfig, IInitializable
     {
-        [Inject] private readonly ILogService logger;
-        [Inject] private readonly SignalBus   signalBus;
-        public                    bool        IsConfigFetchedSucceed { get; private set; }
+        private readonly ILogService logger;
+        private readonly SignalBus   signalBus;
 
-        private void Start() { this.InitFirebase(); }
+        public FirebaseRemoteConfigMobile(ILogService logger, SignalBus signalBus)
+        {
+            this.logger    = logger;
+            this.signalBus = signalBus;
+        }
 
-        public void Initialize() { }
+        public bool IsConfigFetchedSucceed { get; private set; }
 
-        private void InitFirebase()
+        public void Initialize()
         {
             this.logger.Log($"onelog: FirebaseRemoteConfig InitFirebase");
             FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>

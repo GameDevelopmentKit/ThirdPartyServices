@@ -1,4 +1,5 @@
-﻿namespace ServiceImplementation.IAPServices
+﻿#if GDK_ZENJECT
+namespace ServiceImplementation.IAPServices
 {
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.IAPServices.Signals;
@@ -30,3 +31,4 @@
         }
     }
 }
+#endif

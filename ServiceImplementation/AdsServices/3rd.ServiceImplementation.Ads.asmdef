@@ -5,6 +5,7 @@
     "3rdCore.Ads",
     "EasyMobile.Scripts",
     "3rdCore.Analytic",
+    "GameFoundation.DI",
     "GameFoundation.Utilities",
     "Zenject",
     "GameFoundation.Signals",
@@ -46,6 +47,11 @@
       "name": "com.theone.ironsource-adquality",
       "expression": "",
       "define": "IRONSOURCE_AD_QUALITY"
+    },
+    {
+      "name": "com.svermeulen.extenject",
+      "expression": "",
+      "define": "GDK_ZENJECT"
     }
   ],
   "noEngineReferences": false

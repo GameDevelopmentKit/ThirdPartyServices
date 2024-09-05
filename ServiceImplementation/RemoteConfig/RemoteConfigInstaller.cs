@@ -1,3 +1,4 @@
+#if GDK_ZENJECT
 namespace ServiceImplementation.FireBaseRemoteConfig
 {
 #if BYTEBREW
@@ -27,3 +28,4 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         }
     }
 }
+#endif

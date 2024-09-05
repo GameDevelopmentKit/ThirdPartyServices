@@ -1,8 +1,8 @@
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
     using Cysharp.Threading.Tasks;
+    using GameFoundation.DI;
     using ServiceImplementation.Configs;
-    using Zenject;
 
     public class AppTrackingServices : IInitializable
     {

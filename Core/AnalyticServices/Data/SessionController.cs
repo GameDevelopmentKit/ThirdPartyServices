@@ -6,31 +6,24 @@ namespace Core.AnalyticServices.Data
     using Core.AnalyticServices.Tools;
     using UnityEngine;
     using Utilities.Utils;
-    using Zenject;
 
-    /// <summary>
-    /// todo
-    /// </summary>
     internal sealed class SessionController : MonoBehaviour
     {
         private IAnalyticServices analyticServices;
-        private DeviceInfo       deviceInfo;
+        private DeviceInfo        deviceInfo;
 
-        /// <summary>
-        /// 
-        /// </summary>
         public string SessionId { get; private set; }
 
         private const float  HeartbeatInterval = 30f;
         private const double SessionTimeout    = 600000; //  10 min, todo - make config controllable
         private       double focusOutTime      = double.NaN;
 
-        [Inject]
-        public void Init(IAnalyticServices analyticServicesParam, DeviceInfo deviceInfoParam)
+        public void Construct(IAnalyticServices analyticServices, DeviceInfo deviceInfo)
         {
-            this.analyticServices = analyticServicesParam;
-            this.deviceInfo       = deviceInfoParam;
+            this.analyticServices = analyticServices;
+            this.deviceInfo       = deviceInfo;
         }
+
         private void Start()
         {
             this.SessionId = Guid.NewGuid().ToString("N");

@@ -1,21 +1,13 @@
 {
-    "name": "3rd.Configs",
-    "rootNamespace": "",
-    "references": [
-        "3rdCore.Ads",
-        "GameFoundation.Signals",
-        "3rd.RemoteConfig",
-        "3rd.Configs.Editor",
-        "MaxSdk.Scripts.IntegrationManager.Editor",
-        "UniTask"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "3rd.Configs",
+  "rootNamespace": "",
+  "references": [
+    "3rdCore.Ads",
+    "GameFoundation.DI",
+    "GameFoundation.Signals",
+    "3rd.RemoteConfig",
+    "3rd.Configs.Editor",
+    "MaxSdk.Scripts.IntegrationManager.Editor",
+    "UniTask"
+  ]
 }

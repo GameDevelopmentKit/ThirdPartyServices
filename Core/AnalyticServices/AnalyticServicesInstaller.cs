@@ -1,3 +1,4 @@
+#if GDK_ZENJECT
 namespace Core.AnalyticServices
 {
     using Core.AnalyticServices.Data;
@@ -15,7 +16,11 @@ namespace Core.AnalyticServices
             this.Container.Bind<AnalyticConfig>().FromResolveGetter<GDKConfig>(config => config.GetGameConfig<AnalyticConfig>()).AsCached();
             this.Container.Bind<IAnalyticServices>().To<AnalyticServices>().AsCached();
             this.Container.Bind<DeviceInfo>().AsCached();
-            this.Container.Bind<SessionController>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+            this.Container.Bind<SessionController>()
+                .FromNewComponentOnNewGameObject()
+                .AsSingle()
+                .OnInstantiated<SessionController>((ctx, svc) => svc.Construct(ctx.Container.Resolve<IAnalyticServices>(), ctx.Container.Resolve<DeviceInfo>()));
+                .NonLazy();
             this.Container.BindAllDerivedTypes<BaseTracker>(true);
             this.Container.Bind<AnalyticsEventCustomizationConfig>().AsCached();
             this.Container.DeclareSignal<EventTrackedSignal>();
@@ -27,3 +32,4 @@ namespace Core.AnalyticServices
         }
     }
 }
+#endif
