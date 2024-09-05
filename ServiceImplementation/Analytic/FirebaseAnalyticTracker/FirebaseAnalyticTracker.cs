@@ -6,9 +6,9 @@
     using System.Threading.Tasks;
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
+    using GameFoundation.Signals;
     using Newtonsoft.Json;
     using UnityEngine;
-    using Zenject;
 
     public class FirebaseAnalyticTracker : BaseTracker
     {

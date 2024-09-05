@@ -6,9 +6,9 @@ namespace Core.AnalyticServices.Data
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
+    using GameFoundation.Signals;
     using UnityEngine;
     using Utilities.Extension;
-    using Zenject;
 
     public delegate void EventDelegate(IEvent trackedEvent, Dictionary<string, object> data);
 
@@ -43,13 +43,13 @@ namespace Core.AnalyticServices.Data
         protected abstract Dictionary<Type, EventDelegate> CustomEventDelegates { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="changedProps"></param>
         protected abstract void OnChangedProps(Dictionary<string, object> changedProps);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="data"></param>
@@ -61,7 +61,7 @@ namespace Core.AnalyticServices.Data
         protected abstract Task TrackerSetup();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="userId"></param>
         protected abstract void SetUserId(string userId);
@@ -69,7 +69,7 @@ namespace Core.AnalyticServices.Data
         /// <summary>
         /// base constructor for trackers which sets up when/how events and states should be tracked
         /// </summary>
-        public BaseTracker(SignalBus signalBus, AnalyticConfig analyticConfig)
+        protected BaseTracker(SignalBus signalBus, AnalyticConfig analyticConfig)
         {
             this.analyticConfig = analyticConfig;
             signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);

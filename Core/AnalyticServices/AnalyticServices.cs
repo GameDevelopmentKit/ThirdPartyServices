@@ -7,9 +7,9 @@ namespace Core.AnalyticServices
     using Core.AnalyticServices.Data;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
+    using GameFoundation.Signals;
     using UnityEngine;
     using Utilities.Extension;
-    using Zenject;
 
     public interface IAnalyticServices
     {
@@ -48,14 +48,14 @@ namespace Core.AnalyticServices
             this.eventTrackedSignal = new EventTrackedSignal();
             this.started            = new TaskCompletionSource<bool>();
             //todo need to refactor this
-           
+
         }
 
 
         void IAnalyticServices.Start()
         {
             if(this.started.Task.Status == TaskStatus.RanToCompletion) return;
-            
+
             this.Track(new GameLaunched
             {
                 InstallId   = this.deviceInfo.InstallId,
@@ -64,7 +64,7 @@ namespace Core.AnalyticServices
 
             this.deviceInfo.ScrapeDeviceData();
             this.SetupUserProperties();
-            
+
             this.UserProperties.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == nameof(UserProperties.UserId))
@@ -82,7 +82,7 @@ namespace Core.AnalyticServices
 
             this.UserProperties.ChangedProps.Clear();
         }
-        
+
         private void SetupUserProperties()
         {
             // this.UserProperties.GameEnvironment  = this.Config.Environment ? "develop" : "production";

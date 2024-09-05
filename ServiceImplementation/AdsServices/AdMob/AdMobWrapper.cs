@@ -14,12 +14,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
+    using GameFoundation.Signals;
     using GoogleMobileAds.Api;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
-    using Zenject;
 #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
     using Core.AdsServices.Native;
 #endif

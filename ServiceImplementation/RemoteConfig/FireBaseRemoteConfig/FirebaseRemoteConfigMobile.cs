@@ -9,7 +9,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using Firebase.RemoteConfig;
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
-    using Zenject;
+    using GameFoundation.Signals;
 
     /// <summary>
     /// We need to use MonoBehaviour to use Firebase Remote Config

@@ -2,6 +2,7 @@
 namespace ServiceImplementation.IAPServices
 {
     using GameFoundation.Scripts.Utilities.LogService;
+    using GameFoundation.Signals;
     using ServiceImplementation.IAPServices.Signals;
     using UnityEngine;
     using Zenject;

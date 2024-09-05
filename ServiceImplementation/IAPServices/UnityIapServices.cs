@@ -7,13 +7,13 @@ namespace ServiceImplementation.IAPServices
     using System.Linq;
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
+    using GameFoundation.Signals;
     using ServiceImplementation.IAPServices.Signals;
     using Unity.Services.Core;
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
     using UnityEngine.Purchasing.Security;
-    using Zenject;
 
     public class UnityIapServices : IIapServices, IStoreListener
     {

@@ -9,11 +9,11 @@ namespace ServiceImplementation.AdsServices.PreloadService
     using Core.AnalyticServices.Tools;
     using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
+    using GameFoundation.Signals;
     using ServiceImplementation.Configs.Ads;
-    using Zenject;
     using Debug = UnityEngine.Debug;
 
-    public class PreloadAdService : IInitializable, IDisposable, ITickable
+    public class PreloadAdService : IInitializable, ITickable, IDisposable
     {
         #region inject
 

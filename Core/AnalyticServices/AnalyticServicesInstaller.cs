@@ -5,6 +5,7 @@ namespace Core.AnalyticServices
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
     using GameFoundation.Scripts.Utilities.Extension;
+    using GameFoundation.Signals;
     using Models;
     using UnityEngine;
     using Zenject;
@@ -19,7 +20,7 @@ namespace Core.AnalyticServices
             this.Container.Bind<SessionController>()
                 .FromNewComponentOnNewGameObject()
                 .AsSingle()
-                .OnInstantiated<SessionController>((ctx, svc) => svc.Construct(ctx.Container.Resolve<IAnalyticServices>(), ctx.Container.Resolve<DeviceInfo>()));
+                .OnInstantiated<SessionController>((ctx, svc) => svc.Construct(ctx.Container.Resolve<IAnalyticServices>(), ctx.Container.Resolve<DeviceInfo>()))
                 .NonLazy();
             this.Container.BindAllDerivedTypes<BaseTracker>(true);
             this.Container.Bind<AnalyticsEventCustomizationConfig>().AsCached();

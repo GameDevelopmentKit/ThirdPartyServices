@@ -12,11 +12,11 @@ namespace ServiceImplementation.AdsServices.AdMob
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using GameFoundation.DI;
+    using GameFoundation.Signals;
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
-    using Zenject;
     using Debug = UnityEngine.Debug;
 
     public class AdMobAdService : IAdServices, IAdLoadService, IInitializable, ICollapsibleBannerAd
