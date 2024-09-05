@@ -7,6 +7,11 @@
     /// </summary>
     public class BannerShown : IEvent
     {
-        
+        public string placement;
+
+        public BannerShown(string placement)
+        {
+            this.placement = placement;
+        }
     }
 }
