@@ -2,6 +2,7 @@ namespace Core.AdsServices.ImmersiveAds
 {
     using System;
     using System.Threading.Tasks;
+    using GameFoundation.Signals;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Signals;
@@ -16,8 +17,6 @@ namespace Core.AdsServices.ImmersiveAds
     using Cysharp.Threading.Tasks;
     using PubScale.SdkOne.NativeAds;
 #endif
-    using Zenject;
-
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
     [RequireComponent(typeof(NativeAdHolder))]
 #endif

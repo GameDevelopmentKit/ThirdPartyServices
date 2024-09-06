@@ -8,7 +8,6 @@ namespace Core.AdsServices.Native
     using R3;
     using UnityEngine;
     using UnityEngine.UI;
-    using Zenject;
 
     public class NativeAdsView : MonoBehaviour
     {
@@ -29,7 +28,7 @@ namespace Core.AdsServices.Native
         private IDisposable      changeScreenDisposable;
         private IScreenPresenter visibleScreen;
         private IScreenManager   screenManager;
-        
+
 #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
 
         private void Awake()

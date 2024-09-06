@@ -2,8 +2,6 @@ namespace ServiceImplementation.IAPServices
 {
     using System;
     using System.Collections.Generic;
-    using Core.AdsServices;
-    using Zenject;
 
     public class DummyIapServices : IIapServices
     {
