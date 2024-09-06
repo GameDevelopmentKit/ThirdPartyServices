@@ -34,7 +34,11 @@
             return this.TrackerReady.Task;
         }
 
-        protected override void SetUserId(string userId) { FirebaseAnalytics.SetUserId(userId); }
+        protected override void SetUserId(string userId)
+        {
+            FirebaseAnalytics.SetUserId(userId);
+            Debug.Log($"DCM UserId: {userId} - DCM FalconId: {Falcon.FalconCore.Scripts.Repositories.News.FDeviceInfoRepo.DeviceId}");
+        }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps) { FirebaseAnalytics.SetUserProperty(changedProps); }
 
