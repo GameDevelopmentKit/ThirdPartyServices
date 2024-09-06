@@ -30,13 +30,15 @@
     [Serializable]
     public class YandexDashboard
     {
-        public const string YandexSdkVersion = "7.3.0";
+        public static string YandexSdkVersion = "7.3.0";
+        public const  string LatestEndPoint   = "https://api.github.com/repos/yandexmobile/yandex-ads-unity-plugin/releases/latest";
 
         [OnInspectorInit(nameof(UpdateVersionText)), HideLabel, DisplayAsString(TextAlignment.Center, true), PropertyOrder(-2), HorizontalGroup("YandexVersion")]
         private string CurrentVersion { get; set; }
 
-        public void UpdateVersionText()
+        public async UniTask UpdateVersionText()
         {
+            YandexSdkVersion = await UnityPackageHelper.FetchLatestVersion(LatestEndPoint);
             const string path     = "Assets/YandexMobileAds/Editor/YandexMobileadsDependencies.xml";
             var          versions = UnityPackageHelper.ParseXmlFileGetPackageVersion(path);
             this.CurrentVersion = $"current version: <color=yellow>{versions.androidVersion}</color> | latest version: <color=yellow>{YandexSdkVersion}</color>";
@@ -52,9 +54,14 @@
             UnityPackageHelper.CopyFile("Assets/YandexMobileAds/Editor/YandexMobileAds.Scripts.asmdef",
                 "Packages/com.gdk.3rd/ServiceImplementation/Configs/Ads/Yandex/YandexMobileAdsEditorAsmDef.json");
 
-            this.AdapterInfo.ForEach(pair => this.DownloadNetworkAdapter(pair.Key));
-            this.UpdateVersionText();
+            await this.UpdateVersionText();
+            this.UpdateAllNetworks();
         }
+
+        [HorizontalGroup("YandexVersion", width: 110), Button("Update Networks", ButtonSizes.Medium), ShowIf(nameof(NoNeedUpdateSdkVersion))]
+        private void UpdateAllNetworks() { this.AdapterInfo.ForEach(pair => this.DownloadNetworkAdapter(pair.Key)); }
+        
+        private bool NoNeedUpdateSdkVersion() => !this.NeedUpdateSdkVersion();
 
         private bool NeedUpdateSdkVersion()
         {

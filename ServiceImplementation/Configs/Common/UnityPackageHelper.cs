@@ -1,5 +1,6 @@
 ﻿namespace ServiceImplementation.Configs.Common
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.IO.Compression;
@@ -14,6 +15,28 @@
 
     public static class UnityPackageHelper
     {
+        [Serializable]
+        private class GitHubRelease
+        {
+            public string tag_name;
+        }
+
+        /// <param name="apiEndpoint">Endpoint like: "https://api.github.com/repos/yandexmobile/yandex-ads-unity-plugin/releases/latest"</param>
+        public static async UniTask<string> FetchLatestVersion(string apiEndpoint)
+        {
+            using var request = UnityWebRequest.Get(apiEndpoint);
+            request.SetRequestHeader("User-Agent", "request");
+            var operation = request.SendWebRequest();
+
+            await UniTask.WaitUntil(() => operation.isDone);
+
+            if (request.result == UnityWebRequest.Result.Success)
+                return JsonUtility.FromJson<GitHubRelease>(request.downloadHandler.text).tag_name;
+
+            Debug.LogError("Failed to fetch version: " + request.error);
+            return "";
+        }
+
         public static async UniTask DownloadThenImportPackage(string downloadUrl, string fileName)
         {
 #if UNITY_EDITOR
@@ -155,6 +178,7 @@
                 var dir = Path.GetDirectoryName(filePath) ?? ".";
                 Directory.CreateDirectory(dir);
             }
+
             File.WriteAllText(filePath, content);
             AssetDatabase.Refresh();
 #endif
