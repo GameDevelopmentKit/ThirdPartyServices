@@ -27,6 +27,7 @@ namespace Core.AnalyticServices.CommonEvents
         public const string ARSourceAppLovinMAX      = "applovin_max_sdk";
         public const string ARSourceMopub            = "mopub";
         public const string ARSourceAdMob            = "admob_sdk";
+        public const string ARSourceYandex           = "yandex_sdk";
         public const string ARSourceIronSource       = "ironsource_sdk";
         public const string ARSourceAdmost           = "admost_sdk";
         public const string ARSourceUnity            = "unity_sdk";

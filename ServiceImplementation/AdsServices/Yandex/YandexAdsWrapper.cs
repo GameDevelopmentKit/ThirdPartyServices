@@ -5,6 +5,8 @@ namespace ServiceImplementation.AdsServices.Yandex
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
+    using Core.AnalyticServices.CommonEvents;
+    using Core.AnalyticServices.Signal;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
@@ -364,27 +366,26 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleImpression(object sender, ImpressionData impressionData)
         {
             var data = impressionData == null ? "null" : impressionData.rawData;
-            this.logService.Log($"onelog: Yandex Aoa: HandleImpression event received with data: {data}");
-            // this.HandlePaidEvent(impressionData, "AppOpenAd");
+            this.logService.Log($"onelog: Yandex: HandleImpression event received with data: {data}");
+            this.HandlePaidEvent(data);
         }
 
-        private void HandlePaidEvent(ImpressionData data, string adFormat)
+        private void HandlePaidEvent(string data)
         {
-            this.logService.Log($"HandleImpression event received with data: {data}");
-            throw new System.NotImplementedException();
-            // var adsRevenueEvent = new AdsRevenueEvent()
-            // {
-            //     AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
-            //     Revenue            = args.Value / 1e6,
-            //     Currency           = "USD",
-            //     Placement          = adFormat,
-            //     AdNetwork          = "AdMob",
-            //     AdFormat           = adFormat,
-            //     AdUnit             = adFormat
-            // };
-            //
-            // this.analyticService.Track(adsRevenueEvent);
-            // this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
+            var impressionData = JsonUtility.FromJson<YandexImpressionData>(data);
+            var adsRevenueEvent = new AdsRevenueEvent()
+            {
+                AdsRevenueSourceId = AdRevenueConstants.ARSourceYandex,
+                Revenue            = impressionData.revenueUSD,
+                Currency           = "USD",
+                Placement          = impressionData.adType,
+                AdNetwork          = impressionData.network.name,
+                AdFormat           = impressionData.adType,
+                AdUnit             = impressionData.ad_unit_id
+            };
+
+            this.analyticServices.Track(adsRevenueEvent);
+            this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
         }
 
         #endregion
