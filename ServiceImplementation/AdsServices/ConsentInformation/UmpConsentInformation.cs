@@ -34,8 +34,10 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 this.logService.Error($"onelog: OnConsentInfoUpdated Error {consentError.Message}");
                 return;
             }
-
+            
+#if UNITY_IOS
             if (AttHelper.IsRequestTrackingComplete()) return;
+#endif
 
 #if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
