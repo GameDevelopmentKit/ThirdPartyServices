@@ -160,6 +160,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 AdRevenueConstants.ARSourceIronSource  => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeIronSource,
                 AdRevenueConstants.ARSourceAdMob       => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob,
                 AdRevenueConstants.ARSourceUnity       => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeUnity,
+                AdRevenueConstants.ARSourceYandex      => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeYandex,
                 _                                      => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeCustomMediation
             };
 
