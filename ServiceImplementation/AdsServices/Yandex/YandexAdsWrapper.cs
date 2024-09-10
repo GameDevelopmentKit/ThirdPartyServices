@@ -365,27 +365,29 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleImpression(object sender, ImpressionData impressionData)
         {
-            var data = impressionData == null ? "null" : impressionData.rawData;
-            this.logService.Log($"onelog: Yandex: HandleImpression event received with data: {data}");
-            this.HandlePaidEvent(data);
-        }
-
-        private void HandlePaidEvent(string data)
-        {
-            var impressionData = JsonUtility.FromJson<YandexImpressionData>(data);
-            var adsRevenueEvent = new AdsRevenueEvent()
+            var sData = impressionData?.rawData;
+            this.logService.Log($"onelog: Yandex: HandleImpression: {sData}");
+            try
             {
-                AdsRevenueSourceId = AdRevenueConstants.ARSourceYandex,
-                Revenue            = impressionData.revenueUSD,
-                Currency           = "USD",
-                Placement          = impressionData.adType,
-                AdNetwork          = impressionData.network.name,
-                AdFormat           = impressionData.adType,
-                AdUnit             = impressionData.ad_unit_id
-            };
+                var data = JsonUtility.FromJson<YandexImpressionData>(sData);
+                var adsRevenueEvent = new AdsRevenueEvent()
+                {
+                    AdsRevenueSourceId = AdRevenueConstants.ARSourceYandex,
+                    Revenue            = data.revenueUSD,
+                    Currency           = "USD",
+                    Placement          = data.adType,
+                    AdNetwork          = data.network.name,
+                    AdFormat           = data.adType,
+                    AdUnit             = data.ad_unit_id
+                };
 
-            this.analyticServices.Track(adsRevenueEvent);
-            this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
+                this.analyticServices.Track(adsRevenueEvent);
+                this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
+            }
+            catch (Exception e)
+            {
+                this.logService.Error($"onelog: Yandex: Failed to parse impression data: {sData}");
+            }
         }
 
         #endregion
