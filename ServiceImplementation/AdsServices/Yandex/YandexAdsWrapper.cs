@@ -8,6 +8,7 @@ namespace ServiceImplementation.AdsServices.Yandex
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using GameFoundation.Scripts.Utilities.LogService;
+    using Newtonsoft.Json;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using ServiceImplementation.Configs.Ads.Yandex;
@@ -367,9 +368,11 @@ namespace ServiceImplementation.AdsServices.Yandex
         {
             var sData = impressionData?.rawData;
             this.logService.Log($"onelog: Yandex: HandleImpression: {sData}");
+            if(string.IsNullOrEmpty(sData)) return;
+            
             try
             {
-                var data = JsonUtility.FromJson<YandexImpressionData>(sData);
+                var data = JsonConvert.DeserializeObject<YandexImpressionData>(sData);
                 var adsRevenueEvent = new AdsRevenueEvent()
                 {
                     AdsRevenueSourceId = AdRevenueConstants.ARSourceYandex,
