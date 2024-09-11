@@ -9,6 +9,7 @@
     "GameFoundation.Utilities",
     "3rdCore.Ads",
     "Zenject",
+    "VContainer",
     "GameFoundation.Signals",
     "UnityEngine.Purchasing.Security",
     "UnityEngine.Purchasing.SecurityCore",
@@ -20,6 +21,11 @@
       "name": "com.svermeulen.extenject",
       "expression": "",
       "define": "GDK_ZENJECT"
+    },
+    {
+      "name": "jp.hadashikick.vcontainer",
+      "expression": "",
+      "define": "GDK_VCONTAINER"
     }
   ]
 }

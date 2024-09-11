@@ -124,7 +124,7 @@ namespace ServiceImplementation.AdsServices
 
             // This signal is used to all type of ad request
             this.Container.DeclareSignal<AdRequestSignal>();
-            
+
             this.Container.DeclareSignal<AppStateChangeSignal>();
 
             #endregion

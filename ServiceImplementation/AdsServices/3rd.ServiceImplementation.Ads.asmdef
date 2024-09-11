@@ -8,6 +8,7 @@
     "GameFoundation.DI",
     "GameFoundation.Utilities",
     "Zenject",
+    "VContainer",
     "GameFoundation.Signals",
     "MaxSdk.Scripts",
     "UniTask",
@@ -52,6 +53,11 @@
       "name": "com.svermeulen.extenject",
       "expression": "",
       "define": "GDK_ZENJECT"
+    },
+    {
+      "name": "jp.hadashikick.vcontainer",
+      "expression": "",
+      "define": "GDK_VCONTAINER"
     }
   ],
   "noEngineReferences": false

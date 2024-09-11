@@ -4,6 +4,7 @@
   "references": [
     "GameFoundation.Signals",
     "Zenject",
+    "VContainer",
     "GameFoundation.Utilities",
     "GameFoundation.Models",
     "ByteBrew",
@@ -15,6 +16,11 @@
       "name": "com.svermeulen.extenject",
       "expression": "",
       "define": "GDK_ZENJECT"
+    },
+    {
+      "name": "jp.hadashikick.vcontainer",
+      "expression": "",
+      "define": "GDK_VCONTAINER"
     }
   ]
 }

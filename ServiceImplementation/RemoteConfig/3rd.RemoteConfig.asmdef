@@ -7,13 +7,19 @@
     "GameFoundation.DI",
     "GameFoundation.Utilities",
     "GameFoundation.Signals",
-    "Zenject"
+    "Zenject",
+    "VContainer"
   ],
   "versionDefines": [
     {
       "name": "com.svermeulen.extenject",
       "expression": "",
       "define": "GDK_ZENJECT"
+    },
+    {
+      "name": "jp.hadashikick.vcontainer",
+      "expression": "",
+      "define": "GDK_VCONTAINER"
     }
   ]
 }

@@ -17,11 +17,11 @@ namespace ServiceImplementation.AdsServices.PreloadService
     {
         #region inject
 
-        private readonly List<IAdLoadService>      adLoadServices;
-        private readonly AdServicesConfig          adServicesConfig;
-        private readonly SignalBus                 signalBus;
-        private readonly IAnalyticServices         analyticServices;
-        private readonly List<IAOAAdService>       aOaAdServices;
+        private readonly List<IAdLoadService>          adLoadServices;
+        private readonly AdServicesConfig              adServicesConfig;
+        private readonly SignalBus                     signalBus;
+        private readonly IAnalyticServices             analyticServices;
+        private readonly List<IAOAAdService>           aOaAdServices;
         private readonly UnScaleInGameStopWatchManager unScaleInGameStopWatchManager;
 
         #endregion
@@ -30,15 +30,16 @@ namespace ServiceImplementation.AdsServices.PreloadService
         private Dictionary<(IAdLoadService, string), UnScaleInGameStopWatch> rewardAdStopwatch       = new();
         private Dictionary<IAOAAdService, UnScaleInGameStopWatch>            aoaAdStartTime          = new();
 
-        public PreloadAdService(List<IAdLoadService> adLoadServices, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices, List<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
+        public PreloadAdService(IEnumerable<IAdLoadService> adLoadServices, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices, IEnumerable<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
         {
-            this.adLoadServices            = adLoadServices;
-            this.adServicesConfig          = adServicesConfig;
-            this.signalBus                 = signalBus;
-            this.analyticServices          = analyticServices;
-            this.aOaAdServices             = aOAAdServices;
+            this.adLoadServices                = adLoadServices.ToList();
+            this.adServicesConfig              = adServicesConfig;
+            this.signalBus                     = signalBus;
+            this.analyticServices              = analyticServices;
+            this.aOaAdServices                 = aOAAdServices.ToList();
             this.unScaleInGameStopWatchManager = unScaleInGameStopWatchManager;
         }
+
         public void Initialize()
         {
             this.LoadAdsInterval();
@@ -103,7 +104,6 @@ namespace ServiceImplementation.AdsServices.PreloadService
         }
 
         #endregion
-
 
         #region Load RewardAds
 
