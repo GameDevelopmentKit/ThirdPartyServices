@@ -123,6 +123,9 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<AppOpenCalledSignal>();
             this.Container.DeclareSignal<AppOpenClickedSignal>();
 
+            // This signal is used to all type of ad request
+            this.Container.DeclareSignal<AdRequestSignal>();
+            
             this.Container.DeclareSignal<AppStateChangeSignal>();
 
             #endregion

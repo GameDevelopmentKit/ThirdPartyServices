@@ -1,5 +1,8 @@
 ﻿namespace Core.AdsServices.Signals
 {
+    using Core.AnalyticServices.CommonEvents;
+    using Core.AnalyticServices.Signal;
+
     public class InterstitialAdCalledSignal : BaseAdsSignal
     {
         public InterstitialAdCalledSignal(string placement) : base(placement) { }
@@ -7,8 +10,8 @@
 
     public class InterstitialAdLoadedSignal : BaseAdsSignal
     {
-        public long LoadingMilis;
-        public InterstitialAdLoadedSignal(string placement, long loadingMilis) : base(placement) { this.LoadingMilis = loadingMilis; }
+        public long            LoadingMilis;
+        public InterstitialAdLoadedSignal(string placement, long loadingMilis, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent) { this.LoadingMilis = loadingMilis; }
     }
 
     public class InterstitialAdEligibleSignal : BaseAdsSignal
@@ -30,7 +33,7 @@
 
     public class InterstitialAdClickedSignal : BaseAdsSignal
     {
-        public InterstitialAdClickedSignal(string placement) : base(placement) { }
+        public InterstitialAdClickedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent) { }
     }
 
     public class InterstitialAdDisplayedSignal : BaseAdsSignal

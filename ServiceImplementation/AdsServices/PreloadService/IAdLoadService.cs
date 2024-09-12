@@ -4,6 +4,7 @@ namespace Core.AdsServices
 
     public interface IAdLoadService
     {
+        
         AdNetworkSettings AdNetworkSettings { get;}
         bool              IsRewardedAdReady(string place="");
         bool              IsInterstitialAdReady(string place="");

@@ -5,6 +5,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
+    using Core.AnalyticServices.CommonEvents;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs;
@@ -581,11 +582,16 @@ namespace ServiceImplementation.AdsServices.AppLovin
         // Interstitial
         //.............
 
-        private void OnInterstitialAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2) { this.signalBus.Fire(new InterstitialAdClickedSignal(arg2.Placement)); }
+        private void OnInterstitialAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+            var adRevenueEvent = this.CreateAdsRevenueEvent(arg2);
+            this.signalBus.Fire(new InterstitialAdClickedSignal(arg2.Placement, adRevenueEvent));
+        }
         
         private void OnInterstitialAdLoadedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.signalBus.Fire(new InterstitialAdLoadedSignal(arg2.Placement, arg2.LatencyMillis));
+            var adRevenueEvent = this.CreateAdsRevenueEvent(arg2);
+            this.signalBus.Fire(new InterstitialAdLoadedSignal(arg2.Placement, arg2.LatencyMillis,adRevenueEvent));
         }
 
         private void OnInterstitialAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2) { this.signalBus.Fire(new InterstitialAdLoadFailedSignal(arg1, arg2.Message, arg2.LatencyMillis)); }
@@ -658,6 +664,26 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public bool IsShowingAOAAd { get; set; } = false;
 
         private void InternalLoadAppOpenAd() { MaxSdk.LoadAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.Id); }
+
+        #endregion
+
+        #region Revenue tracker
+
+        private AdsRevenueEvent CreateAdsRevenueEvent(MaxSdkBase.AdInfo adInfo)
+        {
+            if (adInfo == null) return null;
+            return new()
+            {
+                AdsRevenueSourceId = AdRevenueConstants.ARSourceAppLovinMAX,
+                AdUnit             = adInfo.AdUnitIdentifier,
+                Revenue            = adInfo.Revenue,
+                Currency           = "USD",
+                NetworkPlacement = adInfo.NetworkPlacement,
+                Placement          = adInfo.Placement,
+                AdNetwork          = adInfo.NetworkName,
+                AdFormat           = adInfo.AdFormat,
+            };
+        }
 
         #endregion
     }
