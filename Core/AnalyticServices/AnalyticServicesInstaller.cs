@@ -21,6 +21,8 @@ namespace Core.AnalyticServices
             this.Container.DeclareSignal<EventTrackedSignal>();
             this.Container.DeclareSignal<SetUserIdSignal>();
             this.Container.DeclareSignal<AdRevenueSignal>();
+            this.Container.DeclareSignal<AdRevenueLoadedSignal>();
+            this.Container.DeclareSignal<AdRevenueClickedSignal>();
             var unScaleInGameTimerManager = new GameObject("UnScaleInGameTimerManager").AddComponent<UnScaleInGameStopWatchManager>();
             Object.DontDestroyOnLoad(unScaleInGameTimerManager);
             this.Container.Bind<UnScaleInGameStopWatchManager>().FromInstance(unScaleInGameTimerManager).AsSingle();

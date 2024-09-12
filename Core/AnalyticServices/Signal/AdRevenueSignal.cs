@@ -9,17 +9,16 @@ namespace Core.AnalyticServices.Signal
         public AdRevenueSignal(AdsRevenueEvent adsRevenueEvent) { this.AdsRevenueEvent = adsRevenueEvent; }
     }
 
-    public class AdRevenueLoadedSignal : AdRevenueSignal
+    public class AdRevenueLoadedSignal
     {
-        public AdRevenueLoadedSignal(AdsRevenueEvent adsRevenueEvent) : base(adsRevenueEvent)
-        {
-        }
+        public           AdsRevenueEvent AdsRevenueEvent;
+        public AdRevenueLoadedSignal(AdsRevenueEvent adsRevenueEvent) { this.AdsRevenueEvent = adsRevenueEvent; }
     }
 
-    public class AdRevenueClickedSignal : AdRevenueSignal
+    public class AdRevenueClickedSignal
     {
-        public AdRevenueClickedSignal(AdsRevenueEvent adsRevenueEvent) : base(adsRevenueEvent)
-        {
-        }
+        public           AdsRevenueEvent AdsRevenueEvent;
+
+        public AdRevenueClickedSignal(AdsRevenueEvent adsRevenueEvent) { this.AdsRevenueEvent = adsRevenueEvent; }
     }
 }
