@@ -38,7 +38,7 @@
 
     public class InterstitialAdDisplayedSignal : BaseAdsSignal
     {
-        public InterstitialAdDisplayedSignal(string placement) : base(placement) { }
+        public InterstitialAdDisplayedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent) { }
     }
 
     public class InterstitialAdDisplayedFailedSignal : BaseAdsSignal
@@ -48,6 +48,6 @@
 
     public class InterstitialAdClosedSignal : BaseAdsSignal
     {
-        public InterstitialAdClosedSignal(string placement) : base(placement) { }
+        public InterstitialAdClosedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent) { }
     }
 }

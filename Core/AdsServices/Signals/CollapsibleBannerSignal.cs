@@ -1,22 +1,24 @@
 namespace Core.AdsServices.Signals
 {
+    using Core.AnalyticServices.CommonEvents;
+
     public class CollapsibleBannerAdPresentedSignal : BaseAdsSignal
     {
-        public CollapsibleBannerAdPresentedSignal(string placement) : base(placement)
+        public CollapsibleBannerAdPresentedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
         {
         }
     }
     
     public class CollapsibleBannerAdDismissedSignal : BaseAdsSignal
     {
-        public CollapsibleBannerAdDismissedSignal(string placement) : base(placement)
+        public CollapsibleBannerAdDismissedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
         {
         }
     }
     
     public class CollapsibleBannerAdLoadedSignal : BaseAdsSignal
     {
-        public CollapsibleBannerAdLoadedSignal(string placement) : base(placement)
+        public CollapsibleBannerAdLoadedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
         {
         }
     }
@@ -32,7 +34,7 @@ namespace Core.AdsServices.Signals
     
     public class CollapsibleBannerAdClickedSignal : BaseAdsSignal
     {
-        public CollapsibleBannerAdClickedSignal(string placement) : base(placement)
+        public CollapsibleBannerAdClickedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
         {
         }
     }

@@ -303,7 +303,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void BannerViewOnAdLoadFailed(LoadAdError obj) { this.signalBus.Fire(new MRecAdLoadFailedSignal("")); }
 
-        private void BannerViewOnAdLoaded() { this.signalBus.Fire(new MRecAdLoadedSignal("")); }
+        private void BannerViewOnAdLoaded()
+        {
+            var adsRevenueEvent = new AdsRevenueEvent()
+                                  {
+                                      AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
+                                      Revenue            = 0,
+                                      Currency           = "USD",
+                                      Placement          = "MREC",
+                                      AdNetwork          = "AdMob",
+                                      NetworkPlacement = "",
+                                      AdFormat           = "MREC",
+                                      AdUnit             = "MREC",
+                                  };
+            this.signalBus.Fire(new MRecAdLoadedSignal("", adsRevenueEvent));
+        }
 
         private void MRECAdHandlePaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, "MREC");
 

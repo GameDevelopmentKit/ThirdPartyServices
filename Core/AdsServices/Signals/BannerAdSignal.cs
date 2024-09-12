@@ -1,22 +1,24 @@
 ﻿namespace Core.AdsServices.Signals
 {
+    using Core.AnalyticServices.CommonEvents;
+
     public class BannerAdPresentedSignal : BaseAdsSignal
     {
-        public BannerAdPresentedSignal(string placement) : base(placement)
+        public BannerAdPresentedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
         {
         }
     }
     
     public class BannerAdDismissedSignal : BaseAdsSignal
     {
-        public BannerAdDismissedSignal(string placement) : base(placement)
+        public BannerAdDismissedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
         {
         }
     }
     
     public class BannerAdLoadedSignal : BaseAdsSignal
     {
-        public BannerAdLoadedSignal(string placement) : base(placement)
+        public BannerAdLoadedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
         {
         }
     }
@@ -32,8 +34,8 @@
     
     public class BannerAdClickedSignal : BaseAdsSignal
     {
-        public BannerAdClickedSignal(string placement) : base(placement)
-        {
-        }
+        private readonly AdsRevenueEvent adsRevenueEvent;
+
+        public BannerAdClickedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement) { this.adsRevenueEvent = adsRevenueEvent; }
     }
 }

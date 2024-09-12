@@ -18,17 +18,9 @@
 
     public class AdRequestSignal : BaseAdsSignal
     {
-        public string AdPlatform;
-        public string AdUnitId;
-        public string AdSource;
-        public string AdFormat;
 
-        public AdRequestSignal(string placement, string adPlatform, string adUnitId, string adSource, string adFormat, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
+        public AdRequestSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
         {
-            this.AdPlatform = adPlatform;
-            this.AdUnitId   = adUnitId;
-            this.AdSource   = adSource;
-            this.AdFormat   = adFormat;
         }
     }
 }

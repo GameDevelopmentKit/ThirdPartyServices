@@ -1,9 +1,11 @@
 ﻿namespace Core.AdsServices.Signals
 {
+    using Core.AnalyticServices.CommonEvents;
+
     public class RewardedAdLoadedSignal : BaseAdsSignal
     {
         public long LoadingTime;
-        public RewardedAdLoadedSignal(string placement, long loadingTime) : base(placement)
+        public RewardedAdLoadedSignal(string placement, long loadingTime, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
         {
             this.LoadingTime = loadingTime;
         }
@@ -22,17 +24,19 @@
 
     public class RewardedAdClickedSignal : BaseAdsSignal
     {
-        public RewardedAdClickedSignal(string placement) : base(placement) { }
+        public RewardedAdClickedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent) { }
     }
 
     public class RewardedAdDisplayedSignal : BaseAdsSignal
     {
-        public RewardedAdDisplayedSignal(string placement) : base(placement) { }
+        public RewardedAdDisplayedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent) { }
     }
 
     public class RewardedAdCompletedSignal : BaseAdsSignal
     {
-        public RewardedAdCompletedSignal(string placement) : base(placement) { }
+        public RewardedAdCompletedSignal(string placement) : base(placement)
+        {
+        }
     }
 
     public class RewardedSkippedSignal : BaseAdsSignal
