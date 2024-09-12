@@ -13,7 +13,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
-    using Zenject;
+    using GameFoundation.Signals;
 
     public class AppLovinAdsWrapper : IAdServices, IMRECAdService, IInitializable, IDisposable, IAdLoadService, IAOAAdService
     {

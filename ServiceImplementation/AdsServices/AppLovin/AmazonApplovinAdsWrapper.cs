@@ -6,7 +6,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
-    using Zenject;
+    using GameFoundation.Signals;
 
     public class AmazonApplovinAdsWrapper : AppLovinAdsWrapper
     {
@@ -59,7 +59,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (this.isFirstMRecRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstMRecRequest = false;
-                
+
                 this.mRecAdsRequest = new APSBannerAdRequest(300, 250, amazonId);
                 this.mRecAdsRequest.onSuccess += response =>
                     {

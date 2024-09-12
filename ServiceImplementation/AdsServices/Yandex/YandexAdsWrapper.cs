@@ -15,7 +15,7 @@ namespace ServiceImplementation.AdsServices.Yandex
     using UnityEngine;
     using YandexMobileAds;
     using YandexMobileAds.Base;
-    using Zenject;
+    using GameFoundation.Signals;
     using AdInfo = Core.AdsServices.AdInfo;
 
     public class YandexAdsWrapper : IAdServices, IInitializable, IAdLoadService, IAOAAdService
@@ -115,7 +115,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleBannerAdFailedToLoad(object sender, AdFailureEventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleBannerAdFailedToLoad {args.Message}");
-            
+
             this.signalBus.Fire(new BannerAdLoadFailedSignal("", args.Message));
         }
 
@@ -243,8 +243,8 @@ namespace ServiceImplementation.AdsServices.Yandex
         public bool IsRewardedAdReady(string place) => this.rewardedAd != null;
 
         public void LoadRewardAds(string           place = "")               => this.rewardedAdLoader.LoadAd(new AdRequestConfiguration.Builder(this.YandexSettings.RewardedAdId.Id).Build());
-        public bool TryGetRewardPlacementId(string placement, out string id) 
-        { 
+        public bool TryGetRewardPlacementId(string placement, out string id)
+        {
             id = default;
             return false;
         }
@@ -298,7 +298,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleInterstitialFailedToLoad(object sender, AdFailedToLoadEventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleInterstitialFailedToLoad {args.Message}");
-            
+
             this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", args.Message, 0));
         }
 
@@ -382,7 +382,7 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.appOpenAd.OnAdFailedToShow += this.HandleAoaAdFailedToShow;
             this.appOpenAd.OnAdDismissed    += this.HandleAoaAdDismissed;
             this.appOpenAd.OnAdImpression   += this.HandleImpression;
-            
+
             var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.AoaAdId.Id, AoaAdFormat);
             this.signalBus.Fire(new AppOpenLoadedSignal("", adInfo));
         }

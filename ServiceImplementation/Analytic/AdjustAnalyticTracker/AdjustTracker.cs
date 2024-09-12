@@ -10,7 +10,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using Core.AnalyticServices.Data;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
-    using Zenject;
+    using GameFoundation.Signals;
 
     public class AdjustTracker : BaseTracker
     {
@@ -70,7 +70,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 #else
             var environment = AdjustEnvironment.Production;
 #endif
-            
+
 
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(appToken))

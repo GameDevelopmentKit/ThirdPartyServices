@@ -11,7 +11,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using GameFoundation.Scripts.Utilities.Extension;
     using Newtonsoft.Json;
     using UnityEngine;
-    using Zenject;
+    using GameFoundation.Signals;
 
     public class ByteBrewTracker : BaseTracker
     {
@@ -31,13 +31,13 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         }
 
         protected override TaskCompletionSource<bool>      TrackerReady                                            { get; } = new();
-        
+
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates                                    { get; } = new();
-        
+
         protected override Task TrackerSetup()
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
-            
+
             Debug.Log($"ByteBrew: Create ByteBrew GameObject");
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
@@ -46,10 +46,10 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             Debug.Log($"ByteBrew: Initialize Finished");
 
             this.TrackerReady.SetResult(true);
-            
+
             return this.TrackerReady.Task;
         }
-        
+
         protected override void SetUserId(string userId)
         {
             ByteBrew.SetCustomUserDataAttribute("user_id", userId);
@@ -61,10 +61,10 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             {
                 ByteBrew.NewCustomEvent(name);
                 Debug.Log($"ByteBrew: OnEvent - {name}");
-                
+
                 return;
             }
-            
+
             var convertedData = data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             ByteBrew.NewCustomEvent(name, convertedData);
             Debug.Log($"ByteBrew: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");

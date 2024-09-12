@@ -5,7 +5,7 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
-    using Zenject;
+    using GameFoundation.Signals;
 
     public class ApplovinAdRevenueTracker : IAdRevenueTracker
     {

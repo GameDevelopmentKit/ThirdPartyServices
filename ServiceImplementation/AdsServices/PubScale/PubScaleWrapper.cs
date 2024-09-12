@@ -13,7 +13,7 @@ namespace ServiceImplementation.AdsServices.PubScale
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
     using UnityEngine;
-    using Zenject;
+    using GameFoundation.Signals;
 
     public class PubScaleWrapper : IImmersiveAdsService
     {

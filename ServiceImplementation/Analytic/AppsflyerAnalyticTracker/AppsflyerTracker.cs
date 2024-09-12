@@ -14,7 +14,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
-    using Zenject;
+    using GameFoundation.Signals;
 #if THEONE_IAP
     using AppsFlyerConnector;
 #endif
