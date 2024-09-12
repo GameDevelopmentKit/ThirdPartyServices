@@ -4,21 +4,36 @@ namespace Core.AnalyticServices.Signal
 
     public class AdRevenueSignal
     {
+        public string          NetworkPlacement;
         public AdsRevenueEvent AdsRevenueEvent;
 
-        public AdRevenueSignal(AdsRevenueEvent adsRevenueEvent) { this.AdsRevenueEvent = adsRevenueEvent; }
+        public AdRevenueSignal(AdsRevenueEvent adsRevenueEvent, string networkPlacement = null)
+        {
+            this.AdsRevenueEvent = adsRevenueEvent;
+            this.NetworkPlacement       = networkPlacement;
+        }
     }
 
     public class AdRevenueLoadedSignal
     {
+        public string NetworkPlacement;
         public           AdsRevenueEvent AdsRevenueEvent;
-        public AdRevenueLoadedSignal(AdsRevenueEvent adsRevenueEvent) { this.AdsRevenueEvent = adsRevenueEvent; }
+        public AdRevenueLoadedSignal(AdsRevenueEvent adsRevenueEvent, string networkPlacement = null)
+        {
+            this.AdsRevenueEvent = adsRevenueEvent;
+            this.NetworkPlacement       = networkPlacement;
+        }
     }
 
     public class AdRevenueClickedSignal
     {
-        public           AdsRevenueEvent AdsRevenueEvent;
+        public string          NetworkPlacement;
+        public AdsRevenueEvent AdsRevenueEvent;
 
-        public AdRevenueClickedSignal(AdsRevenueEvent adsRevenueEvent) { this.AdsRevenueEvent = adsRevenueEvent; }
+        public AdRevenueClickedSignal(AdsRevenueEvent adsRevenueEvent, string networkPlacement = null)
+        {
+            this.AdsRevenueEvent = adsRevenueEvent;
+            this.NetworkPlacement       = networkPlacement;
+        }
     }
 }
