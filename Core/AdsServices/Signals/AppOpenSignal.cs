@@ -1,29 +1,31 @@
 namespace Core.AdsServices.Signals
 {
-   public class AppOpenFullScreenContentOpenedSignal : BaseAdsSignal
+    using Core.AnalyticServices.CommonEvents;
+
+    public class AppOpenFullScreenContentOpenedSignal : BaseAdsSignal
    {
-       public AppOpenFullScreenContentOpenedSignal(string placement) : base(placement)
+       public AppOpenFullScreenContentOpenedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
        {
        }
    }
    
    public class AppOpenFullScreenContentFailedSignal : BaseAdsSignal
    {
-       public AppOpenFullScreenContentFailedSignal(string placement) : base(placement)
+       public AppOpenFullScreenContentFailedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
        {
        }
    }
    
    public class AppOpenFullScreenContentClosedSignal : BaseAdsSignal
    {
-       public AppOpenFullScreenContentClosedSignal(string placement) : base(placement)
+       public AppOpenFullScreenContentClosedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
        {
        }
    }
    
    public class AppOpenLoadedSignal : BaseAdsSignal
    {
-       public AppOpenLoadedSignal(string placement) : base(placement)
+       public AppOpenLoadedSignal(string placement,AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
        {
        }
    }
@@ -44,14 +46,14 @@ namespace Core.AdsServices.Signals
    
    public class AppOpenCalledSignal : BaseAdsSignal
    {
-       public AppOpenCalledSignal(string placement) : base(placement)
+       public AppOpenCalledSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
        {
        }
    }
    
    public class AppOpenClickedSignal : BaseAdsSignal
    {
-       public AppOpenClickedSignal(string placement) : base(placement)
+       public AppOpenClickedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
        {
        }
    }

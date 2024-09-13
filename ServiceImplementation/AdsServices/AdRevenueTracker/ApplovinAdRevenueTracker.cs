@@ -1,6 +1,7 @@
 #if APPLOVIN
 namespace ServiceImplementation.AdsServices.AdRevenueTracker
 {
+    using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
@@ -21,30 +22,30 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
         private void SubscribeAdPaidEvent()
         {
             MaxSdkCallbacks.Banner.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            MaxSdkCallbacks.Banner.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            MaxSdkCallbacks.Banner.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
+            // MaxSdkCallbacks.Banner.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
+            // MaxSdkCallbacks.Banner.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
 
             MaxSdkCallbacks.Interstitial.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            MaxSdkCallbacks.Interstitial.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            MaxSdkCallbacks.Interstitial.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
+            // MaxSdkCallbacks.Interstitial.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
+            // MaxSdkCallbacks.Interstitial.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
 
             MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            MaxSdkCallbacks.Rewarded.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            MaxSdkCallbacks.Rewarded.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
+            // MaxSdkCallbacks.Rewarded.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
+            // MaxSdkCallbacks.Rewarded.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
 
             MaxSdkCallbacks.AppOpen.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            MaxSdkCallbacks.AppOpen.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
+            // MaxSdkCallbacks.AppOpen.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
+            // MaxSdkCallbacks.AppOpen.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
 
             MaxSdkCallbacks.MRec.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            MaxSdkCallbacks.MRec.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            MaxSdkCallbacks.MRec.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
+            // MaxSdkCallbacks.MRec.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
+            // MaxSdkCallbacks.MRec.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
 
             MaxSdkCallbacks.RewardedInterstitial.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            MaxSdkCallbacks.RewardedInterstitial.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            MaxSdkCallbacks.RewardedInterstitial.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
+            // MaxSdkCallbacks.RewardedInterstitial.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
+            // MaxSdkCallbacks.RewardedInterstitial.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
         }
-
+        
         private void OnAdRevenueClickedEvent(string adUnitIdentify, MaxSdkBase.AdInfo adInfo)
         {
             var adsRevenueEvent = this.CreateAdsRevenueEvent(adInfo);
@@ -80,6 +81,7 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
                 AdUnit             = adInfo.AdUnitIdentifier,
                 Revenue            = adInfo.Revenue,
                 Currency           = "USD",
+                NetworkPlacement   = adInfo.NetworkPlacement,
                 Placement          = adInfo.Placement,
                 AdNetwork          = adInfo.NetworkName,
                 AdFormat           = adInfo.AdFormat,

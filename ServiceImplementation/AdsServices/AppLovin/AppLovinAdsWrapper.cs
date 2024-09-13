@@ -424,19 +424,32 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InternalLoadAppOpenAd();
         }
 
-        private void OnAppOpenDisplayFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3) { this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(arg1)); }
+        private void OnAppOpenDisplayFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)
+        {
+            var adRevenueEvent = this.CreateAdsRevenueEvent(arg3);
+            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(arg1, adRevenueEvent));
+        }
 
         private void OnAppOpenDisplayedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(arg1));
+            var adRevenueEvent = this.CreateAdsRevenueEvent(arg2);
+            this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(arg1, adRevenueEvent));
             this.IsShowingAOAAd = true;
         }
 
-        private void OnAppOpenClickedEvent(string arg1, MaxSdkBase.AdInfo arg2) { this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(arg1)); }
+        private void OnAppOpenClickedEvent(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+            var adRevenueEvent = this.CreateAdsRevenueEvent(arg2);
+            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(arg1, adRevenueEvent));
+        }
 
         private void OnAppOpenLoadFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2) { this.signalBus.Fire(new AppOpenLoadFailedSignal(arg1)); }
 
-        private void OnAppOpenLoadedEvent(string arg1, MaxSdkBase.AdInfo arg2) { this.signalBus.Fire(new AppOpenLoadedSignal(arg1)); }
+        private void OnAppOpenLoadedEvent(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+            var adRevenueEvent = this.CreateAdsRevenueEvent(arg2);
+            this.signalBus.Fire(new AppOpenLoadedSignal(arg1, adRevenueEvent));
+        }
 
         public bool IsAOAReady()
         {
@@ -452,7 +465,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenDismissedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
+            var adRevenueEvent = this.CreateAdsRevenueEvent(arg2);
+            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal("", adRevenueEvent));
             this.InternalLoadAppOpenAd();
             this.IsShowingAOAAd = false;
         }
