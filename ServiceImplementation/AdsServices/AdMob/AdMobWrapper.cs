@@ -14,6 +14,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Api;
+    using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
@@ -54,6 +55,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.VerifySetting();
             this.Init();
         }
+        
+        private const string AppOpenAppAdFormat = "AOA";
+        private const string MrecAdFormat        = "MREC";
 
         private AdMobSettings ADMobSettings => this.thirdPartiesConfig.AdSettings.AdMob;
 
@@ -179,7 +183,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                     return;
                 }
 
-                var adRevenueEvent = this.CreateAdsRevenueEvent("AOA", 0);
+                var adRevenueEvent = AdRevenueEventHelper.CreateAdsRevenueEvent(AdMobWrapper.AppOpenAppAdFormat, AdMobWrapper.AppOpenAppAdFormat,0);
                 this.signalBus.Fire(new AppOpenLoadedSignal("", adRevenueEvent));
                 this.currentAOASleepLoadingTime = this.minAOASleepLoadingTime;
 
@@ -197,7 +201,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void AOAHandleAdFullScreenContentClosed()
         {
             this.logService.Log("Closed app open ad");
-            var adRevenueEvent = this.CreateAdsRevenueEvent("AOA", 0);
+            var adRevenueEvent = AdRevenueEventHelper.CreateAdsRevenueEvent(AdMobWrapper.AppOpenAppAdFormat, AdMobWrapper.AppOpenAppAdFormat,0);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal("", adRevenueEvent));
             this.IsShowingAOAAd = false;
         }
@@ -205,21 +209,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void AOAHandleAdFullScreenContentFailed(AdError args)
         {
             this.logService.Log($"Failed to present the ad (reason: {args.GetMessage()})");
-            var adRevenueEvent = this.CreateAdsRevenueEvent("AOA", 0);
+            var adRevenueEvent = AdRevenueEventHelper.CreateAdsRevenueEvent(AdMobWrapper.AppOpenAppAdFormat, AdMobWrapper.AppOpenAppAdFormat,0);
             this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal("", adRevenueEvent));
         }
 
         private void AOAHandleAdFullScreenContentOpened()
         {
             this.logService.Log("Displayed app open ad");
-            var adRevenueEvent = this.CreateAdsRevenueEvent("AOA", 0);
+            var adRevenueEvent = AdRevenueEventHelper.CreateAdsRevenueEvent(AdMobWrapper.AppOpenAppAdFormat, AdMobWrapper.AppOpenAppAdFormat,0);
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal("", adRevenueEvent));
             this.IsShowingAOAAd = true;
         }
 
         private void AOAHandleAdImpressionRecorded() { this.logService.Log("Recorded ad impression"); }
 
-        private void AOAHandleAdPaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, "AOA");
+        private void AOAHandleAdPaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, AdMobWrapper.AppOpenAppAdFormat);
 
         #endregion
 
@@ -309,21 +313,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void BannerViewOnAdLoaded()
         {
-            var adsRevenueEvent = new AdsRevenueEvent()
-                                  {
-                                      AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
-                                      Revenue            = 0,
-                                      Currency           = "USD",
-                                      Placement          = "MREC",
-                                      AdNetwork          = "AdMob",
-                                      NetworkPlacement = "",
-                                      AdFormat           = "MREC",
-                                      AdUnit             = "MREC",
-                                  };
+            var adsRevenueEvent = AdRevenueEventHelper.CreateAdsRevenueEvent(AdMobWrapper.MrecAdFormat, AdMobWrapper.MrecAdFormat, 0);
             this.signalBus.Fire(new MRecAdLoadedSignal("", adsRevenueEvent));
         }
 
-        private void MRECAdHandlePaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, "MREC");
+        private void MRECAdHandlePaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, AdMobWrapper.MrecAdFormat);
 
         #endregion
 
@@ -466,24 +460,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void AdMobHandlePaidEvent(AdValue args, string adFormat)
         {
-            var adsRevenueEvent = this.CreateAdsRevenueEvent(adFormat, args.Value);
+            var adsRevenueEvent = AdRevenueEventHelper.CreateAdsRevenueEvent(adFormat, adFormat,args.Value);
 
             this.analyticService.Track(adsRevenueEvent);
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
-        }
-        
-        private AdsRevenueEvent CreateAdsRevenueEvent(string adFormat, long revenue)
-        {
-            return new AdsRevenueEvent
-            {
-                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
-                Revenue            = revenue / 1e6,
-                Currency           = "USD",
-                Placement          = adFormat,
-                AdNetwork          = "AdMob",
-                AdFormat           = adFormat,
-                AdUnit             = adFormat,
-            };
         }
     }
 #endif
