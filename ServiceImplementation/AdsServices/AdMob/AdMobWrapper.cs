@@ -179,7 +179,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                     return;
                 }
 
-                this.signalBus.Fire(new AppOpenLoadedSignal(""));
+                var adRevenueEvent = this.CreateAdsRevenueEvent("AOA", 0);
+                this.signalBus.Fire(new AppOpenLoadedSignal("", adRevenueEvent));
                 this.currentAOASleepLoadingTime = this.minAOASleepLoadingTime;
 
                 // App open ad is loaded.
@@ -196,20 +197,23 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void AOAHandleAdFullScreenContentClosed()
         {
             this.logService.Log("Closed app open ad");
-            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
+            var adRevenueEvent = this.CreateAdsRevenueEvent("AOA", 0);
+            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal("", adRevenueEvent));
             this.IsShowingAOAAd = false;
         }
 
         private void AOAHandleAdFullScreenContentFailed(AdError args)
         {
             this.logService.Log($"Failed to present the ad (reason: {args.GetMessage()})");
-            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(""));
+            var adRevenueEvent = this.CreateAdsRevenueEvent("AOA", 0);
+            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal("", adRevenueEvent));
         }
 
         private void AOAHandleAdFullScreenContentOpened()
         {
             this.logService.Log("Displayed app open ad");
-            this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(""));
+            var adRevenueEvent = this.CreateAdsRevenueEvent("AOA", 0);
+            this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal("", adRevenueEvent));
             this.IsShowingAOAAd = true;
         }
 
@@ -462,19 +466,24 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void AdMobHandlePaidEvent(AdValue args, string adFormat)
         {
-            var adsRevenueEvent = new AdsRevenueEvent()
-                                  {
-                                      AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
-                                      Revenue            = args.Value / 1e6,
-                                      Currency           = "USD",
-                                      Placement          = adFormat,
-                                      AdNetwork          = "AdMob",
-                                      AdFormat           = adFormat,
-                                      AdUnit             = adFormat
-                                  };
+            var adsRevenueEvent = this.CreateAdsRevenueEvent(adFormat, args.Value);
 
             this.analyticService.Track(adsRevenueEvent);
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
+        }
+        
+        private AdsRevenueEvent CreateAdsRevenueEvent(string adFormat, long revenue)
+        {
+            return new AdsRevenueEvent
+            {
+                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
+                Revenue            = revenue / 1e6,
+                Currency           = "USD",
+                Placement          = adFormat,
+                AdNetwork          = "AdMob",
+                AdFormat           = adFormat,
+                AdUnit             = adFormat,
+            };
         }
     }
 #endif
