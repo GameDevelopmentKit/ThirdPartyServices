@@ -165,7 +165,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void InterstitialOnAdClosedEvent(IronSourceAdInfo obj)                            { this.signalBus.Fire(new InterstitialAdClosedSignal(this.interstitialPlacement)); }
         private void InterstitialOnAdShowFailedEvent(IronSourceError arg1, IronSourceAdInfo arg2) { this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(this.interstitialPlacement)); }
-        private void InterstitialOnAdShowSucceededEvent(IronSourceAdInfo obj)                     { this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.interstitialPlacement)); }
+        private void InterstitialOnAdShowSucceededEvent(IronSourceAdInfo obj)                     { }
 
         private Stopwatch stopwatchInterstitial;
         private void InterstitialOnAdLoadFailed(IronSourceError obj)
