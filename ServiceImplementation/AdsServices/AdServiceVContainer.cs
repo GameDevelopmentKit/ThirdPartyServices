@@ -5,6 +5,7 @@ namespace ServiceImplementation.AdsServices
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
+    using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Signals;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
@@ -33,18 +34,19 @@ namespace ServiceImplementation.AdsServices
         public static void RegisterAdService(this IContainerBuilder builder)
         {
             //config
-            builder.Register<AdServicesConfig>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-            builder.Register<MiscConfig>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.Register<AdServicesConfig>(Lifetime.Singleton).AsInterfacesAndSelf();
+            builder.Register<MiscConfig>(Lifetime.Singleton).AsInterfacesAndSelf();
 
             #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
             builder.RegisterComponentOnNewGameObject<PubScaleManager>(Lifetime.Singleton);
+            builder.AutoResolve<PubScaleManager>();
             builder.Register<PubScaleWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
             #if APPLOVIN
             #if APS_ENABLE && !UNITY_EDITOR
-            builder.Register<AmazonApplovinAdsWrapper>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.Register<AmazonApplovinAdsWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             #else
-            builder.Register<AppLovinAdsWrapper>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.Register<AppLovinAdsWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
             #elif IRONSOURCE && !UNITY_EDITOR
             builder.Register<IronSourceWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
@@ -57,10 +59,10 @@ namespace ServiceImplementation.AdsServices
             #endif
 
             #if ADMOB
-            builder.Register<AdMobWrapper>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.Register<AdMobWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             if (!builder.Exists(typeof(IBackFillAdsService), true))
             {
-                builder.Register<AdMobAdService>(Lifetime.Singleton).As(typeof(GameFoundation.DI.IInitializable), typeof(ICollapsibleBannerAd), typeof(IAdLoadService), typeof(IBackFillAdsService));
+                builder.Register<AdMobAdService>(Lifetime.Singleton).As(typeof(IInitializable), typeof(ICollapsibleBannerAd), typeof(IAdLoadService), typeof(IBackFillAdsService));
             }
             #else
             builder.Register<DummyCollapsibleBannerAdAdService>(Lifetime.Singleton).AsImplementedInterfaces();
@@ -70,8 +72,8 @@ namespace ServiceImplementation.AdsServices
             builder.Register<DummyIBackFillService>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
 
-            builder.Register<PreloadAdService>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-            typeof(IAdRevenueTracker).GetDerivedTypes().ForEach(type => builder.Register(type, Lifetime.Singleton));
+            builder.Register<PreloadAdService>(Lifetime.Singleton).AsImplementedInterfaces();
+            typeof(IAdRevenueTracker).GetDerivedTypes().ForEach(type => builder.Register(type, Lifetime.Singleton).AsImplementedInterfaces());
 
             builder.Register<AppTrackingServices>(Lifetime.Singleton).AsImplementedInterfaces();
             #if ADMOB

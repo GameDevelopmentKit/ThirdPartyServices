@@ -5,9 +5,10 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
+    using GameFoundation.DI;
     using GameFoundation.Signals;
 
-    public class ApplovinAdRevenueTracker : IAdRevenueTracker
+    public class ApplovinAdRevenueTracker : IAdRevenueTracker, IInitializable
     {
         private readonly IAnalyticServices analyticServices;
         private readonly SignalBus         signalBus;
@@ -16,10 +17,9 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
         {
             this.analyticServices = analyticServices;
             this.signalBus        = signalBus;
-            this.SubscribeAdPaidEvent();
         }
 
-        private void SubscribeAdPaidEvent()
+        public void Initialize()
         {
             MaxSdkCallbacks.Banner.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
             MaxSdkCallbacks.Interstitial.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
