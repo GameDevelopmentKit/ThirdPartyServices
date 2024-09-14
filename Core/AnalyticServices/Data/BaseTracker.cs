@@ -6,16 +6,18 @@ namespace Core.AnalyticServices.Data
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
+    using GameFoundation.DI;
     using GameFoundation.Signals;
     using UnityEngine;
     using Utilities.Extension;
 
     public delegate void EventDelegate(IEvent trackedEvent, Dictionary<string, object> data);
 
-    public abstract class BaseTracker
+    public abstract class BaseTracker : IInitializable
     {
         #region inject
 
+        private readonly   SignalBus      signalBus;
         protected readonly AnalyticConfig analyticConfig;
 
         #endregion
@@ -71,15 +73,15 @@ namespace Core.AnalyticServices.Data
         /// </summary>
         protected BaseTracker(SignalBus signalBus, AnalyticConfig analyticConfig)
         {
+            this.signalBus      = signalBus;
             this.analyticConfig = analyticConfig;
-            signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);
-            signalBus.Subscribe<SetUserIdSignal>(signal => this.SetUserId(signal.UserId));
-            this.Init();
         }
 
-        private async void Init()
+        public void Initialize()
         {
-            await this.TrackerSetup();
+            this.TrackerSetup();
+            this.signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);
+            this.signalBus.Subscribe<SetUserIdSignal>(signal => this.SetUserId(signal.UserId));
         }
 
         private async void EventTracked(EventTrackedSignal trackedData)

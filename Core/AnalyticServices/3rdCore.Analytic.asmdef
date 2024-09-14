@@ -2,6 +2,7 @@
   "name": "3rdCore.Analytic",
   "rootNamespace": "",
   "references": [
+    "GameFoundation.DI",
     "GameFoundation.Signals",
     "Zenject",
     "VContainer",
