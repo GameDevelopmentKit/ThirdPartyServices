@@ -56,7 +56,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.SetCreativeDebuggerEnabled(this.AppLovinSetting.CreativeDebugger);
 #endif
             MaxSdk.SetIsAgeRestrictedUser(this.AppLovinSetting.AgeRestrictMode);
-            MaxSdk.SetHasUserConsent(true);
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
             MaxSdk.InitializeSdk();
             MaxSdkCallbacks.OnSdkInitializedEvent += this.OnSDKInitializedHandler;
