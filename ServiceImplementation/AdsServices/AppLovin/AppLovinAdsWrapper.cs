@@ -8,6 +8,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using Core.AdsServices.Signals;
     using Core.AnalyticServices.CommonEvents;
     using Cysharp.Threading.Tasks;
+    using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.Configs;
