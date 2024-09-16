@@ -21,6 +21,7 @@
         public const string MinPauseSecondToShowAoaAD = "min_pause_second_to_show_aoa_ad";
         public const string AoaStartSession           = "aoa_start_session";
         public const string UseAoaAdmob               = "use_aoa_admob";
+        public const string AoaSplash                 = "AOA_splash";
 
         #endregion
 

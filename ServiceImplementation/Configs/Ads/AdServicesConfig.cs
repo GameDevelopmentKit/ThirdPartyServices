@@ -28,10 +28,7 @@ namespace ServiceImplementation.Configs.Ads
             this.FetchRemoteConfig(); // Init default value
         }
 
-        public void Dispose()
-        {
-            this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.FetchRemoteConfig);
-        }
+        public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.FetchRemoteConfig); }
 
         #region General
 
@@ -52,6 +49,7 @@ namespace ServiceImplementation.Configs.Ads
         public int  MinPauseSecondToShowAoaAd { get; private set; }
         public int  AOAStartSession           { get; private set; }
         public bool UseAoaAdmob               { get; private set; }
+        public int  AOASplash                 { get; set; }
 
         #endregion
 
@@ -133,9 +131,9 @@ namespace ServiceImplementation.Configs.Ads
             this.EnableRewardedAd             = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableRewardedAD);
             this.EnableRewardedInterstitialAd = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableRewardedInterstitialAD);
             this.EnableNativeAd               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableNativeAD);
-            #if THEONE_COLLAPSIBLE_BANNER
+#if THEONE_COLLAPSIBLE_BANNER
             this.EnableCollapsibleBanner = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBanner);
-            #endif
+#endif
             this.IntervalLoadAds = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.IntervalLoadAds);
 
             #endregion
@@ -145,6 +143,7 @@ namespace ServiceImplementation.Configs.Ads
             this.MinPauseSecondToShowAoaAd = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.MinPauseSecondToShowAoaAD);
             this.AOAStartSession           = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaStartSession);
             this.UseAoaAdmob               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.UseAoaAdmob);
+            this.AOASplash                 = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaSplash);
 
             #endregion
 
