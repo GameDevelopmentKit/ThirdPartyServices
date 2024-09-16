@@ -55,6 +55,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 #else
             MaxSdk.SetCreativeDebuggerEnabled(this.AppLovinSetting.CreativeDebugger);
 #endif
+            MaxSdk.SetHasUserConsent(true);
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
             MaxSdk.InitializeSdk();
             MaxSdkCallbacks.OnSdkInitializedEvent += this.OnSDKInitializedHandler;
