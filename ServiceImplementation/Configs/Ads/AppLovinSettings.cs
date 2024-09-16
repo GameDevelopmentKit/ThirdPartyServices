@@ -113,11 +113,6 @@
         /// </summary>
         public Dictionary_AdViewPosition_AdId MRECAdIds { get => this.mMRECAdIds; set => this.mMRECAdIds = value; }
 
-        /// <summary>
-        /// age-restricted category.
-        /// </summary>
-        public bool AgeRestrictMode { get { return this.mAgeRestrictMode; } set { this.mAgeRestrictMode = value; } }
-
         public bool CreativeDebugger => this.mCreatveiDebugger;
         
         public bool MediationDebugger => this.mMediationDebugger;
@@ -154,9 +149,6 @@
         private AmazonApplovinSetting amazonApplovinSetting;
 
         [SerializeField] private bool isAdaptiveBanner = true;
-
-        [SerializeField] [LabelText("AgeRestrictMode")]
-        private bool mAgeRestrictMode;
 
         [SerializeField] [LabelText("Creative Debugger")]
         private bool mCreatveiDebugger;
