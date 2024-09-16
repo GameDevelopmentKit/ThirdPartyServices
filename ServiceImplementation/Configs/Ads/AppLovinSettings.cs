@@ -150,6 +150,9 @@
 
         [SerializeField] private bool isAdaptiveBanner = true;
 
+        [SerializeField] [LabelText("AgeRestrictMode")]
+        private bool mAgeRestrictMode;
+
         [SerializeField] [LabelText("Creative Debugger")]
         private bool mCreatveiDebugger;
 
