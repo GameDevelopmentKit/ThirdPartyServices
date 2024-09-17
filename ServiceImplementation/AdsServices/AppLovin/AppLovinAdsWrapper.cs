@@ -301,9 +301,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var adRevenueEvent = new AdsRevenueEvent
             {
                 AdsRevenueSourceId = AdRevenueConstants.ARSourceAppLovinMAX,
-                AdUnit = this.AppLovinSetting.SDKKey,
+                AdUnit = id,
                 AdFormat           = "Banner",
-                NetworkPlacement   = id,
             };
             this.signalBus.Fire<AdRevenueRequestSignal>(new(adRevenueEvent));
             this.CreateAdBanner(id, position, bannerSize);
@@ -345,6 +344,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.Interstitial.OnAdLoadedEvent     += this.OnInterstitialAdLoadedHandler;
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent += this.OnInterstitialAdLoadFailedHandler;
             MaxSdkCallbacks.Interstitial.OnAdClickedEvent    += this.OnInterstitialAdClickedHandler;
+            MaxSdkCallbacks.Interstitial.OnAdDisplayFailedEvent += this.OnInterstitialAdDisplayFailedEvent;
 
             this.InternalLoadInterstitialAd(AdPlacement.Default);
         }
@@ -356,6 +356,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.Interstitial.OnAdLoadedEvent     -= this.OnInterstitialAdLoadedHandler;
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent -= this.OnInterstitialAdLoadFailedHandler;
             MaxSdkCallbacks.Interstitial.OnAdClickedEvent    -= this.OnInterstitialAdClickedHandler;
+            MaxSdkCallbacks.Interstitial.OnAdDisplayFailedEvent -= this.OnInterstitialAdDisplayFailedEvent;
         }
 
         public bool IsInterstitialAdReady(string place)
@@ -387,8 +388,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var adRevenueEvent = new AdsRevenueEvent
             {
                 AdsRevenueSourceId = AdRevenueConstants.ARSourceAppLovinMAX,
+                AdUnit   = id,
                 AdFormat           = "Interstitial",
-                NetworkPlacement   = id,
                 Placement          = adPlacement.Name,
             };
             this.signalBus.Fire<AdRevenueRequestSignal>(new(adRevenueEvent));
@@ -488,6 +489,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent     += this.OnRewardedAdLoadFailedHandler;
             MaxSdkCallbacks.Rewarded.OnAdClickedEvent        += this.OnRewardedAdClickedHandler;
             MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent      += this.OnRewardedAdDisplayedHandler;
+            MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent      += this.OnRewardedAdDisplayedFailedHandler;
 
             this.InternalLoadRewarded(AdPlacement.Default);
         }
@@ -500,6 +502,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent     -= this.OnRewardedAdLoadFailedHandler;
             MaxSdkCallbacks.Rewarded.OnAdClickedEvent        -= this.OnRewardedAdClickedHandler;
             MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent      -= this.OnRewardedAdDisplayedHandler;
+            MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent  -= this.OnRewardedAdDisplayedFailedHandler;
         }
 
         private void OnRewardedCompleted(string arg1, MaxSdkBase.Reward arg2, MaxSdkBase.AdInfo arg3) { this.rewardedCompleted[this.currentShowingRewarded] = true; }
@@ -617,6 +620,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnInterstitialAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2) { this.signalBus.Fire(new InterstitialAdLoadFailedSignal(arg1, arg2.Message, arg2.LatencyMillis)); }
 
         private void InterstitialAdDisplayedSignal(string arg1, MaxSdkBase.AdInfo arg2) { this.signalBus.Fire(new InterstitialAdDisplayedSignal(arg2.Placement)); }
+        
+        private void OnInterstitialAdDisplayFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2 , MaxSdkBase.AdInfo arg3) { this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(arg3.Placement)); }
 
         //.............
         // Rewarded
@@ -625,6 +630,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnRewardedAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2) { this.signalBus.Fire(new RewardedAdClickedSignal(arg2.Placement)); }
 
         private void OnRewardedAdDisplayedHandler(string arg1, MaxSdkBase.AdInfo arg2) { this.signalBus.Fire(new RewardedAdDisplayedSignal(arg2.Placement)); }
+        
+        private void OnRewardedAdDisplayedFailedHandler(string arg1,MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3) { this.signalBus.Fire(new RewardedAdShowFailedSignal(arg3.Placement)); }
 
         private void OnRewardedAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2) { this.signalBus.Fire(new RewardedAdLoadFailedSignal("empty", arg2.Message, arg2.LatencyMillis)); }
 

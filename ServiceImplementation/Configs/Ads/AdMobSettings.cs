@@ -135,6 +135,8 @@
             get => this.mCustomRewardedInterstitialAdIds;
             set => this.mCustomRewardedInterstitialAdIds = value as Dictionary_AdPlacement_AdId;
         }
+        
+        public string AdmobAndroidAppId { get => this.mAdmobAndroidAppId; set => this.mAdmobAndroidAppId = value; } // Admob App Id
 
         [OnInspectorInit]
         private void LoadAdmobSetting()
@@ -145,10 +147,10 @@
             var settingType  = googleMobileAdsSettings.GetType();
 
             this.mIOSAppId     = settingType.GetField("adMobIOSAppId", bindingFlags).GetValue(googleMobileAdsSettings) as string;
-            this.mAndroidAppId = settingType.GetField("adMobAndroidAppId", bindingFlags).GetValue(googleMobileAdsSettings) as string;
+            this.mAdmobAndroidAppId = settingType.GetField("adMobAndroidAppId", bindingFlags).GetValue(googleMobileAdsSettings) as string;
             
             #if APPLOVIN && UNITY_EDITOR
-            AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
+            AppLovinSettings.UpdateGoogleAdsId(this.mAdmobAndroidAppId, this.mIOSAppId);
             #endif
             
             this.mOptimizeInitialization = (bool)settingType.GetField("optimizeInitialization", bindingFlags).GetValue(googleMobileAdsSettings);
@@ -173,9 +175,9 @@
             var settingType  = googleMobileAdsSettings.GetType();
 
             settingType.GetField("adMobIOSAppId", bindingFlags).SetValue(googleMobileAdsSettings, this.mIOSAppId);
-            settingType.GetField("adMobAndroidAppId", bindingFlags).SetValue(googleMobileAdsSettings, this.mAndroidAppId);
+            settingType.GetField("adMobAndroidAppId", bindingFlags).SetValue(googleMobileAdsSettings, this.mAdmobAndroidAppId);
 #if APPLOVIN && UNITY_EDITOR
-            AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
+            AppLovinSettings.UpdateGoogleAdsId(this.mAdmobAndroidAppId, this.mIOSAppId);
 #endif
             settingType.GetField("optimizeInitialization", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeInitialization);
             settingType.GetField("optimizeAdLoading", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeAdLoading);
@@ -196,7 +198,7 @@
         private void AppIdChanged() { Debug.Log("Admob app id changed"); }
 
         [OnValueChanged("SaveAdmobSetting")] [Header("Google Mobile Ads App ID")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("Android App Id")]
-        private string mAndroidAppId;
+        private string mAdmobAndroidAppId;
 
         [OnValueChanged("SaveAdmobSetting")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("IOS App Id")]
         private string mIOSAppId;
