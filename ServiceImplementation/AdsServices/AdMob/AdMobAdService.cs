@@ -82,6 +82,17 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             #endregion
 
+            var adRevenueEvent = new AdsRevenueEvent
+            {
+                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
+                AdUnit             = this.config.DefaultBannerAdId.Id,
+                AdNetwork          = "AdMob",
+                AdFormat           = "Banner",
+                NetworkPlacement   = this.config.AdmobAndroidAppId,
+                Currency           = "USD",
+                Revenue            = 0,
+            };
+            this.signalBus.Fire<AdRevenueRequestSignal>(new(adRevenueEvent));
             this.bannerView.LoadAd(new AdRequest());
         }
 
@@ -106,6 +117,17 @@ namespace ServiceImplementation.AdsServices.AdMob
             if (this.IsInterstitialAdReady(place)) return;
 
             var stopwatch = Stopwatch.StartNew();
+            var adRevenueEvent = new AdsRevenueEvent
+            {
+                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
+                AdUnit             = this.config.DefaultInterstitialAdId.Id,
+                AdNetwork          = "AdMob",
+                AdFormat           = "Interstitial",
+                Placement          = this.config.AdmobAndroidAppId,
+                Currency           = "USD",
+                Revenue            = 0,
+            };
+            this.signalBus.Fire<AdRevenueRequestSignal>(new(adRevenueEvent));
             InterstitialAd.Load(this.config.DefaultInterstitialAdId.Id, new AdRequest(), (ad, error) =>
             {
                 stopwatch.Stop();
@@ -151,6 +173,17 @@ namespace ServiceImplementation.AdsServices.AdMob
             if (this.IsRewardedAdReady(place)) return;
 
             var stopwatch = Stopwatch.StartNew();
+            var adRevenueEvent = new AdsRevenueEvent
+            {
+                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
+                AdUnit             = this.config.DefaultRewardedAdId.Id,
+                AdNetwork          = "AdMob",
+                AdFormat           = "Rewarded",
+                NetworkPlacement = this.config.AdmobAndroidAppId,
+                Currency           = "USD",
+                Revenue            = 0,
+            };
+            this.signalBus.Fire<AdRevenueRequestSignal>(new(adRevenueEvent));
             RewardedAd.Load(this.config.DefaultRewardedAdId.Id, new AdRequest(), (ad, error) =>
             {
                 stopwatch.Stop();
