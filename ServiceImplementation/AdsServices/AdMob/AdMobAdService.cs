@@ -78,7 +78,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.bannerView.OnAdFullScreenContentOpened += () => this.signalBus.Fire(new BannerAdPresentedSignal(PLACEMENT));
             this.bannerView.OnAdFullScreenContentClosed += () => this.signalBus.Fire(new BannerAdDismissedSignal(PLACEMENT));
             this.bannerView.OnAdClicked                 += () => this.signalBus.Fire(new BannerAdClickedSignal(PLACEMENT));
-            this.bannerView.OnAdPaid                    += this.TrackAdRevenue("Banner", PLACEMENT);
+            this.bannerView.OnAdPaid                    += this.TrackAdRevenue("Banner", PLACEMENT, this.config.AdmobAndroidAppId, this.config.DefaultBannerAdId.Id);
 
             #endregion
 
@@ -117,17 +117,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             if (this.IsInterstitialAdReady(place)) return;
 
             var stopwatch = Stopwatch.StartNew();
-            var adRevenueEvent = new AdsRevenueEvent
-            {
-                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
-                AdUnit             = this.config.DefaultInterstitialAdId.Id,
-                AdNetwork          = "AdMob",
-                AdFormat           = "Interstitial",
-                Placement          = this.config.AdmobAndroidAppId,
-                Currency           = "USD",
-                Revenue            = 0,
-            };
-            this.signalBus.Fire<AdRevenueRequestSignal>(new(adRevenueEvent));
+           
             InterstitialAd.Load(this.config.DefaultInterstitialAdId.Id, new AdRequest(), (ad, error) =>
             {
                 stopwatch.Stop();
@@ -136,7 +126,17 @@ namespace ServiceImplementation.AdsServices.AdMob
                     this.signalBus.Fire(new InterstitialAdLoadFailedSignal(place, error.GetMessage(), stopwatch.ElapsedMilliseconds));
                     return;
                 }
-
+                var adRevenueEvent = new AdsRevenueEvent
+                {
+                    AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
+                    AdUnit             = this.config.DefaultInterstitialAdId.Id,
+                    AdNetwork          = "AdMob",
+                    AdFormat           = "Interstitial",
+                    Placement          = this.config.AdmobAndroidAppId,
+                    Currency           = "USD",
+                    Revenue            = 0,
+                };
+                this.signalBus.Fire<AdRevenueRequestSignal>(new(adRevenueEvent));
                 this.signalBus.Fire(new InterstitialAdLoadedSignal(place, stopwatch.ElapsedMilliseconds));
                 this.interstitialAd?.Destroy();
                 this.interstitialAd = ad;
@@ -153,7 +153,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.interstitialAd.OnAdFullScreenContentClosed += () => this.signalBus.Fire(new InterstitialAdClosedSignal(place));
             this.interstitialAd.OnAdFullScreenContentFailed += (_) => this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(place));
             this.interstitialAd.OnAdClicked                 += () => this.signalBus.Fire(new InterstitialAdClickedSignal(place));
-            this.interstitialAd.OnAdPaid                    += this.TrackAdRevenue("Interstitial", place);
+            this.interstitialAd.OnAdPaid                    += this.TrackAdRevenue("Interstitial", place, this.config.AdmobAndroidAppId, this.config.DefaultInterstitialAdId.Id);
 
             #endregion
 
@@ -173,17 +173,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             if (this.IsRewardedAdReady(place)) return;
 
             var stopwatch = Stopwatch.StartNew();
-            var adRevenueEvent = new AdsRevenueEvent
-            {
-                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
-                AdUnit             = this.config.DefaultRewardedAdId.Id,
-                AdNetwork          = "AdMob",
-                AdFormat           = "Rewarded",
-                NetworkPlacement = this.config.AdmobAndroidAppId,
-                Currency           = "USD",
-                Revenue            = 0,
-            };
-            this.signalBus.Fire<AdRevenueRequestSignal>(new(adRevenueEvent));
+           
             RewardedAd.Load(this.config.DefaultRewardedAdId.Id, new AdRequest(), (ad, error) =>
             {
                 stopwatch.Stop();
@@ -192,7 +182,17 @@ namespace ServiceImplementation.AdsServices.AdMob
                     this.signalBus.Fire(new RewardedAdLoadFailedSignal(place, error.GetMessage(), stopwatch.ElapsedMilliseconds));
                     return;
                 }
-
+                var adRevenueEvent = new AdsRevenueEvent
+                {
+                    AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
+                    AdUnit             = this.config.DefaultRewardedAdId.Id,
+                    AdNetwork          = "AdMob",
+                    AdFormat           = "Rewarded",
+                    NetworkPlacement   = this.config.AdmobAndroidAppId,
+                    Currency           = "USD",
+                    Revenue            = 0,
+                };
+                this.signalBus.Fire<AdRevenueRequestSignal>(new(adRevenueEvent));
                 this.signalBus.Fire(new RewardedAdLoadedSignal(place, stopwatch.ElapsedMilliseconds));
                 this.rewardedAd?.Destroy();
                 this.rewardedAd = ad;
@@ -209,7 +209,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.rewardedAd.OnAdFullScreenContentFailed += (_) => OnAdFullScreenContentFailed();
             this.rewardedAd.OnAdClicked                 += () => this.signalBus.Fire(new RewardedAdClickedSignal(place));
             this.rewardedAd.OnAdPaid                    += (_) => this.signalBus.Fire(new RewardedAdEligibleSignal(place));
-            this.rewardedAd.OnAdPaid                    += this.TrackAdRevenue("Rewarded", place);
+            this.rewardedAd.OnAdPaid                    += this.TrackAdRevenue("Rewarded", place, this.config.AdmobAndroidAppId, this.config.DefaultRewardedAdId.Id);
 
             #endregion
 
@@ -239,7 +239,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         #endregion
 
-        private Action<AdValue> TrackAdRevenue(string format, string placement)
+        private Action<AdValue> TrackAdRevenue(string format, string placement, string networkPlacement = null,string adUnit = null)
         {
             return adValue =>
             {
@@ -248,10 +248,11 @@ namespace ServiceImplementation.AdsServices.AdMob
                     AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
                     AdNetwork          = "AdMob",
                     AdFormat           = format,
+                    NetworkPlacement   = networkPlacement,
                     Placement          = placement,
                     Currency           = "USD",
                     Revenue            = adValue.Value / 1e6,
-                    AdUnit             = format
+                    AdUnit             = adUnit,
                 };
 
                 this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
@@ -290,7 +291,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                 this.collapsibleBannerView.OnAdFullScreenContentOpened += () => this.OnCollapsibleBannerPresented(PLACEMENT);
                 this.collapsibleBannerView.OnAdFullScreenContentClosed += () => this.OnCollapsibleBannerDismissed(PLACEMENT);
                 this.collapsibleBannerView.OnAdClicked                 += () => this.OnCollapsibleBannerClicked(PLACEMENT);
-                this.collapsibleBannerView.OnAdPaid                    += this.TrackAdRevenue("CollapsibleBanner", PLACEMENT);
+                this.collapsibleBannerView.OnAdPaid                    += this.TrackAdRevenue("CollapsibleBanner", PLACEMENT, this.config.AdmobAndroidAppId, this.config.CollapsibleBannerAdId.Id);
 
                 #endregion
             }
