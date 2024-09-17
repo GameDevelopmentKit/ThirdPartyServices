@@ -19,7 +19,6 @@ namespace Core.AnalyticServices
             builder.Register<DeviceInfo>(Lifetime.Singleton);
             builder.RegisterComponentOnNewGameObject<SessionController>(Lifetime.Singleton);
             builder.RegisterBuildCallback(container => container.Resolve<SessionController>().Construct(container.Resolve<IAnalyticServices>(), container.Resolve<DeviceInfo>()));
-            builder.Register<AnalyticsEventCustomizationConfig>(Lifetime.Singleton);
             builder.RegisterComponentOnNewGameObject<UnScaleInGameStopWatchManager>(Lifetime.Singleton);
 
             builder.DeclareSignal<EventTrackedSignal>();
