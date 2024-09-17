@@ -71,6 +71,10 @@ namespace ServiceImplementation.AdsServices.PreloadService
             if (!adLoadService.IsInterstitialAdReady(placement))
             {
                 adLoadService.LoadInterstitialAd(placement);
+                var adRevenueData = new AdsRevenueEvent()
+                {
+                    AdsRevenueSourceId = adLoadService.AdPlatform,
+                };
                 this.interstitialAdStopwatch.TryAdd((adLoadService, placement), this.unScaleInGameStopWatchManager.StartNew());
             }
         }

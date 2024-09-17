@@ -4,12 +4,13 @@ namespace Core.AdsServices
 
     public interface IAdLoadService
     {
+        string            AdPlatform        { get; }
         AdNetworkSettings AdNetworkSettings { get;}
         bool              IsRewardedAdReady(string     place ="");
         bool              IsInterstitialAdReady(string place ="");
         bool              IsRemoveAds();
-        public void       LoadRewardAds(string      place ="");
-        public void       LoadInterstitialAd(string place ="");
-        bool            TryGetInterstitialPlacementId(string placement, out string id);
+        public void       LoadRewardAds(string                 place ="");
+        public void       LoadInterstitialAd(string            place ="");
+        bool              TryGetInterstitialPlacementId(string placement, out string id);
     }
 }
