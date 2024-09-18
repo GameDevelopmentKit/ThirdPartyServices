@@ -11,7 +11,6 @@ namespace ServiceImplementation.AdsServices.PreloadService
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs.Ads;
     using Zenject;
-    using Debug = UnityEngine.Debug;
 
     public class PreloadAdService : IInitializable, IDisposable, ITickable
     {
@@ -26,12 +25,13 @@ namespace ServiceImplementation.AdsServices.PreloadService
         private readonly UnScaleInGameStopWatchManager unScaleInGameStopWatchManager;
 
         #endregion
-        
+
         private Dictionary<(IAdLoadService, string), UnScaleInGameStopWatch> interstitialAdStopwatch = new();
         private Dictionary<(IAdLoadService, string), UnScaleInGameStopWatch> rewardAdStopwatch       = new();
         private Dictionary<IAOAAdService, UnScaleInGameStopWatch>            aoaAdStartTime          = new();
-        
-        public PreloadAdService(List<IAdLoadService> adLoadServices,ILogService logger, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices, List<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
+
+        public PreloadAdService(List<IAdLoadService> adLoadServices, ILogService logger, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices,
+            List<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
         {
             this.adLoadServices                = adLoadServices;
             this.logger                        = logger;
@@ -41,10 +41,11 @@ namespace ServiceImplementation.AdsServices.PreloadService
             this.aOaAdServices                 = aOAAdServices;
             this.unScaleInGameStopWatchManager = unScaleInGameStopWatchManager;
         }
+
         public void Initialize()
         {
             this.LoadAdsInterval();
-            
+
             this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.LoadRewardAdsAfterShow);
             this.signalBus.Subscribe<RewardedSkippedSignal>(this.LoadRewardAdsAfterSkip);
             this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.LoadInterAdsAfterShow);
@@ -53,7 +54,6 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private async void LoadAdsInterval()
         {
-            this.logger.Log("load ads interval");
             this.adLoadServices.ForEach(this.LoadAdsOneTime);
             await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.IntervalLoadAds));
             this.LoadAdsInterval();
@@ -67,7 +67,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
         }
 
         #region Load InterstitialAds
-        
+
         private void LoadInterstitial(IAdLoadService adLoadService, string placement = "")
         {
             if (!adLoadService.IsInterstitialAdReady(placement))
@@ -85,6 +85,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
             if (loadService.AdNetworkSettings.CustomInterstitialAdIds == null || loadService.AdNetworkSettings.CustomInterstitialAdIds.Count == 0)
             {
                 this.LoadInterstitial(loadService);
+
                 return;
             }
 
@@ -96,19 +97,12 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private void LoadInterAdsAfterShow(InterstitialAdClosedSignal signal) { this.LoadInterAdWithPlace(signal.Placement); }
 
-        private void LoadInterAdWithPlace(string placement)
-        {
-            this.adLoadServices.ForEach(adLoadService =>
-            {
-                this.LoadInterstitial(adLoadService, placement);
-            });
-        }
+        private void LoadInterAdWithPlace(string placement) { this.adLoadServices.ForEach(adLoadService => { this.LoadInterstitial(adLoadService, placement); }); }
 
         #endregion
 
-
         #region Load RewardAds
-        
+
         private void LoadReward(IAdLoadService adLoadService, string placement = "")
         {
             if (!adLoadService.IsRewardedAdReady(placement))
@@ -126,6 +120,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
             if (loadService.AdNetworkSettings.CustomRewardedAdIds == null || loadService.AdNetworkSettings.CustomRewardedAdIds.Count == 0)
             {
                 this.LoadReward(loadService);
+
                 return;
             }
 
@@ -139,13 +134,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private void LoadRewardAdsAfterSkip(RewardedSkippedSignal signal) { this.LoadRewardAdWithPlace(signal.Placement); }
 
-        private void LoadRewardAdWithPlace(string placement)
-        {
-            this.adLoadServices.ForEach(ads =>
-            {
-                this.LoadReward(ads, placement);
-            });
-        }
+        private void LoadRewardAdWithPlace(string placement) { this.adLoadServices.ForEach(ads => { this.LoadReward(ads, placement); }); }
 
         #endregion
 
@@ -155,7 +144,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
             this.signalBus.TryUnsubscribe<InterstitialAdClosedSignal>(this.LoadInterAdsAfterShow);
             this.signalBus.TryUnsubscribe<RewardedSkippedSignal>(this.LoadRewardAdsAfterSkip);
         }
-        
+
         public void Tick()
         {
             // check interstitial ads
@@ -181,9 +170,9 @@ namespace ServiceImplementation.AdsServices.PreloadService
                         this.analyticServices.Track(new PreLoadReward(placement, this.unScaleInGameStopWatchManager.Stop(stopwatch), adLoadService.GetType().Name));
                         this.rewardAdStopwatch.Remove((adLoadService, placement));
                     }
-                } 
+                }
             }
-            
+
             // check  AOA ads
             foreach (var aOaAdService in aOaAdServices)
             {

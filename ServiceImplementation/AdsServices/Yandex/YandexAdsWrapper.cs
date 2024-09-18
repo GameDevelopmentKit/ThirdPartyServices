@@ -297,7 +297,7 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleInterstitialFailedToLoad(object sender, AdFailedToLoadEventArgs args)
         {
-            this.logService.Log($"onelog: Yandex: HandleInterstitialFailedToLoad {args.Message}");
+            this.logService.Log($"Yandex: HandleInterstitialFailedToLoad {args.Message}");
             
             this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", args.Message, 0));
         }
@@ -451,7 +451,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleImpression(object sender, ImpressionData impressionData)
         {
             var sData = impressionData?.rawData;
-            this.logService.Log($"onelog: Yandex: HandleImpression: {sData}");
+            this.logService.Log($"Yandex: HandleImpression: {sData}");
             if (string.IsNullOrEmpty(sData)) return;
 
             try
@@ -473,7 +473,7 @@ namespace ServiceImplementation.AdsServices.Yandex
             }
             catch (Exception e)
             {
-                this.logService.Error($"onelog: Yandex: Failed to parse impression data: {sData}");
+                this.logService.Error($"Yandex: Failed to parse impression data: {sData}");
             }
         }
 

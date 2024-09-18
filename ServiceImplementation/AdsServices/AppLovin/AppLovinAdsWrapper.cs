@@ -372,7 +372,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return;
 
-            this.logService.Log($"onelog: applovin: InitAOAAds");
+            this.logService.Log($"applovin: InitAOAAds");
             MaxSdkCallbacks.OnSdkInitializedEvent += this.OnMaxSdkCallbacksOnOnSdkInitializedEvent;
         }
 
@@ -391,7 +391,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnMaxSdkCallbacksOnOnSdkInitializedEvent(MaxSdkBase.SdkConfiguration sdkConfiguration)
         {
-            this.logService.Log("onelog: OnMaxSdkCallbacksOnOnSdkInitializedEvent");
+            this.logService.Log("OnMaxSdkCallbacksOnOnSdkInitializedEvent");
             MaxSdkCallbacks.AppOpen.OnAdHiddenEvent        += this.OnAppOpenDismissedEvent;
             MaxSdkCallbacks.AppOpen.OnAdLoadedEvent        += this.OnAppOpenLoadedEvent;
             MaxSdkCallbacks.AppOpen.OnAdLoadFailedEvent    += this.OnAppOpenLoadFailedEvent;
@@ -404,13 +404,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenDisplayFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)
         {
-            this.logService.Log($"onelog: OnAppOpenDisplayFailedEvent: {arg2.Message}");
+            this.logService.Log($"OnAppOpenDisplayFailedEvent: {arg2.Message}");
             this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(arg1, arg2.Message));
         }
 
         private void OnAppOpenDisplayedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.logService.Log($"onelog: OnAppOpenDisplayedEvent: {arg2.AdUnitIdentifier}");
+            this.logService.Log($"OnAppOpenDisplayedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, arg2.AdFormat, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(arg1, adInfo));
             this.IsShowingAOAAd = true;
@@ -418,20 +418,20 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenClickedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.logService.Log($"onelog: OnAppOpenClickedEvent: {arg2.AdUnitIdentifier}");
+            this.logService.Log($"OnAppOpenClickedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, arg2.AdFormat, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(arg1, adInfo));
         }
 
         private void OnAppOpenLoadFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2)
         {
-            this.logService.Log($"onelog: OnAppOpenLoadFailedEvent: {arg2.Message}");
+            this.logService.Log($"OnAppOpenLoadFailedEvent: {arg2.Message}");
             this.signalBus.Fire(new AppOpenLoadFailedSignal(arg1));
         }
 
         private void OnAppOpenLoadedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.logService.Log($"onelog: OnAppOpenLoadedEvent: {arg2.AdUnitIdentifier}");
+            this.logService.Log($"OnAppOpenLoadedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, arg2.AdFormat, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenLoadedSignal(arg1, adInfo));
         }
@@ -450,7 +450,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenDismissedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.logService.Log($"onelog: OnAppOpenDismissedEvent: {arg2.AdUnitIdentifier}");
+            this.logService.Log($"OnAppOpenDismissedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, arg2.AdFormat, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal("", adInfo));
             this.InternalLoadAppOpenAd();

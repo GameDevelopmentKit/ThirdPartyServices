@@ -2,9 +2,11 @@
 {
     public interface ICollapsibleBannerAd
     {
-        public void ShowCollapsibleBannerAd(bool useNewGuid, BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom);
+        void ShowCollapsibleBannerAd(bool useNewGuid, BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom);
+        void LoadCollapsibleBannerAd(bool useNewGuid, BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom);
 
-        public void HideCollapsibleBannerAd();
-        public void DestroyCollapsibleBannerAd();
+        void HideCollapsibleBannerAd();
+        void DestroyCollapsibleBannerAd();
+        bool        IsHasCollapsibleBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom);
     }
 }
