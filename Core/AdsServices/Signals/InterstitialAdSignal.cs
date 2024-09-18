@@ -11,7 +11,7 @@
     public class InterstitialAdLoadedSignal : BaseAdsSignal
     {
         public long            LoadingMilis;
-        public InterstitialAdLoadedSignal(string placement, long loadingMilis, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent) { this.LoadingMilis = loadingMilis; }
+        public InterstitialAdLoadedSignal(string placement, long loadingMilis, AdInfo adInfo) : base(placement, adInfo) { this.LoadingMilis = loadingMilis; }
     }
 
     public class InterstitialAdEligibleSignal : BaseAdsSignal
@@ -33,12 +33,12 @@
 
     public class InterstitialAdClickedSignal : BaseAdsSignal
     {
-        public InterstitialAdClickedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent) { }
+        public InterstitialAdClickedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
     }
 
     public class InterstitialAdDisplayedSignal : BaseAdsSignal
     {
-        public InterstitialAdDisplayedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent) { }
+        public InterstitialAdDisplayedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
     }
 
     public class InterstitialAdDisplayedFailedSignal : BaseAdsSignal
@@ -48,6 +48,6 @@
 
     public class InterstitialAdClosedSignal : BaseAdsSignal
     {
-        public InterstitialAdClosedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent) { }
+        public InterstitialAdClosedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
     }
 }

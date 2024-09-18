@@ -1,26 +1,19 @@
 ﻿namespace Core.AdsServices.Signals
 {
-    using Core.AnalyticServices.CommonEvents;
-
     public class BaseAdsSignal
     {
-        // Ad Revenue data
-        public AdsRevenueEvent AdsRevenueEvent;
-
         public string Placement;
+        public AdInfo AdInfo;
 
-        public BaseAdsSignal(string placement, AdsRevenueEvent adsRevenueEvent = null)
+        public BaseAdsSignal(string placement, AdInfo adInfo = null)
         {
-            this.Placement       = placement;
-            this.AdsRevenueEvent = adsRevenueEvent;
+            this.Placement = placement;
+            this.AdInfo    = adInfo;
         }
     }
 
     public class AdRequestSignal : BaseAdsSignal
     {
-
-        public AdRequestSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
-        {
-        }
+        public AdRequestSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
     }
 }

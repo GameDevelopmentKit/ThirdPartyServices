@@ -46,28 +46,12 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
             // MaxSdkCallbacks.RewardedInterstitial.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
         }
         
-        private void OnAdRevenueClickedEvent(string adUnitIdentify, MaxSdkBase.AdInfo adInfo)
-        {
-            var adsRevenueEvent = this.CreateAdsRevenueEvent(adInfo);
-            if (adsRevenueEvent == null) return;
-
-            this.signalBus.Fire(new AdRevenueClickedSignal(adsRevenueEvent, adInfo.NetworkPlacement));
-        }
-
-        private void OnAdRevenueLoadedEvent(string adUnitIdentify, MaxSdkBase.AdInfo adInfo)
-        {
-            var adsRevenueEvent = this.CreateAdsRevenueEvent(adInfo);
-            if (adsRevenueEvent == null) return;
-
-            this.signalBus.Fire(new AdRevenueLoadedSignal(adsRevenueEvent, adInfo.NetworkPlacement));
-        }
-
         private void OnOnAdRevenuePaidEvent(string adUnitIdentify, MaxSdkBase.AdInfo adInfo)
         {
             var adsRevenueEvent = this.CreateAdsRevenueEvent(adInfo);
             if (adsRevenueEvent == null) return;
 
-            this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent, adInfo.NetworkPlacement));
+            this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
 
             this.analyticServices.Track(adsRevenueEvent);
         }

@@ -4,28 +4,28 @@ namespace Core.AdsServices.Signals
 
     public class AppOpenFullScreenContentOpenedSignal : BaseAdsSignal
    {
-       public AppOpenFullScreenContentOpenedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
+       public AppOpenFullScreenContentOpenedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
        {
        }
    }
    
    public class AppOpenFullScreenContentFailedSignal : BaseAdsSignal
    {
-       public AppOpenFullScreenContentFailedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
+       public AppOpenFullScreenContentFailedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
        {
        }
    }
    
    public class AppOpenFullScreenContentClosedSignal : BaseAdsSignal
    {
-       public AppOpenFullScreenContentClosedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
+       public AppOpenFullScreenContentClosedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
        {
        }
    }
    
    public class AppOpenLoadedSignal : BaseAdsSignal
    {
-       public AppOpenLoadedSignal(string placement,AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
+       public AppOpenLoadedSignal(string placement,AdInfo adInfo) : base(placement, adInfo)
        {
        }
    }
@@ -46,14 +46,14 @@ namespace Core.AdsServices.Signals
    
    public class AppOpenCalledSignal : BaseAdsSignal
    {
-       public AppOpenCalledSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
+       public AppOpenCalledSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
        {
        }
    }
    
    public class AppOpenClickedSignal : BaseAdsSignal
    {
-       public AppOpenClickedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent)
+       public AppOpenClickedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
        {
        }
    }

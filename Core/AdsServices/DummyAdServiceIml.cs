@@ -16,6 +16,8 @@ namespace Core.AdsServices
         public void          RevokeDataPrivacyConsent(AdNetwork adNetwork) { this.logService.Log($"Dummy revoke consent {adNetwork}"); }
         public ConsentStatus GetDataPrivacyConsent(AdNetwork adNetwork)    { return ConsentStatus.Granted; }
 
+        public string AdPlatform { get; set; } = "Dummy";
+
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
             this.logService.Log($"Dummy show banner ad ay {bannerAdsPosition}");

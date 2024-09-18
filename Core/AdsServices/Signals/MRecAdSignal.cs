@@ -4,7 +4,7 @@ namespace Core.AdsServices.Signals
 
     public class MRecAdLoadedSignal : BaseAdsSignal
     {
-        public MRecAdLoadedSignal(string placement, AdsRevenueEvent adsRevenueEvent) : base(placement, adsRevenueEvent) { }
+        public MRecAdLoadedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
     }
 
     public class MRecAdLoadFailedSignal : BaseAdsSignal
@@ -14,12 +14,12 @@ namespace Core.AdsServices.Signals
 
     public class MRecAdClickedSignal : BaseAdsSignal
     {
-        public MRecAdClickedSignal(string placement) : base(placement) { }
+        public MRecAdClickedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
     }
 
     public class MRecAdDisplayedSignal : BaseAdsSignal
     {
-        public MRecAdDisplayedSignal(string placement) : base(placement) { }
+        public MRecAdDisplayedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
     }
 
     public class MRecAdDismissedSignal : BaseAdsSignal
