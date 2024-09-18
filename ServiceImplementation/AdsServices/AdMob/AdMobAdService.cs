@@ -218,7 +218,16 @@ namespace ServiceImplementation.AdsServices.AdMob
         private RewardedAd rewardedAd;
 
         public bool IsRewardedAdReady(string       place)                    { return this.rewardedAd?.CanShowAd() ?? false; }
-        public bool TryGetRewardPlacementId(string placement, out string id) { throw new NotImplementedException(); }
+
+        public bool TryGetRewardPlacementId(string placement, out string id)
+        {
+            var place = AdPlacement.PlacementWithName(placement);
+            id = place == AdPlacement.Default
+                ? this.config.DefaultRewardedAdId.Id
+                : this.FindIdForPlacement(this.AdNetworkSettings.CustomRewardedAdIds, place);
+
+            return !string.IsNullOrEmpty(id);
+        }
 
         public void LoadRewardAds(string place)
         {

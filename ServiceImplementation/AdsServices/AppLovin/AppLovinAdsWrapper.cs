@@ -486,7 +486,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent      -= this.OnRewardedAdDisplayedHandler;
         }
 
-        public bool TryGetRewardPlacementId(string placement, out string id) { throw new NotImplementedException(); }
+        public bool TryGetRewardPlacementId(string placement, out string id)
+        {
+            return this.TryGetRewardedAdsId(placement, out id);
+        }
         
         private void OnRewardedCompleted(string arg1, MaxSdkBase.Reward arg2, MaxSdkBase.AdInfo arg3) { this.rewardedCompleted[this.currentShowingRewarded] = true; }
 
