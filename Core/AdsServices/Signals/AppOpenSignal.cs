@@ -11,9 +11,8 @@ namespace Core.AdsServices.Signals
    
    public class AppOpenFullScreenContentFailedSignal : BaseAdsSignal
    {
-       public AppOpenFullScreenContentFailedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
-       {
-       }
+       public string Message { get; private set; }
+       public AppOpenFullScreenContentFailedSignal(string placement, string message, AdInfo adInfo) : base(placement, adInfo) { this.Message = message; }
    }
    
    public class AppOpenFullScreenContentClosedSignal : BaseAdsSignal

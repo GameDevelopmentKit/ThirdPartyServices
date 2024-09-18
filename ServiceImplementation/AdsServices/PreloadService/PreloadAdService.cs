@@ -6,7 +6,6 @@ namespace ServiceImplementation.AdsServices.PreloadService
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
-    using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Tools;
     using Cysharp.Threading.Tasks;
     using ServiceImplementation.Configs.Ads;

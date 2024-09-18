@@ -211,7 +211,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.logService.Log($"Failed to present the ad (reason: {args.GetMessage()})");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AppOpenAppAdFormat);
-            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal("", adRevenueEvent));
+            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal("", args.GetMessage(), adRevenueEvent));
         }
 
         private void AOAHandleAdFullScreenContentOpened()

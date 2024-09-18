@@ -64,8 +64,9 @@
         public RewardedAdClosedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
     }
 
-    public class RewardedAdShowFailedSignal : BaseAdsSignal
+    public class RewardedAdDisplayFailedSignal : BaseAdsSignal
     {
-        public RewardedAdShowFailedSignal(string placement) : base(placement) { }
+        public string Message { get; private set; }
+        public RewardedAdDisplayFailedSignal(string placement, string message, AdInfo adInfo) : base(placement, adInfo) { this.Message = message; }
     }
 }
