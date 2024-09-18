@@ -2,9 +2,9 @@ namespace Core.AdsServices.Native
 {
     using System;
     using Cysharp.Threading.Tasks;
+    using GameFoundation.DI;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
-    using GameFoundation.Scripts.Utilities.Extension;
     using R3;
     using UnityEngine;
     using UnityEngine.UI;

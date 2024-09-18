@@ -9,7 +9,8 @@
         "UniTask",
         "GameFoundation.Signals",
         "GameFoundation.UIModule",
-        "FirebaseRemoteConfig"
+        "FirebaseRemoteConfig",
+        "GameFoundation.DI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
