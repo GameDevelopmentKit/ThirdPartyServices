@@ -17,11 +17,19 @@
     public class AdMobSettings : AdNetworkSettings
     {
         public bool IsAdaptiveBannerEnabled { get => this.mIsAdaptiveBannerEnabled; set => this.mIsAdaptiveBannerEnabled = value; }
-        
+
         /// <summary>
         /// Gets or sets the default banner identifier.
         /// </summary>
-        public AdId DefaultBannerAdId { get => this.mDefaultBannerAdId; set => this.mDefaultBannerAdId = value; }
+        public AdId DefaultBannerAdId
+        {
+#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => !string.IsNullOrEmpty(this.mDefaultBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/2934735716","ca-app-pub-3940256099942544/6300978111") : this.mDefaultBannerAdId; 
+#else
+            get => this.mDefaultBannerAdId; 
+#endif
+            set => this.mDefaultBannerAdId = value;
+        }
 
         public AdId CollapsibleBannerAdId 
         {
@@ -49,7 +57,15 @@
         /// <summary>
         /// Gets or sets the default rewarded ad identifier.
         /// </summary>
-        public AdId DefaultRewardedAdId { get => this.mDefaultRewardedAdId; set => this.mDefaultRewardedAdId = value; }
+        public AdId DefaultRewardedAdId
+        {
+#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => !string.IsNullOrEmpty(this.mDefaultRewardedAdId.Id) ? new AdId("ca-app-pub-3940256099942544/1712485313","ca-app-pub-3940256099942544/5224354917") : this.mDefaultRewardedAdId; 
+#else
+            get => this.mDefaultRewardedAdId; 
+#endif
+            set => this.mDefaultRewardedAdId = value;
+        }
 
         /// <summary>
         /// Gets or sets the default rewarded interstitial ad identifier.
