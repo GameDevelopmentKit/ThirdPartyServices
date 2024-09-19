@@ -460,7 +460,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsAOAReady()
         {
-            Debug.Log($"oneLog: IsAOAReady MaxSdk: {MaxSdk.IsAppOpenAdReady(this.AppLovinSetting.DefaultAOAAdId.Id)}, IsShowingAOAAd: {this.IsShowingAOAAd}, DefaultAOAAdId: {this.AppLovinSetting.DefaultAOAAdId.Id}");
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return false;
             return MaxSdk.IsAppOpenAdReady(this.AppLovinSetting.DefaultAOAAdId.Id) && !this.IsShowingAOAAd;
         }
