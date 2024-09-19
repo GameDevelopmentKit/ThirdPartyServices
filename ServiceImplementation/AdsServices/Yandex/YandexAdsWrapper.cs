@@ -74,7 +74,7 @@ namespace ServiceImplementation.AdsServices.Yandex
             MobileAds.ShowDebugPanel();
 #endif
 
-            this.logService.Log($"onelog: Yandex Aoa: Initialize SDK");
+            this.logService.Log($"onelog: Yandex: Initialize SDK");
         }
 
         #region Banner
@@ -99,20 +99,20 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleBannerAdLoaded(object sender, EventArgs args)
         {
-            this.logService.Log($"onelog: Yandex Aoa: HandleBannerAdLoaded");
+            this.logService.Log($"onelog: Yandex: HandleBannerAdLoaded");
             this.signalBus.Fire(new BannerAdLoadedSignal(""));
             this.IsBannerAdLoaded = true;
         }
 
         private void HandleBannerAdFailedToLoad(object sender, AdFailureEventArgs args)
         {
-            this.logService.Log($"onelog: Yandex Aoa: HandleBannerAdFailedToLoad {args.Message}");
+            this.logService.Log($"onelog: Yandex: HandleBannerAdFailedToLoad {args.Message}");
             this.signalBus.Fire(new BannerAdLoadFailedSignal("", args.Message));
         }
 
         private void HandleBannerAdClicked(object sender, EventArgs args)
         {
-            this.logService.Log($"onelog: Yandex Aoa: HandleBannerAdClicked");
+            this.logService.Log($"onelog: Yandex: HandleBannerAdClicked");
             this.signalBus.Fire(new BannerAdClickedSignal(""));
         }
 
@@ -349,7 +349,7 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleAoaAdLoaded(object sender, AppOpenAdLoadedEventArgs args)
         {
-            this.logService.Log($"onelog: Yandex Aoa: HandleAoaAdLoaded");
+            this.logService.Log($"onelog: Yandex: HandleAoaAdLoaded");
             this.appOpenAd = args.AppOpenAd;
 
             this.appOpenAd.OnAdClicked      += this.HandleAoaAdClicked;
@@ -363,26 +363,26 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleAoaAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
         {
-            this.logService.Log($"onelog: Yandex Aoa: HandleAoaAdFailedToLoad: {args.Message}");
+            this.logService.Log($"onelog: Yandex: HandleAoaAdFailedToLoad: {args.Message}");
             this.signalBus.Fire(new AppOpenLoadFailedSignal(""));
         }
 
         private void HandleAoaAdClicked(object sender, EventArgs args)
         {
-            this.logService.Log($"onelog: Yandex Aoa: HandleAoaAdClicked");
+            this.logService.Log($"onelog: Yandex: HandleAoaAdClicked");
             this.signalBus.Fire(new AppOpenClickedSignal(""));
         }
 
         private void HandleAoaAdShown(object sender, EventArgs args)
         {
-            this.logService.Log($"onelog: Yandex Aoa: HandleAoaAdShown");
+            this.logService.Log($"onelog: Yandex: HandleAoaAdShown");
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(""));
             this.IsShowingAoaAd = true;
         }
 
         private void HandleAoaAdDismissed(object sender, EventArgs args)
         {
-            this.logService.Log($"onelog: Yandex Aoa: HandleAoaAdDismissed");
+            this.logService.Log($"onelog: Yandex: HandleAoaAdDismissed");
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
             this.DestroyAoaAd();
             this.LoadAoaAd();
@@ -391,7 +391,7 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleAoaAdFailedToShow(object sender, AdFailureEventArgs args)
         {
-            this.logService.Log($"onelog: Yandex Aoa: HandleAdFailedToShow event received with message: {args.Message}");
+            this.logService.Log($"onelog: Yandex: HandleAdFailedToShow event received with message: {args.Message}");
             this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(""));
             this.DestroyAoaAd();
             this.LoadAoaAd();
