@@ -37,13 +37,17 @@ namespace ServiceImplementation.AdsServices
             this.Container.Bind<PubScaleManager>().FromNewComponentOnNewGameObject().WithGameObjectName("PubScaleManager").AsSingle().NonLazy();
             this.Container.BindInterfacesTo<PubScaleWrapper>().AsCached();          
 #endif            
+
+#if APPLOVIN || IRONSOURCE || YANDEX
 #if APPLOVIN
             ApplovinAdsInstaller.Install(this.Container);
             // this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<AppLovinAdsWrapper>();
 #elif IRONSOURCE && !UNITY_EDITOR
             this.Container.BindInterfacesTo<IronSourceWrapper>().AsCached();
-#elif YANDEX && !UNITY_EDITOR
+#endif
+#if YANDEX && !UNITY_EDITOR
             this.Container.BindInterfacesTo<YandexAdsWrapper>().AsCached();
+#endif
 #elif ADMOB
             this.Container.BindInterfacesTo<AdMobAdService>().AsCached();
 #else
