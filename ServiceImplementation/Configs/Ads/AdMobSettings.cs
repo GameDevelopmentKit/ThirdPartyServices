@@ -24,7 +24,7 @@
         public AdId DefaultBannerAdId
         {
 #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mDefaultBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/2435281174","ca-app-pub-3940256099942544/9214589741") : this.mDefaultBannerAdId; 
+            get => !string.IsNullOrEmpty(this.mDefaultBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/2934735716","ca-app-pub-3940256099942544/6300978111") : this.mDefaultBannerAdId; 
 #else
             get => this.mDefaultBannerAdId; 
 #endif
