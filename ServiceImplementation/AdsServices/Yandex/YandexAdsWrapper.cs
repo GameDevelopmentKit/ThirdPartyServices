@@ -73,6 +73,8 @@ namespace ServiceImplementation.AdsServices.Yandex
 #if THEONE_ADS_DEBUG
             MobileAds.ShowDebugPanel();
 #endif
+
+            this.logService.Log($"onelog: Yandex Aoa: Initialize SDK");
         }
 
         #region Banner
@@ -97,13 +99,22 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleBannerAdLoaded(object sender, EventArgs args)
         {
+            this.logService.Log($"onelog: Yandex Aoa: HandleBannerAdLoaded");
             this.signalBus.Fire(new BannerAdLoadedSignal(""));
             this.IsBannerAdLoaded = true;
         }
 
-        private void HandleBannerAdFailedToLoad(object sender, AdFailureEventArgs args) => this.signalBus.Fire(new BannerAdLoadFailedSignal("", args.Message));
+        private void HandleBannerAdFailedToLoad(object sender, AdFailureEventArgs args)
+        {
+            this.logService.Log($"onelog: Yandex Aoa: HandleBannerAdFailedToLoad {args.Message}");
+            this.signalBus.Fire(new BannerAdLoadFailedSignal("", args.Message));
+        }
 
-        private void HandleBannerAdClicked(object sender, EventArgs args) => this.signalBus.Fire(new BannerAdClickedSignal(""));
+        private void HandleBannerAdClicked(object sender, EventArgs args)
+        {
+            this.logService.Log($"onelog: Yandex Aoa: HandleBannerAdClicked");
+            this.signalBus.Fire(new BannerAdClickedSignal(""));
+        }
 
         #endregion
 
@@ -161,10 +172,15 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.rewardedAd.OnRewarded       += this.HandleRewardedAdReward;
         }
 
-        private void HandleRewardedAdFailedToLoad(object sender, AdFailedToLoadEventArgs args) => this.signalBus.Fire(new RewardedAdLoadFailedSignal("", args.Message, 0));
+        private void HandleRewardedAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
+        {
+            this.logService.Log($"onelog: Yandex: HandleRewardedAdFailedToLoad: {args.Message}");
+            this.signalBus.Fire(new RewardedAdLoadFailedSignal("", args.Message, 0));
+        }
 
         private void HandleRewardedAdDismissed(object sender, EventArgs args)
         {
+            this.logService.Log($"onelog: Yandex: HandleRewardedAdDismissed");
             if (this.IsRewardedAdReward)
             {
                 this.OnRewardedAdCompleted?.Invoke();
@@ -182,16 +198,29 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleRewardedAdFailedToShow(object sender, AdFailureEventArgs args)
         {
+            this.logService.Log($"onelog: Yandex: HandleRewardedAdFailedToShow: {args.Message}");
             this.signalBus.Fire(new RewardedAdShowFailedSignal(this.CurrentRewardedAdPlacement));
             this.DestroyRewardedAd();
             this.LoadRewardAds();
         }
 
-        private void HandleRewardedAdClicked(object sender, EventArgs args) => this.signalBus.Fire(new RewardedAdClickedSignal(this.CurrentRewardedAdPlacement));
+        private void HandleRewardedAdClicked(object sender, EventArgs args)
+        {
+            this.logService.Log($"onelog: Yandex: HandleRewardedAdClicked");
+            this.signalBus.Fire(new RewardedAdClickedSignal(this.CurrentRewardedAdPlacement));
+        }
 
-        private void HandleRewardedAdShown(object sender, EventArgs args) => this.signalBus.Fire(new RewardedAdDisplayedSignal(this.CurrentRewardedAdPlacement));
+        private void HandleRewardedAdShown(object sender, EventArgs args)
+        {
+            this.logService.Log($"onelog: Yandex: HandleRewardedAdShown");
+            this.signalBus.Fire(new RewardedAdDisplayedSignal(this.CurrentRewardedAdPlacement));
+        }
 
-        private void HandleRewardedAdReward(object sender, Reward args) => this.IsRewardedAdReward = true;
+        private void HandleRewardedAdReward(object sender, Reward args)
+        {
+            this.logService.Log($"onelog: Yandex: HandleRewardedAdReward");
+            this.IsRewardedAdReward = true;
+        }
 
         #endregion
 
@@ -235,6 +264,7 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleInterstitialLoaded(object sender, InterstitialAdLoadedEventArgs args)
         {
+            this.logService.Log($"onelog: Yandex: HandleInterstitialLoaded");
             this.interstitialAd = args.Interstitial;
 
             this.interstitialAd.OnAdClicked      += this.HandleInterstitialAdClicked;
@@ -245,10 +275,15 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.signalBus.Fire(new InterstitialAdLoadedSignal("", 0));
         }
 
-        private void HandleInterstitialFailedToLoad(object sender, AdFailedToLoadEventArgs args) => this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", args.Message, 0));
+        private void HandleInterstitialFailedToLoad(object sender, AdFailedToLoadEventArgs args)
+        {
+            this.logService.Log($"onelog: Yandex: HandleInterstitialFailedToLoad {args.Message}");
+            this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", args.Message, 0));
+        }
 
         private void HandleInterstitialDismissed(object sender, EventArgs args)
         {
+            this.logService.Log($"onelog: Yandex: HandleInterstitialDismissed");
             this.signalBus.Fire(new InterstitialAdClosedSignal(this.CurrentInterstitialAdPlacement));
             this.DestroyInterstitial();
             this.LoadInterstitialAd();
@@ -256,13 +291,22 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleInterstitialFailedToShow(object sender, EventArgs args)
         {
+            this.logService.Log($"onelog: Yandex: HandleInterstitialFailedToShow");
             this.DestroyInterstitial();
             this.LoadInterstitialAd();
         }
 
-        private void HandleInterstitialAdClicked(object sender, EventArgs args) => this.signalBus.Fire(new InterstitialAdClickedSignal(this.CurrentInterstitialAdPlacement));
+        private void HandleInterstitialAdClicked(object sender, EventArgs args)
+        {
+            this.logService.Log($"onelog: Yandex: HandleInterstitialAdClicked");
+            this.signalBus.Fire(new InterstitialAdClickedSignal(this.CurrentInterstitialAdPlacement));
+        }
 
-        private void HandleInterstitialShown(object sender, EventArgs args) => this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.CurrentInterstitialAdPlacement));
+        private void HandleInterstitialShown(object sender, EventArgs args)
+        {
+            this.logService.Log($"onelog: Yandex: HandleInterstitialShown");
+            this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.CurrentInterstitialAdPlacement));
+        }
 
         #endregion
 
@@ -305,6 +349,7 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleAoaAdLoaded(object sender, AppOpenAdLoadedEventArgs args)
         {
+            this.logService.Log($"onelog: Yandex Aoa: HandleAoaAdLoaded");
             this.appOpenAd = args.AppOpenAd;
 
             this.appOpenAd.OnAdClicked      += this.HandleAoaAdClicked;
@@ -316,18 +361,28 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.signalBus.Fire(new AppOpenLoadedSignal(""));
         }
 
-        private void HandleAoaAdFailedToLoad(object sender, AdFailedToLoadEventArgs args) => this.signalBus.Fire(new AppOpenLoadFailedSignal(""));
+        private void HandleAoaAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
+        {
+            this.logService.Log($"onelog: Yandex Aoa: HandleAoaAdFailedToLoad: {args.Message}");
+            this.signalBus.Fire(new AppOpenLoadFailedSignal(""));
+        }
 
-        private void HandleAoaAdClicked(object sender, EventArgs args) => this.signalBus.Fire(new AppOpenClickedSignal(""));
+        private void HandleAoaAdClicked(object sender, EventArgs args)
+        {
+            this.logService.Log($"onelog: Yandex Aoa: HandleAoaAdClicked");
+            this.signalBus.Fire(new AppOpenClickedSignal(""));
+        }
 
         private void HandleAoaAdShown(object sender, EventArgs args)
         {
+            this.logService.Log($"onelog: Yandex Aoa: HandleAoaAdShown");
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(""));
             this.IsShowingAoaAd = true;
         }
 
         private void HandleAoaAdDismissed(object sender, EventArgs args)
         {
+            this.logService.Log($"onelog: Yandex Aoa: HandleAoaAdDismissed");
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(""));
             this.DestroyAoaAd();
             this.LoadAoaAd();
@@ -336,8 +391,8 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void HandleAoaAdFailedToShow(object sender, AdFailureEventArgs args)
         {
-            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(""));
             this.logService.Log($"onelog: Yandex Aoa: HandleAdFailedToShow event received with message: {args.Message}");
+            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(""));
             this.DestroyAoaAd();
             this.LoadAoaAd();
         }
@@ -368,8 +423,8 @@ namespace ServiceImplementation.AdsServices.Yandex
         {
             var sData = impressionData?.rawData;
             this.logService.Log($"onelog: Yandex: HandleImpression: {sData}");
-            if(string.IsNullOrEmpty(sData)) return;
-            
+            if (string.IsNullOrEmpty(sData)) return;
+
             try
             {
                 var data = JsonConvert.DeserializeObject<YandexImpressionData>(sData);
