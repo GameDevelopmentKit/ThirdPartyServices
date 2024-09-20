@@ -386,6 +386,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return;
 
+            this.logService.Log($"onelog: applovin: InitAOAAds");
             MaxSdkCallbacks.OnSdkInitializedEvent += this.OnMaxSdkCallbacksOnOnSdkInitializedEvent;
         }
 
