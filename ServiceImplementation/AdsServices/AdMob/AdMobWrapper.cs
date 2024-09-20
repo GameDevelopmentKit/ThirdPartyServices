@@ -32,19 +32,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private readonly ILogService        logService;
         private readonly SignalBus          signalBus;
-        private readonly IAdServices        adServices;
+        private readonly IReadOnlyList<IAdServices>        adServices;
         private readonly IAnalyticServices  analyticService;
         private readonly ThirdPartiesConfig thirdPartiesConfig;
         private readonly AdServicesConfig   adServicesConfig;
 
         #endregion
 
-        public AdMobWrapper(ILogService logService,         SignalBus        signalBus, IAdServices adServices, IAnalyticServices analyticService,
+        public AdMobWrapper(ILogService logService,         SignalBus        signalBus, IEnumerable<IAdServices> adServices, IAnalyticServices analyticService,
             ThirdPartiesConfig          thirdPartiesConfig, AdServicesConfig adServicesConfig)
         {
             this.logService         = logService;
             this.signalBus          = signalBus;
-            this.adServices         = adServices;
+            this.adServices         = adServices.ToArray();
             this.analyticService    = analyticService;
             this.thirdPartiesConfig = thirdPartiesConfig;
             this.adServicesConfig   = adServicesConfig;
@@ -100,7 +100,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private async void IntervalCall(int intervalSecond)
         {
-            if (this.adServices.IsRemoveAds()) return;
+            if (this.adServices.Any(adService => adService.IsRemoveAds())) return;
             this.LoadAllMRec();
 #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
             this.LoadAllNativeAds();
@@ -156,7 +156,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void LoadAppOpenAd()
         {
-            if (this.adServices.IsRemoveAds()) return;
+            if (this.adServices.Any(adService => adService.IsRemoveAds())) return;
 
             var adUnitId = this.ADMobSettings.AOAAdId.Id;
 

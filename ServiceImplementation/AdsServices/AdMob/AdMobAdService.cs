@@ -18,7 +18,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using Zenject;
     using Debug = UnityEngine.Debug;
 
-    public class AdMobAdService : IAdServices, IAdLoadService, IBackFillAdsService, IInitializable, ICollapsibleBannerAd
+    public class AdMobAdService : IAdServices, IAdLoadService, IInitializable, ICollapsibleBannerAd
     {
         #region Constructor
 
