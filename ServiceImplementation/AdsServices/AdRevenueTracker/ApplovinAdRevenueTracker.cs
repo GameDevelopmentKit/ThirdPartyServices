@@ -22,28 +22,11 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
         private void SubscribeAdPaidEvent()
         {
             MaxSdkCallbacks.Banner.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            // MaxSdkCallbacks.Banner.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            // MaxSdkCallbacks.Banner.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
-
             MaxSdkCallbacks.Interstitial.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            // MaxSdkCallbacks.Interstitial.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            // MaxSdkCallbacks.Interstitial.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
-
             MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            // MaxSdkCallbacks.Rewarded.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            // MaxSdkCallbacks.Rewarded.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
-
             MaxSdkCallbacks.AppOpen.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            // MaxSdkCallbacks.AppOpen.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            // MaxSdkCallbacks.AppOpen.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
-
             MaxSdkCallbacks.MRec.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            // MaxSdkCallbacks.MRec.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            // MaxSdkCallbacks.MRec.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
-
             MaxSdkCallbacks.RewardedInterstitial.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            // MaxSdkCallbacks.RewardedInterstitial.OnAdLoadedEvent      += this.OnAdRevenueLoadedEvent;
-            // MaxSdkCallbacks.RewardedInterstitial.OnAdClickedEvent     += this.OnAdRevenueClickedEvent;
         }
         
         private void OnOnAdRevenuePaidEvent(string adUnitIdentify, MaxSdkBase.AdInfo adInfo)
