@@ -48,7 +48,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.signalBus       = signalBus;
             this.AppLovinSetting = thirdPartiesConfig.AdSettings.AppLovin;
         }
-        
+
         public string            AdPlatform        => AdRevenueConstants.ARSourceAppLovinMAX;
         private const string MrecAdFormat = "MREC";
 
@@ -337,12 +337,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public bool TryGetInterstitialPlacementId(string place, out string id)
         {
             return AdPlacementHelper.TryGetPlacementId(
-                place, 
-                this.AppLovinSetting.DefaultInterstitialAdId, 
-                this.AppLovinSetting.CustomInterstitialAdIds, 
+                place,
+                this.AppLovinSetting.DefaultInterstitialAdId,
+                this.AppLovinSetting.CustomInterstitialAdIds,
                 out id);
         }
-        
+
 
         protected virtual void InternalLoadInterstitialAd(AdPlacement adPlacement)
         {
@@ -484,7 +484,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent      -= this.OnRewardedAdDisplayedHandler;
             MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent  -= this.OnRewardedAdDisplayFailedEventHandler;
         }
-        
+
         private void OnRewardedCompleted(string arg1, MaxSdkBase.Reward arg2, MaxSdkBase.AdInfo arg3) { this.rewardedCompleted[this.currentShowingRewarded] = true; }
 
         private void OnRewardedHidden(string arg1, MaxSdkBase.AdInfo arg2)
@@ -495,7 +495,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 if (status)
                 {
                     this.OnRewardCompleted(this.currentShowingRewarded, adInfo);
-                    
+
                     this.signalBus.Fire(new RewardedAdClosedSignal(this.currentShowingRewarded.Name, adInfo));
 
                     return;
@@ -516,7 +516,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.RewardedAdCompletedOneTimeAction?.Invoke();
             this.RewardedAdCompletedOneTimeAction = null;
             this.RewardedAdFailed                 = null;
-            
+
             this.signalBus.Fire(new RewardedAdCompletedSignal(placement.Name, adInfo));
             this.InternalLoadRewarded(placement);
         }
@@ -533,9 +533,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public bool TryGetRewardPlacementId(string place, out string id)
         {
             return AdPlacementHelper.TryGetPlacementId(
-                place, 
-                this.AppLovinSetting.DefaultRewardedAdId, 
-                this.AppLovinSetting.CustomRewardedAdIds, 
+                place,
+                this.AppLovinSetting.DefaultRewardedAdId,
+                this.AppLovinSetting.CustomRewardedAdIds,
                 out id);
         }
 
@@ -612,7 +612,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, arg2.AdFormat, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new InterstitialAdClickedSignal(arg2.Placement, adInfo));
         }
-        
+
         private void OnInterstitialAdLoadedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, arg2.AdFormat, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
@@ -693,7 +693,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #endregion
 
-        public void RemoveAds(bool revokeConsent = false) { PlayerPrefs.SetInt("EM_REMOVE_ADS", -1); }
+        public void RemoveAds() { PlayerPrefs.SetInt("EM_REMOVE_ADS", -1); }
 
         public bool IsAdsInitialized() { return this.isInit; }
 

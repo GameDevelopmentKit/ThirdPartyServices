@@ -42,7 +42,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private Action onRewardComplete;
         private Action onRewardFailed;
-        
+
         private bool   isGotRewarded;
         private bool   isLoadedAdaptiveBanner;
         private string interstitialPlacement, rewardedPlacement;
@@ -77,7 +77,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceBannerEvents.onAdScreenPresentedEvent += this.BannerOnAdScreenPresentedEvent;
             IronSourceBannerEvents.onAdScreenDismissedEvent += this.BannerOnAdScreenDismissedEvent;
             IronSourceBannerEvents.onAdLeftApplicationEvent += this.BannerOnAdLeftApplicationEvent;
-            
+
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
 #if THEONE_ADS_DEBUG
             IronSource.Agent.setAdaptersDebug(true);
@@ -358,7 +358,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.onRewardFailed   = onFailed;
         }
 
-        public void RemoveAds(bool revokeConsent = false) { PlayerPrefs.SetInt("EM_REMOVE_ADS", -1); }
+        public void RemoveAds() { PlayerPrefs.SetInt("EM_REMOVE_ADS", -1); }
 
         public bool IsAdsInitialized() { return true; }
 

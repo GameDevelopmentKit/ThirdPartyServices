@@ -40,7 +40,7 @@ namespace Core.AdsServices
         public void ShowRewardedInterstitialAd(string place)                     { this.logService.Log($"Dummy show Rewarded Interstitial ad at {place}"); }
         public void ShowRewardedInterstitialAd(string place, Action onCompleted) { this.logService.Log($"Dummy show Rewarded Interstitial ad at {place} then do {onCompleted}"); }
 
-        public void RemoveAds(bool revokeConsent = false)
+        public void RemoveAds()
         {
             PlayerPrefs.SetInt("EM_REMOVE_ADS", -1);
             this.logService.Log($"Dummy remove Ads");

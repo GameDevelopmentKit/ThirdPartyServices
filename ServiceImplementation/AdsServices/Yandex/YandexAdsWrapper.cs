@@ -441,7 +441,7 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         #region Remove Ads
 
-        public void RemoveAds(bool revokeConsent = false) { PlayerPrefs.SetInt("EM_REMOVE_ADS", -1); }
+        public void RemoveAds() { PlayerPrefs.SetInt("EM_REMOVE_ADS", -1); }
 
         public bool IsRemoveAds() => PlayerPrefs.HasKey("EM_REMOVE_ADS");
 
