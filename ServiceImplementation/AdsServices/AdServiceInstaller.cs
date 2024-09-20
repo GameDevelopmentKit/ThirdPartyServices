@@ -39,23 +39,22 @@ namespace ServiceImplementation.AdsServices
 #endif
 #if APPLOVIN
             ApplovinAdsInstaller.Install(this.Container);
-            // this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<AppLovinAdsWrapper>();
-#elif IRONSOURCE && !UNITY_EDITOR
+#endif
+#if IRONSOURCE && !UNITY_EDITOR
             this.Container.BindInterfacesTo<IronSourceWrapper>().AsCached();
-#elif YANDEX && !UNITY_EDITOR
+#endif
+#if YANDEX && !UNITY_EDITOR
             this.Container.BindInterfacesTo<YandexAdsWrapper>().AsCached();
-#elif ADMOB
-            this.Container.BindInterfacesAndSelfTo<AdMobAdService>().AsCached();
-#else
+#endif
+#if ADMOB
+            this.Container.BindInterfacesTo<AdMobAdService>().AsCached();
+#endif
+#if !APPLOVIN && (!IRONSOURCE || UNITY_EDITOR) && (!YANDEX || UNITY_EDITOR) && !ADMOB
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
 
 #if ADMOB
             this.Container.BindInterfacesTo<AdMobWrapper>().AsCached().NonLazy();
-            if (!this.Container.HasBinding<AdMobAdService>())
-            {
-                this.Container.BindInterfacesAndSelfTo<AdMobAdService>().AsCached();
-            }
 #else
             this.Container.Bind<ICollapsibleBannerAd>().To<DummyCollapsibleBannerAdAdService>().AsCached();
             #if !APPLOVIN
