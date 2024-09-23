@@ -70,8 +70,6 @@ namespace Core.AnalyticServices
             => string.Empty;
 #endif
 
-        public bool AppsflyerIsDebug           => this.appsflyerIsDebug;
-
         [Header("DevKey")][BoxGroup("Appsflyer")]
         [SerializeField] private string appsflyerDevKeyIos;
         [BoxGroup("Appsflyer")]
@@ -81,8 +79,6 @@ namespace Core.AnalyticServices
         [BoxGroup("Appsflyer")]
         [ValidateInput("ValidateAppIdIos", "Appsflyer App Id must start with 'id'", InfoMessageType.Error)]
         [SerializeField] private string appsflyerAppIdIos;
-        [BoxGroup("Appsflyer")]
-        [SerializeField] private bool appsflyerIsDebug;
 
         private bool ValidateAppIdIos(string value) { return string.IsNullOrEmpty(value) || this.appsflyerAppIdIos.StartsWith("id"); }
 #endif
