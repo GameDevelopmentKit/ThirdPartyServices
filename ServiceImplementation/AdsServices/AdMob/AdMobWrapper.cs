@@ -201,7 +201,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void AOAHandleAdFullScreenContentClosed()
         {
-            this.logService.Log("Closed app open ad");
+            this.logService.Log("oneLog: Closed app open ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AppOpenAppAdFormat);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal("", adRevenueEvent));
             this.IsShowingAOAAd = false;
@@ -209,14 +209,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void AOAHandleAdFullScreenContentFailed(AdError args)
         {
-            this.logService.Log($"Failed to present the ad (reason: {args.GetMessage()})");
+            this.logService.Log($"oneLog: Failed to present the ad (reason: {args.GetMessage()})");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AppOpenAppAdFormat);
             this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal("", args.GetMessage(), adRevenueEvent));
         }
 
         private void AOAHandleAdFullScreenContentOpened()
         {
-            this.logService.Log("Displayed app open ad");
+            this.logService.Log("oneLog: Displayed app open ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AppOpenAppAdFormat);
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal("", adRevenueEvent));
             this.IsShowingAOAAd = true;
@@ -318,7 +318,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 .ForEach(adInfo => this.signalBus.Fire(new MRecAdClickedSignal("", adInfo)));
         }
 
-        private void BannerViewOnAdLoadFailed(LoadAdError obj) { this.signalBus.Fire(new MRecAdLoadFailedSignal("")); }
+        private void BannerViewOnAdLoadFailed(LoadAdError obj)
+        {
+            Debug.LogError($"oneLog: AdmobWrapper Failed to load ad: {obj.GetMessage()}");
+            this.signalBus.Fire(new MRecAdLoadFailedSignal(""));
+        }
 
         private void BannerViewOnAdLoaded()
         {
@@ -326,7 +330,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 .ForEach(adInfo => this.signalBus.Fire(new MRecAdLoadedSignal("", adInfo)));
         }
 
-        private void MRECAdHandlePaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, this.ADMobSettings.MRECAdIds.FirstOrDefault().Value.Id, MrecAdFormat);
+        private void MRECAdHandlePaid(AdValue obj) => this.ADMobSettings.MRECAdIds.ForEach(pair => this.AdMobHandlePaidEvent(obj, pair.Value.Id, AdMobWrapper.MrecAdFormat));
 
         #endregion
 
@@ -471,7 +475,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             var adsRevenueEvent = new AdsRevenueEvent
             {
-                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
+                AdsRevenueSourceId = AdMobWrapper.AdPlatForm,
                 AdUnit             = adUnitId,
                 AdFormat           = adFormat,
                 AdNetwork          = "AdMob",

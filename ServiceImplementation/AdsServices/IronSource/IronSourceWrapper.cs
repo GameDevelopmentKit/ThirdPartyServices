@@ -49,6 +49,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void Initialize()
         {
+            this.logService.Log("oneLog: IronSourceWrapper Initialize");
             IronSourceEvents.onImpressionDataReadyEvent += this.ImpressionDataReadyEvent;
             //Add AdInfo Rewarded Video Events
             IronSourceRewardedVideoEvents.onAdOpenedEvent      += this.RewardedVideoOnAdOpenedEvent;
@@ -123,71 +124,56 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.isGotRewarded = true;
             this.onRewardComplete?.Invoke();
             this.onRewardComplete = null;
-            Debug.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdRewardedEvent, " +
-                      $"Reward name: {arg1.getRewardName()}, Placement name: {arg1.getPlacementName()}, Reward amount: {arg1.getRewardAmount()}," +
-                      $"Ad unit: {arg2.adUnit}, Ad network: {arg2.adNetwork}, Country: {arg2.country}, Segment name: {arg2.segmentName}, " +
-                      $"Revenue: {arg2.revenue}, Precision: {arg2.precision}, Lifetime revenue: {arg2.lifetimeRevenue}, Encrypted CPM: {arg2.encryptedCPM}, " +
-                      $"Instance name: {arg2.instanceName}, Instance ID: {arg2.instanceId}, Ab: {arg2.ab}, Auction ID: {arg2.auctionId}");
-            // var adInfo = new AdInfo(AdPlatform, arg2.adUnit, arg2.adUnit, arg2.adNetwork, arg1.);
-            this.signalBus.Fire(new RewardedAdCompletedSignal(this.rewardedPlacement, null));
+            var adInfo = new AdInfo(this.AdPlatform, arg2.adUnit, arg2.adUnit, arg2.adNetwork, value:arg2.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new RewardedAdCompletedSignal(this.rewardedPlacement, adInfo));
         }
 
         private Stopwatch rewardedStopwatch;
 
         private void RewardedVideoOnAdUnavailable()
         {
+            this.logService.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdUnavailable");
             this.rewardedStopwatch.Stop();
             this.signalBus.Fire(new RewardedAdLoadFailedSignal("", "", this.rewardedStopwatch.ElapsedMilliseconds));
         }
-        private void RewardedVideoOnAdAvailable(IronSourceAdInfo obj)
+        private void RewardedVideoOnAdAvailable(IronSourceAdInfo arg1)
         {
             this.rewardedStopwatch.Stop();
-            Debug.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdAvailable, " +
-                      $"Ad unit: {obj.adUnit}, Ad network: {obj.adNetwork}, Country: {obj.country}, Segment name: {obj.segmentName}, " +
-                      $"Revenue: {obj.revenue}, Precision: {obj.precision}, Lifetime revenue: {obj.lifetimeRevenue}, Encrypted CPM: {obj.encryptedCPM}, " +
-                      $"Instance name: {obj.instanceName}, Instance ID: {obj.instanceId}, Ab: {obj.ab}, Auction ID: {obj.auctionId}");
-            
-            this.signalBus.Fire(new RewardedAdLoadedSignal("", this.rewardedStopwatch.ElapsedMilliseconds, null));
+            var adInfo = new AdInfo(this.AdPlatform, arg1.adUnit, arg1.adUnit, arg1.adNetwork, value:arg1.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new RewardedAdLoadedSignal("", this.rewardedStopwatch.ElapsedMilliseconds, adInfo));
         }
 
         private void RewardedVideoOnAdClosedEvent(IronSourceAdInfo obj)
         {
-            Debug.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdClosedEvent, " +
-                      $"Ad unit: {obj.adUnit}, Ad network: {obj.adNetwork}, Country: {obj.country}, Segment name: {obj.segmentName}, " +
-                      $"Revenue: {obj.revenue}, Precision: {obj.precision}, Lifetime revenue: {obj.lifetimeRevenue}, Encrypted CPM: {obj.encryptedCPM}, " +
-                      $"Instance name: {obj.instanceName}, Instance ID: {obj.instanceId}, Ab: {obj.ab}, Auction ID: {obj.auctionId}");
+            var adInfo = new AdInfo(this.AdPlatform, obj.adUnit, obj.adUnit, obj.adNetwork, value:obj.revenue ?? 0, currency:"USD");
             if (!this.isGotRewarded)
             {
                 this.onRewardFailed?.Invoke();
                 this.onRewardFailed = null;
-                this.signalBus.Fire(new RewardedSkippedSignal(this.rewardedPlacement, null));
+                this.signalBus.Fire(new RewardedSkippedSignal(this.rewardedPlacement, adInfo));
             }
-            this.signalBus.Fire(new RewardedAdClosedSignal(this.rewardedPlacement, null));
+            this.signalBus.Fire(new RewardedAdClosedSignal(this.rewardedPlacement, adInfo));
         }
 
         private void RewardedVideoOnAdShowFailedEvent(IronSourceError obj, IronSourceAdInfo info)
         {
             this.onRewardFailed?.Invoke();
             this.onRewardFailed = null;
-            this.signalBus.Fire(new RewardedAdDisplayFailedSignal(this.rewardedPlacement, obj.getDescription(),null));
+            this.logService.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdShowFailedEvent. Message: {obj.getDescription()}");
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new RewardedAdDisplayFailedSignal(this.rewardedPlacement, obj.getDescription(),adInfo));
         }
 
         private void RewardedVideoOnAdClickedEvent(IronSourcePlacement obj, IronSourceAdInfo info)
         {
-            Debug.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdClickedEvent, " +
-                      $"Ad unit: {info.adUnit}, Ad network: {info.adNetwork}, Country: {info.country}, Segment name: {info.segmentName}, " +
-                      $"Revenue: {info.revenue}, Precision: {info.precision}, Lifetime revenue: {info.lifetimeRevenue}, Encrypted CPM: {info.encryptedCPM}, " +
-                      $"Instance name: {info.instanceName}, Instance ID: {info.instanceId}, Ab: {info.ab}, Auction ID: {info.auctionId}");
-            this.signalBus.Fire(new RewardedAdClickedSignal(this.rewardedPlacement, null));
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new RewardedAdClickedSignal(this.rewardedPlacement, adInfo));
         }
 
         private void RewardedVideoOnAdOpenedEvent(IronSourceAdInfo info)
         {
-            Debug.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdOpenedEvent, " +
-                      $"Ad unit: {info.adUnit}, Ad network: {info.adNetwork}, Country: {info.country}, Segment name: {info.segmentName}, " +
-                      $"Revenue: {info.revenue}, Precision: {info.precision}, Lifetime revenue: {info.lifetimeRevenue}, Encrypted CPM: {info.encryptedCPM}, " +
-                      $"Instance name: {info.instanceName}, Instance ID: {info.instanceId}, Ab: {info.ab}, Auction ID: {info.auctionId}");
-            this.signalBus.Fire(new RewardedAdDisplayedSignal(this.rewardedPlacement, null));
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new RewardedAdDisplayedSignal(this.rewardedPlacement, adInfo));
         }
 
         #endregion
@@ -197,48 +183,42 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void InterstitialOnAdClosedEvent(IronSourceAdInfo obj)
         {
-            Debug.Log($"oneLog: IronSourceWrapper InterstitialOnAdClosedEvent, " +
-                      $"Ad unit: {obj.adUnit}, Ad network: {obj.adNetwork}, Country: {obj.country}, Segment name: {obj.segmentName}, " +
-                      $"Revenue: {obj.revenue}, Precision: {obj.precision}, Lifetime revenue: {obj.lifetimeRevenue}, Encrypted CPM: {obj.encryptedCPM}, " +
-                      $"Instance name: {obj.instanceName}, Instance ID: {obj.instanceId}, Ab: {obj.ab}, Auction ID: {obj.auctionId}");
-            this.signalBus.Fire(new InterstitialAdClosedSignal(this.interstitialPlacement, null));
+            var adInfo = new AdInfo(this.AdPlatform, obj.adUnit, obj.adUnit, obj.adNetwork, value:obj.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new InterstitialAdClosedSignal(this.interstitialPlacement, adInfo));
         }
-        private void InterstitialOnAdShowFailedEvent(IronSourceError arg1, IronSourceAdInfo arg2) { this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(this.interstitialPlacement)); }
+
+        private void InterstitialOnAdShowFailedEvent(IronSourceError arg1, IronSourceAdInfo arg2)
+        {
+            this.logService.Log($"oneLog: IronSourceWrapper InterstitialOnAdShowFailedEvent, Message: {arg1.getDescription()}");
+            this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(this.interstitialPlacement));
+        }
         private void InterstitialOnAdShowSucceededEvent(IronSourceAdInfo obj)                     { }
 
         private Stopwatch stopwatchInterstitial;
         private void InterstitialOnAdLoadFailed(IronSourceError obj)
         {
             this.stopwatchInterstitial.Stop();
+            this.logService.Log($"oneLog: IronSourceWrapper InterstitialOnAdLoadFailed, Message: {obj.getDescription()}");
             this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription(), this.stopwatchInterstitial.ElapsedMilliseconds));
         }
 
         private void InterstitialOnAdReadyEvent(IronSourceAdInfo info)
         {
             this.stopwatchInterstitial.Stop();
-            Debug.Log($"oneLog: IronSourceWrapper InterstitialOnAdReadyEvent, " +
-                      $"Ad unit: {info.adUnit}, Ad network: {info.adNetwork}, Country: {info.country}, Segment name: {info.segmentName}, " +
-                      $"Revenue: {info.revenue}, Precision: {info.precision}, Lifetime revenue: {info.lifetimeRevenue}, Encrypted CPM: {info.encryptedCPM}, " +
-                      $"Instance name: {info.instanceName}, Instance ID: {info.instanceId}, Ab: {info.ab}, Auction ID: {info.auctionId}");
-            this.signalBus.Fire(new InterstitialAdLoadedSignal("",  this.stopwatchInterstitial.ElapsedMilliseconds, null));
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new InterstitialAdLoadedSignal("",  this.stopwatchInterstitial.ElapsedMilliseconds, adInfo));
         }
 
         private void InterstitialOnAdOpenedEvent(IronSourceAdInfo info)
         {
-            Debug.Log($"oneLog: IronSourceWrapper InterstitialOnAdOpenedEvent, " +
-                      $"Ad unit: {info.adUnit}, Ad network: {info.adNetwork}, Country: {info.country}, Segment name: {info.segmentName}, " +
-                      $"Revenue: {info.revenue}, Precision: {info.precision}, Lifetime revenue: {info.lifetimeRevenue}, Encrypted CPM: {info.encryptedCPM}, " +
-                      $"Instance name: {info.instanceName}, Instance ID: {info.instanceId}, Ab: {info.ab}, Auction ID: {info.auctionId}");
-            this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.interstitialPlacement, null));
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.interstitialPlacement, adInfo));
         }
 
         private void InterstitialOnAdClickedEvent(IronSourceAdInfo info)
         {
-            Debug.Log($"oneLog: IronSourceWrapper InterstitialOnAdClickedEvent, " +
-                      $"Ad unit: {info.adUnit}, Ad network: {info.adNetwork}, Country: {info.country}, Segment name: {info.segmentName}, " +
-                      $"Revenue: {info.revenue}, Precision: {info.precision}, Lifetime revenue: {info.lifetimeRevenue}, Encrypted CPM: {info.encryptedCPM}, " +
-                      $"Instance name: {info.instanceName}, Instance ID: {info.instanceId}, Ab: {info.ab}, Auction ID: {info.auctionId}");
-            this.signalBus.Fire(new InterstitialAdClickedSignal(this.interstitialPlacement, null));
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new InterstitialAdClickedSignal(this.interstitialPlacement, adInfo));
         }
 
         #endregion
@@ -248,6 +228,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private async void BannerOnAdLoadFailedEvent(IronSourceError obj)
         {
+            this.logService.Log($"oneLog: IronSourceWrapper BannerOnAdLoadFailedEvent, Message: {obj.getDescription()}");
             this.signalBus.Fire(new BannerAdLoadFailedSignal("", $"{obj.getDescription()}"));
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             this.ShowBannerAd();
@@ -257,39 +238,27 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void BannerOnAdScreenDismissedEvent(IronSourceAdInfo obj)
         {
-            Debug.Log($"oneLog: IronSourceWrapper BannerOnAdScreenDismissedEvent, " +
-                      $"Ad unit: {obj.adUnit}, Ad network: {obj.adNetwork}, Country: {obj.country}, Segment name: {obj.segmentName}, " +
-                      $"Revenue: {obj.revenue}, Precision: {obj.precision}, Lifetime revenue: {obj.lifetimeRevenue}, Encrypted CPM: {obj.encryptedCPM}, " +
-                      $"Instance name: {obj.instanceName}, Instance ID: {obj.instanceId}, Ab: {obj.ab}, Auction ID: {obj.auctionId}");
-            this.signalBus.Fire(new BannerAdDismissedSignal("", null));
+            var adInfo = new AdInfo(this.AdPlatform, obj.adUnit, obj.adUnit, obj.adNetwork, value:obj.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new BannerAdDismissedSignal("", adInfo));
         }
 
         private void BannerOnAdScreenPresentedEvent(IronSourceAdInfo obj)
         {
-            Debug.Log($"oneLog: IronSourceWrapper BannerOnAdScreenPresentedEvent, " +
-                      $"Ad unit: {obj.adUnit}, Ad network: {obj.adNetwork}, Country: {obj.country}, Segment name: {obj.segmentName}, " +
-                      $"Revenue: {obj.revenue}, Precision: {obj.precision}, Lifetime revenue: {obj.lifetimeRevenue}, Encrypted CPM: {obj.encryptedCPM}, " +
-                      $"Instance name: {obj.instanceName}, Instance ID: {obj.instanceId}, Ab: {obj.ab}, Auction ID: {obj.auctionId}");
-            this.signalBus.Fire(new BannerAdPresentedSignal("", null));
+            var adInfo = new AdInfo(this.AdPlatform, obj.adUnit, obj.adUnit, obj.adNetwork, value:obj.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new BannerAdPresentedSignal("", adInfo));
         }
 
         private void BannerOnAdLoadedEvent(IronSourceAdInfo info)
         {
-            Debug.Log($"oneLog: IronSourceWrapper BannerOnAdLoadedEvent, " +
-                      $"Ad unit: {info.adUnit}, Ad network: {info.adNetwork}, Country: {info.country}, Segment name: {info.segmentName}, " +
-                      $"Revenue: {info.revenue}, Precision: {info.precision}, Lifetime revenue: {info.lifetimeRevenue}, Encrypted CPM: {info.encryptedCPM}, " +
-                      $"Instance name: {info.instanceName}, Instance ID: {info.instanceId}, Ab: {info.ab}, Auction ID: {info.auctionId}");
-            this.signalBus.Fire(new BannerAdLoadedSignal("", null));
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new BannerAdLoadedSignal("", adInfo));
             this.isLoadedBanner = true;
         }
 
         private void BannerOnAdClickedEvent(IronSourceAdInfo info)
         {
-            Debug.Log($"oneLog: IronSourceWrapper BannerOnAdClickedEvent, " +
-                      $"Ad unit: {info.adUnit}, Ad network: {info.adNetwork}, Country: {info.country}, Segment name: {info.segmentName}, " +
-                      $"Revenue: {info.revenue}, Precision: {info.precision}, Lifetime revenue: {info.lifetimeRevenue}, Encrypted CPM: {info.encryptedCPM}, " +
-                      $"Instance name: {info.instanceName}, Instance ID: {info.instanceId}, Ab: {info.ab}, Auction ID: {info.auctionId}");
-            this.signalBus.Fire(new BannerAdClickedSignal("", null));
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new BannerAdClickedSignal("", adInfo));
         }
 
         #endregion
@@ -323,7 +292,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 Currency           = "USD",
                 Placement          = impressionData.placement,
                 AdNetwork          = impressionData.adNetwork,
-                AdFormat           = impressionData.adUnit
+                AdFormat           = impressionData.adUnit,
             };
 
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
@@ -405,8 +374,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public bool TryGetRewardPlacementId(string placement, out string id)
         {
-            id = "";
-            return true;
+            id = default;
+            return false;
         }
 
         public void LoadInterstitialAd(string place)
@@ -417,8 +386,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public bool TryGetInterstitialPlacementId(string placement, out string id)
         {
-            id = "";
-            return true;
+            id = default;
+            return false;
         }
 
         private void InitAdQuality()
