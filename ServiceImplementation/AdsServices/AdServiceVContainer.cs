@@ -125,7 +125,7 @@ namespace ServiceImplementation.AdsServices
             builder.DeclareSignal<RewardedAdCalledSignal>();
             builder.DeclareSignal<RewardedAdOfferSignal>();
             builder.DeclareSignal<RewardedAdClosedSignal>();
-            builder.DeclareSignal<RewardedAdShowFailedSignal>();
+            builder.DeclareSignal<RewardedAdDisplayFailedSignal>();
 
             builder.DeclareSignal<AppOpenFullScreenContentOpenedSignal>();
             builder.DeclareSignal<AppOpenFullScreenContentFailedSignal>();
