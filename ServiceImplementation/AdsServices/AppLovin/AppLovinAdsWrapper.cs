@@ -48,6 +48,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.AppLovinSetting = thirdPartiesConfig.AdSettings.AppLovin;
         }
         
+        public string            AdPlatform        => AdRevenueConstants.ARSourceAppLovinMAX;
         private const string MrecAdFormat = "MREC";
 
         public virtual async void Initialize()
@@ -728,7 +729,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void LoadInterstitialAd(string place) { this.InternalLoadInterstitialAd(AdPlacement.PlacementWithName(place)); }
 
-        public string            AdPlatform        => AdRevenueConstants.ARSourceAppLovinMAX;
         public AdNetworkSettings AdNetworkSettings => this.AppLovinSetting;
 
         #endregion

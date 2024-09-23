@@ -308,25 +308,22 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void MrecBannerViewDisplay()
         {
-            // TODO Recheck this
-            var adInfo = new AdInfo(AdMobWrapper.AdPlatForm, this.ADMobSettings.MRECAdIds.First().Value.Id, MrecAdFormat);
-            this.signalBus.Fire(new MRecAdDisplayedSignal("", adInfo));
+            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdMobWrapper.MrecAdFormat))
+                .ForEach(adInfo => this.signalBus.Fire(new MRecAdDisplayedSignal("", adInfo)));
         }
 
         private void BannerViewOnAdClicked()
         {
-            // TODO Recheck this
-            var adInfo = new AdInfo(AdMobWrapper.AdPlatForm, this.ADMobSettings.MRECAdIds.First().Value.Id, MrecAdFormat);
-            this.signalBus.Fire(new MRecAdClickedSignal("", adInfo));
+            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdMobWrapper.MrecAdFormat))
+                .ForEach(adInfo => this.signalBus.Fire(new MRecAdClickedSignal("", adInfo)));
         }
 
         private void BannerViewOnAdLoadFailed(LoadAdError obj) { this.signalBus.Fire(new MRecAdLoadFailedSignal("")); }
 
         private void BannerViewOnAdLoaded()
         {
-            // TODO Recheck this
-            var adsRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.MRECAdIds.First().Value.Id, MrecAdFormat);
-            this.signalBus.Fire(new MRecAdLoadedSignal("", adsRevenueEvent));
+            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdMobWrapper.MrecAdFormat))
+                .ForEach(adInfo => this.signalBus.Fire(new MRecAdLoadedSignal("", adInfo)));
         }
 
         private void MRECAdHandlePaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, this.ADMobSettings.MRECAdIds.FirstOrDefault().Value.Id, MrecAdFormat);
@@ -472,9 +469,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void AdMobHandlePaidEvent(AdValue args, string adUnitId, string adFormat)
         {
-            var adsRevenueEvent = new AdsRevenueEvent()
+            var adsRevenueEvent = new AdsRevenueEvent
             {
-                
+                AdsRevenueSourceId = AdRevenueConstants.ARSourceAdMob,
+                AdUnit             = adUnitId,
+                AdFormat           = adFormat,
+                AdNetwork          = "AdMob",
+                Revenue            = args.Value,
+                Currency           = "USD",
             };
 
             this.analyticService.Track(adsRevenueEvent);
