@@ -1,7 +1,5 @@
 namespace Core.AdsServices.Signals
-{
-    using Core.AnalyticServices.CommonEvents;
-
+{ 
     public class AppOpenFullScreenContentOpenedSignal : BaseAdsSignal
    {
        public AppOpenFullScreenContentOpenedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
@@ -12,7 +10,7 @@ namespace Core.AdsServices.Signals
    public class AppOpenFullScreenContentFailedSignal : BaseAdsSignal
    {
        public string Message { get; private set; }
-       public AppOpenFullScreenContentFailedSignal(string placement, string message, AdInfo adInfo) : base(placement, adInfo) { this.Message = message; }
+       public AppOpenFullScreenContentFailedSignal(string placement, string message) : base(placement) { this.Message = message; }
    }
    
    public class AppOpenFullScreenContentClosedSignal : BaseAdsSignal
@@ -45,7 +43,7 @@ namespace Core.AdsServices.Signals
    
    public class AppOpenCalledSignal : BaseAdsSignal
    {
-       public AppOpenCalledSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
+       public AppOpenCalledSignal(string placement) : base(placement)
        {
        }
    }

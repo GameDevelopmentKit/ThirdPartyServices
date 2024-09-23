@@ -6,6 +6,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using System.Diagnostics;
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
+    using Core.AdsServices.Helpers;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -97,14 +98,12 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             void OnAdFullScreenContentOpened()
             {
-                var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultBannerAdId.Id, BannerAdFormat);
-                this.signalBus.Fire(new BannerAdPresentedSignal(BannerAdFormat, adInfo));
+                this.signalBus.Fire(new BannerAdPresentedSignal(BannerAdFormat));
             }
 
             void OnAddFullScreenContentClosed()
             {
-                var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultBannerAdId.Id, BannerAdFormat);
-                this.signalBus.Fire(new BannerAdDismissedSignal(BannerAdFormat, adInfo));
+                this.signalBus.Fire(new BannerAdDismissedSignal(BannerAdFormat));
             }
 
             void OnAdClicked()
@@ -133,29 +132,13 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         public bool TryGetInterstitialPlacementId(string place, out string id)
         {
-            var placement = AdPlacement.PlacementWithName(place);
-            id = placement == AdPlacement.Default
-                ? this.config.DefaultInterstitialAdId.Id
-                : this.FindIdForPlacement(this.AdNetworkSettings.CustomInterstitialAdIds, placement);
-
-            return !string.IsNullOrEmpty(id);
+            return AdPlacementHelper.TryGetPlacementId(
+                place, 
+                this.config.DefaultInterstitialAdId, 
+                this.AdNetworkSettings.CustomInterstitialAdIds, 
+                out id);
         }
         
-        protected virtual string FindIdForPlacement(Dictionary<AdPlacement, AdId> dict, AdPlacement placement)
-        {
-            AdId idObj = null;
-            if (placement != null && dict != null)
-            {
-                dict.TryGetValue(placement, out idObj);
-            }
-
-            if (idObj != null && !string.IsNullOrEmpty(idObj.Id))
-            {
-                return idObj.Id;
-            }
-
-            return string.Empty;
-        }
         public bool IsInterstitialAdReady(string _) { return this.interstitialAd?.CanShowAd() ?? false; }
 
 
@@ -221,12 +204,11 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         public bool TryGetRewardPlacementId(string placement, out string id)
         {
-            var place = AdPlacement.PlacementWithName(placement);
-            id = place == AdPlacement.Default
-                ? this.config.DefaultRewardedAdId.Id
-                : this.FindIdForPlacement(this.AdNetworkSettings.CustomRewardedAdIds, place);
-
-            return !string.IsNullOrEmpty(id);
+            return AdPlacementHelper.TryGetPlacementId(
+                placement, 
+                this.config.DefaultRewardedAdId, 
+                this.AdNetworkSettings.CustomRewardedAdIds, 
+                out id);
         }
 
         public void LoadRewardAds(string place)
@@ -413,14 +395,12 @@ namespace ServiceImplementation.AdsServices.AdMob
         private void OnCollapsibleBannerPresented(string placement)
         {
             Debug.Log("onelog: OnCollapsibleBannerPresented");
-            var adInfo = new AdInfo(this.AdPlatform, this.config.CollapsibleBannerAdId.Id, CollapsibleBannerAdFormat);
-            this.signalBus.Fire(new CollapsibleBannerAdPresentedSignal(placement, adInfo));
+            this.signalBus.Fire(new CollapsibleBannerAdPresentedSignal(placement));
         }
 
         private void OnCollapsibleBannerDismissed(string placement)
         {
-            var adInfo = new AdInfo(this.AdPlatform, this.config.CollapsibleBannerAdId.Id, CollapsibleBannerAdFormat);
-            this.signalBus.Fire(new CollapsibleBannerAdDismissedSignal(placement, adInfo));
+            this.signalBus.Fire(new CollapsibleBannerAdDismissedSignal(placement));
         }
 
         private void OnCollapsibleBannerClicked(string placement)

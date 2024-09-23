@@ -4,6 +4,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using System;
     using System.Collections.Generic;
     using Core.AdsServices;
+    using Core.AdsServices.Helpers;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices.CommonEvents;
     using Cysharp.Threading.Tasks;
@@ -94,22 +95,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         }
 
         #region Extension
-
-        protected virtual string FindIdForPlacement(Dictionary<AdPlacement, AdId> dict, AdPlacement placement)
-        {
-            AdId idObj = null;
-            if (placement != null && dict != null)
-            {
-                dict.TryGetValue(placement, out idObj);
-            }
-
-            if (idObj != null && !string.IsNullOrEmpty(idObj.Id))
-            {
-                return idObj.Id;
-            }
-
-            return string.Empty;
-        }
 
         protected MaxSdkBase.BannerPosition ConvertToBannerAdPosition(BannerAdsPosition pos)
         {
@@ -259,7 +244,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var placement = AdPlacement.PlacementWithName(place);
             id = placement == AdPlacement.Default
                      ? this.AppLovinSetting.DefaultBannerAdId.Id
-                     : this.FindIdForPlacement(this.AppLovinSetting.CustomBannerAdIds, placement);
+                     : AdPlacementHelper.FindIdForPlacement(this.AppLovinSetting.CustomBannerAdIds, placement);
 
             return !string.IsNullOrEmpty(id);
         }
@@ -351,13 +336,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool TryGetInterstitialPlacementId(string place, out string id)
         {
-            var placement = AdPlacement.PlacementWithName(place);
-            id = placement == AdPlacement.Default
-                     ? this.AppLovinSetting.DefaultInterstitialAdId.Id
-                     : this.FindIdForPlacement(this.AppLovinSetting.CustomInterstitialAdIds, placement);
-
-            return !string.IsNullOrEmpty(id);
+            return AdPlacementHelper.TryGetPlacementId(
+                place, 
+                this.AppLovinSetting.DefaultInterstitialAdId, 
+                this.AppLovinSetting.CustomInterstitialAdIds, 
+                out id);
         }
+        
 
         protected virtual void InternalLoadInterstitialAd(AdPlacement adPlacement)
         {
@@ -420,8 +405,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnAppOpenDisplayFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)
         {
             this.logService.Log($"onelog: OnAppOpenDisplayFailedEvent: {arg2.Message}");
-            var adInfo = new AdInfo(this.AdPlatform, arg3.AdUnitIdentifier, arg3.AdFormat, arg3.NetworkName, arg3.NetworkPlacement, arg3.Revenue);
-            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(arg1, arg2.Message,adInfo));
+            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(arg1, arg2.Message));
         }
 
         private void OnAppOpenDisplayedEvent(string arg1, MaxSdkBase.AdInfo arg2)
@@ -500,12 +484,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent      -= this.OnRewardedAdDisplayedHandler;
             MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent  -= this.OnRewardedAdDisplayFailedEventHandler;
         }
-
-
-        public bool TryGetRewardPlacementId(string placement, out string id)
-        {
-            return this.TryGetRewardedAdsId(placement, out id);
-        }
         
         private void OnRewardedCompleted(string arg1, MaxSdkBase.Reward arg2, MaxSdkBase.AdInfo arg3) { this.rewardedCompleted[this.currentShowingRewarded] = true; }
 
@@ -552,19 +530,19 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InternalLoadRewarded(placement);
         }
 
-        private bool TryGetRewardedAdsId(string place, out string id)
+        public bool TryGetRewardPlacementId(string place, out string id)
         {
-            var placement = AdPlacement.PlacementWithName(place);
-            id = placement == AdPlacement.Default
-                     ? this.AppLovinSetting.DefaultRewardedAdId.Id
-                     : this.FindIdForPlacement(this.AppLovinSetting.CustomRewardedAdIds, placement);
-
-            return !string.IsNullOrEmpty(id);
+            return AdPlacementHelper.TryGetPlacementId(
+                place, 
+                this.AppLovinSetting.DefaultRewardedAdId, 
+                this.AppLovinSetting.CustomRewardedAdIds, 
+                out id);
         }
+
 
         public bool IsRewardedAdReady(string place)
         {
-            var isPlacementReady = this.TryGetRewardedAdsId(place, out var id);
+            var isPlacementReady = this.TryGetRewardPlacementId(place, out var id);
 
             return isPlacementReady && MaxSdk.IsRewardedAdReady(id);
         }
@@ -579,13 +557,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         protected virtual void InternalLoadRewarded(AdPlacement placement)
         {
-            if (!this.TryGetRewardedAdsId(placement.Name, out var id)) return;
+            if (!this.TryGetRewardPlacementId(placement.Name, out var id)) return;
             MaxSdk.LoadRewardedAd(id);
         }
 
         private void InternalShowRewarded(AdPlacement placement)
         {
-            if (!this.TryGetRewardedAdsId(placement.Name, out var id)) return;
+            if (!this.TryGetRewardPlacementId(placement.Name, out var id)) return;
 
             this.rewardedCompleted.TryAdd(placement, false);
             this.rewardedCompleted[placement] = false;
@@ -603,14 +581,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnBannerAdCollapsedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, arg2.AdFormat, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
-            this.signalBus.Fire(new BannerAdDismissedSignal(arg2.Placement, adInfo));
+            this.signalBus.Fire(new BannerAdDismissedSignal(arg2.Placement));
         }
 
         private void OnBannerAdExpandedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, arg2.AdFormat, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue); 
-            this.signalBus.Fire(new BannerAdPresentedSignal(arg2.Placement, adInfo));
+            this.signalBus.Fire(new BannerAdPresentedSignal(arg2.Placement));
         }
 
         private void OnBannerAdClickedHandler(string arg1, MaxSdkBase.AdInfo arg2)

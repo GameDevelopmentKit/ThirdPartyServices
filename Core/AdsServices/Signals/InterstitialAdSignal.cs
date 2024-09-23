@@ -1,8 +1,5 @@
 ﻿namespace Core.AdsServices.Signals
 {
-    using Core.AnalyticServices.CommonEvents;
-    using Core.AnalyticServices.Signal;
-
     public class InterstitialAdCalledSignal : BaseAdsSignal
     {
         public InterstitialAdCalledSignal(string placement) : base(placement) { }

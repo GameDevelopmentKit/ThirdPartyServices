@@ -2,12 +2,12 @@
 {
     public class BannerAdPresentedSignal : BaseAdsSignal
     {
-        public BannerAdPresentedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
+        public BannerAdPresentedSignal(string placement) : base(placement) { }
     }
 
     public class BannerAdDismissedSignal : BaseAdsSignal
     {
-        public BannerAdDismissedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
+        public BannerAdDismissedSignal(string placement) : base(placement) { }
     }
 
     public class BannerAdLoadedSignal : BaseAdsSignal

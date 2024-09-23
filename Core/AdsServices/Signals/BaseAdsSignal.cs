@@ -5,7 +5,7 @@
         public string Placement;
         public AdInfo AdInfo;
 
-        public BaseAdsSignal(string placement, AdInfo adInfo = null)
+        protected BaseAdsSignal(string placement, AdInfo adInfo = null)
         {
             this.Placement = placement;
             this.AdInfo    = adInfo;

@@ -1,17 +1,15 @@
 namespace Core.AdsServices.Signals
 {
-    using Core.AnalyticServices.CommonEvents;
-
     public class CollapsibleBannerAdPresentedSignal : BaseAdsSignal
     {
-        public CollapsibleBannerAdPresentedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
+        public CollapsibleBannerAdPresentedSignal(string placement) : base(placement)
         {
         }
     }
     
     public class CollapsibleBannerAdDismissedSignal : BaseAdsSignal
     {
-        public CollapsibleBannerAdDismissedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
+        public CollapsibleBannerAdDismissedSignal(string placement) : base(placement)
         {
         }
     }

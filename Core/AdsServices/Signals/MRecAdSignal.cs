@@ -1,7 +1,5 @@
 namespace Core.AdsServices.Signals
 {
-    using Core.AnalyticServices.CommonEvents;
-
     public class MRecAdLoadedSignal : BaseAdsSignal
     {
         public MRecAdLoadedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }

@@ -1,7 +1,5 @@
 ﻿namespace Core.AdsServices.Signals
 {
-    using Core.AnalyticServices.CommonEvents;
-
     public class RewardedAdLoadedSignal : BaseAdsSignal
     {
         public long LoadingTime;
