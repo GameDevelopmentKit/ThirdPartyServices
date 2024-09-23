@@ -47,6 +47,7 @@
         public const string EnableCollapsibleBannerFallback         = "enable_collapsible_banner_fallback";
         public const string CollapsibleBannerAutoRefreshEnabled     = "collapsible_banner_auto_refresh_enabled";
         public const string CollapsibleBannerExpandOnRefreshEnabled = "collapsible_banner_expand_on_refresh_enabled";
+        public const string CollapsibleBannerDelayStartSession      = "collapsible_banner_delay_start_session";
 
         #endregion
     }

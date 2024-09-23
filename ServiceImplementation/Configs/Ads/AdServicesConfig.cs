@@ -43,6 +43,7 @@ namespace ServiceImplementation.Configs.Ads
         public bool EnableRewardedInterstitialAd { get; private set; }
         public bool EnableNativeAd               { get; private set; }
         public bool EnableCollapsibleBanner      { get; private set; }
+        public int CollapsibleBannerDelayStartSession      { get; private set; }
         public int  IntervalLoadAds              { get; private set; }
 
         #endregion
@@ -134,7 +135,8 @@ namespace ServiceImplementation.Configs.Ads
             this.EnableRewardedInterstitialAd = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableRewardedInterstitialAD);
             this.EnableNativeAd               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableNativeAD);
             #if THEONE_COLLAPSIBLE_BANNER
-            this.EnableCollapsibleBanner = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBanner);
+            this.EnableCollapsibleBanner            = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBanner);
+            this.CollapsibleBannerDelayStartSession = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerDelayStartSession);
             #endif
             this.IntervalLoadAds = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.IntervalLoadAds);
 
