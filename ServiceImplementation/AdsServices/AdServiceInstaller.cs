@@ -48,14 +48,13 @@ namespace ServiceImplementation.AdsServices
 #endif
 #if ADMOB
             this.Container.BindInterfacesTo<AdMobAdService>().AsCached();
+            this.Container.BindInterfacesTo<AdMobWrapper>().AsCached().NonLazy();
 #endif
 #if !APPLOVIN && (!IRONSOURCE || UNITY_EDITOR) && (!YANDEX || UNITY_EDITOR) && !ADMOB
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
 
-#if ADMOB
-            this.Container.BindInterfacesTo<AdMobWrapper>().AsCached().NonLazy();
-#else
+#if !ADMOB
             this.Container.Bind<ICollapsibleBannerAd>().To<DummyCollapsibleBannerAdAdService>().AsCached();
             #if !APPLOVIN
             this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();
