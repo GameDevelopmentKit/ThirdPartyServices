@@ -221,6 +221,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsMRECReady(AdViewPosition adViewPosition)
         {
+            if (this.AppLovinSetting.MRECAdIds.Count == 0) return false;
             return this.idToMRecLoaded.TryGetValue(this.AppLovinSetting.MRECAdIds[adViewPosition].Id, out _)
                    && this.idToMRecLoaded[this.AppLovinSetting.MRECAdIds[adViewPosition].Id];
         }
