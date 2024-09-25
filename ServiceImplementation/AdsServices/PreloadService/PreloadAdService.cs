@@ -71,6 +71,9 @@ namespace ServiceImplementation.AdsServices.PreloadService
             {
                 adLoadService.LoadInterstitialAd(placement);
                 this.interstitialAdStopwatch.TryAdd((adLoadService, placement), this.unScaleInGameStopWatchManager.StartNew());
+                var adUnitId = adLoadService.TryGetInterstitialPlacementId(placement, out var id) ? id : string.Empty;
+                var adInfo   = new AdInfo(adLoadService.AdPlatform, adUnitId, "Interstitial");
+                this.signalBus.Fire<AdRequestSignal>(new(placement, adInfo));
             }
         }
 
@@ -109,6 +112,9 @@ namespace ServiceImplementation.AdsServices.PreloadService
             {
                 adLoadService.LoadRewardAds(placement);
                 this.rewardAdStopwatch.TryAdd((adLoadService, placement), this.unScaleInGameStopWatchManager.StartNew());
+                var adUnitId = adLoadService.TryGetRewardPlacementId(placement, out var id) ? id : string.Empty;
+                var adInfo   = new AdInfo(adLoadService.AdPlatform, adUnitId, "Rewarded");
+                this.signalBus.Fire<AdRequestSignal>(new(placement, adInfo));
             }
         }
 

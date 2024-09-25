@@ -7,6 +7,7 @@ namespace Core.AdsServices
     /// </summary>
     public interface IAdServices
     {
+        string AdPlatform { get; }
         #region consent
 
         // void          GrantDataPrivacyConsent();

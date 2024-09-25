@@ -10,6 +10,7 @@ namespace Core.AnalyticServices.CommonEvents
         public string AdNetwork;
         public string AdUnit;
         public string AdFormat;
+        public string NetworkPlacement;
         public string Placement;
         public string Currency;
         public double Revenue;
