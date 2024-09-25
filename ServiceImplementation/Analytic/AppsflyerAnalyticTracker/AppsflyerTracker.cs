@@ -77,12 +77,16 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 #if UNITY_IOS && !UNITY_EDITOR
             AppsFlyer.waitForATTUserAuthorizationWithTimeoutInterval(60);
 #endif
-            AppsFlyer.setIsDebug(this.analyticConfig.AppsflyerIsDebug);
+#if THEONE_MMP_DEBUG && !PRODUCTION
+            AppsFlyer.setIsDebug(true);
+#endif
 
             //IAP Revenue connector
 #if THEONE_IAP
             AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
-            AppsFlyerPurchaseConnector.setIsSandbox(this.analyticConfig.AppsflyerIsDebug);
+#if THEONE_MMP_DEBUG && !PRODUCTION
+            AppsFlyerPurchaseConnector.setIsSandbox(true); 
+#endif
             AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();
@@ -90,9 +94,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             //Start SDK
             AppsFlyer.startSDK();
-
-            //Ads Revenue connector
-            AppsFlyerAdRevenue.start();
 
             this.TrackerReady.SetResult(true);
 
@@ -145,26 +146,29 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
                 Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
-
                 return;
             }
 
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add(AFAdRevenueEvent.AD_UNIT, adsRevenueEvent.AdUnit);
-            dic.Add(AFAdRevenueEvent.AD_TYPE, adsRevenueEvent.AdFormat);
-            dic.Add(AFAdRevenueEvent.PLACEMENT, adsRevenueEvent.Placement);
-            dic.Add("af_quantity", "1");
-            AppsFlyerAdRevenueMediationNetworkType mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
+            var parameters = new Dictionary<string, string>
             {
-                AdRevenueConstants.ARSourceAppLovinMAX => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax,
-                AdRevenueConstants.ARSourceIronSource  => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeIronSource,
-                AdRevenueConstants.ARSourceAdMob       => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob,
-                AdRevenueConstants.ARSourceUnity       => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeUnity,
-                AdRevenueConstants.ARSourceYandex      => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeYandex,
-                _                                      => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeCustomMediation
+                { AdRevenueScheme.AD_UNIT, adsRevenueEvent.AdUnit },
+                { AdRevenueScheme.AD_TYPE, adsRevenueEvent.AdFormat },
+                { AdRevenueScheme.PLACEMENT, adsRevenueEvent.Placement },
+                { "af_quantity", "1" }
+            };
+            
+            var mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
+            {
+                AdRevenueConstants.ARSourceAppLovinMAX => MediationNetwork.ApplovinMax,
+                AdRevenueConstants.ARSourceIronSource  => MediationNetwork.IronSource,
+                AdRevenueConstants.ARSourceAdMob       => MediationNetwork.GoogleAdMob,
+                AdRevenueConstants.ARSourceUnity       => MediationNetwork.Unity,
+                AdRevenueConstants.ARSourceYandex      => MediationNetwork.Yandex,
+                _                                      => MediationNetwork.Custom
             };
 
-            AppsFlyerAdRevenue.logAdRevenue(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Revenue, adsRevenueEvent.Currency, dic);
+            var logRevenue = new AFAdRevenueData(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Currency, adsRevenueEvent.Revenue);
+            AppsFlyer.logAdRevenue(logRevenue, parameters);
         }
     }
 }

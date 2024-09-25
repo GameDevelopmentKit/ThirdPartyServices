@@ -65,7 +65,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
             var appToken    = this.analyticConfig.AdjustAppToken;
 
-#if MMP_DEBUG && !PRODUCTION
+#if THEONE_MMP_DEBUG && !PRODUCTION
             var environment = AdjustEnvironment.Sandbox;
 #else
             var environment = AdjustEnvironment.Production;
