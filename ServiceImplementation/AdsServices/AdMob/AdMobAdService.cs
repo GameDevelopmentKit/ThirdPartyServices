@@ -18,7 +18,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using Zenject;
     using Debug = UnityEngine.Debug;
 
-    public class AdMobAdService : IAdServices, IAdLoadService, IBackFillAdsService, IInitializable, ICollapsibleBannerAd
+    public class AdMobAdService : IAdServices, IAdLoadService, IInitializable, ICollapsibleBannerAd
     {
         #region Constructor
 
@@ -276,7 +276,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         #region RemoveAds
 
-        public void RemoveAds(bool _) { PlayerPrefs.SetInt("ADMOB_REMOVE_ADS", 1); }
+        public void RemoveAds() { PlayerPrefs.SetInt("ADMOB_REMOVE_ADS", 1); }
 
         public bool IsRemoveAds() { return PlayerPrefs.HasKey("ADMOB_REMOVE_ADS"); }
 
