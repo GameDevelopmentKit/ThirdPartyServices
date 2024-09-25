@@ -161,7 +161,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.onRewardFailed = null;
             this.logService.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdShowFailedEvent. Message: {obj.getDescription()}");
             var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
-            this.signalBus.Fire(new RewardedAdDisplayFailedSignal(this.rewardedPlacement, obj.getDescription(),adInfo));
+            this.signalBus.Fire(new RewardedAdShowFailedSignal(this.rewardedPlacement, obj.getDescription(),adInfo));
         }
 
         private void RewardedVideoOnAdClickedEvent(IronSourcePlacement obj, IronSourceAdInfo info)
@@ -238,14 +238,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void BannerOnAdScreenDismissedEvent(IronSourceAdInfo obj)
         {
-            var adInfo = new AdInfo(this.AdPlatform, obj.adUnit, obj.adUnit, obj.adNetwork, value:obj.revenue ?? 0, currency:"USD");
-            this.signalBus.Fire(new BannerAdDismissedSignal("", adInfo));
+            this.signalBus.Fire(new BannerAdDismissedSignal(""));
         }
 
         private void BannerOnAdScreenPresentedEvent(IronSourceAdInfo obj)
         {
-            var adInfo = new AdInfo(this.AdPlatform, obj.adUnit, obj.adUnit, obj.adNetwork, value:obj.revenue ?? 0, currency:"USD");
-            this.signalBus.Fire(new BannerAdPresentedSignal("", adInfo));
+            this.signalBus.Fire(new BannerAdPresentedSignal(""));
         }
 
         private void BannerOnAdLoadedEvent(IronSourceAdInfo info)

@@ -68,7 +68,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
-
+            var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultBannerAdId.Id, BannerAdFormat);
             var size     = new AdSize(width, height);
             var position = bannerAdsPosition.ToAdMobAdPosition();
 
@@ -92,7 +92,6 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             void OnBannerAdLoaded()
             {
-                var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultBannerAdId.Id, BannerAdFormat);
                 this.signalBus.Fire(new BannerAdLoadedSignal(BannerAdFormat, adInfo));
             }
 
@@ -108,7 +107,6 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             void OnAdClicked()
             {
-                var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultBannerAdId.Id, BannerAdFormat);
                 this.signalBus.Fire(new BannerAdClickedSignal(BannerAdFormat, adInfo));
             }
             #endregion
