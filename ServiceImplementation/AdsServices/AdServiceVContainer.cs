@@ -48,28 +48,26 @@ namespace ServiceImplementation.AdsServices
             #else
             builder.Register<AppLovinAdsWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
-            #elif IRONSOURCE && !UNITY_EDITOR
+            #endif
+            #if IRONSOURCE && !UNITY_EDITOR
             builder.Register<IronSourceWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
-            #elif YANDEX && !UNITY_EDITOR
+            #endif
+            #if YANDEX && !UNITY_EDITOR
             builder.Register<YandexAdsWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
-            #elif ADMOB
+            #endif
+            #if ADMOB
             builder.Register<AdMobAdService>(Lifetime.Singleton).AsImplementedInterfaces();
-            #else
+            builder.Register<AdMobWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
+            #endif
+            #if !APPLOVIN && (!IRONSOURCE || UNITY_EDITOR) && (!YANDEX || UNITY_EDITOR) && !ADMOB
             builder.Register<DummyAdServiceIml>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
 
-            #if ADMOB
-            builder.Register<AdMobWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
-            if (!builder.Exists(typeof(IBackFillAdsService), true))
-            {
-                builder.Register<AdMobAdService>(Lifetime.Singleton).As(typeof(IInitializable), typeof(ICollapsibleBannerAd), typeof(IAdLoadService), typeof(IBackFillAdsService));
-            }
-            #else
+            #if !ADMOB
             builder.Register<DummyCollapsibleBannerAdAdService>(Lifetime.Singleton).AsImplementedInterfaces();
             #if !APPLOVIN
             builder.Register<DummyAOAAdServiceIml>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
-            builder.Register<DummyIBackFillService>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
 
             builder.Register<PreloadAdService>(Lifetime.Singleton).AsImplementedInterfaces();
@@ -125,7 +123,7 @@ namespace ServiceImplementation.AdsServices
             builder.DeclareSignal<RewardedAdCalledSignal>();
             builder.DeclareSignal<RewardedAdOfferSignal>();
             builder.DeclareSignal<RewardedAdClosedSignal>();
-            builder.DeclareSignal<RewardedAdDisplayFailedSignal>();
+            builder.DeclareSignal<RewardedAdShowFailedSignal>();
 
             builder.DeclareSignal<AppOpenFullScreenContentOpenedSignal>();
             builder.DeclareSignal<AppOpenFullScreenContentFailedSignal>();
