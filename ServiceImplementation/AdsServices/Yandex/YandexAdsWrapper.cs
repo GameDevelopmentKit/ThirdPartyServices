@@ -339,7 +339,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         public bool IsInterstitialAdReady(string place) => this.interstitialAd != null;
 
         public virtual void LoadInterstitialAd(string            place = "")               => this.interstitialAdLoader.LoadAd(new AdRequestConfiguration.Builder(this.YandexSettings.InterstitialAdId.Id).Build());
-        public         bool TryGetInterstitialPlacementId(string placement, out string id) { throw new NotImplementedException(); }
+        public         bool TryGetInterstitialPlacementId(string placement, out string id) { id = default; return false; }
 
         public void ShowInterstitialAd(string place)
         {

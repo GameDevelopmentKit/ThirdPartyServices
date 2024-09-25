@@ -4,9 +4,9 @@ namespace Core.AdsServices
     {
         public string AdPlatform     { get; set; }
         public string AdUnitId       { get; set; }
+        public string AdFormat       { get; set; }
         public string AdSource       { get; set; }
         public string AdSourceUnitId { get; set; }
-        public string AdFormat       { get; set; }
         public double Value          { get; set; }
         public string Currency       { get; set; }
 

@@ -509,7 +509,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnRewardedAdDisplayFailedEventHandler(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)
         {
             var adInfo = new AdInfo(AdPlatform, arg3.AdUnitIdentifier, arg3.AdFormat, arg3.NetworkName, arg3.NetworkPlacement, arg3.Revenue);
-            this.signalBus.Fire(new RewardedAdDisplayFailedSignal(arg1, arg2.Message, adInfo));
+            this.signalBus.Fire(new RewardedAdShowFailedSignal(arg1, arg2.Message, adInfo));
         }
         private void OnRewardCompleted(AdPlacement placement, AdInfo adInfo)
         {
