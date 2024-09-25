@@ -2,7 +2,7 @@
 {
     public class InterstitialAdCalledSignal : BaseAdsSignal
     {
-        public InterstitialAdCalledSignal(string placement) : base(placement) { }
+        public InterstitialAdCalledSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
     }
 
     public class InterstitialAdLoadedSignal : BaseAdsSignal
