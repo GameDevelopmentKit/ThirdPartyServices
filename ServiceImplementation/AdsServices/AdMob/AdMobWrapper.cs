@@ -456,7 +456,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log($"Native ad loaded successfully");
         }
 
-        private void AdMobNativePaidHandler(object sender, AdValueEventArgs e) { this.AdMobHandlePaidEvent(e.AdValue, "NativeAds"); }
+        private void AdMobNativePaidHandler(object sender, AdValueEventArgs e) { this.AdMobHandlePaidEvent(e.AdValue,"NativeAds","NativeAds"); }
 
         private void LoadAllNativeAds()
         {
