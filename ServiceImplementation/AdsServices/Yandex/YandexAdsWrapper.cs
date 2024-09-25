@@ -211,7 +211,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         {
             this.logService.Log($"onelog: Yandex: HandleRewardedAdFailedToShow: {args.Message}");
             var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.RewardedAdId.Id, YandexAdsWrapper.RewardedAdFormat, YandexAdsWrapper.RewardedAdFormat);
-            this.signalBus.Fire(new RewardedAdDisplayFailedSignal(this.CurrentRewardedAdPlacement, args.Message, adInfo));
+            this.signalBus.Fire(new RewardedAdShowFailedSignal(this.CurrentRewardedAdPlacement, args.Message, adInfo));
             this.DestroyRewardedAd();
             this.LoadRewardAds();
         }
@@ -421,8 +421,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleAoaAdFailedToShow(object sender, AdFailureEventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleAdFailedToShow event received with message: {args.Message}");
-            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.AoaAdId.Id, AoaAdFormat);
-            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal("", args.Message, adInfo));
+            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal("", args.Message));
             this.DestroyAoaAd();
             this.LoadAoaAd();
         }
