@@ -3,6 +3,7 @@ namespace ServiceImplementation.Analytic.Validator
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using Newtonsoft.Json;
     using TMPro;
@@ -87,6 +88,18 @@ namespace ServiceImplementation.Analytic.Validator
             {
                 this.touchCount = 0;
             }
+        }
+
+        private static string EventLogFilePath => Path.Join(Application.persistentDataPath, "analytic_event_logs.txt");
+
+        private void SaveLogToFile()
+        {
+            if (File.Exists(EventLogFilePath))
+            {
+                File.Delete(EventLogFilePath);
+            }
+
+            File.WriteAllLines(EventLogFilePath, this.loggedEvents);
         }
 
         private void OnDestroy()
