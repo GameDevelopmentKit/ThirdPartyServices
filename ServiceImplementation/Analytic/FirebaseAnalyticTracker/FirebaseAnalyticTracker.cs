@@ -58,14 +58,14 @@
             if (data == null)
             {
                 FirebaseAnalytics.LogEvent(name);
-                Debug.Log($"Firebase: OnEvent - {name}");
+                Debug.Log($"[onelog] Firebase analytic: Track Event - {name}");
 
                 return;
             }
 
             if (!this.CheckConventions(data)) return;
 
-            Debug.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
+            Debug.Log($"[onelog] Firebase analytic: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
             switch (data.Count)
             {
                 case > 1:
