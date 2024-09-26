@@ -22,8 +22,11 @@ namespace Core.AnalyticServices
             builder.RegisterComponentOnNewGameObject<SessionController>(Lifetime.Singleton);
             builder.RegisterBuildCallback(container => container.Resolve<SessionController>().Construct(container.Resolve<IAnalyticServices>(), container.Resolve<DeviceInfo>()));
             builder.RegisterComponentOnNewGameObject<UnScaleInGameStopWatchManager>(Lifetime.Singleton);
+
+#if THEONE_ADS_DEBUG
             builder.RegisterComponentInNewPrefabResource<AnalyticEventValidator>(nameof(AnalyticEventValidator), Lifetime.Singleton);
             builder.AutoResolve<AnalyticEventValidator>();
+#endif
 
             builder.DeclareSignal<EventTrackedSignal>();
             builder.DeclareSignal<SetUserIdSignal>();
