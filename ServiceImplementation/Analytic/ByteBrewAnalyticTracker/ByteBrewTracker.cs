@@ -62,14 +62,13 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             if (data == null)
             {
                 ByteBrew.NewCustomEvent(name);
-                Debug.Log($"ByteBrew: OnEvent - {name}");
-
+                Debug.Log($"[onelog] ByteBrew analytic: Track Event - {name}");
                 return;
             }
 
             var convertedData = data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
+            Debug.Log($"[onelog] ByteBrew analytic: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
             ByteBrew.NewCustomEvent(name, convertedData);
-            Debug.Log($"ByteBrew: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
         }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
