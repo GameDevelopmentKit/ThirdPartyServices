@@ -5,8 +5,10 @@ namespace Core.AnalyticServices
     using Core.AnalyticServices.Data;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
+    using GameFoundation.DI;
     using GameFoundation.Signals;
     using Models;
+    using ServiceImplementation.Analytic.Validator;
     using VContainer;
     using VContainer.Unity;
 
@@ -20,6 +22,8 @@ namespace Core.AnalyticServices
             builder.RegisterComponentOnNewGameObject<SessionController>(Lifetime.Singleton);
             builder.RegisterBuildCallback(container => container.Resolve<SessionController>().Construct(container.Resolve<IAnalyticServices>(), container.Resolve<DeviceInfo>()));
             builder.RegisterComponentOnNewGameObject<UnScaleInGameStopWatchManager>(Lifetime.Singleton);
+            builder.RegisterComponentInNewPrefabResource<AnalyticEventValidator>(nameof(AnalyticEventValidator), Lifetime.Singleton);
+            builder.AutoResolve<AnalyticEventValidator>();
 
             builder.DeclareSignal<EventTrackedSignal>();
             builder.DeclareSignal<SetUserIdSignal>();

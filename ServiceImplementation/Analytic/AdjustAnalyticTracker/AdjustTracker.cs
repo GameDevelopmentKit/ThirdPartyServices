@@ -12,6 +12,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using GameFoundation.Signals;
+    using Newtonsoft.Json;
     using UnityEngine.Scripting;
 
     public class AdjustTracker : BaseTracker
@@ -62,6 +63,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
             Debug.Log($"Adjust: On Event {name} with data: {eventDataString}");
 
+            Debug.Log($"[onelog] Adjust analytic: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
             Adjust.TrackEvent(adjustEvent);
         }
 

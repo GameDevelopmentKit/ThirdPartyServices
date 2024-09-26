@@ -9,7 +9,9 @@
     "GameFoundation.Models",
     "ByteBrewSDK",
     "3rd.Configs.Editor",
-    "ByteBrewSDK.Editor"
+    "ByteBrewSDK.Editor",
+    "ByteBrew.Editor",
+    "Unity.TextMeshPro"
   ],
   "versionDefines": [
     {
