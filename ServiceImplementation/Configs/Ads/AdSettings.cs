@@ -32,6 +32,7 @@
 
 #region Misc
 
+        public bool EnableInterCappingTimeFocus => this.enableInterCappingTimeFocus;
         public bool EnableBreakAds { get { return this.enableBreakAds; } }
 
         public bool CollapsibleRefreshOnScreenShow => this.mCollapsibleRefreshOnScreenShow;
@@ -64,6 +65,9 @@
 
         [SerializeField] [FoldoutGroup("Misc")] [LabelText("Banner Position", SdfIconType.BookmarkFill)]
         private BannerAdsPosition mBannerPosition = BannerAdsPosition.Bottom;
+
+        [SerializeField] [FoldoutGroup("Misc")] [LabelText("Enable Inter Capping Time Focus", SdfIconType.Download)]
+        private bool enableInterCappingTimeFocus;
 
         [SerializeField] [LabelText("AOA ThreshHold", SdfIconType.Download)] [FoldoutGroup("Misc")]
         private float mAOAThreshHold = 5f;
