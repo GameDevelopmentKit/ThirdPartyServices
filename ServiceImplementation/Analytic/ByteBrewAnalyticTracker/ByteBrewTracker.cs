@@ -13,6 +13,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using UnityEngine;
     using GameFoundation.Signals;
     using UnityEngine.Scripting;
+    using TheOne.Logging;
 
     public class ByteBrewTracker : BaseTracker
     {
@@ -27,7 +28,11 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
 
         [Preserve]
-        public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig)
+        public ByteBrewTracker(SignalBus                         signalBus,
+                               AnalyticConfig                    analyticConfig,
+                               ILoggerManager                    loggerManager,
+                               AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig)
+            : base(signalBus, analyticConfig, loggerManager)
         {
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
         }
@@ -40,12 +45,12 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            Debug.Log($"ByteBrew: Create ByteBrew GameObject");
+            this.Logger.Info($"ByteBrew analytic tracker: Create ByteBrew GameObject");
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
-            Debug.Log($"ByteBrew: Initialize ByteBrew");
+            this.Logger.Info($"ByteBrew analytic tracker: Initialize ByteBrew");
             ByteBrew.InitializeByteBrew();
-            Debug.Log($"ByteBrew: Initialize Finished");
+            this.Logger.Info($"ByteBrew analytic tracker: Initialize Finished");
 
             this.TrackerReady.SetResult(true);
 
@@ -62,12 +67,12 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             if (data == null)
             {
                 ByteBrew.NewCustomEvent(name);
-                Debug.Log($"[onelog] ByteBrew analytic: Track Event - {name}");
+                this.Logger.Info($"ByteBrew analytic tracker: Track Event - {name}");
                 return;
             }
 
             var convertedData = data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
-            Debug.Log($"[onelog] ByteBrew analytic: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
+            this.Logger.Info($"ByteBrew analytic tracker: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
             ByteBrew.NewCustomEvent(name, convertedData);
         }
 

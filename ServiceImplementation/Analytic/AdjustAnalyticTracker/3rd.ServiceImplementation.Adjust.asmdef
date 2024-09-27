@@ -6,7 +6,8 @@
     "GameFoundation.Signals",
     "GameFoundation.Utilities",
     "AdjustSdk.Scripts",
-    "AdjustSdk.Editor"
+    "AdjustSdk.Editor",
+    "TheOne.Logging"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
