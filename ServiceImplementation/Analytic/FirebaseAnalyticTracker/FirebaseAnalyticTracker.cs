@@ -8,7 +8,7 @@
     using Core.AnalyticServices.Data;
     using GameFoundation.Signals;
     using Newtonsoft.Json;
-    using UnityEngine;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     public class FirebaseAnalyticTracker : BaseTracker
@@ -16,9 +16,13 @@
         private readonly   AnalyticsEventCustomizationConfig customizationConfig;
         protected override TaskCompletionSource<bool>        TrackerReady         { get; } = new();
         protected override Dictionary<Type, EventDelegate>   CustomEventDelegates { get; }
-
+        
         [Preserve]
-        public FirebaseAnalyticTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
+        public FirebaseAnalyticTracker(SignalBus                         signalBus,
+                                       AnalyticConfig                    analyticConfig,
+                                       ILoggerManager                    loggerManager,
+                                       AnalyticsEventCustomizationConfig customizationConfig)
+            : base(signalBus, analyticConfig, loggerManager)
         {
             this.customizationConfig = customizationConfig;
         }
@@ -50,7 +54,7 @@
         {
             if (!name.IsNameValid().Equals("Valid"))
             {
-                Debug.LogError($"Firebase: Event name error: {name} {name.IsNameValid()}");
+                this.Logger.Error($"Firebase analytic tracker: Event name error: {name} {name.IsNameValid()}");
 
                 return;
             }
@@ -58,14 +62,14 @@
             if (data == null)
             {
                 FirebaseAnalytics.LogEvent(name);
-                Debug.Log($"[onelog] Firebase analytic: Track Event - {name}");
+                this.Logger.Info($"Firebase analytic tracker: Track Event - {name}");
 
                 return;
             }
 
             if (!this.CheckConventions(data)) return;
 
-            Debug.Log($"[onelog] Firebase analytic: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
+            this.Logger.Info($"Firebase analytic tracker: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
             switch (data.Count)
             {
                 case > 1:
@@ -117,14 +121,14 @@
             {
                 if (!entry.Key.IsNameValid().Equals("Valid"))
                 {
-                    Debug.LogError($"Parameter name error: {entry} {entry.Key.IsNameValid()}");
+                    this.Logger.Error($"Firebase analytic tracker: Parameter name error: {entry} {entry.Key.IsNameValid()}");
 
                     return false;
                 }
 
                 if (!entry.Value.IsParameterValueValid().Equals("Valid"))
                 {
-                    Debug.LogError($"Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}");
+                    this.Logger.Error($"Firebase analytic tracker: Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}");
 
                     return false;
                 }

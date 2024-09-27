@@ -11,7 +11,8 @@
     "3rd.Configs.Editor",
     "ByteBrewSDK.Editor",
     "ByteBrew.Editor",
-    "Unity.TextMeshPro"
+    "Unity.TextMeshPro",
+    "TheOne.Logging"
   ],
   "versionDefines": [
     {

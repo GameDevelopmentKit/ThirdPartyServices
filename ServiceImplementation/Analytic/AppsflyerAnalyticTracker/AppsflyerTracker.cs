@@ -11,18 +11,17 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
     using GameFoundation.Scripts.Utilities.Extension;
-    using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using GameFoundation.Signals;
     using UnityEngine.Scripting;
     using Newtonsoft.Json;
+    using TheOne.Logging;
 #if THEONE_IAP
     using AppsFlyerConnector;
 #endif
 
     public class AppsflyerTracker : BaseTracker
     {
-        private readonly   ILogService                       logger;
         private readonly   AnalyticsEventCustomizationConfig customizationConfig;
         protected override TaskCompletionSource<bool>        TrackerReady { get; } = new();
 
@@ -33,14 +32,17 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         };
 
         [Preserve]
-        public AppsflyerTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
+        public AppsflyerTracker(SignalBus                         signalBus,
+                                AnalyticConfig                    analyticConfig,
+                                ILoggerManager                    loggerManager,
+                                AnalyticsEventCustomizationConfig customizationConfig)
+            : base(signalBus, analyticConfig, loggerManager)
         {
-            this.logger = logger;
             this.customizationConfig = customizationConfig;
 
             if (customizationConfig.CustomEventKeys.Count == 0)
             {
-                this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
+                this.Logger.Error("Appsflyer analytic tracker: CustomEventKeys is empty, please Init in your ProjectInstaller");
             }
         }
 
@@ -52,25 +54,25 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            Debug.Log($"setting up appsflyer tracker");
+            this.Logger.Info("Appsflyer analytic tracker: Setting up appsflyer tracker");
 
             var apiId = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
 
             if (string.IsNullOrEmpty(apiId))
             {
-                throw new Exception("Appsflyer can't be initialized, Appsflyer AppId not found");
+                throw new Exception("Appsflyer analytic tracker: Appsflyer can't be initialized, Appsflyer AppId not found");
             }
 
             if (string.IsNullOrEmpty(devKey))
             {
-                throw new Exception("Appsflyer can't be initialized, Appsflyer DevKey not found");
+                throw new Exception("Appsflyer analytic tracker: Appsflyer can't be initialized, Appsflyer DevKey not found");
             }
 
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(apiId))
             {
-                Debug.LogError("Appsflyer can't be initialized, Appsflyer ApiKey not found");
+                this.Logger.Error("Appsflyer analytic tracker: Appsflyer can't be initialized, Appsflyer ApiKey not found");
                 this.TrackerReady.SetResult(false);
                 return this.TrackerReady.Task;
             }
@@ -115,7 +117,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
-            Debug.Log($"[onelog] Appsflyer analytic: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
+            this.Logger.Info($"Appsflyer analytic tracker: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
             var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             AppsFlyer.sendEvent(name, convertedData);
         }
@@ -126,7 +128,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
             {
-                Debug.LogError("trackedEvent in TrackIAP is not of correct type");
+                this.Logger.Error("Appsflyer analytic tracker: TrackedEvent in TrackIAP is not of correct type");
 
                 return;
             }
@@ -147,7 +149,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
-                Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
+                this.Logger.Error("Appsflyer analytic tracker: TrackedEvent in AdsRevenue is not of correct type");
                 return;
             }
 
