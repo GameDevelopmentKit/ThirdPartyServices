@@ -1,4 +1,4 @@
-#if BYTEBREW && !UNITY_EDITOR
+#if UNITY_EDITOR
 namespace ServiceImplementation.ByteBrewAnalyticTracker
 {
     using System;
@@ -45,12 +45,12 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            this.Logger.Info($"ByteBrew analytic tracker: Create ByteBrew GameObject");
+            this.Logger.Info($"ByteBrew: Create ByteBrew GameObject");
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
-            this.Logger.Info($"ByteBrew analytic tracker: Initialize ByteBrew");
+            this.Logger.Info($"ByteBrew: Initialize ByteBrew");
             ByteBrew.InitializeByteBrew();
-            this.Logger.Info($"ByteBrew analytic tracker: Initialize Finished");
+            this.Logger.Info($"ByteBrew: Initialize Finished");
 
             this.TrackerReady.SetResult(true);
 
@@ -67,12 +67,12 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             if (data == null)
             {
                 ByteBrew.NewCustomEvent(name);
-                this.Logger.Info($"ByteBrew analytic tracker: Track Event - {name}");
+                this.Logger.Info($"ByteBrew: Track Event - {name}");
                 return;
             }
 
             var convertedData = data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
-            this.Logger.Info($"ByteBrew analytic tracker: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
+            this.Logger.Info($"ByteBrew: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
             ByteBrew.NewCustomEvent(name, convertedData);
         }
 
