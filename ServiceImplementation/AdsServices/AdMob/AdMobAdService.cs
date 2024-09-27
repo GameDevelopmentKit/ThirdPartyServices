@@ -339,8 +339,9 @@ namespace ServiceImplementation.AdsServices.AdMob
 #endif
             Debug.Log("Load CollapsibleBanner.");
             collapsibleBannerView.LoadAd(request);
-            this.IsCollapsibleLoading[bannerAdsPosition] = true;
-
+            collapsibleBannerView.Hide();
+            this.IsCollapsibleLoading[bannerAdsPosition]   = true;
+            this.collapsibleBannerViews[bannerAdsPosition] = collapsibleBannerView;
             return;
 
             void AddPramsCollapsible()
@@ -385,8 +386,6 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private void OnCollapsibleBannerLoaded(string placement, BannerAdsPosition bannerAdsPosition, BannerView collapsibleBannerView)
         {
-            this.collapsibleBannerViews[bannerAdsPosition] = collapsibleBannerView;
-
             var adInfo = new AdInfo(this.AdPlatform, this.config.CollapsibleBannerAdId.Id, CollapsibleBannerAdFormat);
             this.signalBus.Fire(new CollapsibleBannerAdLoadedSignal(placement, adInfo));
             this.IsCollapsibleLoading[bannerAdsPosition] = false;
