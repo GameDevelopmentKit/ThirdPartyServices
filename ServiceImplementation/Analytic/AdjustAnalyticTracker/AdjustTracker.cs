@@ -8,26 +8,26 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
-    using GameFoundation.Scripts.Utilities.LogService;
-    using UnityEngine;
     using GameFoundation.Signals;
     using Newtonsoft.Json;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     public class AdjustTracker : BaseTracker
     {
-        private readonly ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
         [Preserve]
-        public AdjustTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus,
-            analyticConfig)
+        public AdjustTracker(SignalBus                         signalBus,
+                             AnalyticConfig                    analyticConfig,
+                             ILoggerManager                    loggerManager,
+                             AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig)
+            : base(signalBus, analyticConfig, loggerManager)
         {
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
-            this.logger = logger;
             if (analyticsEventCustomizationConfig.CustomEventKeys.Count == 0)
             {
-                this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
+                this.Logger.Error($"Adjust analytic tracker: CustomEventKeys is empty, please Init in your ProjectInstaller");
             }
         }
 
@@ -57,7 +57,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                 }
             }
 
-            Debug.Log($"[onelog] Adjust analytic: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
+            this.Logger.Info($"Adjust analytic tracker: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
             Adjust.TrackEvent(adjustEvent);
         }
 
@@ -65,7 +65,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            Debug.Log("setting up adjust tracker");
+            this.Logger.Info("Adjust analytic tracker: Setting up adjust tracker");
 
             var appToken = this.analyticConfig.AdjustAppToken;
 
@@ -79,7 +79,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(appToken))
             {
-                Debug.LogError("Adjust can't be initialized, Adjust AppToken not found");
+                this.Logger.Error("Adjust analytic tracker: Adjust can't be initialized, Adjust AppToken not found");
                 this.TrackerReady.SetResult(false);
                 return this.TrackerReady.Task;
             }
@@ -99,7 +99,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (trackedevent is not IapTransactionDidSucceed iapTransaction)
             {
-                Debug.LogError("trackedEvent in TrackIAP is not of correct type");
+                this.Logger.Error("Adjust analytic tracker: TrackedEvent in TrackIAP is not of correct type");
 
                 return;
             }
@@ -114,7 +114,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
-                Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
+                this.Logger.Error("Adjust analytic tracker: TrackedEvent in AdsRevenue is not of correct type");
 
                 return;
             }

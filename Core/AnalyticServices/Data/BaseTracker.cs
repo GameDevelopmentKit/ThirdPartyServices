@@ -8,8 +8,10 @@ namespace Core.AnalyticServices.Data
     using Core.AnalyticServices.Tools;
     using GameFoundation.DI;
     using GameFoundation.Signals;
+    using TheOne.Logging;
     using UnityEngine;
     using Utilities.Extension;
+    using ILogger = TheOne.Logging.ILogger;
 
     public delegate void EventDelegate(IEvent trackedEvent, Dictionary<string, object> data);
 
@@ -19,8 +21,11 @@ namespace Core.AnalyticServices.Data
 
         private readonly   SignalBus      signalBus;
         protected readonly AnalyticConfig analyticConfig;
+        private            ILoggerManager loggerManager;
 
         #endregion
+        
+        protected ILogger Logger { get; set; }
 
         /// <summary>
         /// signal to the base tracker that the "On" events are ready to be invoked
@@ -71,10 +76,12 @@ namespace Core.AnalyticServices.Data
         /// <summary>
         /// base constructor for trackers which sets up when/how events and states should be tracked
         /// </summary>
-        protected BaseTracker(SignalBus signalBus, AnalyticConfig analyticConfig)
+        protected BaseTracker(SignalBus signalBus, AnalyticConfig analyticConfig, ILoggerManager loggerManager)
         {
             this.signalBus      = signalBus;
             this.analyticConfig = analyticConfig;
+            this.loggerManager  = loggerManager;
+            this.Logger         = this.loggerManager.GetLogger("Analytic Tracker");
         }
 
         public void Initialize()
