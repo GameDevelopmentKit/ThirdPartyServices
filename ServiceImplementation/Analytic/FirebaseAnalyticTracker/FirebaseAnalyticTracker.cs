@@ -54,7 +54,7 @@
         {
             if (!name.IsNameValid().Equals("Valid"))
             {
-                this.Logger.Error($"Firebase analytic tracker: Event name error: {name} {name.IsNameValid()}");
+                this.Logger.Error($"Firebase: Event name error: {name} {name.IsNameValid()}");
 
                 return;
             }
@@ -62,14 +62,14 @@
             if (data == null)
             {
                 FirebaseAnalytics.LogEvent(name);
-                this.Logger.Info($"Firebase analytic tracker: Track Event - {name}");
+                this.Logger.Info($"Firebase: Track Event - {name}");
 
                 return;
             }
 
             if (!this.CheckConventions(data)) return;
 
-            this.Logger.Info($"Firebase analytic tracker: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
+            this.Logger.Info($"Firebase: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
             switch (data.Count)
             {
                 case > 1:
@@ -121,14 +121,14 @@
             {
                 if (!entry.Key.IsNameValid().Equals("Valid"))
                 {
-                    this.Logger.Error($"Firebase analytic tracker: Parameter name error: {entry} {entry.Key.IsNameValid()}");
+                    this.Logger.Error($"Firebase: Parameter name error: {entry} {entry.Key.IsNameValid()}");
 
                     return false;
                 }
 
                 if (!entry.Value.IsParameterValueValid().Equals("Valid"))
                 {
-                    this.Logger.Error($"Firebase analytic tracker: Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}");
+                    this.Logger.Error($"Firebase: Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}");
 
                     return false;
                 }

@@ -27,7 +27,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
             if (analyticsEventCustomizationConfig.CustomEventKeys.Count == 0)
             {
-                this.Logger.Error($"Adjust analytic tracker: CustomEventKeys is empty, please Init in your ProjectInstaller");
+                this.Logger.Error($"Adjust: CustomEventKeys is empty, please Init in your ProjectInstaller");
             }
         }
 
@@ -57,7 +57,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                 }
             }
 
-            this.Logger.Info($"Adjust analytic tracker: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
+            this.Logger.Info($"Adjust: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
             Adjust.TrackEvent(adjustEvent);
         }
 
@@ -65,7 +65,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            this.Logger.Info("Adjust analytic tracker: Setting up adjust tracker");
+            this.Logger.Info("Adjust: Setting up adjust tracker");
 
             var appToken = this.analyticConfig.AdjustAppToken;
 
@@ -79,7 +79,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(appToken))
             {
-                this.Logger.Error("Adjust analytic tracker: Adjust can't be initialized, Adjust AppToken not found");
+                this.Logger.Error("Adjust: Adjust can't be initialized, Adjust AppToken not found");
                 this.TrackerReady.SetResult(false);
                 return this.TrackerReady.Task;
             }
@@ -99,7 +99,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (trackedevent is not IapTransactionDidSucceed iapTransaction)
             {
-                this.Logger.Error("Adjust analytic tracker: TrackedEvent in TrackIAP is not of correct type");
+                this.Logger.Error("Adjust: TrackedEvent in TrackIAP is not of correct type");
 
                 return;
             }
@@ -114,7 +114,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
-                this.Logger.Error("Adjust analytic tracker: TrackedEvent in AdsRevenue is not of correct type");
+                this.Logger.Error("Adjust: TrackedEvent in AdsRevenue is not of correct type");
 
                 return;
             }

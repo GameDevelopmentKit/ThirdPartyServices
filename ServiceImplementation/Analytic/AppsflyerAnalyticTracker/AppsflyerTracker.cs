@@ -42,7 +42,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             if (customizationConfig.CustomEventKeys.Count == 0)
             {
-                this.Logger.Error("Appsflyer analytic tracker: CustomEventKeys is empty, please Init in your ProjectInstaller");
+                this.Logger.Error("Appsflyer: CustomEventKeys is empty, please Init in your ProjectInstaller");
             }
         }
 
@@ -54,7 +54,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            this.Logger.Info("Appsflyer analytic tracker: Setting up appsflyer tracker");
+            this.Logger.Info("Appsflyer: Setting up appsflyer tracker");
 
             var apiId = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
@@ -117,7 +117,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
-            this.Logger.Info($"Appsflyer analytic tracker: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
+            this.Logger.Info($"Appsflyer: Track Event - {name} - {JsonConvert.SerializeObject(data)}");
             var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             AppsFlyer.sendEvent(name, convertedData);
         }
@@ -128,7 +128,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
             {
-                this.Logger.Error("Appsflyer analytic tracker: TrackedEvent in TrackIAP is not of correct type");
+                this.Logger.Error("Appsflyer: TrackedEvent in TrackIAP is not of correct type");
 
                 return;
             }
@@ -149,7 +149,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
-                this.Logger.Error("Appsflyer analytic tracker: TrackedEvent in AdsRevenue is not of correct type");
+                this.Logger.Error("Appsflyer: TrackedEvent in AdsRevenue is not of correct type");
                 return;
             }
 
