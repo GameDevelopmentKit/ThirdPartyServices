@@ -3,11 +3,13 @@ namespace Core.AdsServices
     using System;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
+    using UnityEngine.Scripting;
 
     public class DummyAdServiceIml : IAdServices
     {
         private readonly ILogService logService;
 
+        [Preserve]
         public DummyAdServiceIml(ILogService logService) { this.logService = logService; }
 
         public void          GrantDataPrivacyConsent()                     { this.logService.Log("Dummy Grant consent"); }

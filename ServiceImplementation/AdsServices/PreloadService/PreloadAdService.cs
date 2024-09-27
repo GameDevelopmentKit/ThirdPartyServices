@@ -11,6 +11,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
     using GameFoundation.DI;
     using GameFoundation.Signals;
     using ServiceImplementation.Configs.Ads;
+    using UnityEngine.Scripting;
     using Debug = UnityEngine.Debug;
 
     public class PreloadAdService : IInitializable, ITickable, IDisposable
@@ -30,6 +31,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
         private Dictionary<(IAdLoadService, string), UnScaleInGameStopWatch> rewardAdStopwatch       = new();
         private Dictionary<IAOAAdService, UnScaleInGameStopWatch>            aoaAdStartTime          = new();
 
+        [Preserve]
         public PreloadAdService(IEnumerable<IAdLoadService> adLoadServices, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices, IEnumerable<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
         {
             this.adLoadServices                = adLoadServices.ToList();

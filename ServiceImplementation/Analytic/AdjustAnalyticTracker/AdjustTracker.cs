@@ -11,12 +11,14 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using GameFoundation.Signals;
+    using UnityEngine.Scripting;
 
     public class AdjustTracker : BaseTracker
     {
         private readonly ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
+        [Preserve]
         public AdjustTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus,
             analyticConfig)
         {

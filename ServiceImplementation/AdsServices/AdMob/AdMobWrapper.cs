@@ -20,6 +20,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
+    using UnityEngine.Scripting;
 #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
     using Core.AdsServices.Native;
 #endif
@@ -40,6 +41,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
+        [Preserve]
         public AdMobWrapper(ILogService logService,         SignalBus        signalBus, IEnumerable<IAdServices> adServices, IAnalyticServices analyticService,
             ThirdPartiesConfig          thirdPartiesConfig, AdServicesConfig adServicesConfig)
         {
@@ -166,7 +168,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.logService.Log($"AOA ads was already loaded");
                 return;
             }
-            
+
             AppOpenAd.Load(adUnitId, new AdRequest(), LoadAoaCompletedHandler);
             return;
 

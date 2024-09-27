@@ -10,6 +10,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
+    using UnityEngine.Scripting;
 
     /// <summary>
     /// We need to use MonoBehaviour to use Firebase Remote Config
@@ -19,6 +20,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         private readonly ILogService logger;
         private readonly SignalBus   signalBus;
 
+        [Preserve]
         public FirebaseRemoteConfigMobile(ILogService logger, SignalBus signalBus)
         {
             this.logger    = logger;

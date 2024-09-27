@@ -9,6 +9,7 @@
     using GameFoundation.Signals;
     using Newtonsoft.Json;
     using UnityEngine;
+    using UnityEngine.Scripting;
 
     public class FirebaseAnalyticTracker : BaseTracker
     {
@@ -16,6 +17,7 @@
         protected override TaskCompletionSource<bool>        TrackerReady         { get; } = new TaskCompletionSource<bool>();
         protected override Dictionary<Type, EventDelegate>   CustomEventDelegates { get; }
 
+        [Preserve]
         public FirebaseAnalyticTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
             this.customizationConfig = customizationConfig;

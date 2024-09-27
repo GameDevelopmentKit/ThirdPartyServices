@@ -1,6 +1,7 @@
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
     using GameFoundation.Scripts.Utilities.LogService;
+    using UnityEngine.Scripting;
 
     public class DummyConsentInformation : IConsentInformation
     {
@@ -10,6 +11,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         #endregion
 
+        [Preserve]
         public DummyConsentInformation(ILogService logService) { this.logService = logService; }
 
         public void Request() { this.logService.Log("Request consent information"); }

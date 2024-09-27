@@ -14,6 +14,7 @@ namespace ServiceImplementation.IAPServices
     using UnityEngine;
     using UnityEngine.Purchasing;
     using UnityEngine.Purchasing.Security;
+    using UnityEngine.Scripting;
 
     public class UnityIapServices : IIapServices, IStoreListener
     {
@@ -30,6 +31,7 @@ namespace ServiceImplementation.IAPServices
 
         #endregion
 
+        [Preserve]
         public UnityIapServices(ILogService log, SignalBus signalBus)
         {
             this.logger    = log;

@@ -14,6 +14,7 @@ namespace ServiceImplementation.AdsServices.PubScale
     using ServiceImplementation.Configs;
     using UnityEngine;
     using GameFoundation.Signals;
+    using UnityEngine.Scripting;
 
     public class PubScaleWrapper : IImmersiveAdsService
     {
@@ -30,6 +31,7 @@ namespace ServiceImplementation.AdsServices.PubScale
         private readonly HashSet<NativeAdHolder> cacheNativeAdHolder = new();
         private          Canvas                  cacheCanvas;
 
+        [Preserve]
         public PubScaleWrapper
         (
             IScreenManager     screenManager,

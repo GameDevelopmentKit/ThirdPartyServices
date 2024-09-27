@@ -9,6 +9,7 @@ namespace Core.AnalyticServices
     using Core.AnalyticServices.Tools;
     using GameFoundation.Signals;
     using UnityEngine;
+    using UnityEngine.Scripting;
     using Utilities.Extension;
 
     public interface IAnalyticServices
@@ -40,6 +41,7 @@ namespace Core.AnalyticServices
 
         public UserProperties UserProperties { get; }
 
+        [Preserve]
         public AnalyticServices(DeviceInfo deviceInfo, SignalBus signalBus)
         {
             this.deviceInfo         = deviceInfo;

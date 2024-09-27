@@ -1,5 +1,8 @@
 ﻿namespace ServiceImplementation.FireBaseRemoteConfig
 {
+    using UnityEngine.Scripting;
+
+    [Preserve]
     public class DummyRemoteConfig : IRemoteConfig
     {
         public bool   IsConfigFetchedSucceed                                     => true;

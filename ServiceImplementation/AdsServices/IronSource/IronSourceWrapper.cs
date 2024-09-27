@@ -15,7 +15,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
-    using Debug = UnityEngine.Debug;
+    using UnityEngine.Scripting;
 
     public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable, IAdLoadService
     {
@@ -29,7 +29,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
-
+        [Preserve]
         public IronSourceWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig, ILogService logService)
         {
             this.analyticServices   = analyticServices;

@@ -2,7 +2,9 @@ namespace ServiceImplementation.IAPServices
 {
     using System;
     using System.Collections.Generic;
+    using UnityEngine.Scripting;
 
+    [Preserve]
     public class DummyIapServices : IIapServices
     {
         public void InitIapServices(Dictionary<string, IAPModel> iapPack, string environment = "production") { }

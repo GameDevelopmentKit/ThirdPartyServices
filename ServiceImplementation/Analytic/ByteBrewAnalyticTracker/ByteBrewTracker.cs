@@ -12,6 +12,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using Newtonsoft.Json;
     using UnityEngine;
     using GameFoundation.Signals;
+    using UnityEngine.Scripting;
 
     public class ByteBrewTracker : BaseTracker
     {
@@ -25,6 +26,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         protected override HashSet<string>            IncludeEvents   => this.analyticsEventCustomizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
 
+        [Preserve]
         public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig)
         {
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;

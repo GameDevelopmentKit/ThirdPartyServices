@@ -17,6 +17,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
+    using UnityEngine.Scripting;
     using Debug = UnityEngine.Debug;
 
     public class AdMobAdService : IAdServices, IAdLoadService, IInitializable, ICollapsibleBannerAd
@@ -27,6 +28,7 @@ namespace ServiceImplementation.AdsServices.AdMob
         private readonly SignalBus         signalBus;
         private readonly IAnalyticServices analyticService;
 
+        [Preserve]
         public AdMobAdService(ThirdPartiesConfig config, SignalBus signalBus, IAnalyticServices analyticService)
         {
             this.config          = config.AdSettings.AdMob;
@@ -35,17 +37,18 @@ namespace ServiceImplementation.AdsServices.AdMob
         }
 
         #endregion
+
         string IAdServices.AdPlatform => AdRevenueConstants.ARSourceAdMob;
 
         public string AdPlatform                                                     => AdRevenueConstants.ARSourceAdMob;
 
         public AdNetworkSettings AdNetworkSettings => this.config;
-        
+
         private const string BannerAdFormat        = "Banner";
         private const string InterstitialAdFormat = "Interstitial";
         private const string RewardedAdFormat     = "Rewarded";
         private const string CollapsibleBannerAdFormat = "CollapsibleBanner";
-        
+
         #region Initialize
 
         private bool isInitialized = true;
@@ -132,12 +135,12 @@ namespace ServiceImplementation.AdsServices.AdMob
         public bool TryGetInterstitialPlacementId(string place, out string id)
         {
             return AdPlacementHelper.TryGetPlacementId(
-                place, 
-                this.config.DefaultInterstitialAdId, 
-                this.AdNetworkSettings.CustomInterstitialAdIds, 
+                place,
+                this.config.DefaultInterstitialAdId,
+                this.AdNetworkSettings.CustomInterstitialAdIds,
                 out id);
         }
-        
+
         public bool IsInterstitialAdReady(string _) { return this.interstitialAd?.CanShowAd() ?? false; }
 
 
@@ -183,7 +186,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             {
                 this.signalBus.Fire(new InterstitialAdClosedSignal(place, adInfo));
             }
-            
+
             void OnAdClicked()
             {
                 this.signalBus.Fire(new InterstitialAdClickedSignal(place, adInfo));
@@ -204,9 +207,9 @@ namespace ServiceImplementation.AdsServices.AdMob
         public bool TryGetRewardPlacementId(string placement, out string id)
         {
             return AdPlacementHelper.TryGetPlacementId(
-                placement, 
-                this.config.DefaultRewardedAdId, 
-                this.AdNetworkSettings.CustomRewardedAdIds, 
+                placement,
+                this.config.DefaultRewardedAdId,
+                this.AdNetworkSettings.CustomRewardedAdIds,
                 out id);
         }
 
@@ -223,7 +226,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     this.signalBus.Fire(new RewardedAdLoadFailedSignal(place, error.GetMessage(), stopwatch.ElapsedMilliseconds));
                     return;
                 }
-                
+
                 var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultRewardedAdId.Id, RewardedAdFormat);
                 this.signalBus.Fire(new RewardedAdLoadedSignal(place, stopwatch.ElapsedMilliseconds, adInfo));
                 this.rewardedAd?.Destroy();

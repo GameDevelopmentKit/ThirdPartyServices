@@ -17,6 +17,7 @@ namespace ServiceImplementation.AdsServices.Yandex
     using YandexMobileAds.Base;
     using GameFoundation.Signals;
     using AdInfo = Core.AdsServices.AdInfo;
+    using UnityEngine.Scripting;
 
     public class YandexAdsWrapper : IAdServices, IInitializable, IAdLoadService, IAOAAdService
     {
@@ -28,6 +29,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         private readonly ThirdPartiesConfig thirdPartiesConfig;
         private readonly ILogService        logService;
 
+        [Preserve]
         public YandexAdsWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig, ILogService logService)
         {
             this.analyticServices   = analyticServices;
@@ -107,7 +109,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleBannerAdLoaded(object sender, EventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleBannerAdLoaded");
-            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.BannerAdId.Id, YandexAdsWrapper.BannerAdFormat, YandexAdsWrapper.BannerAdFormat);
+            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.BannerAdId.Id, BannerAdFormat, BannerAdFormat);
             this.signalBus.Fire(new BannerAdLoadedSignal("", adInfo));
             this.IsBannerAdLoaded = true;
         }
@@ -122,7 +124,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleBannerAdClicked(object sender, EventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleBannerAdClicked");
-            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.BannerAdId.Id, YandexAdsWrapper.BannerAdFormat, YandexAdsWrapper.BannerAdFormat);
+            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.BannerAdId.Id, BannerAdFormat, BannerAdFormat);
             this.signalBus.Fire(new BannerAdClickedSignal("", adInfo));
         }
 
@@ -200,7 +202,7 @@ namespace ServiceImplementation.AdsServices.Yandex
             {
                 this.OnRewardedAdFailed?.Invoke();
             }
-            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.RewardedAdId.Id, YandexAdsWrapper.RewardedAdFormat, YandexAdsWrapper.RewardedAdFormat);
+            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.RewardedAdId.Id, RewardedAdFormat, RewardedAdFormat);
             this.signalBus.Fire(new RewardedAdClosedSignal(this.CurrentRewardedAdPlacement, adInfo));
 
             this.DestroyRewardedAd();
@@ -210,7 +212,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleRewardedAdFailedToShow(object sender, AdFailureEventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleRewardedAdFailedToShow: {args.Message}");
-            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.RewardedAdId.Id, YandexAdsWrapper.RewardedAdFormat, YandexAdsWrapper.RewardedAdFormat);
+            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.RewardedAdId.Id, RewardedAdFormat, RewardedAdFormat);
             this.signalBus.Fire(new RewardedAdShowFailedSignal(this.CurrentRewardedAdPlacement, args.Message, adInfo));
             this.DestroyRewardedAd();
             this.LoadRewardAds();
@@ -219,14 +221,14 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleRewardedAdClicked(object sender, EventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleRewardedAdClicked");
-            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.RewardedAdId.Id, YandexAdsWrapper.RewardedAdFormat, YandexAdsWrapper.RewardedAdFormat);
+            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.RewardedAdId.Id, RewardedAdFormat, RewardedAdFormat);
             this.signalBus.Fire(new RewardedAdClickedSignal(this.CurrentRewardedAdPlacement, adInfo));
         }
 
         private void HandleRewardedAdShown(object sender, EventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleRewardedAdShown");
-            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.RewardedAdId.Id, YandexAdsWrapper.RewardedAdFormat, YandexAdsWrapper.RewardedAdFormat);
+            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.RewardedAdId.Id, RewardedAdFormat, RewardedAdFormat);
             this.signalBus.Fire(new RewardedAdDisplayedSignal(this.CurrentRewardedAdPlacement, adInfo));
         }
 
@@ -291,7 +293,7 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.interstitialAd.OnAdFailedToShow += this.HandleInterstitialFailedToShow;
             this.interstitialAd.OnAdDismissed    += this.HandleInterstitialDismissed;
             this.interstitialAd.OnAdImpression   += this.HandleImpression;
-            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.InterstitialAdId.Id, YandexAdsWrapper.InterstitialAdFormat);
+            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.InterstitialAdId.Id, InterstitialAdFormat);
             this.signalBus.Fire(new InterstitialAdLoadedSignal("", 0,adInfo));
         }
 
@@ -305,7 +307,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleInterstitialDismissed(object sender, EventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleInterstitialDismissed");
-            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.InterstitialAdId.Id, YandexAdsWrapper.InterstitialAdFormat);
+            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.InterstitialAdId.Id, InterstitialAdFormat);
             this.signalBus.Fire(new InterstitialAdClosedSignal(this.CurrentInterstitialAdPlacement, adInfo));
             this.DestroyInterstitial();
             this.LoadInterstitialAd();
@@ -321,14 +323,14 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleInterstitialAdClicked(object sender, EventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleInterstitialAdClicked");
-            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.InterstitialAdId.Id, YandexAdsWrapper.InterstitialAdFormat);
+            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.InterstitialAdId.Id, InterstitialAdFormat);
             this.signalBus.Fire(new InterstitialAdClickedSignal(this.CurrentInterstitialAdPlacement, adInfo));
         }
 
         private void HandleInterstitialShown(object sender, EventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleInterstitialShown");
-            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.InterstitialAdId.Id, YandexAdsWrapper.InterstitialAdFormat);
+            var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.InterstitialAdId.Id, InterstitialAdFormat);
             this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.CurrentInterstitialAdPlacement, adInfo));
         }
 

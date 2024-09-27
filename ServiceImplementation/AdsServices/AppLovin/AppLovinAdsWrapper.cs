@@ -15,6 +15,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
     using GameFoundation.Signals;
+    using UnityEngine.Scripting;
 
     public class AppLovinAdsWrapper : IAdServices, IMRECAdService, IInitializable, IDisposable, IAdLoadService, IAOAAdService
     {
@@ -42,6 +43,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #endregion
 
+        [Preserve]
         public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus,
             ThirdPartiesConfig thirdPartiesConfig)
         {

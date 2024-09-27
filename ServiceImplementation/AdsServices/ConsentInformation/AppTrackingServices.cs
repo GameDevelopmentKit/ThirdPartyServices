@@ -3,6 +3,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
     using ServiceImplementation.Configs;
+    using UnityEngine.Scripting;
 
     public class AppTrackingServices : IInitializable
     {
@@ -10,6 +11,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         private readonly ThirdPartiesConfig thirdPartiesConfig;
 
+        [Preserve]
         public AppTrackingServices(ThirdPartiesConfig thirdPartiesConfig) { this.thirdPartiesConfig = thirdPartiesConfig; }
 
         public async void Initialize()

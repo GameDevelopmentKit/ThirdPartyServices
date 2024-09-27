@@ -4,6 +4,7 @@ namespace ServiceImplementation.Configs.Ads
     using GameFoundation.DI;
     using GameFoundation.Signals;
     using ServiceImplementation.FireBaseRemoteConfig;
+    using UnityEngine.Scripting;
 
     public class MiscConfig : IInitializable, IDisposable
     {
@@ -17,6 +18,7 @@ namespace ServiceImplementation.Configs.Ads
 
         #endregion
 
+        [Preserve]
         public MiscConfig(SignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
         {
             this.signalBus           = signalBus;

@@ -9,6 +9,7 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
     using GameFoundation.Signals;
     using ServiceImplementation.FireBaseRemoteConfig;
     using ServiceImplementation.RemoteConfig;
+    using UnityEngine.Scripting;
 
     internal class ByteBrewRemoteConfig : IInGameRemoteConfig, IInitializable
     {
@@ -19,6 +20,7 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
 
         #endregion
 
+        [Preserve]
         public ByteBrewRemoteConfig(SignalBus signalBus, ILogService logService)
         {
             this.signalBus  = signalBus;
