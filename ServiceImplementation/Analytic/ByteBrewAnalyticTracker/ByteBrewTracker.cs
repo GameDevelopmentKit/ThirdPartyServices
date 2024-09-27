@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+#if BYTEBREW && !UNITY_EDITOR
 namespace ServiceImplementation.ByteBrewAnalyticTracker
 {
     using System;
