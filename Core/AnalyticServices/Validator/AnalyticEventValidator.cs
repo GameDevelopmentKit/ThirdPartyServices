@@ -19,9 +19,12 @@ namespace ServiceImplementation.Analytic.Validator
 
         private readonly List<string> loggedEvents = new();
 
+        private const string LoggerName      = "Analytic Tracker";
+        private const string TrackActionName = "Track Event";
+
         private void HandleLog(string logString, string stackTrace, LogType type)
         {
-            var isEventLog = logString.Contains("[onelog]") && logString.Contains("Track Event");
+            var isEventLog = logString.Contains(LoggerName) && logString.Contains(TrackActionName);
             if (!isEventLog) return;
             this.loggedEvents.Add(logString);
         }
