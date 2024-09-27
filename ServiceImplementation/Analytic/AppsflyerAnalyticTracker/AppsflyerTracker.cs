@@ -72,7 +72,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(apiId))
             {
-                this.Logger.Error("Appsflyer analytic tracker: Appsflyer can't be initialized, Appsflyer ApiKey not found");
+                this.Logger.Error("Appsflyer: Appsflyer can't be initialized, Appsflyer ApiKey not found");
                 this.TrackerReady.SetResult(false);
                 return this.TrackerReady.Task;
             }
