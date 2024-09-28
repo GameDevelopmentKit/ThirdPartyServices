@@ -94,7 +94,8 @@ namespace Core.AnalyticServices.Data
         private async void EventTracked(EventTrackedSignal trackedData)
         {
             // if the tracker has failed setup we should not forward it any events
-            if (this.TrackerReady.Task.Status == TaskStatus.Canceled || this.TrackerReady.Task.Status == TaskStatus.Faulted) return;
+            if (this.TrackerReady.Task.Status is TaskStatus.Canceled or TaskStatus.Faulted)
+                return;
             await this.TrackerReady.Task;
 
             if (trackedData.ChangedProps != null) this.OnChangedProps(trackedData.ChangedProps);
@@ -160,8 +161,8 @@ namespace Core.AnalyticServices.Data
                 if (!string.IsNullOrEmpty(parsedReceipt.Payload) && !string.IsNullOrEmpty(parsedReceipt.Store) && !string.IsNullOrEmpty(parsedReceipt.TransactionID))
                 {
                     //Return the receipt Payload to prevent integration errors.
-                    Debug.LogWarning(
-                        "[AnalyticService BaseTracker] Wrong receipt parameter detected. Replacing it with Receipt.Payload");
+                    this.Logger.Warning(
+                        "BaseTracker: Wrong receipt parameter detected. Replacing it with Receipt.Payload");
 
                     return parsedReceipt.Payload;
                 }
