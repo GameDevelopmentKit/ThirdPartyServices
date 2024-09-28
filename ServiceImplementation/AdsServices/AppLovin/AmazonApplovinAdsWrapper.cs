@@ -6,7 +6,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
-    using Zenject;
+    using GameFoundation.Signals;
+    using UnityEngine.Scripting;
 
     public class AmazonApplovinAdsWrapper : AppLovinAdsWrapper
     {
@@ -29,6 +30,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private const string AmazonResponseMessage = "amazon_ad_response";
         private const string AmazonErrorMessage    = "amazon_ad_error";
 
+        [Preserve]
         public AmazonApplovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig,
             ThirdPartiesConfig thirdPartiesConfig)
             : base(logService, signalBus, thirdPartiesConfig)
@@ -59,7 +61,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (this.isFirstMRecRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstMRecRequest = false;
-                
+
                 this.mRecAdsRequest = new APSBannerAdRequest(300, 250, amazonId);
                 this.mRecAdsRequest.onSuccess += response =>
                     {

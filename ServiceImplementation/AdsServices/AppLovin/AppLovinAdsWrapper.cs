@@ -8,12 +8,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using Core.AdsServices.Signals;
     using Core.AnalyticServices.CommonEvents;
     using Cysharp.Threading.Tasks;
+    using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
-    using Zenject;
+    using GameFoundation.Signals;
+    using UnityEngine.Scripting;
 
     public class AppLovinAdsWrapper : IAdServices, IMRECAdService, IInitializable, IDisposable, IAdLoadService, IAOAAdService
     {
@@ -41,6 +43,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #endregion
 
+        [Preserve]
         public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus,
             ThirdPartiesConfig thirdPartiesConfig)
         {

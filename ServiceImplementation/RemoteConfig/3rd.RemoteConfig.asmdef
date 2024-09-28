@@ -1,20 +1,25 @@
 {
-    "name": "3rd.RemoteConfig",
-    "rootNamespace": "",
-    "references": [
-        "UniTask",
-        "ByteBrew",
-        "GameFoundation.Utilities",
-        "Zenject-Signals",
-        "Zenject"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "3rd.RemoteConfig",
+  "rootNamespace": "",
+  "references": [
+    "UniTask",
+    "ByteBrew",
+    "GameFoundation.DI",
+    "GameFoundation.Utilities",
+    "GameFoundation.Signals",
+    "Zenject",
+    "VContainer"
+  ],
+  "versionDefines": [
+    {
+      "name": "com.svermeulen.extenject",
+      "expression": "",
+      "define": "GDK_ZENJECT"
+    },
+    {
+      "name": "jp.hadashikick.vcontainer",
+      "expression": "",
+      "define": "GDK_VCONTAINER"
+    }
+  ]
 }

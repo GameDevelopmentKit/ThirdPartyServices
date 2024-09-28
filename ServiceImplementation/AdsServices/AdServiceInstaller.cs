@@ -1,9 +1,11 @@
+#if GDK_ZENJECT
 namespace ServiceImplementation.AdsServices
 {
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
+    using GameFoundation.Signals;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
     using ServiceImplementation.AdsServices.EasyMobile;
@@ -122,10 +124,11 @@ namespace ServiceImplementation.AdsServices
 
             // This signal is used to all type of ad request
             this.Container.DeclareSignal<AdRequestSignal>();
-            
+
             this.Container.DeclareSignal<AppStateChangeSignal>();
 
             #endregion
         }
     }
 }
+#endif

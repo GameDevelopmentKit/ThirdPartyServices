@@ -3,7 +3,9 @@
     using System;
     using System.Globalization;
     using UnityEngine;
+    using UnityEngine.Scripting;
 
+    [Preserve]
     public class DeviceInfo
     {
         public string BundleId { get; private set; }
@@ -45,7 +47,7 @@
         public string Gaid { get; private set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string AndroidId { get; private set; }
 

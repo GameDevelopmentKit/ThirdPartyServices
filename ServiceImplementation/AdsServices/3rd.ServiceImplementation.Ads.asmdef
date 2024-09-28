@@ -5,9 +5,11 @@
     "3rdCore.Ads",
     "EasyMobile.Scripts",
     "3rdCore.Analytic",
+    "GameFoundation.DI",
     "GameFoundation.Utilities",
     "Zenject",
-    "Zenject-Signals",
+    "VContainer",
+    "GameFoundation.Signals",
     "MaxSdk.Scripts",
     "UniTask",
     "IronSource.Scripts",
@@ -46,6 +48,16 @@
       "name": "com.theone.ironsource-adquality",
       "expression": "",
       "define": "IRONSOURCE_AD_QUALITY"
+    },
+    {
+      "name": "com.svermeulen.extenject",
+      "expression": "",
+      "define": "GDK_ZENJECT"
+    },
+    {
+      "name": "jp.hadashikick.vcontainer",
+      "expression": "",
+      "define": "GDK_VCONTAINER"
     }
   ],
   "noEngineReferences": false

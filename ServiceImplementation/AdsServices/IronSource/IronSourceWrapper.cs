@@ -9,12 +9,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using Cysharp.Threading.Tasks;
+    using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
+    using GameFoundation.Signals;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
-    using Zenject;
-    using Debug = UnityEngine.Debug;
+    using UnityEngine.Scripting;
 
     public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable, IAdLoadService
     {
@@ -28,7 +29,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
-
+        [Preserve]
         public IronSourceWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig, ILogService logService)
         {
             this.analyticServices   = analyticServices;
@@ -301,7 +302,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         //todo convert ads position
         private bool isLoadedBanner;
-        
+
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
             if (this.isLoadedBanner)

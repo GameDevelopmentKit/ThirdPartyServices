@@ -14,7 +14,8 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
-    using Zenject;
+    using GameFoundation.Signals;
+    using UnityEngine.Scripting;
 #if THEONE_IAP
     using AppsFlyerConnector;
 #endif
@@ -31,6 +32,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
         };
 
+        [Preserve]
         public AppsflyerTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
             this.logger              = logger;
@@ -85,7 +87,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 #if THEONE_IAP
             AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
 #if THEONE_MMP_DEBUG && !PRODUCTION
-            AppsFlyerPurchaseConnector.setIsSandbox(true); 
+            AppsFlyerPurchaseConnector.setIsSandbox(true);
 #endif
             AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
             AppsFlyerPurchaseConnector.build();
@@ -156,7 +158,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 { AdRevenueScheme.PLACEMENT, adsRevenueEvent.Placement },
                 { "af_quantity", "1" }
             };
-            
+
             var mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
             {
                 AdRevenueConstants.ARSourceAppLovinMAX => MediationNetwork.ApplovinMax,
