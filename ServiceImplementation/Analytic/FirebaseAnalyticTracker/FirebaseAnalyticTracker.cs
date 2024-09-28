@@ -52,10 +52,10 @@
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
-            if (!name.IsNameValid().Equals("Valid"))
+            var validateMessage = name.IsNameValid();
+            if (!validateMessage.Equals("Valid"))
             {
-                this.Logger.Error($"Firebase: Event name error: {name} {name.IsNameValid()}");
-
+                this.Logger.Error($"Firebase: Event name error: {name} {validateMessage}");
                 return;
             }
 
@@ -63,7 +63,6 @@
             {
                 FirebaseAnalytics.LogEvent(name);
                 this.Logger.Info($"Firebase: Track Event - {name}");
-
                 return;
             }
 
@@ -119,16 +118,18 @@
         {
             foreach (var entry in data)
             {
-                if (!entry.Key.IsNameValid().Equals("Valid"))
+                var validateKeyResult = entry.Key.IsNameValid();
+                if (!validateKeyResult.Equals("Valid"))
                 {
-                    this.Logger.Error($"Firebase: Parameter name error: {entry} {entry.Key.IsNameValid()}");
+                    this.Logger.Error($"Firebase: Parameter name error: {entry} {validateKeyResult}");
 
                     return false;
                 }
 
-                if (!entry.Value.IsParameterValueValid().Equals("Valid"))
+                var validateValueResult = entry.Value.IsParameterValueValid();
+                if (!validateValueResult.Equals("Valid"))
                 {
-                    this.Logger.Error($"Firebase: Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}");
+                    this.Logger.Error($"Firebase: Parameter value error: {entry.Value} {validateValueResult}");
 
                     return false;
                 }
@@ -138,4 +139,3 @@
         }
     }
 }
-// #endif
