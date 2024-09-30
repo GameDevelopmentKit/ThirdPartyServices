@@ -57,6 +57,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public virtual async void Initialize()
         {
+            await UniTask.SwitchToMainThread();
 #if THEONE_ADS_DEBUG
             MaxSdk.SetCreativeDebuggerEnabled(true);
 #else
