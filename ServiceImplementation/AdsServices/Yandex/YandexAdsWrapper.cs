@@ -243,9 +243,14 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         #region Public
 
-        public bool IsRewardedAdReady(string place) => this.rewardedAd != null;
+        public bool IsRewardedAdReady(string place) => !string.IsNullOrEmpty(place) && this.rewardedAd != null;
 
-        public void LoadRewardAds(string           place = "")               => this.rewardedAdLoader.LoadAd(new AdRequestConfiguration.Builder(this.YandexSettings.RewardedAdId.Id).Build());
+        public void LoadRewardAds(string place = "")
+        {
+            if (string.IsNullOrEmpty(place)) return;
+            this.rewardedAdLoader.LoadAd(new AdRequestConfiguration.Builder(this.YandexSettings.RewardedAdId.Id).Build());
+        }
+
         public bool TryGetRewardPlacementId(string placement, out string id)
         {
             id = default;
@@ -341,7 +346,12 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         public bool IsInterstitialAdReady(string place) => this.interstitialAd != null;
 
-        public virtual void LoadInterstitialAd(string            place = "")               => this.interstitialAdLoader.LoadAd(new AdRequestConfiguration.Builder(this.YandexSettings.InterstitialAdId.Id).Build());
+        public virtual void LoadInterstitialAd(string place = "")
+        {
+            if (string.IsNullOrEmpty(place)) return;
+            this.interstitialAdLoader.LoadAd(new AdRequestConfiguration.Builder(this.YandexSettings.InterstitialAdId.Id).Build());
+        }
+
         public         bool TryGetInterstitialPlacementId(string placement, out string id) { id = default; return false; }
 
         public void ShowInterstitialAd(string place)
