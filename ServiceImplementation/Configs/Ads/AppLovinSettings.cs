@@ -113,10 +113,6 @@
         /// </summary>
         public Dictionary_AdViewPosition_AdId MRECAdIds { get => this.mMRECAdIds; set => this.mMRECAdIds = value; }
 
-        public bool CreativeDebugger => this.mCreatveiDebugger;
-        
-        public bool MediationDebugger => this.mMediationDebugger;
-
         /// <summary>
         /// Gets or sets the list of custom banner identifiers.
         /// Each identifier is associated with an ad placement.
@@ -149,12 +145,6 @@
         private AmazonApplovinSetting amazonApplovinSetting;
 
         [SerializeField] private bool isAdaptiveBanner = true;
-
-        [SerializeField] [LabelText("Creative Debugger")]
-        private bool mCreatveiDebugger;
-
-        [SerializeField] [LabelText("Mediation Debugger")]
-        private bool mMediationDebugger;
 
         [SerializeField] [LabelText("SDK Key")] [OnValueChanged("SaveApplovinSetting")]
         private string mSDKKey;

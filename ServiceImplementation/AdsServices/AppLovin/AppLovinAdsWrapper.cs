@@ -60,12 +60,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
             await UniTask.SwitchToMainThread();
 #if THEONE_ADS_DEBUG
             MaxSdk.SetCreativeDebuggerEnabled(true);
-#else
-            MaxSdk.SetCreativeDebuggerEnabled(this.AppLovinSetting.CreativeDebugger);
 #endif
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
             MaxSdk.InitializeSdk();
-            MaxSdkCallbacks.OnSdkInitializedEvent += this.OnSDKInitializedHandler;
 
             await UniTask.WaitUntil(MaxSdk.IsInitialized);
             this.InitBannerAds();
@@ -74,19 +71,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InitRewardedAds();
             this.InitAOAAds();
 
-            if (this.AppLovinSetting.MediationDebugger) MaxSdk.ShowMediationDebugger();
-
-            this.isInit = true;
-
-            this.logService.Log("AppLovin Ads Services has been initialized!");
-        }
-
-        private void OnSDKInitializedHandler(MaxSdkBase.SdkConfiguration obj)
-        {
 #if THEONE_ADS_DEBUG
-            // Show Mediation Debugger
             MaxSdk.ShowMediationDebugger();
 #endif
+            this.isInit = true;
+
+            this.logService.Log("onelog: AppLovinAdsWrapper has been initialized!");
         }
 
         public void Dispose()
@@ -377,13 +367,18 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return;
 
             this.logService.Log($"onelog: applovin: InitAOAAds");
-            MaxSdkCallbacks.OnSdkInitializedEvent += this.OnMaxSdkCallbacksOnOnSdkInitializedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdHiddenEvent        += this.OnAppOpenDismissedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdLoadedEvent        += this.OnAppOpenLoadedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdLoadFailedEvent    += this.OnAppOpenLoadFailedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdClickedEvent       += this.OnAppOpenClickedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdDisplayedEvent     += this.OnAppOpenDisplayedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdDisplayFailedEvent += this.OnAppOpenDisplayFailedEvent;
+            this.InternalLoadAppOpenAd();
         }
 
         private void DisposeAOAAds()
         {
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return;
-            MaxSdkCallbacks.OnSdkInitializedEvent -= this.OnMaxSdkCallbacksOnOnSdkInitializedEvent;
 
             MaxSdkCallbacks.AppOpen.OnAdHiddenEvent        -= this.OnAppOpenDismissedEvent;
             MaxSdkCallbacks.AppOpen.OnAdLoadedEvent        -= this.OnAppOpenLoadedEvent;
@@ -391,19 +386,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.AppOpen.OnAdClickedEvent       -= this.OnAppOpenClickedEvent;
             MaxSdkCallbacks.AppOpen.OnAdDisplayedEvent     -= this.OnAppOpenDisplayedEvent;
             MaxSdkCallbacks.AppOpen.OnAdDisplayFailedEvent -= this.OnAppOpenDisplayFailedEvent;
-        }
-
-        private void OnMaxSdkCallbacksOnOnSdkInitializedEvent(MaxSdkBase.SdkConfiguration sdkConfiguration)
-        {
-            this.logService.Log("onelog: OnMaxSdkCallbacksOnOnSdkInitializedEvent");
-            MaxSdkCallbacks.AppOpen.OnAdHiddenEvent        += this.OnAppOpenDismissedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdLoadedEvent        += this.OnAppOpenLoadedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdLoadFailedEvent    += this.OnAppOpenLoadFailedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdClickedEvent       += this.OnAppOpenClickedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdDisplayedEvent     += this.OnAppOpenDisplayedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdDisplayFailedEvent += this.OnAppOpenDisplayFailedEvent;
-
-            this.InternalLoadAppOpenAd();
         }
 
         private void OnAppOpenDisplayFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)
