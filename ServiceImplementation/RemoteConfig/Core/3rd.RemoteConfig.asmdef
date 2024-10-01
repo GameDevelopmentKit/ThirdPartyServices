@@ -3,12 +3,9 @@
   "rootNamespace": "",
   "references": [
     "UniTask",
-    "ByteBrew",
     "GameFoundation.DI",
     "GameFoundation.Utilities",
-    "GameFoundation.Signals",
-    "Zenject",
-    "VContainer"
+    "GameFoundation.Signals"
   ],
   "versionDefines": [
     {

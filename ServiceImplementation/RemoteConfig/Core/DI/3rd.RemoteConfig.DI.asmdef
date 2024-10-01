@@ -1,0 +1,25 @@
+{
+  "name": "3rd.RemoteConfig.DI",
+  "references": [
+    "ByteBrew",
+    "3rd.RemoteConfig.ByteBrew",
+    "3rd.RemoteConfig.FireBase",
+    "GameFoundation.Signals",
+    "GameFoundation.Utilities",
+    "GameFoundation.DI",
+    "3rd.RemoteConfig",
+    "VContainer"
+  ],
+  "versionDefines": [
+    {
+      "name": "com.svermeulen.extenject",
+      "expression": "",
+      "define": "GDK_ZENJECT"
+    },
+    {
+      "name": "jp.hadashikick.vcontainer",
+      "expression": "",
+      "define": "GDK_VCONTAINER"
+    }
+  ]
+}

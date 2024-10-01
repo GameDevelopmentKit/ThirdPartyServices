@@ -1,0 +1,24 @@
+{
+  "name": "3rd.remoteconfig.bytebrew",
+  "displayName": "Third Party Remote Config ByteBrew",
+  "version": "1.0.0",
+  "description": "",
+  "author": {
+    "name": "TheOne - 3rd",
+    "email": "tuha@the1studio.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/The1Studio/3rdRemoteConfigByteBrew.git"
+  },
+  "dependencies": {
+    "3rd.RemoteConfig.DI" : "latest",
+    "com.theone.bytebrew" : "latest"
+  },
+  "keywords": [
+    "RemotConfig",
+    "3rd",
+    "ByteBrew"
+  ],
+  "license": "MIT"
+}
