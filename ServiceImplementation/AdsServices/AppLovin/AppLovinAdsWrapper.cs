@@ -16,8 +16,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using UnityEngine;
     using GameFoundation.Signals;
     using UnityEngine.Scripting;
+    using VContainer.Unity;
 
-    public class AppLovinAdsWrapper : IAdServices, IMRECAdService, IInitializable, IDisposable, IAdLoadService, IAOAAdService
+    public class AppLovinAdsWrapper : IAdServices, IMRECAdService, IStartable, IDisposable, IAdLoadService, IAOAAdService
     {
         #region Inject
 
@@ -55,7 +56,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public string            AdPlatform        => AdRevenueConstants.ARSourceAppLovinMAX;
         private const string MrecAdFormat = "MREC";
 
-        public virtual async void Initialize()
+        public virtual async void Start()
         {
             await UniTask.SwitchToMainThread();
 #if THEONE_ADS_DEBUG
@@ -720,6 +721,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void InternalLoadAppOpenAd() { MaxSdk.LoadAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.Id); }
 
         #endregion
+
     }
 }
 
