@@ -15,7 +15,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     /// <summary>
     /// We need to use MonoBehaviour to use Firebase Remote Config
     /// </summary>
-    public class FirebaseRemoteConfigMobile : IRemoteConfig, IInitializable
+    internal class FirebaseRemoteConfigMobile : IRemoteConfig, IInitializable
     {
         private readonly ILogService logger;
         private readonly SignalBus   signalBus;
