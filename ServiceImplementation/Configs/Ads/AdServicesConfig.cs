@@ -107,6 +107,11 @@ namespace ServiceImplementation.Configs.Ads
         ///     The interval between two banner ads
         /// </summary>
         public int CollapsibleBannerADInterval { get; private set; }
+        
+        /// <summary>
+        ///     The interval refresh collapsible banner expand
+        /// </summary>
+        public int CollapsibleBannerExpandOnRefreshInterval { get; private set; }
 
         /// <summary>
         ///     Enable fallback to banner ad when collapsible banner ad is not available
@@ -114,7 +119,7 @@ namespace ServiceImplementation.Configs.Ads
         public bool EnableCollapsibleBannerFallback { get; private set; }
 
         /// <summary>
-        ///     Auto refresh collapsible banner ad each <see cref="CollapsibleBannerADInterval"/>
+        ///     Auto refresh collapsible banner ad each <see cref="CollapsibleBannerExpandOnRefreshInterval"/>
         /// </summary>
         public bool CollapsibleBannerAutoRefreshEnabled { get; private set; }
 
