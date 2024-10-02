@@ -1,4 +1,6 @@
-﻿#nullable enable
+﻿#if UNITY_EDITOR
+
+#nullable enable
 namespace ServiceImplementation.Analytic.Validator
 {
     using System;
@@ -112,3 +114,5 @@ namespace ServiceImplementation.Analytic.Validator
         }
     }
 }
+
+#endif
