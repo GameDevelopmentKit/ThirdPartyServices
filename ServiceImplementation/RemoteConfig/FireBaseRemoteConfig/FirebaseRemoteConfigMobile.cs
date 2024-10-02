@@ -120,7 +120,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             }
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
-
+            this.logger.Log($"onelog: vietanh FirebaseRemoteConfig FetchComplete {value}.");
             return bool.TryParse(value, out var result) && result;
         }
 

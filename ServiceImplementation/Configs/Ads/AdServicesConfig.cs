@@ -1,6 +1,7 @@
 namespace ServiceImplementation.Configs.Ads
 {
     using System;
+    using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.FireBaseRemoteConfig;
     using Zenject;
 
@@ -11,12 +12,14 @@ namespace ServiceImplementation.Configs.Ads
         private readonly SignalBus           signalBus;
         private readonly IRemoteConfig       remoteConfig;
         private readonly RemoteConfigSetting remoteConfigSetting;
+        private readonly ILogService         logService;
 
-        public AdServicesConfig(SignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
+        public AdServicesConfig(SignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting,ILogService         logService)
         {
             this.signalBus           = signalBus;
             this.remoteConfig        = remoteConfig;
             this.remoteConfigSetting = remoteConfigSetting;
+            this.logService          = logService;
         }
 
         #endregion
@@ -127,6 +130,7 @@ namespace ServiceImplementation.Configs.Ads
             #region General
 
             this.EnableBannerAd               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableBannerAD);
+            this.logService.Log($"onelog: vietanh EnableBannerAd Fetched: {this.EnableBannerAd}");
             this.EnableInterstitialAd         = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableInterstitialAD);
             this.EnableMRECAd                 = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableMrecAD);
             this.EnableAOAAd                  = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableAoaAD);
