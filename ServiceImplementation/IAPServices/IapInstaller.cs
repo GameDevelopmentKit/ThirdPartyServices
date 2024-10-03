@@ -5,8 +5,10 @@ namespace ServiceImplementation.IAPServices
     using GameFoundation.Signals;
     using ServiceImplementation.IAPServices.Signals;
     using UnityEngine;
+    using UnityEngine.Scripting;
     using Zenject;
 
+    [Preserve]
     public class IapInstaller : Installer<IapInstaller>
     {
         public override void InstallBindings()

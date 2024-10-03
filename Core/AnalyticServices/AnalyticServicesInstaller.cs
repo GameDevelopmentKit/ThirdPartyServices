@@ -8,8 +8,10 @@ namespace Core.AnalyticServices
     using GameFoundation.Signals;
     using Models;
     using UnityEngine;
+    using UnityEngine.Scripting;
     using Zenject;
 
+    [Preserve]
     public class AnalyticServicesInstaller : Installer<AnalyticServicesInstaller>
     {
         public override void InstallBindings()

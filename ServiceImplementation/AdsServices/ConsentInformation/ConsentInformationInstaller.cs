@@ -1,8 +1,10 @@
 #if GDK_ZENJECT
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
+    using UnityEngine.Scripting;
     using Zenject;
 
+    [Preserve]
     public class ConsentInformationInstaller : Installer<ConsentInformationInstaller>
     {
         public override void InstallBindings()

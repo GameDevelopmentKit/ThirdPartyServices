@@ -1,8 +1,10 @@
 #if GDK_ZENJECT
 namespace ServiceImplementation.AdsServices.AppLovin
 {
+    using UnityEngine.Scripting;
     using Zenject;
 
+    [Preserve]
     public class ApplovinAdsInstaller : Installer<ApplovinAdsInstaller>
     {
         public override void InstallBindings()

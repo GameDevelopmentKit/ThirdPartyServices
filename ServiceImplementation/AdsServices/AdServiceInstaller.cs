@@ -12,6 +12,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.PreloadService;
     using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs.Ads;
+    using UnityEngine.Scripting;
     using Zenject;
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
     using global::PubScale.SdkOne;
@@ -27,6 +28,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.Yandex;
 #endif
 
+    [Preserve]
     public class AdServiceInstaller : Installer<AdServiceInstaller>
     {
         public override void InstallBindings()
