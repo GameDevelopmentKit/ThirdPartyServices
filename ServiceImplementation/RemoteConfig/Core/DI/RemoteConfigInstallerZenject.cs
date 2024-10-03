@@ -6,8 +6,10 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 #endif
     using ServiceImplementation.RemoteConfig;
     using UnityEngine;
+    using UnityEngine.Scripting;
     using Zenject;
 
+    [Preserve]
     public class RemoteConfigInstaller : Installer<RemoteConfigInstaller>
     {
         public override void InstallBindings()
