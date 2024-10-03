@@ -13,6 +13,7 @@
         public const string EnableNativeAD               = "enable_native_ad";
         public const string EnableCollapsibleBanner      = "enable_collapsible_banner";
         public const string IntervalLoadAds              = "interval_load_ads";
+        public const string EnableAds                    = "enable_ads";
 
         #endregion
 

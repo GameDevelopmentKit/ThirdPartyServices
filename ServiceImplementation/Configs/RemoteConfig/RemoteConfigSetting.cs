@@ -63,6 +63,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.TryAddAddsConfig(RemoteConfigKey.EnableNativeAD, "true");
             this.TryAddAddsConfig(RemoteConfigKey.EnableCollapsibleBanner, "false");
             this.TryAddAddsConfig(RemoteConfigKey.IntervalLoadAds, "5");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableAds, "true");
 
             #endregion
 
