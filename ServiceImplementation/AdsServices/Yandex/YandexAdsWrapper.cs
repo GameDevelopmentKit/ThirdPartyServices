@@ -7,6 +7,7 @@ namespace ServiceImplementation.AdsServices.Yandex
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
+    using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
     using ServiceImplementation.Configs;
