@@ -22,7 +22,7 @@ namespace Core.AnalyticServices
                 .AsSingle()
                 .OnInstantiated<SessionController>((ctx, svc) => svc.Construct(ctx.Container.Resolve<IAnalyticServices>(), ctx.Container.Resolve<DeviceInfo>()))
                 .NonLazy();
-            this.Container.BindAllDerivedTypes<BaseTracker>(true);
+            this.Container.BindInterfacesAndSelfToAllTypeDriveFrom<BaseTracker>();
             this.Container.Bind<AnalyticsEventCustomizationConfig>().AsCached();
             this.Container.DeclareSignal<EventTrackedSignal>();
             this.Container.DeclareSignal<SetUserIdSignal>();
