@@ -125,7 +125,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.isGotRewarded = true;
             this.onRewardComplete?.Invoke();
             this.onRewardComplete = null;
-            var adInfo = new AdInfo(this.AdPlatform, arg2.adUnit, arg2.adUnit, arg2.adNetwork, value:arg2.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, arg2.adUnit, AdFormatConstants.Rewarded, arg2.adNetwork, value:arg2.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new RewardedAdCompletedSignal(this.rewardedPlacement, adInfo));
         }
 
@@ -140,13 +140,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void RewardedVideoOnAdAvailable(IronSourceAdInfo arg1)
         {
             this.rewardedStopwatch.Stop();
-            var adInfo = new AdInfo(this.AdPlatform, arg1.adUnit, arg1.adUnit, arg1.adNetwork, value:arg1.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, arg1.adUnit, AdFormatConstants.Rewarded, arg1.adNetwork, value:arg1.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new RewardedAdLoadedSignal("", this.rewardedStopwatch.ElapsedMilliseconds, adInfo));
         }
 
         private void RewardedVideoOnAdClosedEvent(IronSourceAdInfo obj)
         {
-            var adInfo = new AdInfo(this.AdPlatform, obj.adUnit, obj.adUnit, obj.adNetwork, value:obj.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, obj.adUnit, AdFormatConstants.Rewarded, obj.adNetwork, value:obj.revenue ?? 0, currency:"USD");
             if (!this.isGotRewarded)
             {
                 this.onRewardFailed?.Invoke();
@@ -161,19 +161,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.onRewardFailed?.Invoke();
             this.onRewardFailed = null;
             this.logService.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdShowFailedEvent. Message: {obj.getDescription()}");
-            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, AdFormatConstants.Rewarded, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new RewardedAdShowFailedSignal(this.rewardedPlacement, obj.getDescription(),adInfo));
         }
 
         private void RewardedVideoOnAdClickedEvent(IronSourcePlacement obj, IronSourceAdInfo info)
         {
-            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, AdFormatConstants.Rewarded, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new RewardedAdClickedSignal(this.rewardedPlacement, adInfo));
         }
 
         private void RewardedVideoOnAdOpenedEvent(IronSourceAdInfo info)
         {
-            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, AdFormatConstants.Rewarded, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new RewardedAdDisplayedSignal(this.rewardedPlacement, adInfo));
         }
 
@@ -184,7 +184,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void InterstitialOnAdClosedEvent(IronSourceAdInfo obj)
         {
-            var adInfo = new AdInfo(this.AdPlatform, obj.adUnit, obj.adUnit, obj.adNetwork, value:obj.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, obj.adUnit, AdFormatConstants.Interstitial, obj.adNetwork, value:obj.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new InterstitialAdClosedSignal(this.interstitialPlacement, adInfo));
         }
 
@@ -206,19 +206,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void InterstitialOnAdReadyEvent(IronSourceAdInfo info)
         {
             this.stopwatchInterstitial.Stop();
-            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit,  AdFormatConstants.Interstitial, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new InterstitialAdLoadedSignal("",  this.stopwatchInterstitial.ElapsedMilliseconds, adInfo));
         }
 
         private void InterstitialOnAdOpenedEvent(IronSourceAdInfo info)
         {
-            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit,  AdFormatConstants.Interstitial, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.interstitialPlacement, adInfo));
         }
 
         private void InterstitialOnAdClickedEvent(IronSourceAdInfo info)
         {
-            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit,  AdFormatConstants.Interstitial, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new InterstitialAdClickedSignal(this.interstitialPlacement, adInfo));
         }
 
@@ -249,14 +249,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void BannerOnAdLoadedEvent(IronSourceAdInfo info)
         {
-            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit,  AdFormatConstants.Banner, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new BannerAdLoadedSignal("", adInfo));
             this.isLoadedBanner = true;
         }
 
         private void BannerOnAdClickedEvent(IronSourceAdInfo info)
         {
-            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnit, AdFormatConstants.Banner, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new BannerAdClickedSignal("", adInfo));
         }
 

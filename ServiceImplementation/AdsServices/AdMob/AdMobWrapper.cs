@@ -460,7 +460,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void AdMobNativePaidHandler(object sender, AdValueEventArgs e)
         {
             // TODO: Temporary get the first native ad id, only work for single native ad. Refactor later
-            this.AdMobHandlePaidEvent(e.AdValue, this.ADMobSettings.NativeAdIds.First().Id,"NativeAds");
+            this.AdMobHandlePaidEvent(e.AdValue, this.ADMobSettings.NativeAdIds.First().Id,AdFormatConstants.Native);
         }
 
         private void LoadAllNativeAds()
