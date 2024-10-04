@@ -482,7 +482,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 AdUnit             = adUnitId,
                 AdFormat           = adFormat,
                 AdNetwork          = "AdMob",
-                Revenue            = args.Value,
+                Revenue            = args.Value / 1e6,
                 Currency           = "USD",
             };
 
