@@ -13,6 +13,7 @@
         public const string EnableNativeAD               = "enable_native_ad";
         public const string EnableCollapsibleBanner      = "enable_collapsible_banner";
         public const string IntervalLoadAds              = "interval_load_ads";
+        public const string EnableAds                    = "enable_ads";
 
         #endregion
 
@@ -43,10 +44,11 @@
 
         #region Collapsible
 
-        public const string CollapsibleBannerADInterval             = "colapsible_banner_ad_interval";
-        public const string EnableCollapsibleBannerFallback         = "enable_collapsible_banner_fallback";
-        public const string CollapsibleBannerAutoRefreshEnabled     = "collapsible_banner_auto_refresh_enabled";
-        public const string CollapsibleBannerExpandOnRefreshEnabled = "collapsible_banner_expand_on_refresh_enabled";
+        public const string CollapsibleBannerADInterval              = "colapsible_banner_ad_interval";
+        public const string CollapsibleBannerExpandOnRefreshInterval = "collapsible_banner_expand_on_refresh_interval";
+        public const string EnableCollapsibleBannerFallback          = "enable_collapsible_banner_fallback";
+        public const string CollapsibleBannerAutoRefreshEnabled      = "collapsible_banner_auto_refresh_enabled";
+        public const string CollapsibleBannerExpandOnRefreshEnabled  = "collapsible_banner_expand_on_refresh_enabled";
 
         #endregion
     }
