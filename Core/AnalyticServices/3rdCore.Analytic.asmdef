@@ -1,22 +1,27 @@
 {
-    "name": "3rdCore.Analytic",
-    "rootNamespace": "",
-    "references": [
-        "Zenject-Signals",
-        "Zenject",
-        "GameFoundation.Utilities",
-        "GameFoundation.Models",
-        "ByteBrew",
-        "3rd.Configs.Editor",
-        "ByteBrew.Editor"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "3rdCore.Analytic",
+  "rootNamespace": "",
+  "references": [
+    "GameFoundation.DI",
+    "GameFoundation.Signals",
+    "Zenject",
+    "VContainer",
+    "GameFoundation.Utilities",
+    "GameFoundation.Models",
+    "ByteBrew",
+    "3rd.Configs.Editor",
+    "ByteBrew.Editor"
+  ],
+  "versionDefines": [
+    {
+      "name": "com.svermeulen.extenject",
+      "expression": "",
+      "define": "GDK_ZENJECT"
+    },
+    {
+      "name": "jp.hadashikick.vcontainer",
+      "expression": "",
+      "define": "GDK_VCONTAINER"
+    }
+  ]
 }

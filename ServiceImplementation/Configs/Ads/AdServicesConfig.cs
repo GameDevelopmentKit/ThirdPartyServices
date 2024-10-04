@@ -1,8 +1,10 @@
 namespace ServiceImplementation.Configs.Ads
 {
     using System;
+    using GameFoundation.DI;
+    using GameFoundation.Signals;
     using ServiceImplementation.FireBaseRemoteConfig;
-    using Zenject;
+    using UnityEngine.Scripting;
 
     public class AdServicesConfig : IInitializable, IDisposable
     {
@@ -12,6 +14,7 @@ namespace ServiceImplementation.Configs.Ads
         private readonly IRemoteConfig       remoteConfig;
         private readonly RemoteConfigSetting remoteConfigSetting;
 
+        [Preserve]
         public AdServicesConfig(SignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
         {
             this.signalBus           = signalBus;

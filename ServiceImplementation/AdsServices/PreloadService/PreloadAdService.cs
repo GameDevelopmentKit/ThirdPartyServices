@@ -8,40 +8,44 @@ namespace ServiceImplementation.AdsServices.PreloadService
     using Core.AnalyticServices;
     using Core.AnalyticServices.Tools;
     using Cysharp.Threading.Tasks;
+    using GameFoundation.DI;
+    using GameFoundation.Signals;
     using ServiceImplementation.Configs.Ads;
-    using Zenject;
+    using UnityEngine.Scripting;
     using Debug = UnityEngine.Debug;
 
-    public class PreloadAdService : IInitializable, IDisposable, ITickable
+    public class PreloadAdService : IInitializable, ITickable, IDisposable
     {
         #region inject
 
-        private readonly List<IAdLoadService>      adLoadServices;
-        private readonly AdServicesConfig          adServicesConfig;
-        private readonly SignalBus                 signalBus;
-        private readonly IAnalyticServices         analyticServices;
-        private readonly List<IAOAAdService>       aOaAdServices;
+        private readonly List<IAdLoadService>          adLoadServices;
+        private readonly AdServicesConfig              adServicesConfig;
+        private readonly SignalBus                     signalBus;
+        private readonly IAnalyticServices             analyticServices;
+        private readonly List<IAOAAdService>           aOaAdServices;
         private readonly UnScaleInGameStopWatchManager unScaleInGameStopWatchManager;
 
         #endregion
-        
+
         private Dictionary<(IAdLoadService, string), UnScaleInGameStopWatch> interstitialAdStopwatch = new();
         private Dictionary<(IAdLoadService, string), UnScaleInGameStopWatch> rewardAdStopwatch       = new();
         private Dictionary<IAOAAdService, UnScaleInGameStopWatch>            aoaAdStartTime          = new();
-        
-        public PreloadAdService(List<IAdLoadService> adLoadServices, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices, List<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
+
+        [Preserve]
+        public PreloadAdService(IEnumerable<IAdLoadService> adLoadServices, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices, IEnumerable<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
         {
-            this.adLoadServices            = adLoadServices;
-            this.adServicesConfig          = adServicesConfig;
-            this.signalBus                 = signalBus;
-            this.analyticServices          = analyticServices;
-            this.aOaAdServices             = aOAAdServices;
+            this.adLoadServices                = adLoadServices.ToList();
+            this.adServicesConfig              = adServicesConfig;
+            this.signalBus                     = signalBus;
+            this.analyticServices              = analyticServices;
+            this.aOaAdServices                 = aOAAdServices.ToList();
             this.unScaleInGameStopWatchManager = unScaleInGameStopWatchManager;
         }
+
         public void Initialize()
         {
             this.LoadAdsInterval();
-            
+
             this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.LoadRewardAdsAfterShow);
             this.signalBus.Subscribe<RewardedSkippedSignal>(this.LoadRewardAdsAfterSkip);
             this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.LoadInterAdsAfterShow);
@@ -64,13 +68,16 @@ namespace ServiceImplementation.AdsServices.PreloadService
         }
 
         #region Load InterstitialAds
-        
+
         private void LoadInterstitial(IAdLoadService adLoadService, string placement = "")
         {
             if (!adLoadService.IsInterstitialAdReady(placement))
             {
                 adLoadService.LoadInterstitialAd(placement);
                 this.interstitialAdStopwatch.TryAdd((adLoadService, placement), this.unScaleInGameStopWatchManager.StartNew());
+                var adUnitId = adLoadService.TryGetInterstitialPlacementId(placement, out var id) ? id : string.Empty;
+                var adInfo   = new AdInfo(adLoadService.AdPlatform, adUnitId, "Interstitial");
+                this.signalBus.Fire<AdRequestSignal>(new(placement, adInfo));
             }
         }
 
@@ -100,15 +107,17 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         #endregion
 
-
         #region Load RewardAds
-        
+
         private void LoadReward(IAdLoadService adLoadService, string placement = "")
         {
             if (!adLoadService.IsRewardedAdReady(placement))
             {
                 adLoadService.LoadRewardAds(placement);
                 this.rewardAdStopwatch.TryAdd((adLoadService, placement), this.unScaleInGameStopWatchManager.StartNew());
+                var adUnitId = adLoadService.TryGetRewardPlacementId(placement, out var id) ? id : string.Empty;
+                var adInfo   = new AdInfo(adLoadService.AdPlatform, adUnitId, "Rewarded");
+                this.signalBus.Fire<AdRequestSignal>(new(placement, adInfo));
             }
         }
 
@@ -146,7 +155,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
             this.signalBus.TryUnsubscribe<InterstitialAdClosedSignal>(this.LoadInterAdsAfterShow);
             this.signalBus.TryUnsubscribe<RewardedSkippedSignal>(this.LoadRewardAdsAfterSkip);
         }
-        
+
         public void Tick()
         {
             // check interstitial ads
@@ -172,9 +181,9 @@ namespace ServiceImplementation.AdsServices.PreloadService
                         this.analyticServices.Track(new PreLoadReward(placement, this.unScaleInGameStopWatchManager.Stop(stopwatch), adLoadService.GetType().Name));
                         this.rewardAdStopwatch.Remove((adLoadService, placement));
                     }
-                } 
+                }
             }
-            
+
             // check  AOA ads
             foreach (var aOaAdService in aOaAdServices)
             {

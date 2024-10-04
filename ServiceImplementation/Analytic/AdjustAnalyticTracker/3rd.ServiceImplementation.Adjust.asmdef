@@ -3,7 +3,7 @@
   "rootNamespace": "",
   "references": [
     "3rdCore.Analytic",
-    "Zenject-Signals",
+    "GameFoundation.Signals",
     "GameFoundation.Utilities",
     "AdjustSdk.Scripts",
     "AdjustSdk.Editor"

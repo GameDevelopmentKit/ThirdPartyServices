@@ -4,11 +4,10 @@ namespace Core.AdsServices.Native
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
-    using GameFoundation.Scripts.Utilities.Extension;
+    using GameFoundation.DI;
     using R3;
     using UnityEngine;
     using UnityEngine.UI;
-    using Zenject;
 
     public class NativeAdsView : MonoBehaviour
     {

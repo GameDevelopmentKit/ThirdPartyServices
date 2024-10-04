@@ -16,7 +16,7 @@ namespace Core.AdsServices.Signals
     
     public class CollapsibleBannerAdLoadedSignal : BaseAdsSignal
     {
-        public CollapsibleBannerAdLoadedSignal(string placement) : base(placement)
+        public CollapsibleBannerAdLoadedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
         {
         }
     }
@@ -32,7 +32,7 @@ namespace Core.AdsServices.Signals
     
     public class CollapsibleBannerAdClickedSignal : BaseAdsSignal
     {
-        public CollapsibleBannerAdClickedSignal(string placement) : base(placement)
+        public CollapsibleBannerAdClickedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
         {
         }
     }

@@ -13,7 +13,8 @@ namespace ServiceImplementation.AdsServices.PubScale
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
     using UnityEngine;
-    using Zenject;
+    using GameFoundation.Signals;
+    using UnityEngine.Scripting;
 
     public class PubScaleWrapper : IImmersiveAdsService
     {
@@ -30,6 +31,7 @@ namespace ServiceImplementation.AdsServices.PubScale
         private readonly HashSet<NativeAdHolder> cacheNativeAdHolder = new();
         private          Canvas                  cacheCanvas;
 
+        [Preserve]
         public PubScaleWrapper
         (
             IScreenManager     screenManager,

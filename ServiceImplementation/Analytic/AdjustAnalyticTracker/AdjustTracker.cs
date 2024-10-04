@@ -10,13 +10,15 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using Core.AnalyticServices.Data;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
-    using Zenject;
+    using GameFoundation.Signals;
+    using UnityEngine.Scripting;
 
     public class AdjustTracker : BaseTracker
     {
         private readonly ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
+        [Preserve]
         public AdjustTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus,
             analyticConfig)
         {
@@ -65,12 +67,12 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
             var appToken    = this.analyticConfig.AdjustAppToken;
 
-#if MMP_DEBUG && !PRODUCTION
+#if THEONE_MMP_DEBUG && !PRODUCTION
             var environment = AdjustEnvironment.Sandbox;
 #else
             var environment = AdjustEnvironment.Production;
 #endif
-            
+
 
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(appToken))

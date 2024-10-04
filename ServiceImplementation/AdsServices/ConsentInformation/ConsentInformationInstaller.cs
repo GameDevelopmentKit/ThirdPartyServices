@@ -1,3 +1,4 @@
+#if GDK_ZENJECT
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
     using Zenject;
@@ -15,3 +16,4 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         }
     }
 }
+#endif

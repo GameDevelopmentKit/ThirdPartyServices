@@ -7,13 +7,14 @@ namespace ServiceImplementation.IAPServices
     using System.Linq;
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
+    using GameFoundation.Signals;
     using ServiceImplementation.IAPServices.Signals;
     using Unity.Services.Core;
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
     using UnityEngine.Purchasing.Security;
-    using Zenject;
+    using UnityEngine.Scripting;
 
     public class UnityIapServices : IIapServices, IStoreListener
     {
@@ -30,6 +31,7 @@ namespace ServiceImplementation.IAPServices
 
         #endregion
 
+        [Preserve]
         public UnityIapServices(ILogService log, SignalBus signalBus)
         {
             this.logger    = log;

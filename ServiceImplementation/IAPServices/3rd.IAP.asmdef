@@ -9,19 +9,23 @@
     "GameFoundation.Utilities",
     "3rdCore.Ads",
     "Zenject",
-    "Zenject-Signals",
+    "VContainer",
+    "GameFoundation.Signals",
     "UnityEngine.Purchasing.Security",
     "UnityEngine.Purchasing.SecurityCore",
     "UnityEngine.Purchasing.SecurityStub",
     "Unity.Security.Tangle"
   ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [],
-  "noEngineReferences": false
+  "versionDefines": [
+    {
+      "name": "com.svermeulen.extenject",
+      "expression": "",
+      "define": "GDK_ZENJECT"
+    },
+    {
+      "name": "jp.hadashikick.vcontainer",
+      "expression": "",
+      "define": "GDK_VCONTAINER"
+    }
+  ]
 }

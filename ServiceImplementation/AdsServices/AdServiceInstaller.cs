@@ -1,9 +1,11 @@
+#if GDK_ZENJECT
 namespace ServiceImplementation.AdsServices
 {
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
+    using GameFoundation.Signals;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
     using ServiceImplementation.AdsServices.EasyMobile;
@@ -35,33 +37,30 @@ namespace ServiceImplementation.AdsServices
 
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
             this.Container.Bind<PubScaleManager>().FromNewComponentOnNewGameObject().WithGameObjectName("PubScaleManager").AsSingle().NonLazy();
-            this.Container.BindInterfacesTo<PubScaleWrapper>().AsCached();          
-#endif            
+            this.Container.BindInterfacesTo<PubScaleWrapper>().AsCached();
+#endif
 #if APPLOVIN
             ApplovinAdsInstaller.Install(this.Container);
-            // this.Container.Bind<Dictionary<AdViewPosition, string>>().FromInstance(new Dictionary<AdViewPosition, string>()).WhenInjectedInto<AppLovinAdsWrapper>();
-#elif IRONSOURCE && !UNITY_EDITOR
+#endif
+#if IRONSOURCE && !UNITY_EDITOR
             this.Container.BindInterfacesTo<IronSourceWrapper>().AsCached();
-#elif YANDEX && !UNITY_EDITOR
+#endif
+#if YANDEX && !UNITY_EDITOR
             this.Container.BindInterfacesTo<YandexAdsWrapper>().AsCached();
-#elif ADMOB
+#endif
+#if ADMOB
             this.Container.BindInterfacesTo<AdMobAdService>().AsCached();
-#else
+            this.Container.BindInterfacesTo<AdMobWrapper>().AsCached().NonLazy();
+#endif
+#if !APPLOVIN && (!IRONSOURCE || UNITY_EDITOR) && (!YANDEX || UNITY_EDITOR) && !ADMOB
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
 
-#if ADMOB
-            this.Container.BindInterfacesAndSelfTo<AdMobWrapper>().AsCached().NonLazy();
-            if (!this.Container.HasBinding<IBackFillAdsService>())
-            {
-                this.Container.Bind(typeof(IInitializable), typeof(ICollapsibleBannerAd), typeof(IAdLoadService), typeof(IBackFillAdsService)).To<AdMobAdService>().AsCached();
-            }
-#else
+#if !ADMOB
             this.Container.Bind<ICollapsibleBannerAd>().To<DummyCollapsibleBannerAdAdService>().AsCached();
             #if !APPLOVIN
             this.Container.Bind<IAOAAdService>().To<DummyAOAAdServiceIml>().AsCached();
             #endif
-            this.Container.Bind<IBackFillAdsService>().To<DummyIBackFillService>().AsCached();
 #endif
 
             this.Container.BindInterfacesAndSelfTo<PreloadAdService>().AsCached().NonLazy();
@@ -123,9 +122,13 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<AppOpenCalledSignal>();
             this.Container.DeclareSignal<AppOpenClickedSignal>();
 
+            // This signal is used to all type of ad request
+            this.Container.DeclareSignal<AdRequestSignal>();
+
             this.Container.DeclareSignal<AppStateChangeSignal>();
 
             #endregion
         }
     }
 }
+#endif

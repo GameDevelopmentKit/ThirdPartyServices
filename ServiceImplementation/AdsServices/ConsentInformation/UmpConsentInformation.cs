@@ -1,9 +1,10 @@
 #if ADMOB
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
+    using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
-    using Zenject;
+    using UnityEngine.Scripting;
 
     public class UmpConsentInformation : IConsentInformation, IInitializable
     {
@@ -13,6 +14,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         #endregion
 
+        [Preserve]
         public UmpConsentInformation(ILogService logService) { this.logService = logService; }
 
         public void Initialize() { this.Request(); }
@@ -34,7 +36,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 this.logService.Error($"onelog: OnConsentInfoUpdated Error {consentError.Message}");
                 return;
             }
-            
+
 #if UNITY_IOS
             if (AttHelper.IsRequestTrackingComplete()) return;
 #endif

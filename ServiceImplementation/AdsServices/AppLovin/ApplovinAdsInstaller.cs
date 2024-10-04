@@ -1,3 +1,4 @@
+#if GDK_ZENJECT
 namespace ServiceImplementation.AdsServices.AppLovin
 {
     using Zenject;
@@ -14,3 +15,4 @@ namespace ServiceImplementation.AdsServices.AppLovin
         }
     }
 }
+#endif

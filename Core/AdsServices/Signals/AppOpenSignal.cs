@@ -1,29 +1,28 @@
 namespace Core.AdsServices.Signals
-{
-   public class AppOpenFullScreenContentOpenedSignal : BaseAdsSignal
+{ 
+    public class AppOpenFullScreenContentOpenedSignal : BaseAdsSignal
    {
-       public AppOpenFullScreenContentOpenedSignal(string placement) : base(placement)
+       public AppOpenFullScreenContentOpenedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
        {
        }
    }
    
    public class AppOpenFullScreenContentFailedSignal : BaseAdsSignal
    {
-       public AppOpenFullScreenContentFailedSignal(string placement) : base(placement)
-       {
-       }
+       public string Message { get; private set; }
+       public AppOpenFullScreenContentFailedSignal(string placement, string message) : base(placement) { this.Message = message; }
    }
    
    public class AppOpenFullScreenContentClosedSignal : BaseAdsSignal
    {
-       public AppOpenFullScreenContentClosedSignal(string placement) : base(placement)
+       public AppOpenFullScreenContentClosedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
        {
        }
    }
    
    public class AppOpenLoadedSignal : BaseAdsSignal
    {
-       public AppOpenLoadedSignal(string placement) : base(placement)
+       public AppOpenLoadedSignal(string placement,AdInfo adInfo) : base(placement, adInfo)
        {
        }
    }
@@ -51,7 +50,7 @@ namespace Core.AdsServices.Signals
    
    public class AppOpenClickedSignal : BaseAdsSignal
    {
-       public AppOpenClickedSignal(string placement) : base(placement)
+       public AppOpenClickedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
        {
        }
    }
