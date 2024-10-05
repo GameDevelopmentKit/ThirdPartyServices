@@ -11,7 +11,7 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
     using ServiceImplementation.RemoteConfig;
     using UnityEngine.Scripting;
 
-    internal class ByteBrewRemoteConfig : IInGameRemoteConfig, IInitializable
+    public class ByteBrewRemoteConfig : IInGameRemoteConfig, IInitializable
     {
         #region Inject
 
