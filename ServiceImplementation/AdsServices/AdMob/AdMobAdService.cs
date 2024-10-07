@@ -278,7 +278,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     AdNetwork          = "AdMob",
                     AdUnit             = adUnit,
                     NetworkPlacement   = placement,
-                    Revenue            = adValue.Value,
+                    Revenue            = adValue.Value/1e6,
                     Currency           = adValue.CurrencyCode,
                 };
 
