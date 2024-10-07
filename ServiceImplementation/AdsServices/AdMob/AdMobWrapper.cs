@@ -486,8 +486,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 Currency           = "USD",
             };
 
+#if ADMOB_ANALYTICS_ENABLE
             this.analyticService.Track(adsRevenueEvent);
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
+#endif
         }
     }
 #endif

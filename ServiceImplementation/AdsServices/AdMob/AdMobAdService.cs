@@ -282,9 +282,12 @@ namespace ServiceImplementation.AdsServices.AdMob
                     Currency           = adValue.CurrencyCode,
                 };
 
-                this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
+#if ADMOB_ANALYTICS_ENABLE
+                 this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
 
                 this.analyticService.Track(adsRevenueEvent);
+#endif
+               
             };
         }
 
