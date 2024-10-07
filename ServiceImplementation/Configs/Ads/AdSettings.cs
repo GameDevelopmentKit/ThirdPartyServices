@@ -59,7 +59,11 @@
         /// <summary>
         /// AOA threshold
         /// </summary>
-        public float AOAThreshHold { get { return this.mAOAThreshHold; } }
+        public float AOAThreshHold
+        {
+            get => this.mAOAThreshHold;
+            set => this.mAOAThreshHold = value;
+        }
 
         public BannerAdsPosition BannerPosition => this.mBannerPosition;
 
