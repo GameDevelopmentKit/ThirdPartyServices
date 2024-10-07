@@ -77,14 +77,14 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 #if UNITY_IOS && !UNITY_EDITOR
             AppsFlyer.waitForATTUserAuthorizationWithTimeoutInterval(60);
 #endif
-#if THEONE_MMP_DEBUG && !PRODUCTION
+#if MMP_DEBUG && !PRODUCTION
             AppsFlyer.setIsDebug(true);
 #endif
 
             //IAP Revenue connector
 #if IAP
             AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
-#if THEONE_MMP_DEBUG && !PRODUCTION
+#if MMP_DEBUG && !PRODUCTION
             AppsFlyerPurchaseConnector.setIsSandbox(true); 
 #endif
             AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);

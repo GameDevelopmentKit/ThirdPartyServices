@@ -23,7 +23,7 @@
         /// </summary>
         public AdId DefaultBannerAdId
         {
-#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+#if ADS_DEBUG || ADMOB_ADS_DEBUG
             get => !string.IsNullOrEmpty(this.mDefaultBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/2934735716","ca-app-pub-3940256099942544/6300978111") : this.mDefaultBannerAdId; 
 #else
             get => this.mDefaultBannerAdId; 
@@ -59,7 +59,7 @@
         /// </summary>
         public AdId DefaultRewardedAdId
         {
-#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+#if ADS_DEBUG || ADMOB_ADS_DEBUG
             get => !string.IsNullOrEmpty(this.mDefaultRewardedAdId.Id) ? new AdId("ca-app-pub-3940256099942544/1712485313","ca-app-pub-3940256099942544/5224354917") : this.mDefaultRewardedAdId; 
 #else
             get => this.mDefaultRewardedAdId; 
