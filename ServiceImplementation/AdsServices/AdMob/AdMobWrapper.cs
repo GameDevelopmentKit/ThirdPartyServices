@@ -1,6 +1,6 @@
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
-    #if ADMOB
+#if ADMOB
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -45,12 +45,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public AdMobWrapper(ILogService logService,         SignalBus        signalBus, IEnumerable<IAdServices> adServices, IAnalyticServices analyticService,
             ThirdPartiesConfig          thirdPartiesConfig, AdServicesConfig adServicesConfig)
         {
-            this.logService = logService;
-            this.signalBus = signalBus;
-            this.adServices = adServices.ToArray();
-            this.analyticService = analyticService;
+            this.logService         = logService;
+            this.signalBus          = signalBus;
+            this.adServices         = adServices.ToArray();
+            this.analyticService    = analyticService;
             this.thirdPartiesConfig = thirdPartiesConfig;
-            this.adServicesConfig = adServicesConfig;
+            this.adServicesConfig   = adServicesConfig;
         }
 
         public void Initialize()
@@ -59,7 +59,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.Init();
         }
 
-        private const string AdPlatForm = AdRevenueConstants.ARSourceAdMob;
+        private const string AdPlatForm         = AdRevenueConstants.ARSourceAdMob;
 
         private AdMobSettings ADMobSettings => this.thirdPartiesConfig.AdSettings.AdMob;
 
@@ -88,7 +88,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                  {
                                      this.logService.Log("AOA finished init");
                                      this.LoadAppOpenAd();
-                                     this.IntervalCall(5);
 #if ADMOB_ADS_DEBUG
                                      MobileAds.OpenAdInspector(_ => {});
 #endif
@@ -98,17 +97,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         // Temporarily disable this
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
         private static void InitAdmob() { MobileAds.Initialize(_ => { }); }
-
-        private async void IntervalCall(int intervalSecond)
-        {
-            if (this.adServices.Any(adService => adService.IsRemoveAds())) return;
-            this.LoadAllMRec();
-#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
-            this.LoadAllNativeAds();
-#endif
-            await UniTask.Delay(TimeSpan.FromSeconds(intervalSecond));
-            this.IntervalCall(intervalSecond);
-        }
 
         private string GetInterstitialAdsIdByPlace(string place)
         {
@@ -138,7 +126,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             public void Init(AppOpenAd appOpenAd)
             {
-                this.appOpenAd = appOpenAd;
+                this.appOpenAd  = appOpenAd;
                 this.loadedTime = DateTime.UtcNow;
             }
 
@@ -151,9 +139,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private int minAOASleepLoadingTime = 8;
+        private int minAOASleepLoadingTime     = 8;
         private int currentAOASleepLoadingTime = 8;
-        private int maxAOASleepLoadingTime = 64;
+        private int maxAOASleepLoadingTime     = 64;
 
         private void LoadAppOpenAd()
         {
@@ -193,8 +181,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 appOpenAd.OnAdFullScreenContentClosed += this.AOAHandleAdFullScreenContentClosed;
                 appOpenAd.OnAdFullScreenContentFailed += this.AOAHandleAdFullScreenContentFailed;
                 appOpenAd.OnAdFullScreenContentOpened += this.AOAHandleAdFullScreenContentOpened;
-                appOpenAd.OnAdImpressionRecorded += this.AOAHandleAdImpressionRecorded;
-                appOpenAd.OnAdPaid += this.AOAHandleAdPaid;
+                appOpenAd.OnAdImpressionRecorded      += this.AOAHandleAdImpressionRecorded;
+                appOpenAd.OnAdPaid                    += this.AOAHandleAdPaid;
 
                 this.aoaAdLoadedInstance.Init(appOpenAd);
             }
@@ -230,20 +218,28 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region MREC
 
-        private Dictionary<AdViewPosition, BannerView> positionToMRECBannerView = new();
-        private Dictionary<AdViewPosition, bool>       positionToMRECToIsLoading = new();
+        private readonly Dictionary<string, BannerView> idToMrecBannerView = new();
+        private          DateTime                       lastTimeCreateMrec = DateTime.MinValue;
+        private          TimeSpan                       minRecreateMrec    = TimeSpan.FromHours(1);
 
         public void ShowMREC(AdViewPosition adViewPosition)
         {
-            this.positionToMRECBannerView[adViewPosition].Show();
+            this.LoadAllMRec();
+            var mrecBannerView = this.idToMrecBannerView[this.AdId(adViewPosition)];
+            mrecBannerView.SetPosition(adViewPosition.ToAdMobAdPosition());
+            mrecBannerView.Show();
+
             this.MrecBannerViewDisplay();
         }
 
         public void HideMREC(AdViewPosition adViewPosition)
         {
-            this.positionToMRECBannerView[adViewPosition].Hide();
+            var mrecBannerView = this.idToMrecBannerView[this.AdId(adViewPosition)];
+            mrecBannerView.Hide();
             this.MrecBannerViewDismissed();
         }
+
+        private string AdId(AdViewPosition adViewPosition) => this.ADMobSettings.MRECAdIds[adViewPosition].Id;
 
         public void StopMRECAutoRefresh(AdViewPosition adViewPosition) { }
 
@@ -251,53 +247,74 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void LoadMREC(AdViewPosition adViewPosition)
         {
-            if (this.positionToMRECBannerView.ContainsKey(adViewPosition) || this.positionToMRECToIsLoading.GetOrAdd(adViewPosition, () => false))
+            var adId = this.AdId(adViewPosition);
+
+            if (this.idToMrecBannerView.TryGetValue(adId, out var mrecBannerView)) return;
+
+            mrecBannerView = new BannerView(adId, AdSize.MediumRectangle, adViewPosition.ToAdMobAdPosition());
+            this.idToMrecBannerView.Add(adId, mrecBannerView);
+
+            mrecBannerView.OnBannerAdLoaded     += OnMrecBannerLoaded;
+            mrecBannerView.OnBannerAdLoadFailed += OnMrecBannerLoadFailed;
+
+            mrecBannerView.OnBannerAdLoaded     += this.BannerViewOnAdLoaded;
+            mrecBannerView.OnBannerAdLoadFailed += this.BannerViewOnAdLoadFailed;
+            mrecBannerView.OnAdClicked          += this.BannerViewOnAdClicked;
+            mrecBannerView.OnAdPaid             += this.MRECAdHandlePaid;
+
+            #if ADMOB_BELLOW_9_0_0
+            var adRequest = new AdRequest.Builder().Build();
+            #else
+            var adRequest = new AdRequest();
+            #endif
+            mrecBannerView.LoadAd(adRequest);
+
+            return;
+
+            void OnMrecBannerLoaded()
             {
-                return;
+                Debug.Log("mrec loaded");
             }
 
-            var mrecBannerView = new BannerView(this.ADMobSettings.MRECAdIds[adViewPosition].Id, AdSize.MediumRectangle, adViewPosition.ToAdMobAdPosition());
-
-#if ADMOB_BELLOW_9_0_0
-            var adRequest = new AdRequest.Builder().Build();
-#else
-            var adRequest = new AdRequest();
-#endif
-
-            // send the request to load the ad.
-            mrecBannerView.LoadAd(adRequest);
-            this.positionToMRECToIsLoading[adViewPosition] = true;
-#if UNITY_EDITOR
-            HideMrecWhenLoaded();
-#endif
-            mrecBannerView.OnBannerAdLoaded += HideMrecWhenLoaded;
-            mrecBannerView.OnBannerAdLoadFailed += _ => { this.positionToMRECToIsLoading[adViewPosition] = false; };
-
-            mrecBannerView.OnBannerAdLoaded += this.BannerViewOnAdLoaded;
-            mrecBannerView.OnBannerAdLoadFailed += this.BannerViewOnAdLoadFailed;
-            mrecBannerView.OnAdClicked += this.BannerViewOnAdClicked;
-            mrecBannerView.OnAdPaid += this.MRECAdHandlePaid;
-
-            void HideMrecWhenLoaded()
+            void OnMrecBannerLoadFailed(LoadAdError _)
             {
-                mrecBannerView.Hide();
-                this.positionToMRECToIsLoading[adViewPosition] = false;
-                this.positionToMRECBannerView.Add(adViewPosition, mrecBannerView);
+                this.LoadMREC(adViewPosition);
+                Debug.Log("mrec load failed");
             }
         }
 
-        public bool IsMRECReady(AdViewPosition adViewPosition) { return this.positionToMRECBannerView.ContainsKey(adViewPosition) && !this.positionToMRECToIsLoading[adViewPosition]; }
+        public bool IsMRECReady(AdViewPosition adViewPosition)
+        {
+            if (!this.ADMobSettings.MRECAdIds.ContainsKey(adViewPosition)) return false;
+            var adId         = this.AdId(adViewPosition);
+            var isMrecLoaded = this.idToMrecBannerView.ContainsKey(adId);
+            if (!isMrecLoaded)
+            {
+                this.LoadMREC(adViewPosition);
+            }
+
+            return this.idToMrecBannerView.ContainsKey(adId);
+        }
 
         public void HideAllMREC()
         {
-            foreach (var (adViewPosition, value) in this.positionToMRECBannerView)
+            foreach (var (position, _) in this.ADMobSettings.MRECAdIds)
             {
-                this.HideMREC(adViewPosition);
+                this.HideMREC(position);
             }
         }
 
         private void LoadAllMRec()
         {
+            if (DateTime.Now - this.lastTimeCreateMrec >= this.minRecreateMrec)
+            {
+                foreach (var (_, mrecBannerView) in this.idToMrecBannerView)
+                {
+                    mrecBannerView.Destroy();
+                }
+                this.idToMrecBannerView.Clear();
+                this.lastTimeCreateMrec = DateTime.Now;
+            }
             foreach (var (position, _) in this.ADMobSettings.MRECAdIds)
             {
                 this.LoadMREC(position);
@@ -358,8 +375,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             adLoader.OnAdFailedToLoad += (_, _) => { this.loadingNativeAdsIds.Remove(adsId); };
 
-            adLoader.OnNativeAdLoaded += this.HandleNativeAdLoaded;
-            adLoader.OnAdFailedToLoad += this.HandleAdFailedToLoad;
+            adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
+            adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
             adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
 #if ADMOB_BELLOW_9_0_0
             adLoader.LoadAd(new AdRequest.Builder().Build());
@@ -382,6 +399,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             if (!this.adServicesConfig.EnableNativeAd) return;
 
+            this.LoadAllNativeAds();
             if (this.nativeAdsIdToNativeAd.Count == 0 || this.nativeAdsViewToNativeAd.ContainsKey(nativeAdsView)) return;
             var nativeAd = this.nativeAdsViewToNativeAd.GetOrAdd(nativeAdsView, this.GetAvailableNativeAd);
 
@@ -480,16 +498,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             var adsRevenueEvent = new AdsRevenueEvent
             {
                 AdsRevenueSourceId = AdMobWrapper.AdPlatForm,
-                AdUnit = adUnitId,
-                AdFormat = adFormat,
-                AdNetwork = "AdMob",
-                Revenue = args.Value / 1e6,
-                Currency = "USD",
+                AdUnit             = adUnitId,
+                AdFormat           = adFormat,
+                AdNetwork          = "AdMob",
+                Revenue            = args.Value / 1e6,
+                Currency           = "USD",
             };
 
             this.analyticService.Track(adsRevenueEvent);
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
         }
     }
-    #endif
+#endif
 }

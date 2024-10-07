@@ -51,7 +51,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void Initialize()
         {
             this.logService.Log("oneLog: IronSourceWrapper Initialize");
-            IronSourceEvents.onImpressionDataReadyEvent += this.ImpressionDataReadyEvent;
+            IronSourceEvents.onImpressionDataReadyEvent        += this.ImpressionDataReadyEvent;
+            IronSourceEvents.onSdkInitializationCompletedEvent += this.OnSdkInitializationCompleted;
+
             //Add AdInfo Rewarded Video Events
             IronSourceRewardedVideoEvents.onAdOpenedEvent += this.RewardedVideoOnAdOpenedEvent;
             IronSourceRewardedVideoEvents.onAdClosedEvent += this.RewardedVideoOnAdClosedEvent;
@@ -79,17 +81,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceBannerEvents.onAdScreenDismissedEvent += this.BannerOnAdScreenDismissedEvent;
             IronSourceBannerEvents.onAdLeftApplicationEvent += this.BannerOnAdLeftApplicationEvent;
 
+            #if THEONE_ADS_DEBUG
+            IronSource.Agent.setMetaData("is_test_suite", "enable");
+            #endif
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
-#if THEONE_ADS_DEBUG
+            #if THEONE_ADS_DEBUG
             IronSource.Agent.setAdaptersDebug(true);
             IronSource.Agent.validateIntegration();
-#endif
+            #endif
             this.InitAdQuality();
         }
 
         public void Dispose()
         {
-            IronSourceEvents.onImpressionDataReadyEvent -= this.ImpressionDataReadyEvent;
+            IronSourceEvents.onImpressionDataReadyEvent        -= this.ImpressionDataReadyEvent;
+            IronSourceEvents.onSdkInitializationCompletedEvent -= this.OnSdkInitializationCompleted;
 
             //Add AdInfo Rewarded Video Events
             IronSourceRewardedVideoEvents.onAdOpenedEvent -= this.RewardedVideoOnAdOpenedEvent;
@@ -116,6 +122,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceBannerEvents.onAdScreenPresentedEvent -= this.BannerOnAdScreenPresentedEvent;
             IronSourceBannerEvents.onAdScreenDismissedEvent -= this.BannerOnAdScreenDismissedEvent;
             IronSourceBannerEvents.onAdLeftApplicationEvent -= this.BannerOnAdLeftApplicationEvent;
+        }
+
+        private void OnSdkInitializationCompleted()
+        {
+            #if THEONE_ADS_DEBUG
+            this.logService.Log($"onelog: IronSource Sdk initialized!");
+            IronSource.Agent.launchTestSuite();
+            #endif
         }
 
         #region Rewarded
