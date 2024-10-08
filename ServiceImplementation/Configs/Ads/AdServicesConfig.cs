@@ -5,7 +5,6 @@ namespace ServiceImplementation.Configs.Ads
     using GameFoundation.Signals;
     using ServiceImplementation.FireBaseRemoteConfig;
     using UnityEngine.Scripting;
-    using Debug = UnityEngine.Debug;
 
     public class AdServicesConfig : IInitializable, IDisposable
     {
