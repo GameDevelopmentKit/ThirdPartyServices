@@ -53,7 +53,7 @@ namespace ServiceImplementation.Configs.Ads
 
         #region AOA
 
-        public int AOALoadingThreshold      { get; private set; }
+        public float AOALoadingThreshold      { get; private set; }
         public int  MinPauseSecondToShowAoaAd { get; private set; }
         public int  AOAStartSession           { get; private set; }
         public bool UseAoaAdmob               { get; private set; }
@@ -153,7 +153,7 @@ namespace ServiceImplementation.Configs.Ads
 
             #region AOA
 
-            this.AOALoadingThreshold      = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AOALoadingThreshold);
+            this.AOALoadingThreshold      = RemoteConfigHelpers.GetFloatRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AOALoadingThreshold);
             this.MinPauseSecondToShowAoaAd = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.MinPauseSecondToShowAoaAD);
             this.AOAStartSession           = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaStartSession);
             this.UseAoaAdmob               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.UseAoaAdmob);
