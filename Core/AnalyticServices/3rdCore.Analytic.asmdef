@@ -4,13 +4,12 @@
   "references": [
     "GameFoundation.DI",
     "GameFoundation.Signals",
-    "Zenject",
     "VContainer",
     "GameFoundation.Utilities",
     "GameFoundation.Models",
-    "ByteBrew",
+    "ByteBrewSDK",
     "3rd.Configs.Editor",
-    "ByteBrew.Editor"
+    "ByteBrewSDK.Editor"
   ],
   "versionDefines": [
     {

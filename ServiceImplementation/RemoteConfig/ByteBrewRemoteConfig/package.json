@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "3rd.RemoteConfig.DI" : "1.0.0",
-    "com.theone.bytebrew" : "0.1.15"
+    "com.bytebrew.unitysdk" : "0.1.17"
   },
   "keywords": [
     "RemotConfig",

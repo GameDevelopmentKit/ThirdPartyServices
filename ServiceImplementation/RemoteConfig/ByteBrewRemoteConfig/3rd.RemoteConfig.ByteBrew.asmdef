@@ -3,7 +3,7 @@
     "rootNamespace": "",
     "references": [
         "UniTask",
-        "ByteBrew",
+        "ByteBrewSDK",
         "3rd.RemoteConfig",
         "GameFoundation.Signals",
         "GameFoundation.Utilities",
