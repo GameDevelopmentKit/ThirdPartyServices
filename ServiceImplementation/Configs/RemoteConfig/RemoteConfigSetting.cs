@@ -69,6 +69,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             #region AOA
 
+            this.TryAddAddsConfig(RemoteConfigKey.AOALoadingThreshold, "5");
             this.TryAddAddsConfig(RemoteConfigKey.MinPauseSecondToShowAoaAD, "0");
             this.TryAddAddsConfig(RemoteConfigKey.AoaStartSession, "2");
             this.TryAddAddsConfig(RemoteConfigKey.UseAoaAdmob, "true");
