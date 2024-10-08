@@ -19,7 +19,7 @@
 
         #region AOA
         
-        public const string AOALoadingThreshHold      = "aoa_loading_thresh_hold";
+        public const string AOALoadingThreshold      = "aoa_loading_threshold";
         public const string MinPauseSecondToShowAoaAD = "min_pause_second_to_show_aoa_ad";
         public const string AoaStartSession           = "aoa_start_session";
         public const string UseAoaAdmob               = "use_aoa_admob";

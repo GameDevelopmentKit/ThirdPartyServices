@@ -121,7 +121,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public bool IsShowingAOAAd { get; set; } = false;
 
-        public float LoadingTimeToShowAOA => this.adServicesConfig.AOALoadingThreshHold;
+        public float LoadingTimeToShowAOA => this.adServicesConfig.AOALoadingThreshold;
 
 
         public bool IsAOAReady() { return this.aoaAdLoadedInstance.IsAoaAdAvailable && !this.IsShowingAOAAd; }
