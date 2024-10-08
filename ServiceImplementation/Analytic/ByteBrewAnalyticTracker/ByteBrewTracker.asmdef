@@ -4,7 +4,7 @@
     "references": [
         "3rdCore.Analytic",
         "GameFoundation.Signals",
-        "ByteBrew",
+        "ByteBrewSDK",
         "GameFoundation.Utilities",
         "UniTask"
     ],
