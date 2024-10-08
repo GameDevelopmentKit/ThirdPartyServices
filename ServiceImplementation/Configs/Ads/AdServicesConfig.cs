@@ -5,6 +5,7 @@ namespace ServiceImplementation.Configs.Ads
     using GameFoundation.Signals;
     using ServiceImplementation.FireBaseRemoteConfig;
     using UnityEngine.Scripting;
+    using Debug = UnityEngine.Debug;
 
     public class AdServicesConfig : IInitializable, IDisposable
     {
@@ -53,6 +54,7 @@ namespace ServiceImplementation.Configs.Ads
 
         #region AOA
 
+        public int AOALoadingThreshHold      { get; private set; }
         public int  MinPauseSecondToShowAoaAd { get; private set; }
         public int  AOAStartSession           { get; private set; }
         public bool UseAoaAdmob               { get; private set; }
@@ -152,6 +154,7 @@ namespace ServiceImplementation.Configs.Ads
 
             #region AOA
 
+            this.AOALoadingThreshHold      = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AOALoadingThreshHold);
             this.MinPauseSecondToShowAoaAd = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.MinPauseSecondToShowAoaAD);
             this.AOAStartSession           = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaStartSession);
             this.UseAoaAdmob               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.UseAoaAdmob);

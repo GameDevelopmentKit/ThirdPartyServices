@@ -56,15 +56,6 @@
 
         #endregion
 
-        /// <summary>
-        /// AOA threshold
-        /// </summary>
-        public float AOAThreshHold
-        {
-            get => this.mAOAThreshHold;
-            set => this.mAOAThreshHold = value;
-        }
-
         public BannerAdsPosition BannerPosition => this.mBannerPosition;
 
         [SerializeField] [FoldoutGroup("Misc")] [LabelText("Banner Position", SdfIconType.BookmarkFill)]
@@ -72,9 +63,6 @@
 
         [SerializeField] [FoldoutGroup("Misc")] [LabelText("Enable Inter Capping Time Focus", SdfIconType.Download)]
         private bool enableInterCappingTimeFocus;
-
-        [SerializeField] [LabelText("AOA ThreshHold", SdfIconType.Download)] [FoldoutGroup("Misc")]
-        private float mAOAThreshHold = 5f;
 
         [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)] [FoldoutGroup("Misc")]
         private bool enableBreakAds;
