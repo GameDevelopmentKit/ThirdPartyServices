@@ -268,15 +268,18 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void ShowMREC(AdViewPosition adViewPosition)
         {
             if (!this.adServicesConfig.EnableMRECAd) return;
+            this.isShowMREC = true;
             IronSource.Agent.displayBanner();
             IronSource.Agent.loadBanner(IronSourceBannerSize.RECTANGLE, this.GetBannerPosition(adViewPosition));
         }
 
-        public void HideMREC(AdViewPosition adViewPosition)             { }
-        public void StopMRECAutoRefresh(AdViewPosition adViewPosition)  { }
+        private bool isShowMREC;
+
+        public void HideMREC(AdViewPosition             adViewPosition) { this.isShowMREC = false; }
+        public void StopMRECAutoRefresh(AdViewPosition  adViewPosition) { }
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
-        public void LoadMREC(AdViewPosition adViewPosition)             { }
-        public bool IsMRECReady(AdViewPosition adViewPosition)          { return true; }
+        public void LoadMREC(AdViewPosition             adViewPosition) { }
+        public bool IsMRECReady(AdViewPosition          adViewPosition) { return true; }
         public void HideAllMREC()                                       { }
 
         private IronSourceBannerPosition GetBannerPosition(AdViewPosition adViewPosition)
@@ -349,7 +352,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             return bannerSize;
         }
 
-        public void              HideBannedAd()                      { IronSource.Agent.hideBanner(); }
+        public void HideBannedAd()
+        {
+            if (this.isShowMREC) return;
+            IronSource.Agent.hideBanner();
+        }
         public void              DestroyBannerAd()                   { IronSource.Agent.destroyBanner(); }
         public bool              IsInterstitialAdReady(string place) { return IronSource.Agent.isInterstitialReady(); }
 
