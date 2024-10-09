@@ -268,7 +268,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void ShowMREC(AdViewPosition adViewPosition)
         {
             if (!this.adServicesConfig.EnableMRECAd) return;
-            IronSource.Agent.destroyBanner();
             IronSource.Agent.displayBanner();
             IronSource.Agent.loadBanner(IronSourceBannerSize.RECTANGLE, this.GetBannerPosition(adViewPosition));
         }
