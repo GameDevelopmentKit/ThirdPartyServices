@@ -256,6 +256,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 this.InternalCreateBanner(id, position, bannerSize);
                 if (!this.placementToBanner.ContainsKey(adPlacement))
                 {
+                    this.logService.Log($"onelog: vietanh adPlacement : {adPlacement}");
                     this.placementToBanner.Add(adPlacement, new KeyValuePair<BannerAdsPosition, BannerSize>(position, bannerSize));
                 }
             }
@@ -263,7 +264,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.ShowBanner(id);
         }
 
-        protected virtual void InternalCreateBanner(string id, BannerAdsPosition position, BannerSize bannerSize) { this.CreateAdBanner(id, position, bannerSize); }
+        protected virtual void InternalCreateBanner(string id, BannerAdsPosition position, BannerSize bannerSize)
+        {
+            this.logService.Log($"onelog: vietanh CreateBanner id : {id}      position : {position}    bannerSize : {bannerSize}");
+            this.CreateAdBanner(id, position, bannerSize);
+        }
 
         protected void CreateAdBanner(string id, BannerAdsPosition position, BannerSize bannerSize)
         {
@@ -285,6 +290,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InternalDestroyBanner(AdPlacement adPlacement)
         {
+            this.logService.Log($"onelog: vietanh destroybanner : {adPlacement}");
             if (!this.IsBannerPlacementReady(adPlacement.Name, out var id)) return;
             MaxSdk.DestroyBanner(id);
             this.placementToBanner.Remove(adPlacement);
