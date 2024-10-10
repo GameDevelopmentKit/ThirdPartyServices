@@ -60,8 +60,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         }
 
         private const string AdPlatForm         = AdRevenueConstants.ARSourceAdMob;
-        private const string AppOpenAppAdFormat = "AOA";
-        private const string MrecAdFormat       = "MREC";
 
         private AdMobSettings ADMobSettings => this.thirdPartiesConfig.AdSettings.AdMob;
 
@@ -187,7 +185,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                     return;
                 }
 
-                var adRevenueEvent = new AdInfo(AdMobWrapper.AdPlatForm, adUnitId, AppOpenAppAdFormat);
+                var adRevenueEvent = new AdInfo(AdMobWrapper.AdPlatForm, adUnitId, AdFormatConstants.AppOpen);
                 this.signalBus.Fire(new AppOpenLoadedSignal("", adRevenueEvent));
                 this.currentAOASleepLoadingTime = this.minAOASleepLoadingTime;
 
@@ -205,7 +203,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void AOAHandleAdFullScreenContentClosed()
         {
             this.logService.Log("oneLog: Closed app open ad");
-            var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AppOpenAppAdFormat);
+            var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal("", adRevenueEvent));
             this.IsShowingAOAAd = false;
         }
@@ -219,14 +217,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void AOAHandleAdFullScreenContentOpened()
         {
             this.logService.Log("oneLog: Displayed app open ad");
-            var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AppOpenAppAdFormat);
+            var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal("", adRevenueEvent));
             this.IsShowingAOAAd = true;
         }
 
         private void AOAHandleAdImpressionRecorded() { this.logService.Log("Recorded ad impression"); }
 
-        private void AOAHandleAdPaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, this.ADMobSettings.AOAAdId.Id,AdMobWrapper.AppOpenAppAdFormat);
+        private void AOAHandleAdPaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, this.ADMobSettings.AOAAdId.Id,AdFormatConstants.AppOpen);
 
         #endregion
 
@@ -310,13 +308,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void MrecBannerViewDisplay()
         {
-            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdMobWrapper.MrecAdFormat))
+            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdFormatConstants.MREC))
                 .ForEach(adInfo => this.signalBus.Fire(new MRecAdDisplayedSignal("", adInfo)));
         }
 
         private void BannerViewOnAdClicked()
         {
-            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdMobWrapper.MrecAdFormat))
+            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdFormatConstants.MREC))
                 .ForEach(adInfo => this.signalBus.Fire(new MRecAdClickedSignal("", adInfo)));
         }
 
@@ -328,11 +326,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void BannerViewOnAdLoaded()
         {
-            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdMobWrapper.MrecAdFormat))
+            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdFormatConstants.MREC))
                 .ForEach(adInfo => this.signalBus.Fire(new MRecAdLoadedSignal("", adInfo)));
         }
 
-        private void MRECAdHandlePaid(AdValue obj) => this.ADMobSettings.MRECAdIds.ForEach(pair => this.AdMobHandlePaidEvent(obj, pair.Value.Id, AdMobWrapper.MrecAdFormat));
+        private void MRECAdHandlePaid(AdValue obj) => this.ADMobSettings.MRECAdIds.ForEach(pair => this.AdMobHandlePaidEvent(obj, pair.Value.Id, AdFormatConstants.MREC));
 
         #endregion
 
@@ -462,7 +460,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void AdMobNativePaidHandler(object sender, AdValueEventArgs e)
         {
             // TODO: Temporary get the first native ad id, only work for single native ad. Refactor later
-            this.AdMobHandlePaidEvent(e.AdValue, this.ADMobSettings.NativeAdIds.First().Id,"NativeAds");
+            this.AdMobHandlePaidEvent(e.AdValue, this.ADMobSettings.NativeAdIds.First().Id,AdFormatConstants.Native);
         }
 
         private void LoadAllNativeAds()
