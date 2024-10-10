@@ -228,7 +228,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InternalShowBanner(AdPlacement.Default, bannerAdsPosition, new BannerSize(width, height));
         }
 
-        public void HideBannedAd() { this.InternalHideBanner(AdPlacement.Default); }
+        public void HideBannedAd()
+        {
+            this.InternalHideBanner(AdPlacement.Default);
+        }
 
         public void DestroyBannerAd() { this.InternalDestroyBanner(AdPlacement.Default); }
 
@@ -249,7 +252,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var shouldCreateBanner = !this.placementToBanner.ContainsKey(adPlacement)
                                      || this.placementToBanner[adPlacement].Key   != position
                                      || this.placementToBanner[adPlacement].Value != bannerSize;
-
+            this.logService.Log($"onelog: vietanh shouldCreateBanner : {shouldCreateBanner }");
             if (shouldCreateBanner)
             {
                 this.InternalDestroyBanner(adPlacement);
@@ -285,6 +288,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void InternalHideBanner(AdPlacement adPlacement)
         {
             if (!this.IsBannerPlacementReady(adPlacement.Name, out var id)) return;
+            this.logService.Log($"onelog: vietanh hidebanner : {adPlacement.ToString()}");
             MaxSdk.HideBanner(id);
         }
 
