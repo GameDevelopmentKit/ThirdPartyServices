@@ -252,14 +252,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var shouldCreateBanner = !this.placementToBanner.ContainsKey(adPlacement)
                                      || this.placementToBanner[adPlacement].Key   != position
                                      || this.placementToBanner[adPlacement].Value != bannerSize;
-            this.logService.Log($"onelog: vietanh shouldCreateBanner : {shouldCreateBanner }");
+            this.logService.Log($"onelog: vietanh shouldCreateBanner : {shouldCreateBanner } + {this.placementToBanner[adPlacement].Key}");
+            this.logService.Log($"onelog: vietanh bannerSize : {bannerSize.width} x {bannerSize.height }");
             if (shouldCreateBanner)
             {
                 this.InternalDestroyBanner(adPlacement);
                 this.InternalCreateBanner(id, position, bannerSize);
                 if (!this.placementToBanner.ContainsKey(adPlacement))
                 {
-                    this.logService.Log($"onelog: vietanh adPlacement : {adPlacement.Name}");
                     this.placementToBanner.Add(adPlacement, new KeyValuePair<BannerAdsPosition, BannerSize>(position, bannerSize));
                 }
             }
@@ -275,7 +275,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         protected void CreateAdBanner(string id, BannerAdsPosition position, BannerSize bannerSize)
         {
             MaxSdk.CreateBanner(id, this.ConvertToBannerAdPosition(position));
-            this.logService.Log($"onelog: vietanh CreateBanner id : {id}      position : {position}    bannerSize : {bannerSize}");
+            this.logService.Log($"onelog: vietanh CreateBanner id : {id}  position : {position}    bannerSize : {bannerSize}");
             if (!this.AppLovinSetting.IsAdaptiveBanner)
             {
                 MaxSdk.SetBannerExtraParameter(id, "adaptive_banner", "false");
