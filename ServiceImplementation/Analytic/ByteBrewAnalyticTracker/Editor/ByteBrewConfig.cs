@@ -1,12 +1,12 @@
 namespace Core.AnalyticServices
 {
-#if  UNITY_EDITOR
+    #if UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
     using UnityEditor;
-#endif
-#if BYTEBREW
+    #endif
+    #if BYTEBREW
     using ByteBrewSDK;
-#endif
+    #endif
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -16,21 +16,19 @@ namespace Core.AnalyticServices
     public partial class AnalyticConfig
     {
         private const string ByteBrewSymbol = "BYTEBREW";
-        
-        [BoxGroup("ByteBrew")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeByteBrewEnabled")]
-        [SerializeField] private bool isByteBrewEnabled = true;
-        
+
+        [BoxGroup("ByteBrew")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeByteBrewEnabled")] [SerializeField] private bool isByteBrewEnabled = true;
+
         [OnInspectorInit]
         private void OnChangeByteBrewEnabled()
         {
-#if  UNITY_EDITOR
+            #if UNITY_EDITOR
             EditorUtils.ModifyPackage(this.isByteBrewEnabled, "com.bytebrew.unitysdk", "https://github.com/The1Studio/ByteBrewUnitySDK.git?path=UPMPackage#");
             EditorUtils.SetDefineSymbol(ByteBrewSymbol, this.isByteBrewEnabled);
-#endif
+            #endif
         }
 
-#if BYTEBREW
-
+        #if BYTEBREW
         [OnValueChanged("SaveByteBrewSetting")] [Header("Android")] [SerializeField] [BoxGroup("ByteBrew")]
         private bool androidEnabled;
 
@@ -55,12 +53,12 @@ namespace Core.AnalyticServices
             Debug.Log("OnInspectorInit");
             var byteBrewSettings = Resources.Load<ByteBrewSettings>("ByteBrewSettings");
 
-            this.androidEnabled        = byteBrewSettings.androidEnabled;
-            this.byteBrewAppIdAndroid  = byteBrewSettings.androidGameID;
+            this.androidEnabled = byteBrewSettings.androidEnabled;
+            this.byteBrewAppIdAndroid = byteBrewSettings.androidGameID;
             this.byteBrewSDKKeyAndroid = byteBrewSettings.androidSDKKey;
 
-            this.iosEnabled        = byteBrewSettings.iosEnabled;
-            this.byteBrewAppIdIos  = byteBrewSettings.iosGameID;
+            this.iosEnabled = byteBrewSettings.iosEnabled;
+            this.byteBrewAppIdIos = byteBrewSettings.iosGameID;
             this.byteBrewSDKKeyIos = byteBrewSettings.iosSDKKey;
 
 #if UNITY_EDITOR
@@ -76,18 +74,18 @@ namespace Core.AnalyticServices
             var byteBrewSettings = Resources.Load<ByteBrewSettings>("ByteBrewSettings");
 
             byteBrewSettings.androidEnabled = this.androidEnabled;
-            byteBrewSettings.androidGameID  = this.byteBrewAppIdAndroid;
-            byteBrewSettings.androidSDKKey  = this.byteBrewSDKKeyAndroid;
+            byteBrewSettings.androidGameID = this.byteBrewAppIdAndroid;
+            byteBrewSettings.androidSDKKey = this.byteBrewSDKKeyAndroid;
             
             byteBrewSettings.iosEnabled = this.iosEnabled;
-            byteBrewSettings.iosGameID  = this.byteBrewAppIdIos;
-            byteBrewSettings.iosSDKKey  = this.byteBrewSDKKeyIos;
+            byteBrewSettings.iosGameID = this.byteBrewAppIdIos;
+            byteBrewSettings.iosSDKKey = this.byteBrewSDKKeyIos;
             
 #if UNITY_EDITOR
             EditorUtility.SetDirty(byteBrewSettings);
             AssetDatabase.SaveAssets();
 #endif
         }
-#endif
+        #endif
     }
 }

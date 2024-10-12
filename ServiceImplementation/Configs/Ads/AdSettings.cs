@@ -8,17 +8,17 @@
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     using System.IO;
     using UnityEditor;
     using ServiceImplementation.Configs.Editor;
-#endif
+    #endif
 
     public enum BannerLoadStrategy
     {
         Instantiate,
         AfterLoading,
-        Manually
+        Manually,
     }
 
     [Serializable]
@@ -30,27 +30,24 @@
         public YandexSettings      Yandex       => this.mYandex;
         public ImmersiveAdsSetting ImmersiveAds => this.mImmersiveAds;
 
-#region Misc
+        #region Misc
 
         public bool EnableInterCappingTimeFocus => this.enableInterCappingTimeFocus;
-        public bool EnableBreakAds { get { return this.enableBreakAds; } }
+        public bool EnableBreakAds              => this.enableBreakAds;
 
         public bool CollapsibleRefreshOnScreenShow => this.mCollapsibleRefreshOnScreenShow;
 
         public List<string> CollapsibleIgnoreRefreshOnScreens => this.mCollapsibleIgnoreRefreshOnScreens;
 
-        public BannerLoadStrategy BannerLoadStrategy { get { return this.bannerLoadStrategy; } }
+        public BannerLoadStrategy BannerLoadStrategy => this.bannerLoadStrategy;
 
         #region ATT (iOS only)
 
-        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Auto Request App Tracking Transparent for iOS")]
-        public bool autoRequestATT = true;
+        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Auto Request App Tracking Transparent for iOS")] public bool autoRequestATT = true;
 
-        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Custom App Tracking Transparent for iOS")]
-        public bool customAtt;
+        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Custom App Tracking Transparent for iOS")] public bool customAtt;
 
-        [FoldoutGroup("Misc/ATT (iOS only)/Custom")] [Sirenix.OdinInspector.FilePath(Extensions = "unity")] [ShowIf(nameof(customAtt))]
-        public string attScenePath = "Assets/Scenes/ATTScene.unity";
+        [FoldoutGroup("Misc/ATT (iOS only)/Custom")] [Sirenix.OdinInspector.FilePath(Extensions = "unity")] [ShowIf(nameof(customAtt))] public string attScenePath = "Assets/Scenes/ATTScene.unity";
 
         #endregion
 
@@ -58,25 +55,23 @@
 
         public BannerAdsPosition BannerPosition => this.mBannerPosition;
 
-        [SerializeField] [FoldoutGroup("Misc")] [LabelText("Banner Position", SdfIconType.BookmarkFill)]
-        private BannerAdsPosition mBannerPosition = BannerAdsPosition.Bottom;
+        [SerializeField] [FoldoutGroup("Misc")] [LabelText("Banner Position", SdfIconType.BookmarkFill)] private BannerAdsPosition mBannerPosition = BannerAdsPosition.Bottom;
 
-        [SerializeField] [FoldoutGroup("Misc")] [LabelText("Enable Inter Capping Time Focus", SdfIconType.Download)]
-        private bool enableInterCappingTimeFocus;
+        [SerializeField] [FoldoutGroup("Misc")] [LabelText("Enable Inter Capping Time Focus", SdfIconType.Download)] private bool enableInterCappingTimeFocus;
 
-        [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)] [FoldoutGroup("Misc")]
-        private bool enableBreakAds;
+        [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)] [FoldoutGroup("Misc")] private bool enableBreakAds;
 
-        [SerializeField] [LabelText("Banner Load Strategy", SdfIconType.BookmarkFill)] [FoldoutGroup("Misc")]
-        private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.AfterLoading;
+        [SerializeField] [LabelText("Banner Load Strategy", SdfIconType.BookmarkFill)] [FoldoutGroup("Misc")] private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.AfterLoading;
 
-        [SerializeField] [LabelText("Custom Interstitial capping time")] [FoldoutGroup("Misc")]
-        public Dictionary_AdPlacement_CappingTime CustomInterstitialCappingTime;
+        [SerializeField] [LabelText("Custom Interstitial capping time")] [FoldoutGroup("Misc")] public Dictionary_AdPlacement_CappingTime CustomInterstitialCappingTime;
 
-        [SerializeField] [LabelText("Enable")] [OnValueChanged("OnChangeCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
-        private bool mEnableCollapsibleBanner;
+        [SerializeField] [LabelText("Enable")] [OnValueChanged("OnChangeCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")] private bool mEnableCollapsibleBanner;
 
-        [SerializeField] [LabelText("Auto Refresh")] [Tooltip("Collapsible Banner will auto refresh on Screen Show")] [ShowIf("mEnableCollapsibleBanner")] [FoldoutGroup("Misc/Collapsible Banner")]
+        [SerializeField]
+        [LabelText("Auto Refresh")]
+        [Tooltip("Collapsible Banner will auto refresh on Screen Show")]
+        [ShowIf("mEnableCollapsibleBanner")]
+        [FoldoutGroup("Misc/Collapsible Banner")]
         private bool mCollapsibleRefreshOnScreenShow = true;
 
         [SerializeField]
@@ -84,39 +79,29 @@
         [Tooltip("Collapsible Banner will ignore auto refresh on screens")]
         [ShowIf("mEnableCollapsibleBanner")]
         [FoldoutGroup("Misc/Collapsible Banner")]
-        private List<string> mCollapsibleIgnoreRefreshOnScreens = new List<string>();
+        private List<string> mCollapsibleIgnoreRefreshOnScreens = new();
 
-        [SerializeField] [LabelText("AdMob", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdMob")]
-        private bool enableAdMob;
+        [SerializeField] [LabelText("AdMob", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdMob")] private bool enableAdMob;
 
-        [SerializeField] [ShowIf("enableAdMob")] [HideLabel] [FoldoutGroup("AdMob")]
-        private AdMobSettings mAdMob = null;
+        [SerializeField] [ShowIf("enableAdMob")] [HideLabel] [FoldoutGroup("AdMob")] private AdMobSettings mAdMob = null;
 
-        [SerializeField] [LabelText("AppLovin", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppLovin")]
-        private bool enableAppLovin;
+        [SerializeField] [LabelText("AppLovin", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppLovin")] private bool enableAppLovin;
 
-        [SerializeField] [ShowIf("enableAppLovin")] [HideLabel] [FoldoutGroup("AppLovin")]
-        private AppLovinSettings mAppLovin = null;
+        [SerializeField] [ShowIf("enableAppLovin")] [HideLabel] [FoldoutGroup("AppLovin")] private AppLovinSettings mAppLovin = null;
 
-        [SerializeField] [LabelText("IronSource", SdfIconType.Youtube)] [OnValueChanged("OnChangeIronSource")]
-        private bool enableIronSource;
+        [SerializeField] [LabelText("IronSource", SdfIconType.Youtube)] [OnValueChanged("OnChangeIronSource")] private bool enableIronSource;
 
-        [SerializeField] [ShowIf("enableIronSource")] [HideLabel] [FoldoutGroup("IronSource")]
-        private IronSourceSettings mIronSource = null;
+        [SerializeField] [ShowIf("enableIronSource")] [HideLabel] [FoldoutGroup("IronSource")] private IronSourceSettings mIronSource = null;
 
-        [SerializeField] [LabelText("Yandex", SdfIconType.Youtube)] [OnValueChanged("OnChangeYandex")]
-        private bool enableYandex;
+        [SerializeField] [LabelText("Yandex", SdfIconType.Youtube)] [OnValueChanged("OnChangeYandex")] private bool enableYandex;
 
-        [SerializeField] [ShowIf("enableYandex")] [HideLabel] [FoldoutGroup("Yandex")]
-        private YandexSettings mYandex = null;
+        [SerializeField] [ShowIf("enableYandex")] [HideLabel] [FoldoutGroup("Yandex")] private YandexSettings mYandex = null;
 
-        [SerializeField] [LabelText("ImmersiveAds", SdfIconType.Youtube)] [OnValueChanged("OnChangeImmersiveAds")]
-        private bool enableImmersiveAds;
+        [SerializeField] [LabelText("ImmersiveAds", SdfIconType.Youtube)] [OnValueChanged("OnChangeImmersiveAds")] private bool enableImmersiveAds;
 
-        [SerializeField] [ShowIf("enableImmersiveAds")] [HideLabel] [FoldoutGroup("ImmersiveAds")]
-        private ImmersiveAdsSetting mImmersiveAds;
+        [SerializeField] [ShowIf("enableImmersiveAds")] [HideLabel] [FoldoutGroup("ImmersiveAds")] private ImmersiveAdsSetting mImmersiveAds;
 
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
 
         private const string AdModSymbol             = "ADMOB";
         private const string AppLovinSymbol          = "APPLOVIN";
@@ -135,23 +120,16 @@
         {
             EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin);
             if (this.enableAppLovin)
-            {
                 AppLovinSettings.DownloadApplovin();
-            }
             else
-            {
                 UnityPackageHelper.DeleteFolderIfExists("Assets/MaxSdk");
-            }
         }
 
         private void OnChangeIronSource()
         {
             EditorUtils.SetDefineSymbol(IronSourceSymbol, this.enableIronSource);
             EditorUtils.ModifyPackage(this.enableIronSource, "com.unity.services.levelplay", "8.1.0");
-            if (!this.enableIronSource)
-            {
-                UnityPackageHelper.DeleteFolderIfExists("Assets/LevelPlay");
-            }
+            if (!this.enableIronSource) UnityPackageHelper.DeleteFolderIfExists("Assets/LevelPlay");
         }
 
         private void OnChangeYandex()
@@ -163,14 +141,18 @@
                 this.mYandex.Dashboard.DownloadSDK();
             }
             else
-            {
                 UnityPackageHelper.DeleteFolderIfExists("Assets/YandexMobileAds");
-            }
         }
 
-        private void OnChangeCollapsibleBanner() { EditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner); }
+        private void OnChangeCollapsibleBanner()
+        {
+            EditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner);
+        }
 
-        private void OnChangeImmersiveAds()      { EditorUtils.SetDefineSymbol(ImmersiveAdsSymbol,      this.enableImmersiveAds);}
+        private void OnChangeImmersiveAds()
+        {
+            EditorUtils.SetDefineSymbol(ImmersiveAdsSymbol, this.enableImmersiveAds);
+        }
 
         private static bool DeleteFolderIfExists(string folderPath)
         {
@@ -187,23 +169,25 @@
 
             return false;
         }
-        
-        [FoldoutGroup("Misc/ATT (iOS only)/Custom")] [Button] [ShowIf(nameof(customAtt))]
+
+        [FoldoutGroup("Misc/ATT (iOS only)/Custom")]
+        [Button]
+        [ShowIf(nameof(customAtt))]
         private void SetupCustomAtt()
         {
             if (string.IsNullOrEmpty(this.attScenePath) || !File.Exists(this.attScenePath))
             {
-                EditorWindow.focusedWindow.ShowNotification(new GUIContent("ATT Scene Path is not valid!"));
+                EditorWindow.focusedWindow.ShowNotification(new("ATT Scene Path is not valid!"));
                 return;
             }
 
             var scenes = EditorBuildSettings.scenes.ToList();
             scenes.RemoveAll(x => x.path == this.attScenePath);
-            scenes.Insert(0, new EditorBuildSettingsScene(this.attScenePath, true));
+            scenes.Insert(0, new(this.attScenePath, true));
             EditorBuildSettings.scenes = scenes.ToArray();
-            EditorWindow.focusedWindow.ShowNotification(new GUIContent("Setup ATT Scene Path successfully"));
+            EditorWindow.focusedWindow.ShowNotification(new("Setup ATT Scene Path successfully"));
         }
 
-#endif
+        #endif
     }
 }

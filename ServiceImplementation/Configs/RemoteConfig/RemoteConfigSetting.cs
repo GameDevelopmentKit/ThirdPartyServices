@@ -10,7 +10,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using System.IO;
     using Newtonsoft.Json;
     using UnityEditor;
-#endif
+    #endif
 
     [CreateAssetMenu(fileName = nameof(RemoteConfigSetting), menuName = "ScriptableObjects/SpawnRemoteConfigSetting", order = 1)]
     public class RemoteConfigSetting : ScriptableObject
@@ -21,30 +21,23 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public static string ResourcePath = $"GameConfigs/{nameof(RemoteConfigSetting)}";
 
-        [OnValueChanged("OnRemoteConfigProviderTypeChanged")] [LabelText("Remote Config Provider Type")] [LabelWidth(200)] [GUIColor(1, 1, 0)]
-        public RemoteConfigProviderType RemoteConfigProviderType = RemoteConfigProviderType.FireBase;
+        [OnValueChanged("OnRemoteConfigProviderTypeChanged")] [LabelText("Remote Config Provider Type")] [LabelWidth(200)] [GUIColor(1, 1, 0)] public RemoteConfigProviderType RemoteConfigProviderType = RemoteConfigProviderType.FireBase;
 
         public List<RemoteConfig> AdsRemoteConfigs  => this.mAdsRemoteConfigs;
         public List<RemoteConfig> MiscRemoteConfigs => this.mMiscRemoteConfigs;
         public List<RemoteConfig> GameRemoteConfigs => this.mGameRemoteConfigs;
 
-        [TableList] [LabelText("Ads Remote Configs")] [SerializeField]
-        private List<RemoteConfig> mAdsRemoteConfigs = new();
+        [TableList] [LabelText("Ads Remote Configs")] [SerializeField] private List<RemoteConfig> mAdsRemoteConfigs = new();
 
-        [TableList] [LabelText("Misc Remote Configs")] [SerializeField]
-        private List<RemoteConfig> mMiscRemoteConfigs = new();
+        [TableList] [LabelText("Misc Remote Configs")] [SerializeField] private List<RemoteConfig> mMiscRemoteConfigs = new();
 
-        [TableList] [LabelText("Game Remote Configs")] [SerializeField]
-        private List<RemoteConfig> mGameRemoteConfigs = new();
+        [TableList] [LabelText("Game Remote Configs")] [SerializeField] private List<RemoteConfig> mGameRemoteConfigs = new();
 
         private bool TryAddAddsConfig(string key, string value)
         {
-            if (this.mAdsRemoteConfigs.Any(x => x.key.Equals(key)))
-            {
-                return false;
-            }
+            if (this.mAdsRemoteConfigs.Any(x => x.key.Equals(key))) return false;
 
-            this.mAdsRemoteConfigs.Add(new RemoteConfig(key, key, value));
+            this.mAdsRemoteConfigs.Add(new(key, key, value));
             return true;
         }
 
@@ -112,10 +105,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             result ??= this.mMiscRemoteConfigs.FirstOrDefault(x => x.key == key);
             result ??= this.mGameRemoteConfigs.FirstOrDefault(x => x.key == key);
 
-            if (result == null)
-            {
-                Debug.LogError($"RemoteConfigSetting.GetRemoteConfig: Cannot find remote config with key: {key}");
-            }
+            if (result == null) Debug.LogError($"RemoteConfigSetting.GetRemoteConfig: Cannot find remote config with key: {key}");
 
             return result;
         }
@@ -126,18 +116,15 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         {
             EditorUtils.SetDefineSymbol(FireBaseRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.FireBase);
             EditorUtils.SetDefineSymbol(ByteBrewRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew);
-            if (this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew)
-            {
-                EditorUtils.SetDefineSymbol(ByteBrewSymbol, true);
-            }
+            if (this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew) EditorUtils.SetDefineSymbol(ByteBrewSymbol, true);
         }
 
-        [Button]    
+        [Button]
         private async void GenerateJsonFile()
         {
             const string path = "Assets/Resources/GameConfigs/default_config.json";
 
-            var setup            = new RemoteConfigSetup();
+            var setup = new RemoteConfigSetup();
             this.mAdsRemoteConfigs.ForEach(AddConfig);
             this.mMiscRemoteConfigs.ForEach(AddConfig);
             this.mGameRemoteConfigs.ForEach(AddConfig);
@@ -152,14 +139,8 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             void AddConfig(RemoteConfig config)
             {
-                if (!setup.parameters.ContainsKey(config.mapping.AndroidId))
-                {
-                    setup.parameters.Add(config.mapping.AndroidId, new RemoteConfigParam(config.defaultValue.AndroidId, ""));
-                }
-                if (!setup.parameters.ContainsKey(config.mapping.IosId))
-                {
-                    setup.parameters.Add(config.mapping.IosId, new RemoteConfigParam(config.defaultValue.IosId, ""));
-                }
+                if (!setup.parameters.ContainsKey(config.mapping.AndroidId)) setup.parameters.Add(config.mapping.AndroidId, new(config.defaultValue.AndroidId, ""));
+                if (!setup.parameters.ContainsKey(config.mapping.IosId)) setup.parameters.Add(config.mapping.IosId, new(config.defaultValue.IosId, ""));
             }
         }
 
@@ -187,19 +168,13 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             public RemoteConfigParam(string defaultValue, string description)
             {
                 this.defaultValue.Add("value", defaultValue);
-                this.description  = description;
+                this.description = description;
                 if (int.TryParse(defaultValue, out _))
-                {
                     this.valueType = "NUMBER";
-                }
                 else if (bool.TryParse(defaultValue, out _))
-                {
                     this.valueType = "BOOLEAN";
-                }
                 else
-                {
                     this.valueType = "STRING";
-                }
             }
         }
         #endif

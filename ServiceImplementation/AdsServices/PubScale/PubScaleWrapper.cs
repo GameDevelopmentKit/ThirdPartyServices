@@ -41,10 +41,10 @@ namespace ServiceImplementation.AdsServices.PubScale
             ThirdPartiesConfig thirdPartiesConfig
         )
         {
-            this.screenManager      = screenManager;
-            this.signalBus          = signalBus;
-            this.analyticServices   = analyticServices;
-            this.logService         = logService;
+            this.screenManager = screenManager;
+            this.signalBus = signalBus;
+            this.analyticServices = analyticServices;
+            this.logService = logService;
             this.thirdPartiesConfig = thirdPartiesConfig;
         }
 
@@ -56,7 +56,7 @@ namespace ServiceImplementation.AdsServices.PubScale
             if (!worldSpace)
             {
                 var canvas = this.cacheCanvas ?? this.screenManager.RootUICanvas.GetComponentInChildren<Canvas>();
-                this.cacheCanvas      = canvas;
+                this.cacheCanvas = canvas;
                 nativeAdHolder.canvas = this.cacheCanvas;
             }
 
@@ -72,11 +72,11 @@ namespace ServiceImplementation.AdsServices.PubScale
             if (this.cacheNativeAdHolder.TryGetValue(nativeAdHolder, out _)) return;
 
             this.cacheNativeAdHolder.Add(nativeAdHolder);
-            nativeAdHolder.Event_OnAdPaid     += this.OnAdPaid;
+            nativeAdHolder.Event_OnAdPaid += this.OnAdPaid;
             nativeAdHolder.Event_AdImpression += this.OnAdImpression;
-            nativeAdHolder.Event_AdFailed     += this.OnAdFailed;
-            nativeAdHolder.Event_AdLoaded     += this.OnAdLoaded;
-            nativeAdHolder.Event_AdRequest    += this.OnAdRequest;
+            nativeAdHolder.Event_AdFailed += this.OnAdFailed;
+            nativeAdHolder.Event_AdLoaded += this.OnAdLoaded;
+            nativeAdHolder.Event_AdRequest += this.OnAdRequest;
         }
 
         private void OnAdImpression(object arg1, EventArgs arg2)
@@ -109,10 +109,10 @@ namespace ServiceImplementation.AdsServices.PubScale
             var adsRevenueEvent = new AdsRevenueEvent
                                   {
                                       AdsRevenueSourceId = AdRevenueConstants.ARSourceImmersiveAds,
-                                      Revenue            = obj.Value / 1e6,
-                                      Currency           = "USD",
-                                      Placement          = "ImmersiveAds",
-                                      AdNetwork          = "AdMob"
+                                      Revenue = obj.Value / 1e6,
+                                      Currency = "USD",
+                                      Placement = "ImmersiveAds",
+                                      AdNetwork = "AdMob"
                                   };
 
             this.analyticServices.Track(adsRevenueEvent);

@@ -1,3 +1,6 @@
-namespace Core.AnalyticServices.Data {
-    public interface IEvent { }
+namespace Core.AnalyticServices.Data
+{
+    public interface IEvent
+    {
+    }
 }

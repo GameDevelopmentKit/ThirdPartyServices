@@ -9,9 +9,9 @@
     using UnityEngine;
     using UnityEngine.Networking;
     using System.Xml;
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     using UnityEditor;
-#endif
+    #endif
 
     public static class UnityPackageHelper
     {
@@ -30,8 +30,7 @@
 
             await UniTask.WaitUntil(() => operation.isDone);
 
-            if (request.result == UnityWebRequest.Result.Success)
-                return JsonUtility.FromJson<GitHubRelease>(request.downloadHandler.text).tag_name;
+            if (request.result == UnityWebRequest.Result.Success) return JsonUtility.FromJson<GitHubRelease>(request.downloadHandler.text).tag_name;
 
             Debug.LogError("Failed to fetch version: " + request.error);
             return "";
@@ -39,26 +38,24 @@
 
         public static async UniTask DownloadThenImportPackage(string downloadUrl, string fileName)
         {
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             var path            = Path.Combine(Application.temporaryCachePath, $"{fileName}.unitypackage");
             var downloadHandler = new DownloadHandlerFile(path);
 
             var webRequest = new UnityWebRequest(downloadUrl)
             {
                 method          = UnityWebRequest.kHttpVerbGET,
-                downloadHandler = downloadHandler
+                downloadHandler = downloadHandler,
             };
 
             await webRequest.SendWebRequest();
 
-#if UNITY_2020_1_OR_NEWER
+            #if UNITY_2020_1_OR_NEWER
             if (webRequest.result != UnityWebRequest.Result.Success)
-#else
+                #else
             if (webRequest.isNetworkError || webRequest.isHttpError)
-#endif
-            {
+                #endif
                 Debug.LogError("onelog: Failed to download package: " + webRequest.error);
-            }
             else
             {
                 AssetDatabase.ImportPackage(path, false);
@@ -66,7 +63,7 @@
             }
 
             webRequest.Dispose();
-#endif
+            #endif
         }
 
         public static async UniTaskVoid DownloadThenUnZip(string downloadUrl, string fileName, string unzipPath)
@@ -77,16 +74,14 @@
             var webRequest = new UnityWebRequest(downloadUrl)
             {
                 method          = UnityWebRequest.kHttpVerbGET,
-                downloadHandler = downloadHandler
+                downloadHandler = downloadHandler,
             };
 
             var operation = webRequest.SendWebRequest();
             await operation;
 
             if (webRequest.result != UnityWebRequest.Result.Success)
-            {
                 Debug.LogError("onelog: Failed to download zip file: " + webRequest.error);
-            }
             else
             {
                 //unzip file to the specified path
@@ -100,7 +95,7 @@
 
         public static bool DeleteFolderIfExists(string folderPath)
         {
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             // Check if the folder exists
             if (AssetDatabase.IsValidFolder(folderPath))
             {
@@ -112,14 +107,14 @@
 
                 return true;
             }
-#endif
+            #endif
 
             return false;
         }
 
         public static bool DeleteFileIfExists(string path)
         {
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             if (File.Exists(path))
             {
                 AssetDatabase.DeleteAsset(path);
@@ -129,7 +124,7 @@
 
                 return true;
             }
-#endif
+            #endif
 
             return false;
         }
@@ -146,18 +141,15 @@
 
             var androidPackageNodes = xmlDoc.SelectNodes("/dependencies/androidPackages/androidPackage");
             if (androidPackageNodes != null)
-            {
                 foreach (XmlNode node in androidPackageNodes)
                 {
                     if (node.Attributes == null) continue;
                     var packageName = node.Attributes["spec"].Value;
                     androidPackages.Add(packageName.Split(':')[1], packageName.Split(':')[2]);
                 }
-            }
 
             var iosPodNodes = xmlDoc.SelectNodes("/dependencies/iosPods/iosPod");
             if (iosPodNodes != null)
-            {
                 foreach (XmlNode node in iosPodNodes)
                 {
                     if (node.Attributes == null) continue;
@@ -165,14 +157,13 @@
                     var podVersion = node.Attributes["version"].Value;
                     iosPods.Add(podName, podVersion);
                 }
-            }
 
             return (androidPackages.Values.FirstOrDefault(), iosPods.Values.FirstOrDefault());
         }
 
         public static void CreateFileWithContent(string filePath, string content)
         {
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             if (!File.Exists(filePath))
             {
                 var dir = Path.GetDirectoryName(filePath) ?? ".";
@@ -181,14 +172,14 @@
 
             File.WriteAllText(filePath, content);
             AssetDatabase.Refresh();
-#endif
+            #endif
         }
 
         public static void CopyFile(string filePath, string sourcePath)
         {
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             CreateFileWithContent(filePath, File.ReadAllText(sourcePath));
-#endif
+            #endif
         }
     }
 }

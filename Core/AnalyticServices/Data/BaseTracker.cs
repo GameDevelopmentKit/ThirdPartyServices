@@ -87,21 +87,16 @@ namespace Core.AnalyticServices.Data
         private async void EventTracked(EventTrackedSignal trackedData)
         {
             // if the tracker has failed setup we should not forward it any events
-            if (this.TrackerReady.Task.Status == TaskStatus.Canceled || this.TrackerReady.Task.Status == TaskStatus.Faulted)
-                return;
+            if (this.TrackerReady.Task.Status == TaskStatus.Canceled || this.TrackerReady.Task.Status == TaskStatus.Faulted) return;
             await this.TrackerReady.Task;
 
-            if (trackedData.ChangedProps != null)
-                this.OnChangedProps(trackedData.ChangedProps);
+            if (trackedData.ChangedProps != null) this.OnChangedProps(trackedData.ChangedProps);
 
             var trackedEvent = trackedData.TrackedEvent;
             if (this.CustomEventDelegates != null && this.CustomEventDelegates.ContainsKey(trackedEvent.GetType()))
             {
-                var eventDelegate = this.CustomEventDelegates[trackedEvent.GetType()];
-                if (trackedEvent is IapTransactionDidSucceed iapEvent)
-                {
-                    iapEvent.Receipt = this.CheckReceiptFormat(iapEvent.Receipt);
-                }
+                var eventDelegate                                                       = this.CustomEventDelegates[trackedEvent.GetType()];
+                if (trackedEvent is IapTransactionDidSucceed iapEvent) iapEvent.Receipt = this.CheckReceiptFormat(iapEvent.Receipt);
 
                 eventDelegate?.Invoke(trackedEvent, trackedData.ChangedProps);
             }
@@ -135,25 +130,16 @@ namespace Core.AnalyticServices.Data
             var result     = new Dictionary<string, object>();
             var objectType = obj.GetType();
 
-            foreach (var fieldInfo in objectType.GetFields())
-            {
-                result.Add(this.GetCorrectName(fieldInfo.Name), fieldInfo.GetValue(obj));
-            }
+            foreach (var fieldInfo in objectType.GetFields()) result.Add(this.GetCorrectName(fieldInfo.Name), fieldInfo.GetValue(obj));
 
-            foreach (var propertyInfo in objectType.GetProperties())
-            {
-                result.Add(this.GetCorrectName(propertyInfo.Name), propertyInfo.GetValue(obj));
-            }
+            foreach (var propertyInfo in objectType.GetProperties()) result.Add(this.GetCorrectName(propertyInfo.Name), propertyInfo.GetValue(obj));
 
             return result;
         }
 
         private string GetCorrectName(string rawName)
         {
-            if (this.CustomEventKeys != null && this.CustomEventKeys.TryGetValue(rawName, out var correctName))
-            {
-                return correctName;
-            }
+            if (this.CustomEventKeys != null && this.CustomEventKeys.TryGetValue(rawName, out var correctName)) return correctName;
 
             return rawName.ToSnakeCase();
         }
@@ -164,9 +150,7 @@ namespace Core.AnalyticServices.Data
             {
                 var parsedReceipt = JsonUtility.FromJson<UnityReceipt>(receipt);
                 //Check if the parameter sent follows the Unity Purchase Receipt format.
-                if (!string.IsNullOrEmpty(parsedReceipt.Payload) &&
-                    !string.IsNullOrEmpty(parsedReceipt.Store) &&
-                    !string.IsNullOrEmpty(parsedReceipt.TransactionID))
+                if (!string.IsNullOrEmpty(parsedReceipt.Payload) && !string.IsNullOrEmpty(parsedReceipt.Store) && !string.IsNullOrEmpty(parsedReceipt.TransactionID))
                 {
                     //Return the receipt Payload to prevent integration errors.
                     Debug.LogWarning(

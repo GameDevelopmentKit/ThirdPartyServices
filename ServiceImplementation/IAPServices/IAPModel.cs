@@ -10,6 +10,6 @@
     {
         Consumable,
         NonConsumable,
-        Subscription
+        Subscription,
     }
 }

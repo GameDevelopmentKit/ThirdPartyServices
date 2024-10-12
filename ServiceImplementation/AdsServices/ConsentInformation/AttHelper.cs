@@ -4,9 +4,9 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     {
         public static bool IsRequestTrackingComplete()
         {
-#if UNITY_IOS && !UNITY_EDITOR
+            #if UNITY_IOS && !UNITY_EDITOR
             return Unity.Advertisement.IosSupport.ATTrackingStatusBinding.GetAuthorizationTrackingStatus() != Unity.Advertisement.IosSupport.ATTrackingStatusBinding.AuthorizationTrackingStatus.NOT_DETERMINED;
-#endif
+            #endif
             return true;
         }
     }

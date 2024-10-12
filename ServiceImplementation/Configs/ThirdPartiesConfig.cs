@@ -11,7 +11,6 @@ namespace ServiceImplementation.Configs
 
         public AdSettings AdSettings => this.mAdvertisingSettings;
 
-        [SerializeField] [LabelText("Advertising Setting")]
-        private AdSettings mAdvertisingSettings = null;
+        [SerializeField] [LabelText("Advertising Setting")] private AdSettings mAdvertisingSettings = null;
     }
 }

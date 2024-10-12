@@ -7,7 +7,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
         public string Mediation;
         public string Placement;
         public long   TimeMilis;
-        
+
         public PreLoadEvent(string placement, long timeMilis, string mediation)
         {
             this.Placement = placement;

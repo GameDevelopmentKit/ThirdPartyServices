@@ -10,7 +10,7 @@ namespace Core.AnalyticServices.Tools
 
         public UnScaleInGameStopWatch StartNew()
         {
-            var timer = this.pool.Count > 0 ? this.pool.Pop() : new UnScaleInGameStopWatch();
+            var timer = this.pool.Count > 0 ? this.pool.Pop() : new();
 
             timer.Reset();
             this.activeTimers.Add(timer);
@@ -25,25 +25,17 @@ namespace Core.AnalyticServices.Tools
             this.activeTimers.Remove(stopWatch);
             return stopWatch.GetTime();
         }
-        
+
         private void OnApplicationPause(bool pauseStatus)
         {
             if (pauseStatus)
-            {
                 // The application is paused
                 foreach (var timer in this.activeTimers)
-                {
                     timer.Pause();
-                }
-            }
             else
-            {
                 // The application is resumed
                 foreach (var timer in this.activeTimers)
-                {
                     timer.Resume();
-                }
-            }
         }
     }
 }

@@ -6,7 +6,9 @@ namespace Core.AnalyticServices.CommonEvents
     /*
      * Purchasing
      */
+
     #region Purchasing
+
     /// <summary>
     /// Default purchase event class which contains properties common to all purchase events
     /// </summary>
@@ -153,7 +155,7 @@ namespace Core.AnalyticServices.CommonEvents
     [Serializable]
     public sealed class IapFailedRestore : IapEvent
     {
-        public String ErrorMessage;
+        public string ErrorMessage;
     }
 
     /// <summary>
@@ -180,5 +182,6 @@ namespace Core.AnalyticServices.CommonEvents
     public sealed class IapRestorationProcessDidFail : IEvent
     {
     }
+
     #endregion
 }

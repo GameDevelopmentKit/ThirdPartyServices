@@ -8,7 +8,7 @@ namespace Core.AnalyticServices.Signal
 
         public AdRevenueSignal(AdsRevenueEvent adsRevenueEvent)
         {
-            this.AdsRevenueEvent  = adsRevenueEvent;
+            this.AdsRevenueEvent = adsRevenueEvent;
         }
     }
 }

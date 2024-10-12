@@ -38,13 +38,9 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
                 this.logger.Log($"onelog: FirebaseRemoteConfig CheckAndFixDependenciesAsync {dependencyStatus}");
                 if (dependencyStatus == DependencyStatus.Available)
-                {
                     this.FetchDataAsync();
-                }
                 else
-                {
                     this.logger.Error($"Could not resolve all Firebase dependencies: {dependencyStatus}");
-                }
             });
         }
 
@@ -60,17 +56,10 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         private void FetchComplete(Task fetchTask)
         {
             if (fetchTask.IsCanceled)
-            {
                 this.logger.Log($"onelog: FirebaseRemoteConfig Fetch canceled.");
-            }
             else if (fetchTask.IsFaulted)
-            {
                 this.logger.Log($"onelog: FirebaseRemoteConfig Fetch encountered an error.");
-            }
-            else if (fetchTask.IsCompleted)
-            {
-                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch completed successfully!");
-            }
+            else if (fetchTask.IsCompleted) this.logger.Log($"onelog: FirebaseRemoteConfig Fetch completed successfully!");
 
             var info = FirebaseRemoteConfig.DefaultInstance.Info;
             this.logger.Log($"onelog: FirebaseRemoteConfig FetchComplete {info.LastFetchStatus}");
@@ -97,10 +86,8 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                             this.logger.Log($"onelog: FirebaseRemoteConfig Fetch throttled until " + info.ThrottledEndTime);
 
                             break;
-                        case FetchFailureReason.Invalid:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                        case FetchFailureReason.Invalid: break;
+                        default:                         throw new ArgumentOutOfRangeException();
                     }
 
                     break;
@@ -108,21 +95,20 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                     this.logger.Log($"onelog: FirebaseRemoteConfig Latest Fetch call still pending.");
 
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                default: throw new ArgumentOutOfRangeException();
             }
         }
 
         #region Get Data Remote Config
 
-        public string GetRemoteConfigStringValue(string key, string defaultValue) { return !this.HasKey(key) ? defaultValue : FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue; }
+        public string GetRemoteConfigStringValue(string key, string defaultValue)
+        {
+            return !this.HasKey(key) ? defaultValue : FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
+        }
 
         public bool GetRemoteConfigBoolValue(string key, bool defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed)
-            {
-                return defaultValue;
-            }
+            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
 
@@ -131,10 +117,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public long GetRemoteConfigLongValue(string key, long defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed)
-            {
-                return defaultValue;
-            }
+            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
 
@@ -143,10 +126,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public double GetRemoteConfigDoubleValue(string key, double defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed)
-            {
-                return defaultValue;
-            }
+            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
 
@@ -155,10 +135,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public int GetRemoteConfigIntValue(string key, int defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed)
-            {
-                return defaultValue;
-            }
+            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
 
@@ -167,17 +144,17 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public float GetRemoteConfigFloatValue(string key, float defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed)
-            {
-                return defaultValue;
-            }
+            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
 
             return float.TryParse(value, out var result) ? result : defaultValue;
         }
 
-        private bool HasKey(string key) { return FirebaseRemoteConfig.DefaultInstance.Keys != null && FirebaseRemoteConfig.DefaultInstance.Keys.Contains(key); }
+        private bool HasKey(string key)
+        {
+            return FirebaseRemoteConfig.DefaultInstance.Keys != null && FirebaseRemoteConfig.DefaultInstance.Keys.Contains(key);
+        }
 
         #endregion
     }

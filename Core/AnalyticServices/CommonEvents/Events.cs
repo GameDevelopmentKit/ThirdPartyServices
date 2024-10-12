@@ -64,6 +64,7 @@ namespace Core.AnalyticServices.CommonEvents
             this.LocationPrev = locationPrev;
         }
     }
+
     #endregion
 
     /*
@@ -125,8 +126,8 @@ namespace Core.AnalyticServices.CommonEvents
     internal sealed class SessionStarted : GameLaunched
     {
     }
-    #endregion
 
+    #endregion
 
     /*
      * Service Status
@@ -143,7 +144,7 @@ namespace Core.AnalyticServices.CommonEvents
         /// <summary>
         /// Name of the service
         /// </summary>
-        public String ServiceName;
+        public string ServiceName;
     }
 
     /// <summary>
@@ -171,7 +172,8 @@ namespace Core.AnalyticServices.CommonEvents
         /// <summary>
         /// Error message if any.
         /// </summary>
-        public String Error;
+        public string Error;
     }
+
     #endregion
 }

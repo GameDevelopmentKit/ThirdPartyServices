@@ -39,11 +39,10 @@ namespace Core.AdsServices.Native
             }
         }
 
-#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
-
+        #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
     private void Awake()
     {
-        this.screenManager          = this.GetCurrentContainer().Resolve<IScreenManager>();
+        this.screenManager = this.GetCurrentContainer().Resolve<IScreenManager>();
         this.changeScreenDisposable = this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
     }
 
@@ -86,7 +85,7 @@ namespace Core.AdsServices.Native
         this.nativeAdsService = nativeAdsService;
         this.iconImage.gameObject.SetActive(false);
         this.adChoicesImage.gameObject.SetActive(false);
-        this.isInit   = true;
+        this.isInit = true;
         this.isEnable = true;
         this.IntervalCall();
         this.ShowAds(true);
@@ -101,7 +100,6 @@ namespace Core.AdsServices.Native
         await UniTask.Delay(TimeSpan.FromSeconds(1));
         this.IntervalCall();
     }
-#endif
-}
-
+        #endif
+    }
 }

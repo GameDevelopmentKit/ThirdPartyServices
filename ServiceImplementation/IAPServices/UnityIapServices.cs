@@ -34,7 +34,7 @@ namespace ServiceImplementation.IAPServices
         [Preserve]
         public UnityIapServices(ILogService log, SignalBus signalBus)
         {
-            this.logger    = log;
+            this.logger = log;
             this.signalBus = signalBus;
         }
 
@@ -234,8 +234,8 @@ namespace ServiceImplementation.IAPServices
 
             return new ProductData()
             {
-                Id           = productId,
-                Price        = product.metadata.localizedPrice,
+                Id = productId,
+                Price = product.metadata.localizedPrice,
                 CurrencyCode = product.metadata.isoCurrencyCode
             };
         }
@@ -259,7 +259,7 @@ namespace ServiceImplementation.IAPServices
             #if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS
 
             byte[] googlePlayTangleData = null;
-            byte[] appleTangleData      = null;
+            byte[] appleTangleData = null;
 
             // Here we populate the secret keys for each platform.
             // Note that the code is disabled in the editor for it to not stop the EM editor code (due to ClassNotFound error)
@@ -318,7 +318,7 @@ namespace ServiceImplementation.IAPServices
         public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
         {
             this.logger.Log("OnInitialized: PASS");
-            this.mStoreController        = controller;
+            this.mStoreController = controller;
             this.mStoreExtensionProvider = extensions;
         }
 

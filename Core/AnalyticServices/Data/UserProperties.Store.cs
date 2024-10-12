@@ -11,19 +11,17 @@ namespace Core.AnalyticServices.Data
     /// </summary>
     public sealed partial class UserProperties
     {
-        internal readonly Dictionary<string, object> ChangedProps = new Dictionary<string, object>();
+        internal readonly Dictionary<string, object> ChangedProps = new();
 
-        private readonly Dictionary<string, object> store = new Dictionary<string, object>();
+        private readonly Dictionary<string, object> store = new();
 
         private TProp get<TProp>([CallerMemberName] string key = "")
         {
             key = key.ToSnakeCase(); // todo - compile time
 
-            if (!this.store.ContainsKey(key))
-                return default;
+            if (!this.store.ContainsKey(key)) return default;
 
-            if (this.store[key] is TProp)
-                return (TProp)this.store[key];
+            if (this.store[key] is TProp) return (TProp)this.store[key];
 
             Debug.LogError($"attempted to get {key} by wrong type {typeof(TProp)}");
             return default;
@@ -34,8 +32,7 @@ namespace Core.AnalyticServices.Data
             var origKey = key;
             key = key.ToSnakeCase();
 
-            if (value == null || (this.store.ContainsKey(key) && value.Equals(this.store[key])))
-                return false;
+            if (value == null || (this.store.ContainsKey(key) && value.Equals(this.store[key]))) return false;
 
             this.store[key] = value;
 
@@ -47,7 +44,7 @@ namespace Core.AnalyticServices.Data
         private void NotifyOfPropChange<TProp>(string key, string origKey, TProp value)
         {
             this.ChangedProps[key] = value;
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(origKey));
+            this.PropertyChanged?.Invoke(this, new(origKey));
         }
     }
 }

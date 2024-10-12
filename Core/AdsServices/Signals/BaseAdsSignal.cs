@@ -14,6 +14,8 @@
 
     public class AdRequestSignal : BaseAdsSignal
     {
-        public AdRequestSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
+        public AdRequestSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
+        {
+        }
     }
 }

@@ -1,19 +1,19 @@
 {
-    "name": "3rd.RemoteConfig.FireBase",
-    "rootNamespace": "",
-    "references": [
-        "GameFoundation.Utilities",
-        "GameFoundation.Signals",
-        "3rd.RemoteConfig",
-        "GameFoundation.DI"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "3rd.RemoteConfig.FireBase",
+  "rootNamespace": "",
+  "references": [
+    "GameFoundation.Utilities",
+    "GameFoundation.Signals",
+    "3rd.RemoteConfig",
+    "GameFoundation.DI"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

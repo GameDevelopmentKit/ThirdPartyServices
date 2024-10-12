@@ -23,7 +23,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             analyticConfig)
         {
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
-            this.logger                            = logger;
+            this.logger = logger;
             if (analyticsEventCustomizationConfig.CustomEventKeys.Count == 0)
             {
                 this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
@@ -65,7 +65,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
             Debug.Log("setting up adjust tracker");
 
-            var appToken    = this.analyticConfig.AdjustAppToken;
+            var appToken = this.analyticConfig.AdjustAppToken;
 
 #if THEONE_MMP_DEBUG && !PRODUCTION
             var environment = AdjustEnvironment.Sandbox;

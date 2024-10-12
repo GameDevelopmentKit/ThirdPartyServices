@@ -11,17 +11,14 @@
             id = placement == AdPlacement.Default
                 ? defaultId?.Id
                 : FindIdForPlacement(customIds, placement);
-            
+
             return !string.IsNullOrEmpty(id);
         }
 
         public static string FindIdForPlacement(Dictionary<AdPlacement, AdId> dict, AdPlacement placement)
         {
-            if (dict != null && dict.TryGetValue(placement, out var idObj) && idObj != null && !string.IsNullOrEmpty(idObj.Id))
-            {
-                return idObj.Id;
-            }
-    
+            if (dict != null && dict.TryGetValue(placement, out var idObj) && idObj != null && !string.IsNullOrEmpty(idObj.Id)) return idObj.Id;
+
             return string.Empty;
         }
     }

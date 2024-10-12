@@ -12,7 +12,7 @@
     "url": "https://github.com/The1Studio/3rdRemoteConfigFirebase.git"
   },
   "dependencies": {
-    "3rd.RemoteConfig.DI" : "1.0.0",
+    "3rd.RemoteConfig.DI": "1.0.0",
     "com.google.firebase.remote-config": "12.2.1"
   },
   "keywords": [

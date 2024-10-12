@@ -4,6 +4,9 @@ namespace ServiceImplementation.AdsServices.Signal
     {
         public bool IsBackground { get; set; }
 
-        public AppStateChangeSignal(bool isBackground) { this.IsBackground = isBackground; }
+        public AppStateChangeSignal(bool isBackground)
+        {
+            this.IsBackground = isBackground;
+        }
     }
 }

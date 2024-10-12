@@ -10,9 +10,9 @@ namespace Core.AnalyticServices.Tools
         public UnScaleInGameStopWatch()
         {
             this.stopwatch = Stopwatch.StartNew();
-            this.isPaused = false;
+            this.isPaused  = false;
         }
-        
+
         public void Reset()
         {
             this.stopwatch.Reset();
@@ -37,6 +37,9 @@ namespace Core.AnalyticServices.Tools
             }
         }
 
-        public long GetTime() { return this.stopwatch.ElapsedMilliseconds; }
+        public long GetTime()
+        {
+            return this.stopwatch.ElapsedMilliseconds;
+        }
     }
 }

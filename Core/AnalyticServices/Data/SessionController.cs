@@ -52,20 +52,15 @@ namespace Core.AnalyticServices.Data
 
             if (hasFocus)
             {
-                if (double.IsNaN(this.focusOutTime))
-                    return;
+                if (double.IsNaN(this.focusOutTime)) return;
 
                 var deltaFocusTime = focusTime - this.focusOutTime;
                 this.focusOutTime = double.NaN;
 
                 if (deltaFocusTime is > SessionTimeout or < 0)
-                {
                     this.Start();
-                }
                 else
-                {
                     this.analyticServices.Track(new FocusIn());
-                }
             }
             else
             {

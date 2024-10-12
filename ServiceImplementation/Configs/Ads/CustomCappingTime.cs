@@ -21,13 +21,13 @@ namespace ServiceImplementation.Configs.Ads
         {
             get
             {
-#if UNITY_ANDROID
+                #if UNITY_ANDROID
                 return this.AndroidCapping;
-#elif UNITY_IOS
+                #elif UNITY_IOS
                 return IosCapping;
-#else
+                #else
                 return -1;
-#endif
+                #endif
             }
         }
 

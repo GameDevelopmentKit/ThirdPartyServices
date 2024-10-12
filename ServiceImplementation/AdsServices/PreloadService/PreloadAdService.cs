@@ -89,13 +89,13 @@ namespace ServiceImplementation.AdsServices.PreloadService
                 return;
             }
 
-            foreach (var (key, _) in loadService.AdNetworkSettings.CustomInterstitialAdIds)
-            {
-                this.LoadInterstitial(loadService, key.Name);
-            }
+            foreach (var (key, _) in loadService.AdNetworkSettings.CustomInterstitialAdIds) this.LoadInterstitial(loadService, key.Name);
         }
 
-        private void LoadInterAdsAfterShow(InterstitialAdClosedSignal signal) { this.LoadInterAdWithPlace(signal.Placement); }
+        private void LoadInterAdsAfterShow(InterstitialAdClosedSignal signal)
+        {
+            this.LoadInterAdWithPlace(signal.Placement);
+        }
 
         private void LoadInterAdWithPlace(string placement)
         {
@@ -129,15 +129,18 @@ namespace ServiceImplementation.AdsServices.PreloadService
                 return;
             }
 
-            foreach (var (key, value) in loadService.AdNetworkSettings.CustomRewardedAdIds)
-            {
-                this.LoadReward(loadService, key.Name);
-            }
+            foreach (var (key, value) in loadService.AdNetworkSettings.CustomRewardedAdIds) this.LoadReward(loadService, key.Name);
         }
 
-        private void LoadRewardAdsAfterShow(RewardedAdCompletedSignal signal) { this.LoadRewardAdWithPlace(signal.Placement); }
+        private void LoadRewardAdsAfterShow(RewardedAdCompletedSignal signal)
+        {
+            this.LoadRewardAdWithPlace(signal.Placement);
+        }
 
-        private void LoadRewardAdsAfterSkip(RewardedSkippedSignal signal) { this.LoadRewardAdWithPlace(signal.Placement); }
+        private void LoadRewardAdsAfterSkip(RewardedSkippedSignal signal)
+        {
+            this.LoadRewardAdWithPlace(signal.Placement);
+        }
 
         private void LoadRewardAdWithPlace(string placement)
         {
@@ -160,50 +163,34 @@ namespace ServiceImplementation.AdsServices.PreloadService
         {
             // check interstitial ads
             if (this.interstitialAdStopwatch.Count > 0)
-            {
                 foreach (var ((adLoadService, placement), stopwatch) in this.interstitialAdStopwatch.ToList())
-                {
                     if (adLoadService.IsInterstitialAdReady(placement))
                     {
                         this.analyticServices.Track(new PreLoadInter(placement, this.unScaleInGameStopWatchManager.Stop(stopwatch), adLoadService.GetType().Name));
                         this.interstitialAdStopwatch.Remove((adLoadService, placement));
                     }
-                }
-            }
 
             // check reward ads
             if (this.rewardAdStopwatch.Count > 0)
-            {
                 foreach (var ((adLoadService, placement), stopwatch) in this.rewardAdStopwatch.ToList())
-                {
                     if (adLoadService.IsRewardedAdReady(placement))
                     {
                         this.analyticServices.Track(new PreLoadReward(placement, this.unScaleInGameStopWatchManager.Stop(stopwatch), adLoadService.GetType().Name));
                         this.rewardAdStopwatch.Remove((adLoadService, placement));
                     }
-                }
-            }
 
             // check  AOA ads
-            foreach (var aOaAdService in aOaAdServices)
-            {
+            foreach (var aOaAdService in this.aOaAdServices)
                 if (!aOaAdService.IsAOAReady())
                 {
                     // Record the start time when the service starts loading
-                    if (!this.aoaAdStartTime.ContainsKey(aOaAdService))
-                    {
-                        this.aoaAdStartTime.Add(aOaAdService, this.unScaleInGameStopWatchManager.StartNew());
-                    }
+                    if (!this.aoaAdStartTime.ContainsKey(aOaAdService)) this.aoaAdStartTime.Add(aOaAdService, this.unScaleInGameStopWatchManager.StartNew());
                 }
                 else
                 {
                     // Calculate the elapsed time when the service is ready
-                    if (this.aoaAdStartTime.Remove(aOaAdService, out var watch))
-                    {
-                        this.analyticServices.Track(new PreLoadAOA(string.Empty, this.unScaleInGameStopWatchManager.Stop(watch), aOaAdService.GetType().Name));
-                    }
+                    if (this.aoaAdStartTime.Remove(aOaAdService, out var watch)) this.analyticServices.Track(new PreLoadAOA(string.Empty, this.unScaleInGameStopWatchManager.Stop(watch), aOaAdService.GetType().Name));
                 }
-            }
         }
     }
 }

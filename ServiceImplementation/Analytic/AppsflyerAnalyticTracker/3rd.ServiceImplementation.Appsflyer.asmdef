@@ -1,21 +1,21 @@
 {
-    "name": "3rd.ServiceImplementation.Appsflyer",
-    "rootNamespace": "",
-    "references": [
-        "3rdCore.Analytic",
-        "GameFoundation.Signals",
-        "AppsFlyer",
-        "GameFoundation.Utilities",
-        "AppsFlyerAdRevenue",
-        "AppsFlyerPurchaseConnector"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "3rd.ServiceImplementation.Appsflyer",
+  "rootNamespace": "",
+  "references": [
+    "3rdCore.Analytic",
+    "GameFoundation.Signals",
+    "AppsFlyer",
+    "GameFoundation.Utilities",
+    "AppsFlyerAdRevenue",
+    "AppsFlyerPurchaseConnector"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

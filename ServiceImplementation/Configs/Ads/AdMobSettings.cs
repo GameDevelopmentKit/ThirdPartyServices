@@ -6,9 +6,9 @@
     using System.Reflection;
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     using UnityEditor;
-#endif
+    #endif
     using UnityEngine;
     using UnityEngine.Events;
     using UnityEngine.Serialization;
@@ -23,22 +23,22 @@
         /// </summary>
         public AdId DefaultBannerAdId
         {
-#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mDefaultBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/2934735716","ca-app-pub-3940256099942544/6300978111") : this.mDefaultBannerAdId; 
-#else
-            get => this.mDefaultBannerAdId; 
-#endif
+            #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => !string.IsNullOrEmpty(this.mDefaultBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/2934735716","ca-app-pub-3940256099942544/6300978111") : this.mDefaultBannerAdId;
+            #else
+            get => this.mDefaultBannerAdId;
+            #endif
             set => this.mDefaultBannerAdId = value;
         }
 
-        public AdId CollapsibleBannerAdId 
+        public AdId CollapsibleBannerAdId
         {
-#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mCollapsibleBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/8388050270","ca-app-pub-3940256099942544/2014213617") : this.mCollapsibleBannerAdId; 
-#else
-            get => this.mCollapsibleBannerAdId; 
-#endif
-            set => this.mCollapsibleBannerAdId = value; 
+            #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => !string.IsNullOrEmpty(this.mCollapsibleBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/8388050270","ca-app-pub-3940256099942544/2014213617") : this.mCollapsibleBannerAdId;
+            #else
+            get => this.mCollapsibleBannerAdId;
+            #endif
+            set => this.mCollapsibleBannerAdId = value;
         }
 
         /// <summary>
@@ -46,11 +46,11 @@
         /// </summary>
         public AdId DefaultInterstitialAdId
         {
-#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mDefaultInterstitialAdId.Id) ? new AdId("ca-app-pub-3940256099942544/4411468910","ca-app-pub-3940256099942544/1033173712") : this.mDefaultInterstitialAdId; 
-#else
-            get => this.mDefaultInterstitialAdId; 
-#endif
+            #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => !string.IsNullOrEmpty(this.mDefaultInterstitialAdId.Id) ? new AdId("ca-app-pub-3940256099942544/4411468910","ca-app-pub-3940256099942544/1033173712") : this.mDefaultInterstitialAdId;
+            #else
+            get => this.mDefaultInterstitialAdId;
+            #endif
             set => this.mDefaultInterstitialAdId = value;
         }
 
@@ -59,11 +59,11 @@
         /// </summary>
         public AdId DefaultRewardedAdId
         {
-#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mDefaultRewardedAdId.Id) ? new AdId("ca-app-pub-3940256099942544/1712485313","ca-app-pub-3940256099942544/5224354917") : this.mDefaultRewardedAdId; 
-#else
-            get => this.mDefaultRewardedAdId; 
-#endif
+            #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => !string.IsNullOrEmpty(this.mDefaultRewardedAdId.Id) ? new AdId("ca-app-pub-3940256099942544/1712485313","ca-app-pub-3940256099942544/5224354917") : this.mDefaultRewardedAdId;
+            #else
+            get => this.mDefaultRewardedAdId;
+            #endif
             set => this.mDefaultRewardedAdId = value;
         }
 
@@ -77,11 +77,11 @@
         /// </summary>
         public AdId AOAAdId
         {
-#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mAoaAdId.Id) ? new AdId("ca-app-pub-3940256099942544/5575463023","ca-app-pub-3940256099942544/9257395921") : this.mAoaAdId; 
-#else
-            get => this.mAoaAdId; 
-#endif
+            #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => !string.IsNullOrEmpty(this.mAoaAdId.Id) ? new AdId("ca-app-pub-3940256099942544/5575463023","ca-app-pub-3940256099942544/9257395921") : this.mAoaAdId;
+            #else
+            get => this.mAoaAdId;
+            #endif
             set => this.mAoaAdId = value;
         }
 
@@ -90,11 +90,11 @@
         /// </summary>
         public List<AdId> NativeAdIds
         {
-#if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => this.mNativeAdIds.Select(x => new AdId("ca-app-pub-3940256099942544/3986624511", "ca-app-pub-3940256099942544/2247696110")).ToList();
-#else
-            get => this.mNativeAdIds; 
-#endif
+            #else
+            get => this.mNativeAdIds;
+            #endif
             set => this.mNativeAdIds = value;
         }
 
@@ -107,7 +107,7 @@
         /// Enables or disables test mode.
         /// </summary>
         public bool EnableTestMode { get => this.mEnableTestMode; set => this.mEnableTestMode = value; }
-        
+
         /// <summary>
         /// Gets or sets the list of custom banner identifiers.
         /// Each identifier is associated with an ad placement.
@@ -130,11 +130,7 @@
         /// Gets or sets the list of custom rewarded interstitial ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public Dictionary<AdPlacement, AdId> CustomRewardedInterstitialAdIds
-        {
-            get => this.mCustomRewardedInterstitialAdIds;
-            set => this.mCustomRewardedInterstitialAdIds = value as Dictionary_AdPlacement_AdId;
-        }
+        public Dictionary<AdPlacement, AdId> CustomRewardedInterstitialAdIds { get => this.mCustomRewardedInterstitialAdIds; set => this.mCustomRewardedInterstitialAdIds = value as Dictionary_AdPlacement_AdId; }
 
         [OnInspectorInit]
         private void LoadAdmobSetting()
@@ -146,21 +142,21 @@
 
             this.mIOSAppId     = settingType.GetField("adMobIOSAppId", bindingFlags).GetValue(googleMobileAdsSettings) as string;
             this.mAndroidAppId = settingType.GetField("adMobAndroidAppId", bindingFlags).GetValue(googleMobileAdsSettings) as string;
-            
+
             #if APPLOVIN && UNITY_EDITOR
             AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
             #endif
-            
+
             this.mOptimizeInitialization = (bool)settingType.GetField("optimizeInitialization", bindingFlags).GetValue(googleMobileAdsSettings);
 
             this.mOptimizeAdLoading = (bool)settingType.GetField("optimizeAdLoading", bindingFlags).GetValue(googleMobileAdsSettings);
 
-#if ADMOB_BELLOW_9_0_0
+            #if ADMOB_BELLOW_9_0_0
             this.mDelayAppMeasurementInit = (bool)settingType.GetField("delayAppMeasurementInit", bindingFlags).GetValue(googleMobileAdsSettings);
-#endif 
+            #endif
             this.enableKotlinXCoroutinesPackagingOption = (bool)settingType.GetField("enableKotlinXCoroutinesPackagingOption", bindingFlags).GetValue(googleMobileAdsSettings);
-            this.mValidateGradleDependencies = (bool)settingType.GetField("validateGradleDependencies", bindingFlags).GetValue(googleMobileAdsSettings);
-            this.mUserTrackingUsageDescription = settingType.GetField("userTrackingUsageDescription", bindingFlags).GetValue(googleMobileAdsSettings) as string;
+            this.mValidateGradleDependencies            = (bool)settingType.GetField("validateGradleDependencies", bindingFlags).GetValue(googleMobileAdsSettings);
+            this.mUserTrackingUsageDescription          = settingType.GetField("userTrackingUsageDescription", bindingFlags).GetValue(googleMobileAdsSettings) as string;
         }
 
         public UnityAction<ScriptableObject> OnDataChange;
@@ -174,97 +170,86 @@
 
             settingType.GetField("adMobIOSAppId", bindingFlags).SetValue(googleMobileAdsSettings, this.mIOSAppId);
             settingType.GetField("adMobAndroidAppId", bindingFlags).SetValue(googleMobileAdsSettings, this.mAndroidAppId);
-#if APPLOVIN && UNITY_EDITOR
+            #if APPLOVIN && UNITY_EDITOR
             AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
-#endif
+            #endif
             settingType.GetField("optimizeInitialization", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeInitialization);
             settingType.GetField("optimizeAdLoading", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeAdLoading);
-#if ADMOB_BELLOW_9_0_0
+            #if ADMOB_BELLOW_9_0_0
             settingType.GetField("delayAppMeasurementInit", bindingFlags).SetValue(googleMobileAdsSettings, this.mDelayAppMeasurementInit);
-#endif
+            #endif
             settingType.GetField("validateGradleDependencies", bindingFlags).SetValue(googleMobileAdsSettings, this.mValidateGradleDependencies);
             settingType.GetField("enableKotlinXCoroutinesPackagingOption", bindingFlags).SetValue(googleMobileAdsSettings, this.enableKotlinXCoroutinesPackagingOption);
             settingType.GetField("userTrackingUsageDescription", bindingFlags).SetValue(googleMobileAdsSettings, this.mUserTrackingUsageDescription);
-            
+
             this.OnDataChange?.Invoke(googleMobileAdsSettings);
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             EditorUtility.SetDirty(googleMobileAdsSettings);
             AssetDatabase.SaveAssets();
-#endif
+            #endif
         }
 
-        private void AppIdChanged() { Debug.Log("Admob app id changed"); }
+        private void AppIdChanged()
+        {
+            Debug.Log("Admob app id changed");
+        }
 
-        [OnValueChanged("SaveAdmobSetting")] [Header("Google Mobile Ads App ID")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("Android App Id")]
-        private string mAndroidAppId;
+        [OnValueChanged("SaveAdmobSetting")] [Header("Google Mobile Ads App ID")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("Android App Id")] private string mAndroidAppId;
 
-        [OnValueChanged("SaveAdmobSetting")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("IOS App Id")]
-        private string mIOSAppId;
+        [OnValueChanged("SaveAdmobSetting")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("IOS App Id")] private string mIOSAppId;
 
-
-        [OnValueChanged("SaveAdmobSetting")] [Header("Android optimization settings")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("Optimize initialization")]
+        [OnValueChanged("SaveAdmobSetting")]
+        [Header("Android optimization settings")]
+        [BoxGroup("Admob Settings")]
+        [SerializeField]
+        [LabelText("Optimize initialization")]
         private bool mOptimizeInitialization;
 
-        [OnValueChanged("SaveAdmobSetting")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("Optimize ad loading")]
-        private bool mOptimizeAdLoading;
+        [OnValueChanged("SaveAdmobSetting")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("Optimize ad loading")] private bool mOptimizeAdLoading;
 
-#if ADMOB_BELLOW_9_0_0
+        #if ADMOB_BELLOW_9_0_0
         [OnValueChanged("SaveAdmobSetting")] [Header("Admob-specific settings")] [SerializeField] [BoxGroup("Admob Settings")]
         private bool mDelayAppMeasurementInit;
-#endif
-        [FormerlySerializedAs("mEnableKotlinXCoroutinesPackagingOption"),OnValueChanged("SaveAdmobSetting")] [Header("Admob-specific settings")] [SerializeField] [BoxGroup("Admob Settings")]
+        #endif
+        [FormerlySerializedAs("mEnableKotlinXCoroutinesPackagingOption")]
+        [OnValueChanged("SaveAdmobSetting")]
+        [Header("Admob-specific settings")]
+        [SerializeField]
+        [BoxGroup("Admob Settings")]
         private bool enableKotlinXCoroutinesPackagingOption;
 
-        [OnValueChanged("SaveAdmobSetting")] [SerializeField] [BoxGroup("Admob Settings")] [LabelText("Remove property tag from GMA Android SDK")]
-        private bool mValidateGradleDependencies;
+        [OnValueChanged("SaveAdmobSetting")] [SerializeField] [BoxGroup("Admob Settings")] [LabelText("Remove property tag from GMA Android SDK")] private bool mValidateGradleDependencies;
 
-        [OnValueChanged("SaveAdmobSetting")] [Header("UMP-specific settings")] [SerializeField] [BoxGroup("Admob Settings")]
-        private string mUserTrackingUsageDescription;
+        [OnValueChanged("SaveAdmobSetting")] [Header("UMP-specific settings")] [SerializeField] [BoxGroup("Admob Settings")] private string mUserTrackingUsageDescription;
 
-        [SerializeField] [LabelText("Enable Test Mode")]
-        private bool mEnableTestMode;
+        [SerializeField] [LabelText("Enable Test Mode")] private bool mEnableTestMode;
 
-        [SerializeField] [LabelText("Banner")] [BoxGroup("Default Id")]
-        private AdId mDefaultBannerAdId;
+        [SerializeField] [LabelText("Banner")] [BoxGroup("Default Id")] private AdId mDefaultBannerAdId;
 
-        [SerializeField] [LabelText("Collapsible Banner")] [BoxGroup("Default Id")]
-        private AdId mCollapsibleBannerAdId;
+        [SerializeField] [LabelText("Collapsible Banner")] [BoxGroup("Default Id")] private AdId mCollapsibleBannerAdId;
 
-        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Default Id")]
-        private AdId mDefaultInterstitialAdId;
+        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Default Id")] private AdId mDefaultInterstitialAdId;
 
-        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Default Id")]
-        private AdId mDefaultRewardedAdId;
+        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Default Id")] private AdId mDefaultRewardedAdId;
 
-        [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Default Id")]
-        private AdId mDefaultRewardedInterstitialAdId;
+        [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Default Id")] private AdId mDefaultRewardedInterstitialAdId;
 
-        [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")]
-        private AdId mAoaAdId;
+        [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")] private AdId mAoaAdId;
 
-        [SerializeField] [LabelText("Native")] [BoxGroup("Default Id")]
-        private List<AdId> mNativeAdIds;
+        [SerializeField] [LabelText("Native")] [BoxGroup("Default Id")] private List<AdId> mNativeAdIds;
 
-        [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")]
-        private Dictionary_AdViewPosition_AdId mMRECAdIds;
+        [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")] private Dictionary_AdViewPosition_AdId mMRECAdIds;
 
+        [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
 
-        [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")]
-        private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
+        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomInterstitialAdIds;
 
-        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")]
-        private Dictionary_AdPlacement_AdId mCustomInterstitialAdIds;
-        
-        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")]
-        private Dictionary<AdPlacement, CustomCappingTime> mCustomInterstitialCappingTime;
+        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")] private Dictionary<AdPlacement, CustomCappingTime> mCustomInterstitialCappingTime;
 
-        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Custom Placement Id")]
-        private Dictionary_AdPlacement_AdId mCustomRewardedAdIds;
+        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomRewardedAdIds;
 
-        [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Custom Placement Id")]
-        private Dictionary_AdPlacement_AdId mCustomRewardedInterstitialAdIds;
+        [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomRewardedInterstitialAdIds;
 
-        [SerializeField] [LabelText("Is Adaptive Banner")] [BoxGroup("Admob Settings")]
-        private bool mIsAdaptiveBannerEnabled = true;
+        [SerializeField] [LabelText("Is Adaptive Banner")] [BoxGroup("Admob Settings")] private bool mIsAdaptiveBannerEnabled = true;
     }
 }

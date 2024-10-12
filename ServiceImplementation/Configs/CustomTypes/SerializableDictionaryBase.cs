@@ -7,22 +7,18 @@
     /// <typeparam name="T">Key type.</typeparam>
     /// <typeparam name="U">Value type.</typeparam>
     /// <typeparam name="V">Value storage type.</typeparam>
-    public abstract class SerializableDictionaryBase<T, U, V> : 
-        Dictionary<T, U>, ISerializationCallbackReceiver
+    public abstract class SerializableDictionaryBase<T, U, V> :
+        Dictionary<T, U>,
+        ISerializationCallbackReceiver
     {
-        [SerializeField]
-        protected T[] keys;
+        [SerializeField] protected T[] keys;
 
-        [SerializeField]
-        protected V[] values;
+        [SerializeField] protected V[] values;
 
         public SerializableDictionaryBase(IDictionary<T, U> dict)
             : base(dict.Count)
         {
-            foreach (var kvp in dict)
-            {
-                this[kvp.Key] = kvp.Value;
-            }
+            foreach (var kvp in dict) this[kvp.Key] = kvp.Value;
         }
 
         public SerializableDictionaryBase()
@@ -41,10 +37,7 @@
         public void CopyFrom(IDictionary<T, U> dict)
         {
             this.Clear();
-            foreach (var pair in dict)
-            {
-                this[pair.Key] = pair.Value;
-            }
+            foreach (var pair in dict) this[pair.Key] = pair.Value;
         }
 
         public void OnAfterDeserialize()
@@ -52,10 +45,7 @@
             if (this.keys != null && this.values != null && this.keys.Length == this.values.Length)
             {
                 this.Clear();
-                for (int i = 0; i < this.keys.Length; ++i)
-                {
-                    this[this.keys[i]] = this.GetValue(this.values, i);
-                }
+                for (var i = 0; i < this.keys.Length; ++i) this[this.keys[i]] = this.GetValue(this.values, i);
 
                 this.keys   = null;
                 this.values = null;
@@ -67,7 +57,7 @@
             this.keys   = new T[this.Count];
             this.values = new V[this.Count];
 
-            int i = 0;
+            var i = 0;
             foreach (var pair in this)
             {
                 this.keys[i] = pair.Key;

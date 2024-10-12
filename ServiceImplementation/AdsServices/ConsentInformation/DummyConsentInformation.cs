@@ -12,8 +12,14 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         #endregion
 
         [Preserve]
-        public DummyConsentInformation(ILogService logService) { this.logService = logService; }
+        public DummyConsentInformation(ILogService logService)
+        {
+            this.logService = logService;
+        }
 
-        public void Request() { this.logService.Log("Request consent information"); }
+        public void Request()
+        {
+            this.logService.Log("Request consent information");
+        }
     }
 }

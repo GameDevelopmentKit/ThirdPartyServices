@@ -3,6 +3,7 @@
     public class RewardedAdLoadedSignal : BaseAdsSignal
     {
         public long LoadingTime;
+
         public RewardedAdLoadedSignal(string placement, long loadingTime, AdInfo adInfo) : base(placement, adInfo)
         {
             this.LoadingTime = loadingTime;
@@ -11,8 +12,9 @@
 
     public class RewardedAdLoadFailedSignal : BaseAdsSignal
     {
-        public float LoadingTime;
+        public float  LoadingTime;
         public string Message;
+
         public RewardedAdLoadFailedSignal(string placement, string message, float loadingTime) : base(placement)
         {
             this.Message     = message;
@@ -22,12 +24,16 @@
 
     public class RewardedAdClickedSignal : BaseAdsSignal
     {
-        public RewardedAdClickedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
+        public RewardedAdClickedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
+        {
+        }
     }
 
     public class RewardedAdDisplayedSignal : BaseAdsSignal
     {
-        public RewardedAdDisplayedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
+        public RewardedAdDisplayedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
+        {
+        }
     }
 
     public class RewardedAdCompletedSignal : BaseAdsSignal
@@ -39,32 +45,46 @@
 
     public class RewardedSkippedSignal : BaseAdsSignal
     {
-        public RewardedSkippedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
+        public RewardedSkippedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
+        {
+        }
     }
 
     public class RewardedAdEligibleSignal : BaseAdsSignal
     {
-        public RewardedAdEligibleSignal(string placement) : base(placement) { }
+        public RewardedAdEligibleSignal(string placement) : base(placement)
+        {
+        }
     }
 
     public class RewardedAdCalledSignal : BaseAdsSignal
     {
-        public RewardedAdCalledSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
+        public RewardedAdCalledSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
+        {
+        }
     }
 
     public class RewardedAdOfferSignal : BaseAdsSignal
     {
-        public RewardedAdOfferSignal(string placement) : base(placement) { }
+        public RewardedAdOfferSignal(string placement) : base(placement)
+        {
+        }
     }
 
     public class RewardedAdClosedSignal : BaseAdsSignal
     {
-        public RewardedAdClosedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
+        public RewardedAdClosedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
+        {
+        }
     }
 
     public class RewardedAdShowFailedSignal : BaseAdsSignal
     {
         public string Message { get; private set; }
-        public RewardedAdShowFailedSignal(string placement, string message, AdInfo adInfo) : base(placement, adInfo) { this.Message = message; }
+
+        public RewardedAdShowFailedSignal(string placement, string message, AdInfo adInfo) : base(placement, adInfo)
+        {
+            this.Message = message;
+        }
     }
 }

@@ -7,6 +7,5 @@
     /// </summary>
     public class LevelUp : IEvent
     {
-        
     }
 }

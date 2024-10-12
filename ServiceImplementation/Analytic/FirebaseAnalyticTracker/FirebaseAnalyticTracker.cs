@@ -14,7 +14,7 @@
     public class FirebaseAnalyticTracker : BaseTracker
     {
         private readonly   AnalyticsEventCustomizationConfig customizationConfig;
-        protected override TaskCompletionSource<bool>        TrackerReady         { get; } = new TaskCompletionSource<bool>();
+        protected override TaskCompletionSource<bool>        TrackerReady         { get; } = new();
         protected override Dictionary<Type, EventDelegate>   CustomEventDelegates { get; }
 
         [Preserve]
@@ -36,9 +36,15 @@
             return this.TrackerReady.Task;
         }
 
-        protected override void SetUserId(string userId) { FirebaseAnalytics.SetUserId(userId); }
+        protected override void SetUserId(string userId)
+        {
+            FirebaseAnalytics.SetUserId(userId);
+        }
 
-        protected override void OnChangedProps(Dictionary<string, object> changedProps) { FirebaseAnalytics.SetUserProperty(changedProps); }
+        protected override void OnChangedProps(Dictionary<string, object> changedProps)
+        {
+            FirebaseAnalytics.SetUserProperty(changedProps);
+        }
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
@@ -57,8 +63,7 @@
                 return;
             }
 
-            if (!this.CheckConventions(data))
-                return;
+            if (!this.CheckConventions(data)) return;
 
             Debug.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
             switch (data.Count)
@@ -108,7 +113,7 @@
 
         private bool CheckConventions(Dictionary<string, object> data)
         {
-            foreach (KeyValuePair<string, object> entry in data)
+            foreach (var entry in data)
             {
                 if (!entry.Key.IsNameValid().Equals("Valid"))
                 {
