@@ -26,19 +26,19 @@
 
         public string Platform { get; private set; }
 
-#if UNITY_IOS
+        #if UNITY_IOS
 		public const string Store = "appstore";
-#elif STORE_GOOGLEPLAY
+        #elif STORE_GOOGLEPLAY
 		public const string Store = "googleplay";
-#elif STORE_AMAZON
+        #elif STORE_AMAZON
 		public const string Store = "amazon";
-#elif STORE_SAMSUNG
+        #elif STORE_SAMSUNG
 		public const string Store = "samsung";
-#elif UNITY_WSA_10_0
+        #elif UNITY_WSA_10_0
 		public const string Store = "microsoft";
-#else
+        #else
         public const string Store = "unknown";
-#endif
+        #endif
 
         /*
          * Android
@@ -83,8 +83,7 @@
         {
             get
             {
-                if (PlayerPrefs.HasKey(InstallIdKey))
-                    return PlayerPrefs.GetString(InstallIdKey);
+                if (PlayerPrefs.HasKey(InstallIdKey)) return PlayerPrefs.GetString(InstallIdKey);
 
                 PlayerPrefs.SetString(InstallIdKey, Guid.NewGuid().ToString("D"));
                 PlayerPrefs.SetString(InstallDateKey, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture));
@@ -96,8 +95,7 @@
         {
             get
             {
-                if (PlayerPrefs.HasKey(FirstLaunchKey))
-                    return false;
+                if (PlayerPrefs.HasKey(FirstLaunchKey)) return false;
 
                 PlayerPrefs.SetInt(FirstLaunchKey, 1);
                 return true;
@@ -111,18 +109,18 @@
         // todo - need to bind data here by implementing native tool to get device info
         internal void ScrapeDeviceData()
         {
-#if UNITY_IOS && !UNITY_EDITOR
+            #if UNITY_IOS && !UNITY_EDITOR
 			Make = "apple";
 			Platform = "iOS";
-#elif UNITY_ANDROID && !UNITY_EDITOR
+            #elif UNITY_ANDROID && !UNITY_EDITOR
 			Platform = "Android";
-#elif UNITY_WEBGL && !UNITY_EDITOR
+            #elif UNITY_WEBGL && !UNITY_EDITOR
 			Platform = "Web";
-#elif UNITY_WSA_10_0 && !UNITY_EDITOR
+            #elif UNITY_WSA_10_0 && !UNITY_EDITOR
 			Platform = "Windows";
-#else
+            #else
             this.Platform = "Editor";
-#endif
+            #endif
         }
     }
 }

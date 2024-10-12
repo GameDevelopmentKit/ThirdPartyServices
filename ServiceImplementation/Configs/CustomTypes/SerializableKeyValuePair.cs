@@ -11,15 +11,13 @@
     [Serializable]
     public class SerializableKeyValuePair<K, V>
     {
-        [SerializeField]
-        private K key;
+        [SerializeField] private K key;
 
-        [SerializeField]
-        private V value;
+        [SerializeField] private V value;
 
         public SerializableKeyValuePair(K key, V value)
         {
-            this.key = key;
+            this.key   = key;
             this.value = value;
         }
 
@@ -29,26 +27,18 @@
             this.value = pair.Value;
         }
 
-        public K Key
-        {
-            get { return this.key; }
-            set { this.key = value; }
-        }
+        public K Key { get => this.key; set => this.key = value; }
 
-        public V Value
-        {
-            get { return this.value; }
-            set { this.value = value; }
-        }
+        public V Value { get => this.value; set => this.value = value; }
 
         public KeyValuePair<K, V> ToKeyValuePair()
         {
-            return new KeyValuePair<K, V>(this.key, this.value);  
+            return new(this.key, this.value);
         }
 
         public static SerializableKeyValuePair<K, V> FromKeyValuePair(KeyValuePair<K, V> pair)
         {
-            return new SerializableKeyValuePair<K, V>(pair.Key, pair.Value);
+            return new(pair.Key, pair.Value);
         }
     }
 
@@ -61,31 +51,27 @@
 
         public static IEnumerable<SerializableKeyValuePair<K, V>> ToSerializableKeyValuePairs<K, V>(this IEnumerable<KeyValuePair<K, V>> pairs)
         {
-            if (pairs == null)
-                return null;
+            if (pairs == null) return null;
 
             return pairs.Select(p => new SerializableKeyValuePair<K, V>(p.Key, p.Value));
         }
 
         public static IEnumerable<KeyValuePair<K, V>> ToKeyValuePairs<K, V>(this IEnumerable<SerializableKeyValuePair<K, V>> pairs)
         {
-            if (pairs == null)
-                return null;
+            if (pairs == null) return null;
             return pairs.Select(p => new KeyValuePair<K, V>(p.Key, p.Value));
         }
 
         public static IEnumerable<K> Keys<K, V>(this IEnumerable<SerializableKeyValuePair<K, V>> pairs)
         {
-            if (pairs == null)
-                return null;
+            if (pairs == null) return null;
 
             return pairs.Select(p => p.Key);
         }
 
         public static IEnumerable<V> Values<K, V>(this IEnumerable<SerializableKeyValuePair<K, V>> pairs)
         {
-            if (pairs == null)
-                return null;
+            if (pairs == null) return null;
 
             return pairs.Select(p => p.Value);
         }

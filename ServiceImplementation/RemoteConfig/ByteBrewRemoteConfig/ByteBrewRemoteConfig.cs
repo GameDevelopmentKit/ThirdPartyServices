@@ -23,7 +23,7 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
         [Preserve]
         public ByteBrewRemoteConfig(SignalBus signalBus, ILogService logService)
         {
-            this.signalBus  = signalBus;
+            this.signalBus = signalBus;
             this.logService = logService;
         }
 

@@ -1,8 +1,8 @@
 namespace Core.AnalyticServices
 {
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
-#endif
+    #endif
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -12,32 +12,30 @@ namespace Core.AnalyticServices
     public partial class AnalyticConfig
     {
         private const string AppsflyerSymbol = "APPSFLYER";
-        
-        [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")]
-        [SerializeField] private bool isAppsflyerEnabled;
+
+        [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")] [SerializeField] private bool isAppsflyerEnabled;
 
         private void OnChangeAppsflyerEnabled()
         {
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
             EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "com.theone.appsflyer-unity-plugin", "https://github.com/The1Studio/appsflyer.git?path=Assets/AppsFlyer#appsflyer_sdk-purchase_sdk");
-#endif
+            #endif
         }
-        
+
         [OnInspectorInit]
         private void InitAppsflyerSetting()
         {
-#if APPSFLYER && UNITY_EDITOR
+            #if APPSFLYER && UNITY_EDITOR
             if (!string.IsNullOrEmpty(this.appsflyerDevKeyAndroid) || !string.IsNullOrEmpty(this.appsflyerDevKeyIos))
             {
                 this.isAppsflyerEnabled = true;
                 return;
             }
-#endif
+            #endif
             this.OnChangeAppsflyerEnabled();
         }
-#if APPSFLYER
-
+        #if APPSFLYER
         /// <summary>
         /// 
         /// </summary>
@@ -81,6 +79,6 @@ namespace Core.AnalyticServices
         [SerializeField] private string appsflyerAppIdIos;
 
         private bool ValidateAppIdIos(string value) { return string.IsNullOrEmpty(value) || this.appsflyerAppIdIos.StartsWith("id"); }
-#endif
+        #endif
     }
 }

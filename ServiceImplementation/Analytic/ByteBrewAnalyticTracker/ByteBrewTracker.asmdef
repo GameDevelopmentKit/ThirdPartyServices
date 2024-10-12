@@ -1,20 +1,20 @@
 {
-    "name": "ByteBrewTracker",
-    "rootNamespace": "",
-    "references": [
-        "3rdCore.Analytic",
-        "GameFoundation.Signals",
-        "ByteBrewSDK",
-        "GameFoundation.Utilities",
-        "UniTask"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "ByteBrewTracker",
+  "rootNamespace": "",
+  "references": [
+    "3rdCore.Analytic",
+    "GameFoundation.Signals",
+    "ByteBrewSDK",
+    "GameFoundation.Utilities",
+    "UniTask"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

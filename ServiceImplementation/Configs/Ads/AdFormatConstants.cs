@@ -1,6 +1,5 @@
 ﻿namespace ServiceImplementation
 {
-
     public class AdFormatConstants
     {
         public const string Banner            = "BANNER";
@@ -11,5 +10,4 @@
         public const string MREC              = "MREC";
         public const string CollapsibleBanner = "COLLAPSIBLE_BANNER";
     }
-
 }

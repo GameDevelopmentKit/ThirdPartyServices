@@ -6,7 +6,11 @@ namespace Core.AnalyticServices.Data
     public sealed partial class UserProperties : INotifyPropertyChanged
     {
         private readonly IAnalyticServices analyticServices;
-        public UserProperties(IAnalyticServices analyticServices) { this.analyticServices = analyticServices; }
+
+        public UserProperties(IAnalyticServices analyticServices)
+        {
+            this.analyticServices = analyticServices;
+        }
 
         /// <summary>
         /// 
@@ -86,10 +90,8 @@ namespace Core.AnalyticServices.Data
             {
                 var currentLocation = this.get<string>();
                 if (currentLocation == value)
-                {
                     // Do not track changes to same location.
                     return;
-                }
 
                 this.set(value);
                 this.LocationPrev = currentLocation;
@@ -154,7 +156,6 @@ namespace Core.AnalyticServices.Data
         /// Indicates if application is patched or pirated.
         /// </summary>
         public bool GameValidApp { get => this.get<bool>(); set => this.set(value); }
-
 
         /*
          * OS

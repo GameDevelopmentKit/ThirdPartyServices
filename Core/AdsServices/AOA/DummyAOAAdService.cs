@@ -12,7 +12,10 @@ namespace Core.AdsServices
         #endregion
 
         [Preserve]
-        public DummyAOAAdServiceIml(ILogService logService) { this.logService = logService; }
+        public DummyAOAAdServiceIml(ILogService logService)
+        {
+            this.logService = logService;
+        }
 
         public bool IsAOAReady()
         {

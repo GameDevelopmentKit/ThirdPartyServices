@@ -16,9 +16,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
         // Amazon Cache
         private AmazonApplovinSetting amazonSetting;
 
-        private bool isFirstInterstitialRequest  = true;
+        private bool isFirstInterstitialRequest = true;
         private bool isFirstRewardedVideoRequest = true;
-        private bool isFirstMRecRequest          = true;
+        private bool isFirstMRecRequest = true;
 
         private APSBannerAdRequest       bannerAdRequest;
         private APSBannerAdRequest       mRecAdsRequest;
@@ -28,7 +28,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         #endregion
 
         private const string AmazonResponseMessage = "amazon_ad_response";
-        private const string AmazonErrorMessage    = "amazon_ad_error";
+        private const string AmazonErrorMessage = "amazon_ad_error";
 
         [Preserve]
         public AmazonApplovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig,
@@ -57,7 +57,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         protected override void InternalShowMREC(AdViewPosition position)
         {
             var amazonId = this.amazonSetting.AmazonMRecAdId.Id;
-            var id       = this.AppLovinSetting.MRECAdIds[position].Id;
+            var id = this.AppLovinSetting.MRECAdIds[position].Id;
             if (this.isFirstMRecRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstMRecRequest = false;
@@ -125,7 +125,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (this.isFirstInterstitialRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstInterstitialRequest = false;
-                this.interstitialAdRequest      = new APSInterstitialAdRequest(amazonId);
+                this.interstitialAdRequest = new APSInterstitialAdRequest(amazonId);
 
                 this.interstitialAdRequest.onSuccess += response =>
                 {
@@ -155,7 +155,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (this.isFirstRewardedVideoRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstRewardedVideoRequest = false;
-                this.rewardedVideoAdRequest      = new APSVideoAdRequest(320, 480, amazonId);
+                this.rewardedVideoAdRequest = new APSVideoAdRequest(320, 480, amazonId);
 
                 this.rewardedVideoAdRequest.onSuccess += response =>
                 {

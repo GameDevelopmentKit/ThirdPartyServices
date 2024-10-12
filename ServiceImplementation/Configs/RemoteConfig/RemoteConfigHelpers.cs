@@ -64,10 +64,7 @@
 
         private static int GetIntDefaultValue(RemoteConfig config)
         {
-            if (int.TryParse(config.defaultValue.Id, out var result))
-            {
-                return result;
-            }
+            if (int.TryParse(config.defaultValue.Id, out var result)) return result;
 
             Debug.LogError($"Can not parse int value from remote config key: {config.key}");
             return 0;
@@ -75,10 +72,7 @@
 
         private static bool GetBoolDefaultValue(RemoteConfig config)
         {
-            if (bool.TryParse(config.defaultValue.Id, out var result))
-            {
-                return result;
-            }
+            if (bool.TryParse(config.defaultValue.Id, out var result)) return result;
 
             Debug.LogError($"Can not parse bool value from remote config key: {config.key}");
             return false;
@@ -86,10 +80,7 @@
 
         private static float GetFloatDefaultValue(RemoteConfig config)
         {
-            if (float.TryParse(config.defaultValue.Id, out var result))
-            {
-                return result;
-            }
+            if (float.TryParse(config.defaultValue.Id, out var result)) return result;
 
             Debug.LogError($"Can not parse float value from remote config key: {config.key}");
             return 0;

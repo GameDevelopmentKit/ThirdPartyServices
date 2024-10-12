@@ -12,8 +12,8 @@
     "url": "https://github.com/The1Studio/3rdRemoteConfigByteBrew.git"
   },
   "dependencies": {
-    "3rd.RemoteConfig.DI" : "1.0.0",
-    "com.bytebrew.unitysdk" : "0.1.17"
+    "3rd.RemoteConfig.DI": "1.0.0",
+    "com.bytebrew.unitysdk": "0.1.17"
   },
   "keywords": [
     "RemotConfig",

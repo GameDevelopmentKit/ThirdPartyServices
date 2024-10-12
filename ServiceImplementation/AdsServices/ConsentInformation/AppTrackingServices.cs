@@ -12,25 +12,25 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         private readonly ThirdPartiesConfig thirdPartiesConfig;
 
         [Preserve]
-        public AppTrackingServices(ThirdPartiesConfig thirdPartiesConfig) { this.thirdPartiesConfig = thirdPartiesConfig; }
+        public AppTrackingServices(ThirdPartiesConfig thirdPartiesConfig)
+        {
+            this.thirdPartiesConfig = thirdPartiesConfig;
+        }
 
         public async void Initialize()
         {
             await UniTask.Delay(this.DelayRequestTrackingMillisecond);
-            if (this.thirdPartiesConfig.AdSettings.autoRequestATT)
-            {
-                await RequestTracking();
-            }
+            if (this.thirdPartiesConfig.AdSettings.autoRequestATT) await RequestTracking();
         }
 
         public static async UniTask RequestTracking()
         {
             if (AttHelper.IsRequestTrackingComplete()) return;
 
-#if UNITY_IOS
+            #if UNITY_IOS
             Unity.Advertisement.IosSupport.ATTrackingStatusBinding.RequestAuthorizationTracking();
             await UniTask.WaitUntil(AttHelper.IsRequestTrackingComplete);
-#endif
+            #endif
         }
     }
 }

@@ -15,17 +15,17 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
         /// <returns></returns>
         public static string IsNameValid(this string str)
         {
-            Regex reg = new Regex("^[a-zA-Z0-9_]+$");
+            var reg = new Regex("^[a-zA-Z0-9_]+$");
 
-            if (str == null) { return "Name is null"; }
-            
-            if (str.Length > 40) { return "Name is too long"; }
+            if (str == null) return "Name is null";
 
-            if (!char.IsLetter(str[0])) { return "Name does not start with letter"; }
+            if (str.Length > 40) return "Name is too long";
 
-            if (!reg.IsMatch(str)) { return "Name contains special characters"; }
+            if (!char.IsLetter(str[0])) return "Name does not start with letter";
 
-            if (str.Equals("firebase_") || str.Equals("google_") || str.Equals("ga_")) { return "Name is reserved from google"; }
+            if (!reg.IsMatch(str)) return "Name contains special characters";
+
+            if (str.Equals("firebase_") || str.Equals("google_") || str.Equals("ga_")) return "Name is reserved from google";
 
             return "Valid";
         }
@@ -38,10 +38,9 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
         /// <returns></returns>
         public static string IsParameterValueValid(this object obj)
         {
-            if (obj == null)
-                return "Valid";
-            
-            string str = obj.ToString();
+            if (obj == null) return "Valid";
+
+            var str = obj.ToString();
             return str.Length <= 100 ? "Valid" : "Parameter too long";
         }
     }

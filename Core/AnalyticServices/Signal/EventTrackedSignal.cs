@@ -11,8 +11,8 @@ namespace Core.AnalyticServices.Signal
         /// <summary>
         /// the event object which will be forwarded to attached services
         /// </summary>
-        public IEvent                     TrackedEvent;
-        
+        public IEvent TrackedEvent;
+
         /// <summary>
         /// any user properties waiting to be forwarded to attached services
         /// </summary>

@@ -5,6 +5,8 @@
     /// </summary>
     public class StringStringKeyValuePair : SerializableKeyValuePair<string, string>
     {
-        public StringStringKeyValuePair(string key, string value) : base(key, value) { }
+        public StringStringKeyValuePair(string key, string value) : base(key, value)
+        {
+        }
     }
 }

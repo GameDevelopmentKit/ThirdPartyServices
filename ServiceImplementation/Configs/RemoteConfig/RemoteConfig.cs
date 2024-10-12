@@ -13,8 +13,8 @@
         public RemoteConfig(string key, string mapping, string defaultValue)
         {
             this.key          = key;
-            this.mapping      = new AdId(mapping, mapping);
-            this.defaultValue = new AdId(defaultValue, defaultValue);
+            this.mapping      = new(mapping, mapping);
+            this.defaultValue = new(defaultValue, defaultValue);
         }
     }
 }

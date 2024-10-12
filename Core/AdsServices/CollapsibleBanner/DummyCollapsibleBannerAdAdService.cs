@@ -12,9 +12,15 @@ namespace Core.AdsServices.CollapsibleBanner
         #endregion
 
         [Preserve]
-        public DummyCollapsibleBannerAdAdService(ILogService logService) { this.logService = logService; }
+        public DummyCollapsibleBannerAdAdService(ILogService logService)
+        {
+            this.logService = logService;
+        }
 
-        public void ShowCollapsibleBannerAd(bool useNewGuid, BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom) { this.logService.Log("Dummy show collapsible banner ad"); }
+        public void ShowCollapsibleBannerAd(bool useNewGuid, BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom)
+        {
+            this.logService.Log("Dummy show collapsible banner ad");
+        }
 
         public void HideCollapsibleBannerAd()
         {

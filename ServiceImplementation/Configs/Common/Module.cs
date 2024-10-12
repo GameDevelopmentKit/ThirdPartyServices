@@ -2,7 +2,7 @@
 {
     public enum Module
     {
-        None = -1,
+        None        = -1,
         Advertising = 0,
         GameServices,
         Gif,

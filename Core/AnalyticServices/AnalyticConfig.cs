@@ -10,6 +10,5 @@ namespace Core.AnalyticServices
     [Serializable]
     public partial class AnalyticConfig : ScriptableObject, IGameConfig
     {
-
     }
 }

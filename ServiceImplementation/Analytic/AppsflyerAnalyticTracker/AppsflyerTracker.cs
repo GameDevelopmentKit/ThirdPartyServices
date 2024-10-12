@@ -1,5 +1,4 @@
 ﻿#if APPSFLYER
-
 namespace ServiceImplementation.AppsflyerAnalyticTracker
 {
     using System;
@@ -35,7 +34,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         [Preserve]
         public AppsflyerTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
-            this.logger              = logger;
+            this.logger = logger;
             this.customizationConfig = customizationConfig;
 
             if (customizationConfig.CustomEventKeys.Count == 0)
@@ -54,7 +53,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             Debug.Log($"setting up appsflyer tracker");
 
-            var apiId  = this.analyticConfig.AppsflyerAppId;
+            var apiId = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
 
             if (string.IsNullOrEmpty(apiId))

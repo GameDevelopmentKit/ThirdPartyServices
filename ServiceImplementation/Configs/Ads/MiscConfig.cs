@@ -34,9 +34,14 @@ namespace ServiceImplementation.Configs.Ads
             this.InitDefaultValue();
         }
 
-        public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnFetchRemoteConfig); }
+        public void Dispose()
+        {
+            this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnFetchRemoteConfig);
+        }
 
-        private void InitDefaultValue() { }
+        private void InitDefaultValue()
+        {
+        }
 
         private void OnFetchRemoteConfig()
         {

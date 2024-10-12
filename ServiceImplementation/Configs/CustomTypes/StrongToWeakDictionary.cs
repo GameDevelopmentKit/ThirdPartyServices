@@ -47,10 +47,7 @@
         /// kick in immediately after return and reclaim some of them.
         /// </summary>
         /// <value>The values.</value>
-        public List<TValue> Values
-        {
-            get { return this.Pairs.Select(x => x.Value).ToList(); }
-        }
+        public List<TValue> Values { get { return this.Pairs.Select(x => x.Value).ToList(); } }
 
         public StrongToWeakDictionary()
             : this(EqualityComparer<TKey>.Default)
@@ -59,7 +56,7 @@
 
         public StrongToWeakDictionary(IEqualityComparer<TKey> comparer)
         {
-            this.mMap = new Dictionary<TKey, WeakReference<TValue>>(comparer);
+            this.mMap = new(comparer);
         }
 
         public void Add(TKey key, TValue value)
@@ -88,12 +85,12 @@
                 // A strong reference is being assigned to Target,
                 // safely excluding it from being GC'ed. IsAlive == true
                 // is fully trustable in this case!
-                value = weakValue.Target;   
+                value = weakValue.Target;
                 return weakValue.IsAlive;
             }
             else
             {
-                value = default(TValue);
+                value = default;
                 return false;
             }
         }
@@ -105,11 +102,10 @@
         {
             if (!this.mGcWatch.IsAlive)
             {
-                if (VerboseDebug)
-                    Debug.Log(typeof(TValue).ToString() + " StrongToWeakDict: GC has occurred. Start culling dict...");
+                if (VerboseDebug) Debug.Log(typeof(TValue).ToString() + " StrongToWeakDict: GC has occurred. Start culling dict...");
 
                 this.CullDeadEntries();
-                this.mGcWatch = AllocWeakRef();  // spawn new watch
+                this.mGcWatch = AllocWeakRef(); // spawn new watch
             }
         }
 
@@ -120,31 +116,26 @@
         /// </summary>
         public void CullDeadEntries()
         {
-            if (VerboseDebug)
-                Debug.Log(typeof(TValue).ToString() + " StrongToWeakDict: count BEFORE culling: " + this.mMap.Count);
+            if (VerboseDebug) Debug.Log(typeof(TValue).ToString() + " StrongToWeakDict: count BEFORE culling: " + this.mMap.Count);
 
             List<TKey> toRemove = null;
-            foreach (KeyValuePair<TKey, WeakReference<TValue>> pair in this.mMap)
+            foreach (var pair in this.mMap)
             {
-                var key = pair.Key;
+                var key       = pair.Key;
                 var weakValue = pair.Value;
 
                 if (!weakValue.IsAlive)
                 {
-                    if (toRemove == null)
-                        toRemove = new List<TKey>();
+                    if (toRemove == null) toRemove = new();
                     toRemove.Add(key);
                 }
             }
 
             if (toRemove != null)
-            {
                 foreach (var key in toRemove)
                     this.mMap.Remove(key);
-            }
 
-            if (VerboseDebug)
-                Debug.Log(typeof(TValue).ToString() + " StrongToWeakDict: count AFTER culling: " + this.mMap.Count);
+            if (VerboseDebug) Debug.Log(typeof(TValue).ToString() + " StrongToWeakDict: count AFTER culling: " + this.mMap.Count);
         }
 
         /// <summary>
@@ -156,7 +147,7 @@
         /// <returns>The gc watch.</returns>
         private static WeakReference AllocWeakRef()
         {
-            return new WeakReference(new object());
+            return new(new());
         }
 
         // Adds strong typing to WeakReference.Target using generics. Also,
@@ -167,10 +158,9 @@
         {
             public static WeakReference<T> Create(T target)
             {
-                if (target == null)
-                    return WeakNullReference<T>.Singleton;
+                if (target == null) return WeakNullReference<T>.Singleton;
 
-                return new WeakReference<T>(target);
+                return new(target);
             }
 
             protected WeakReference(T target)
@@ -178,10 +168,7 @@
             {
             }
 
-            public new T Target
-            {
-                get { return (T)base.Target; }
-            }
+            public new T Target => (T)base.Target;
         }
 
         // Provides a weak reference to a null target object, which, unlike
@@ -190,17 +177,14 @@
         // legal.
         internal class WeakNullReference<T> : WeakReference<T> where T : class
         {
-            public static readonly WeakNullReference<T> Singleton = new WeakNullReference<T>();
+            public static readonly WeakNullReference<T> Singleton = new();
 
             private WeakNullReference()
                 : base(null)
             {
             }
 
-            public override bool IsAlive
-            {
-                get { return true; }
-            }
+            public override bool IsAlive => true;
         }
     }
 }

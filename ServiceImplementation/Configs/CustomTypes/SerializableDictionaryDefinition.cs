@@ -16,6 +16,5 @@
     [Serializable]
     public class Dictionary_AdPlacement_AdId : SerializableDictionary<AdPlacement, AdId>
     {
-        
     }
 }

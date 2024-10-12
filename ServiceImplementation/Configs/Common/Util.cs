@@ -5,7 +5,7 @@
     internal static class Util
     {
         public static readonly DateTime UnixEpoch =
-            DateTime.SpecifyKind(new DateTime(1970, 1, 1), DateTimeKind.Utc);
+            DateTime.SpecifyKind(new(1970, 1, 1), DateTimeKind.Utc);
 
         /// <summary>
         /// Determines if the current build is a development build.
@@ -28,10 +28,7 @@
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T NullArgumentTest<T>(T value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(typeof(T).ToString());
-            }
+            if (value == null) throw new ArgumentNullException(typeof(T).ToString());
 
             return value;
         }
@@ -45,10 +42,7 @@
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T NullArgumentTest<T>(T value, string paramName)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(paramName);
-            }
+            if (value == null) throw new ArgumentNullException(paramName);
 
             return value;
         }
@@ -70,17 +64,11 @@
         /// <param name="span">Time span.</param>
         public static long ToMilliseconds(TimeSpan span)
         {
-            double millis = span.TotalMilliseconds;
+            var millis = span.TotalMilliseconds;
 
-            if (millis > long.MaxValue)
-            {
-                return long.MaxValue;
-            }
+            if (millis > long.MaxValue) return long.MaxValue;
 
-            if (millis < long.MinValue)
-            {
-                return long.MinValue;
-            }
+            if (millis < long.MinValue) return long.MinValue;
 
             return Convert.ToInt64(millis);
         }
@@ -92,8 +80,7 @@
         /// <param name="id">Identifier.</param>
         public static string AutoTrimId(string id)
         {
-            if (string.IsNullOrEmpty(id))
-                return string.Empty;
+            if (string.IsNullOrEmpty(id)) return string.Empty;
 
             return id.Trim();
         }

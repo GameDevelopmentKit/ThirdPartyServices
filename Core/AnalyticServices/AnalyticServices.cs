@@ -46,17 +46,15 @@ namespace Core.AnalyticServices
         {
             this.deviceInfo         = deviceInfo;
             this.signalBus          = signalBus;
-            this.UserProperties     = new UserProperties(this);
-            this.eventTrackedSignal = new EventTrackedSignal();
-            this.started            = new TaskCompletionSource<bool>();
+            this.UserProperties     = new(this);
+            this.eventTrackedSignal = new();
+            this.started            = new();
             //todo need to refactor this
-
         }
-
 
         void IAnalyticServices.Start()
         {
-            if(this.started.Task.Status == TaskStatus.RanToCompletion) return;
+            if (this.started.Task.Status == TaskStatus.RanToCompletion) return;
 
             this.Track(new GameLaunched
             {
@@ -69,8 +67,7 @@ namespace Core.AnalyticServices
 
             this.UserProperties.PropertyChanged += (sender, args) =>
             {
-                if (args.PropertyName == nameof(UserProperties.UserId))
-                    this.signalBus.Fire(new SetUserIdSignal(){UserId = this.UserProperties.UserId});
+                if (args.PropertyName == nameof(this.UserProperties.UserId)) this.signalBus.Fire(new SetUserIdSignal() { UserId = this.UserProperties.UserId });
             };
             this.started.SetResult(true);
         }
@@ -98,15 +95,15 @@ namespace Core.AnalyticServices
             this.UserProperties.DeviceMake     = this.deviceInfo.Make;
             this.UserProperties.DeviceFamily   = this.deviceInfo.Family;
 
-#if UNITY_IOS && !UNITY_EDITOR
-            this.UserProperties.DeviceVendorId      = this.deviceInfo.Idfv;
+            #if UNITY_IOS && !UNITY_EDITOR
+            this.UserProperties.DeviceVendorId = this.deviceInfo.Idfv;
             this.UserProperties.DeviceAdvertisingId = this.deviceInfo.Idfa;
-#elif UNITY_ANDROID && !UNITY_EDITOR
-            this.UserProperties.DeviceVendorId      = this.deviceInfo.AndroidId;
+            #elif UNITY_ANDROID && !UNITY_EDITOR
+            this.UserProperties.DeviceVendorId = this.deviceInfo.AndroidId;
             this.UserProperties.DeviceAdvertisingId = this.deviceInfo.Gaid;
-#elif UNITY_WSA_10_0 && !UNITY_EDITOR
+            #elif UNITY_WSA_10_0 && !UNITY_EDITOR
             this.UserProperties.DeviceAppHardwareId = this.deviceInfo.ASHWID;
-#endif
+            #endif
 
             this.UserProperties.PlatformName    = this.deviceInfo.Platform;
             this.UserProperties.PlatformVersion = this.deviceInfo.OSVersion;
@@ -117,11 +114,9 @@ namespace Core.AnalyticServices
             this.UserProperties.GameIsTestflight = this.deviceInfo.IsTestflightBuild;
             this.UserProperties.GameInstallMode  = Application.installMode.ToString().ToLowerInvariant();
 
-
             this.UserProperties.InstallId = this.deviceInfo.InstallId;
 
-            if (!PlayerPrefs.HasKey(DeviceInfo.InstallDateKey))
-                return;
+            if (!PlayerPrefs.HasKey(DeviceInfo.InstallDateKey)) return;
 
             var installDate         = PlayerPrefs.GetString(DeviceInfo.InstallDateKey);
             var installDateTime     = Convert.ToDateTime(installDate, CultureInfo.InvariantCulture);

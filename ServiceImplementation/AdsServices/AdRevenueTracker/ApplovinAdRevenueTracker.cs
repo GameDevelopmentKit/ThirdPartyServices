@@ -18,7 +18,7 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
         public ApplovinAdRevenueTracker(IAnalyticServices analyticServices, SignalBus signalBus)
         {
             this.analyticServices = analyticServices;
-            this.signalBus        = signalBus;
+            this.signalBus = signalBus;
         }
 
         public void Initialize()
@@ -47,13 +47,13 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
             return new()
             {
                 AdsRevenueSourceId = AdRevenueConstants.ARSourceAppLovinMAX,
-                AdUnit             = adInfo.AdUnitIdentifier,
-                Revenue            = adInfo.Revenue,
-                Currency           = "USD",
-                NetworkPlacement   = adInfo.NetworkPlacement,
-                Placement          = adInfo.Placement,
-                AdNetwork          = adInfo.NetworkName,
-                AdFormat           = adInfo.AdFormat,
+                AdUnit = adInfo.AdUnitIdentifier,
+                Revenue = adInfo.Revenue,
+                Currency = "USD",
+                NetworkPlacement = adInfo.NetworkPlacement,
+                Placement = adInfo.Placement,
+                AdNetwork = adInfo.NetworkName,
+                AdFormat = adInfo.AdFormat,
             };
         }
     }

@@ -36,32 +36,32 @@ public static class FireBasePostProcessBuild
         using var streamReader = new StreamReader(fileStream);
 
         var firebaseConfig = streamReader.ReadToEnd();
-        var html           = ReadTextFile(htmlPath);
+        var html = ReadTextFile(htmlPath);
         ConditionRegexFirebase(htmlPath, html, "const firebaseConfig .*[\\s\\S]*};", firebaseConfig);
     }
 
     private static string ReadTextFile(string pFilePath)
     {
         using var streamReader = new StreamReader(pFilePath, Encoding.UTF8);
-        var       html         = streamReader.ReadToEnd();
+        var       html = streamReader.ReadToEnd();
 
         return html;
     }
 
     private static void ConditionRegexFirebase(string htmlPath, string htmlInput, string regexCondition, string firebaseConfig)
     {
-        var                         rx      = new Regex(regexCondition);
+        var                         rx = new Regex(regexCondition);
         var                         matches = rx.Matches(htmlInput);
-        IDictionary<string, string> map     = new Dictionary<string, string>();
+        IDictionary<string, string> map = new Dictionary<string, string>();
 
         foreach (Match match in matches)
         {
-            var groups    = match.Groups;
+            var groups = match.Groups;
             var newConfig = firebaseConfig;
             map.TryAdd(groups[0].Value, newConfig);
         }
 
-        var regex       = new Regex(string.Join("|", map.Keys.Select(Regex.Escape)));
+        var regex = new Regex(string.Join("|", map.Keys.Select(Regex.Escape)));
         var finalConfig = regex.Replace(htmlInput, m => map[m.Value]);
         File.WriteAllText(htmlPath, finalConfig);
     }

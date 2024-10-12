@@ -33,11 +33,11 @@ namespace ServiceImplementation.AdsServices.Yandex
         [Preserve]
         public YandexAdsWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig, ILogService logService)
         {
-            this.analyticServices   = analyticServices;
-            this.adServicesConfig   = adServicesConfig;
-            this.signalBus          = signalBus;
+            this.analyticServices = analyticServices;
+            this.adServicesConfig = adServicesConfig;
+            this.signalBus = signalBus;
             this.thirdPartiesConfig = thirdPartiesConfig;
-            this.logService         = logService;
+            this.logService = logService;
         }
 
         #endregion
@@ -93,10 +93,10 @@ namespace ServiceImplementation.AdsServices.Yandex
 
             this.banner = new Banner(this.YandexSettings.BannerAdId.Id, bannerSize, AdPosition.BottomCenter);
 
-            this.banner.OnAdLoaded       += this.HandleBannerAdLoaded;
+            this.banner.OnAdLoaded += this.HandleBannerAdLoaded;
             this.banner.OnAdFailedToLoad += this.HandleBannerAdFailedToLoad;
-            this.banner.OnAdClicked      += this.HandleBannerAdClicked;
-            this.banner.OnImpression     += this.HandleImpression;
+            this.banner.OnAdClicked += this.HandleBannerAdClicked;
+            this.banner.OnImpression += this.HandleImpression;
 
             this.banner.LoadAd(new AdRequest.Builder().Build());
         }
@@ -155,8 +155,8 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void InitRewardedAd()
         {
-            this.rewardedAdLoader                  =  new RewardedAdLoader();
-            this.rewardedAdLoader.OnAdLoaded       += this.HandleRewardedAdLoaded;
+            this.rewardedAdLoader = new RewardedAdLoader();
+            this.rewardedAdLoader.OnAdLoaded += this.HandleRewardedAdLoaded;
             this.rewardedAdLoader.OnAdFailedToLoad += this.HandleRewardedAdFailedToLoad;
 
             this.LoadRewardAds();
@@ -174,12 +174,12 @@ namespace ServiceImplementation.AdsServices.Yandex
         {
             this.rewardedAd = args.RewardedAd;
 
-            this.rewardedAd.OnAdClicked      += this.HandleRewardedAdClicked;
-            this.rewardedAd.OnAdShown        += this.HandleRewardedAdShown;
+            this.rewardedAd.OnAdClicked += this.HandleRewardedAdClicked;
+            this.rewardedAd.OnAdShown += this.HandleRewardedAdShown;
             this.rewardedAd.OnAdFailedToShow += this.HandleRewardedAdFailedToShow;
-            this.rewardedAd.OnAdImpression   += this.HandleImpression;
-            this.rewardedAd.OnAdDismissed    += this.HandleRewardedAdDismissed;
-            this.rewardedAd.OnRewarded       += this.HandleRewardedAdReward;
+            this.rewardedAd.OnAdImpression += this.HandleImpression;
+            this.rewardedAd.OnAdDismissed += this.HandleRewardedAdDismissed;
+            this.rewardedAd.OnRewarded += this.HandleRewardedAdReward;
         }
 
         private void HandleRewardedAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
@@ -255,10 +255,10 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
-            this.IsRewardedAdReward         = false;
+            this.IsRewardedAdReward = false;
             this.CurrentRewardedAdPlacement = place;
-            this.OnRewardedAdCompleted      = onCompleted;
-            this.OnRewardedAdFailed         = onFailed;
+            this.OnRewardedAdCompleted = onCompleted;
+            this.OnRewardedAdFailed = onFailed;
             this.rewardedAd?.Show();
         }
 
@@ -270,8 +270,8 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void InitInterstitialAd()
         {
-            this.interstitialAdLoader                  =  new InterstitialAdLoader();
-            this.interstitialAdLoader.OnAdLoaded       += this.HandleInterstitialLoaded;
+            this.interstitialAdLoader = new InterstitialAdLoader();
+            this.interstitialAdLoader.OnAdLoaded += this.HandleInterstitialLoaded;
             this.interstitialAdLoader.OnAdFailedToLoad += this.HandleInterstitialFailedToLoad;
 
             this.LoadInterstitialAd();
@@ -290,11 +290,11 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.logService.Log($"onelog: Yandex: HandleInterstitialLoaded, AdUnitId: {args.Interstitial.GetInfo().AdUnitId}");
             this.interstitialAd = args.Interstitial;
 
-            this.interstitialAd.OnAdClicked      += this.HandleInterstitialAdClicked;
-            this.interstitialAd.OnAdShown        += this.HandleInterstitialShown;
+            this.interstitialAd.OnAdClicked += this.HandleInterstitialAdClicked;
+            this.interstitialAd.OnAdShown += this.HandleInterstitialShown;
             this.interstitialAd.OnAdFailedToShow += this.HandleInterstitialFailedToShow;
-            this.interstitialAd.OnAdDismissed    += this.HandleInterstitialDismissed;
-            this.interstitialAd.OnAdImpression   += this.HandleImpression;
+            this.interstitialAd.OnAdDismissed += this.HandleInterstitialDismissed;
+            this.interstitialAd.OnAdImpression += this.HandleImpression;
             var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.InterstitialAdId.Id, AdFormatConstants.Interstitial);
             this.signalBus.Fire(new InterstitialAdLoadedSignal("", 0,adInfo));
         }
@@ -364,8 +364,8 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private void InitAoaAd()
         {
-            this.appOpenAdLoader                  =  new AppOpenAdLoader();
-            this.appOpenAdLoader.OnAdLoaded       += this.HandleAoaAdLoaded;
+            this.appOpenAdLoader = new AppOpenAdLoader();
+            this.appOpenAdLoader.OnAdLoaded += this.HandleAoaAdLoaded;
             this.appOpenAdLoader.OnAdFailedToLoad += this.HandleAoaAdFailedToLoad;
 
             this.LoadAoaAd();
@@ -386,11 +386,11 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.logService.Log($"onelog: Yandex: HandleAoaAdLoaded");
             this.appOpenAd = args.AppOpenAd;
 
-            this.appOpenAd.OnAdClicked      += this.HandleAoaAdClicked;
-            this.appOpenAd.OnAdShown        += this.HandleAoaAdShown;
+            this.appOpenAd.OnAdClicked += this.HandleAoaAdClicked;
+            this.appOpenAd.OnAdShown += this.HandleAoaAdShown;
             this.appOpenAd.OnAdFailedToShow += this.HandleAoaAdFailedToShow;
-            this.appOpenAd.OnAdDismissed    += this.HandleAoaAdDismissed;
-            this.appOpenAd.OnAdImpression   += this.HandleImpression;
+            this.appOpenAd.OnAdDismissed += this.HandleAoaAdDismissed;
+            this.appOpenAd.OnAdImpression += this.HandleImpression;
 
             var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.AoaAdId.Id, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenLoadedSignal("", adInfo));
@@ -469,12 +469,12 @@ namespace ServiceImplementation.AdsServices.Yandex
                 var adsRevenueEvent = new AdsRevenueEvent()
                 {
                     AdsRevenueSourceId = AdRevenueConstants.ARSourceYandex,
-                    Revenue            = data.revenueUSD,
-                    Currency           = "USD",
-                    Placement          = data.adType,
-                    AdNetwork          = data.network.name,
-                    AdFormat           = data.adType,
-                    AdUnit             = data.ad_unit_id
+                    Revenue = data.revenueUSD,
+                    Currency = "USD",
+                    Placement = data.adType,
+                    AdNetwork = data.network.name,
+                    AdFormat = data.adType,
+                    AdUnit = data.ad_unit_id
                 };
 
                 this.analyticServices.Track(adsRevenueEvent);

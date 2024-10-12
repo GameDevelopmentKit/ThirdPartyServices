@@ -38,7 +38,7 @@ namespace ServiceImplementation.Configs.Editor
 
             PlayerSettings.SetScriptingDefineSymbols(buildTarget, string.Join(Delemiter, defineSymbols));
         }
-        
+
         // Modify the package in the manifest.json
         // add: true to add a package, false to remove a package
         // packageName: the package name to add or remove
@@ -48,7 +48,7 @@ namespace ServiceImplementation.Configs.Editor
             var manifestPath = Path.Combine(Application.dataPath, "../Packages/manifest.json");
             if (File.Exists(manifestPath))
             {
-                var  manifestContent = File.ReadAllText(manifestPath);
+                var manifestContent = File.ReadAllText(manifestPath);
                 var manifestJson    = JObject.Parse(manifestContent);
 
                 // Check if the package already exists
@@ -64,10 +64,7 @@ namespace ServiceImplementation.Configs.Editor
                     }
                     else
                     {
-                        if (packageToken.ToString().Equals(packagePath))
-                        {
-                            Debug.LogWarning($"Package {packageName} already exists. No action taken.");
-                        }
+                        if (packageToken.ToString().Equals(packagePath)) Debug.LogWarning($"Package {packageName} already exists. No action taken.");
                         manifestJson["dependencies"][packageName] = packagePath;
                         Debug.LogWarning($"Update package path for {packageName}.");
                     }
@@ -81,18 +78,14 @@ namespace ServiceImplementation.Configs.Editor
                         Debug.Log($"Package {packageName} removed successfully.");
                     }
                     else
-                    {
                         Debug.LogWarning($"Package {packageName} does not exist. No action taken.");
-                    }
                 }
 
                 // Write the updated JSON back to the file
                 File.WriteAllText(manifestPath, manifestJson.ToString());
             }
             else
-            {
                 Debug.LogError("manifest.json not found.");
-            }
 
             Client.Resolve();
         }
