@@ -120,7 +120,9 @@
                 UnityPackageHelper.DownloadThenImportPackage(url, name).Forget();
             }
             else
+            {
                 UnityPackageHelper.DeleteFileIfExists($"Assets/YandexMobileAds/Editor/{xmlName}.xml");
+            }
             #endif
         }
 

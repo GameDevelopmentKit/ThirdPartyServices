@@ -55,7 +55,9 @@
                 #else
             if (webRequest.isNetworkError || webRequest.isHttpError)
                 #endif
+            {
                 Debug.LogError("onelog: Failed to download package: " + webRequest.error);
+            }
             else
             {
                 AssetDatabase.ImportPackage(path, false);
@@ -81,7 +83,9 @@
             await operation;
 
             if (webRequest.result != UnityWebRequest.Result.Success)
+            {
                 Debug.LogError("onelog: Failed to download zip file: " + webRequest.error);
+            }
             else
             {
                 //unzip file to the specified path
