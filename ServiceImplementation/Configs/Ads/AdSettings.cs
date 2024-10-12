@@ -141,7 +141,9 @@
                 this.mYandex.Dashboard.DownloadSDK();
             }
             else
+            {
                 UnityPackageHelper.DeleteFolderIfExists("Assets/YandexMobileAds");
+            }
         }
 
         private void OnChangeCollapsibleBanner()

@@ -78,14 +78,18 @@ namespace ServiceImplementation.Configs.Editor
                         Debug.Log($"Package {packageName} removed successfully.");
                     }
                     else
+                    {
                         Debug.LogWarning($"Package {packageName} does not exist. No action taken.");
+                    }
                 }
 
                 // Write the updated JSON back to the file
                 File.WriteAllText(manifestPath, manifestJson.ToString());
             }
             else
+            {
                 Debug.LogError("manifest.json not found.");
+            }
 
             Client.Resolve();
         }
