@@ -132,20 +132,6 @@ namespace ServiceImplementation.Configs.Ads
 
         #endregion
 
-        #region Mrec
-
-        /// <summary>
-        ///     Auto refresh mrec banner each <see cref="MrecAutoRefreshInterval"/>
-        /// </summary>
-        public bool MrecAutoRefreshEnable { get; private set; }
-
-        /// <summary>
-        ///     The interval auto refresh mrec banner
-        /// </summary>
-        public int MrecAutoRefreshInterval { get; private set; }
-        
-        #endregion
-
         private void FetchRemoteConfig()
         {
             #region General
