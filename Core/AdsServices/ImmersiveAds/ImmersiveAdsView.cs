@@ -2,6 +2,7 @@ namespace Core.AdsServices.ImmersiveAds
 {
     using System;
     using System.Threading.Tasks;
+    using GameFoundation.DI;
     using GameFoundation.Signals;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;

@@ -15,6 +15,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs.Ads;
     using VContainer;
+    using VContainer.Unity;
     #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
     using global::PubScale.SdkOne;
     using ServiceImplementation.AdsServices.PubScale;
