@@ -186,8 +186,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsMRECReady(AdViewPosition adViewPosition)
         {
-            return this.idToMRecLoaded.TryGetValue(this.AppLovinSetting.MRECAdIds[adViewPosition].Id, out _)
-                   && this.idToMRecLoaded[this.AppLovinSetting.MRECAdIds[adViewPosition].Id];
+            if (!this.AppLovinSetting.MRECAdIds.TryGetValue(adViewPosition, out var adId)) return false;
+            return this.idToMRecLoaded.TryGetValue(adId.Id, out _)
+                   && this.idToMRecLoaded[adId.Id];
         }
 
         public void HideAllMREC()
