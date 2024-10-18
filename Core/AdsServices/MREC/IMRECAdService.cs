@@ -3,7 +3,7 @@ namespace Core.AdsServices
     public interface IMRECAdService
     {
         void ShowMREC(string                     placement, AdScreenPosition position);
-        bool IsMRECReady(string                  placement);
+        bool IsMRECReady(string                  placement, AdScreenPosition position);
         void ShowMREC(AdViewPosition             adViewPosition);
         void HideMREC(AdViewPosition             adViewPosition);
         void StopMRECAutoRefresh(AdViewPosition  adViewPosition);
