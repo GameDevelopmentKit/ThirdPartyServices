@@ -151,6 +151,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
         }
 
         // test show mrec
+
+#region Test mrec
+
         public void ShowMREC(string placement, AdScreenPosition position)
         {
             var adsId = this.AppLovinSetting.MRECAd[AdPlacement.PlacementWithName(placement)].Id;
@@ -159,7 +162,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.ShowMRec(adsId);
         }
 
-        public bool IsMRECReady(string placement)
+        public bool IsMRECReady(string placement, AdScreenPosition position)
         {
             if (!this.AppLovinSetting.MRECAd.TryGetValue(AdPlacement.PlacementWithName(placement), out var adId)) return false;
 
@@ -167,6 +170,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 && this.idToMRecLoaded[adId.Id];
         }
 
+#endregion
         public void ShowMREC(AdViewPosition adViewPosition) { this.InternalShowMREC(adViewPosition); }
 
         protected virtual void InternalShowMREC(AdViewPosition adViewPosition)
