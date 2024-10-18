@@ -236,6 +236,18 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private readonly Dictionary<string, BannerViewHandler> idToMrecViewHandler = new();
 
+        // test show mrec
+        public void ShowMREC(string placement, AdScreenPosition position)
+        {
+            this.LoadAllMRec();
+            var adId = this.ADMobSettings.MRECAd[AdPlacement.PlacementWithName(placement)];
+            var mrecBannerHandler = this.idToMrecViewHandler[adId.Id];
+            mrecBannerHandler.bannerView.SetPosition(position.x, position.y);
+            mrecBannerHandler.bannerView.Show();
+
+            this.MrecBannerViewDisplay();
+        }
+
         public void ShowMREC(AdViewPosition adViewPosition)
         {
             this.LoadAllMRec();

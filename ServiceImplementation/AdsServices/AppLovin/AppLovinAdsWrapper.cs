@@ -150,6 +150,15 @@ namespace ServiceImplementation.AdsServices.AppLovin
             }
         }
 
+        // test show mrec
+        public void ShowMREC(string placement, AdScreenPosition position)
+        {
+            var adsId = this.AppLovinSetting.MRECAd[AdPlacement.PlacementWithName(placement)].Id;
+            this.OnMRecAdDisplayed(adsId);
+            MaxSdk.UpdateMRecPosition(adsId, position.x, position.y);
+            MaxSdk.ShowMRec(adsId);
+        }
+
         public void ShowMREC(AdViewPosition adViewPosition) { this.InternalShowMREC(adViewPosition); }
 
         protected virtual void InternalShowMREC(AdViewPosition adViewPosition)
