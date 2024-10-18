@@ -125,6 +125,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void InitMRECAds()
         {
             this.CreateAllMRec();
+            this.CreateMrec();
             MaxSdkCallbacks.MRec.OnAdLoadedEvent += this.OnMRecAdLoadedEvent;
             MaxSdkCallbacks.MRec.OnAdLoadFailedEvent += this.OnMRecAdLoadFailedEvent;
             MaxSdkCallbacks.MRec.OnAdClickedEvent += this.OnMRecAdClickedEvent;
@@ -154,6 +155,19 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
 #region Test mrec
 
+        private void CreateMrec()
+        {
+            foreach (var (placement, adUnitId) in this.AppLovinSetting.MRECAd)
+            {
+                var adsId = adUnitId.Id;
+                if (this.idMRecCreating.Contains(adsId)) continue;
+                this.idMRecCreating.Add(adsId);
+
+                this.logService.Log($"Check max init {MaxSdk.IsInitialized()}");
+                MaxSdk.CreateMRec(adUnitId.Id, MaxSdkBase.AdViewPosition.BottomCenter);
+            }
+        }
+        
         public void ShowMREC(string placement, AdScreenPosition position)
         {
             var adsId = this.AppLovinSetting.MRECAd[AdPlacement.PlacementWithName(placement)].Id;
