@@ -156,7 +156,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             var adsId = this.AppLovinSetting.MRECAdIds[adViewPosition].Id;
             this.OnMRecAdDisplayed(adsId);
-            MaxSdk.UpdateMRecPosition(adsId, this.ConvertAdViewPosition(adViewPosition));
+            // MaxSdk.UpdateMRecPosition(adsId, this.ConvertAdViewPosition(adViewPosition));
+            MaxSdk.UpdateMRecPosition(adsId, (float)Screen.width / 2, 700);
             MaxSdk.ShowMRec(this.AppLovinSetting.MRECAdIds[adViewPosition].Id);
         }
 
