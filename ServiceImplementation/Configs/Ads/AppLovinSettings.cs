@@ -110,6 +110,11 @@
         public Dictionary_AdViewPosition_AdId MRECAdIds { get => this.mMRECAdIds; set => this.mMRECAdIds = value; }
 
         /// <summary>
+        /// Gets or sets the default MREC ad identifier.
+        /// </summary>
+        public Dictionary<AdPlacement, AdId> MRECAd { get => this.mMRECAd; set => this.mMRECAd = value as Dictionary_AdPlacement_AdId; }
+
+        /// <summary>
         /// Gets or sets the list of custom banner identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
@@ -146,6 +151,8 @@
         [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")] private AdId mAOAAdId;
 
         [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")] private Dictionary_AdViewPosition_AdId mMRECAdIds;
+
+        [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")] private Dictionary_AdPlacement_AdId mMRECAd;
 
         [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
 
