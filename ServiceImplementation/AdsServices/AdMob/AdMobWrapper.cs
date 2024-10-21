@@ -240,12 +240,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region Test MREC
 
-        public void ShowMREC(string placement, AdScreenPosition position)
+        public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             this.LoadAllMRec();
             var adId              = this.ADMobSettings.MRECAd[AdPlacement.PlacementWithName(placement)];
             var mrecBannerHandler = this.idToMrecViewHandler[adId.Id];
-            mrecBannerHandler.bannerView.SetPosition(position.x, position.y);
+            mrecBannerHandler.bannerView.SetPosition((int)position.x, (int)position.y);
             mrecBannerHandler.bannerView.Show();
 
             this.MrecBannerViewDisplay();
@@ -273,7 +273,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (this.idToMrecViewHandler.TryGetValue(adId.Id, out var bannerViewHandler)) return;
 
-            bannerViewHandler = new BannerViewHandler(adId.Id, AdSize.MediumRectangle, adPosition.x, adPosition.y);
+            bannerViewHandler = new BannerViewHandler(adId.Id, AdSize.MediumRectangle, (int)adPosition.x, (int)adPosition.y);
             this.idToMrecViewHandler.Add(adId.Id, bannerViewHandler);
 
             bannerViewHandler.bannerView.OnBannerAdLoaded     += OnMrecBannerLoaded;
@@ -308,6 +308,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             mrecBannerHandler.bannerView.Show();
 
             this.MrecBannerViewDisplay();
+        }
+
+        public void HideMREC(string placement, AdScreenPosition position)
+        {
+            
         }
 
         public void HideMREC(AdViewPosition adViewPosition)
@@ -610,8 +615,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public BannerViewHandler(string adId, AdSize adSize, int x, int y)
         {
-            this.adId       = adId;
-            this.adSize     = adSize;
+            this.adId   = adId;
+            this.adSize = adSize;
+            this.x      = x;
+            this.y      = y;
             this.CreateBannerView();
         }
 

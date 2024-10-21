@@ -151,10 +151,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
             }
         }
 
-        // test show mrec
-
-#region Test mrec
-
         private void CreateMrec()
         {
             foreach (var (placement, adUnitId) in this.AppLovinSetting.MRECAd)
@@ -168,11 +164,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
             }
         }
         
-        public void ShowMREC(string placement, AdScreenPosition position)
+        public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
-            var adsId = this.AppLovinSetting.MRECAd[AdPlacement.PlacementWithName(placement)].Id;
+            var density = MaxSdkUtils.GetScreenDensity();
+            var adsId   = this.AppLovinSetting.MRECAd[AdPlacement.PlacementWithName(placement)].Id;
             this.OnMRecAdDisplayed(adsId);
-            MaxSdk.UpdateMRecPosition(adsId, position.x, position.y);
+            var mrecPosition = position.GetMRECPosition();
+            MaxSdk.UpdateMRecPosition(adsId, mrecPosition.x + offset.x, mrecPosition.y + offset.y);
             MaxSdk.ShowMRec(adsId);
         }
 
@@ -184,7 +182,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 && this.idToMRecLoaded[adId.Id];
         }
 
-#endregion
         public void ShowMREC(AdViewPosition adViewPosition) { this.InternalShowMREC(adViewPosition); }
 
         protected virtual void InternalShowMREC(AdViewPosition adViewPosition)
@@ -193,6 +190,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.OnMRecAdDisplayed(adsId);
             MaxSdk.UpdateMRecPosition(adsId, this.ConvertAdViewPosition(adViewPosition));
             MaxSdk.ShowMRec(this.AppLovinSetting.MRECAdIds[adViewPosition].Id);
+        }
+
+        public void HideMREC(string placement, AdScreenPosition position)
+        {
+            var adsId = this.AppLovinSetting.MRECAd[AdPlacement.PlacementWithName(placement)].Id;
+            this.HideMREC(adsId);
         }
 
         public void HideMREC(AdViewPosition adViewPosition)

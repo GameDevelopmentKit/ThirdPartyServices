@@ -283,13 +283,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             if (!this.adServicesConfig.EnableMRECAd) return;
         }
-
+        public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset) {}
         public void HideMREC(AdViewPosition adViewPosition)             { }
+        public void HideMREC(string placement, AdScreenPosition position) { }
         public void StopMRECAutoRefresh(AdViewPosition adViewPosition)  { }
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
         public void LoadMREC(AdViewPosition adViewPosition)             { }
         public bool IsMRECReady(AdViewPosition adViewPosition)          { return false; }
         public void HideAllMREC()                                       { }
+
 
         #endregion
 
