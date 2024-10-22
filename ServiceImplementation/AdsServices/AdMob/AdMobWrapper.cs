@@ -245,7 +245,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.LoadAllMRec();
             var adId              = this.ADMobSettings.MRECAd[AdPlacement.PlacementWithName(placement)];
             var mrecBannerHandler = this.idToMrecViewHandler[adId.Id];
-            var mrecPosition      = position.ToAdmobPosition() + offset;
+            var mrecPosition      = (position + offset).ToAdmobPosition();
             mrecBannerHandler.bannerView.SetPosition((int)mrecPosition.x, (int)mrecPosition.y);
             mrecBannerHandler.bannerView.Show();
 

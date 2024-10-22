@@ -169,7 +169,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var density = MaxSdkUtils.GetScreenDensity();
             var adsId   = this.AppLovinSetting.MRECAd[AdPlacement.PlacementWithName(placement)].Id;
             this.OnMRecAdDisplayed(adsId);
-            var mrecPosition = position.GetMRECPosition() + offset;
+            var mrecPosition = (position + offset).GetMRECPosition();
             MaxSdk.UpdateMRecPosition(adsId, mrecPosition.x, mrecPosition.y);
             MaxSdk.ShowMRec(adsId);
         }
