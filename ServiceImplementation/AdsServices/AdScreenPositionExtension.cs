@@ -22,13 +22,12 @@
         #if ADMOB
         public static AdScreenPosition ToAdmobPosition(this AdScreenPosition adScreenPosition)
         {
-            var dpW     = ToDp(Screen.width);
-            var dpH     = ToDp(Screen.height);
-            var dpMrecW = ToDp(MREC_WIDTH);
-            var dpMrecH = ToDp(MREC_HEIGHT);
+            var dpW = ToDp(Screen.width);
+            var dpH = ToDp(Screen.height);
 
-            var connerPosX = (dpW - Screen.dpi * MREC_WIDTH  / 160f) * (adScreenPosition.x / Screen.width);
-            var connerPosY = (dpH - Screen.dpi * MREC_HEIGHT / 160f) * (adScreenPosition.y / Screen.height);
+            var connerPosX = dpW * (adScreenPosition.x / Screen.width) - MREC_WIDTH * (Screen.dpi / 160f) * (adScreenPosition.x / Screen.width) * dpW / Screen.width;
+
+            var connerPosY = dpH * (adScreenPosition.y / Screen.height) - MREC_HEIGHT * (Screen.dpi / 160f) * (adScreenPosition.y / Screen.height) * dpH / Screen.height;
 
             return new AdScreenPosition(connerPosX, connerPosY);
         }
