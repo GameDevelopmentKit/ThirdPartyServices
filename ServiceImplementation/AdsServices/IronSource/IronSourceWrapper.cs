@@ -278,18 +278,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
 
         #region MREC
-
-        public void ShowMREC(AdViewPosition adViewPosition)
-        {
-            if (!this.adServicesConfig.EnableMRECAd) return;
-        }
-        public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset) {}
-        public void HideMREC(AdViewPosition adViewPosition)             { }
-        public void HideMREC(string placement, AdScreenPosition position) { }
-        public void StopMRECAutoRefresh(AdViewPosition adViewPosition)  { }
+        
+        public void ShowMREC(string                     placement, AdScreenPosition position, AdScreenPosition offset) {}
+        public bool IsMRECReady(string                  placement, AdScreenPosition position) { return false;}
+        public void HideMREC(string                     placement, AdScreenPosition position) { }
+        public void StopMRECAutoRefresh(AdViewPosition  adViewPosition) { }
         public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
-        public void LoadMREC(AdViewPosition adViewPosition)             { }
-        public bool IsMRECReady(AdViewPosition adViewPosition)          { return false; }
         public void HideAllMREC()                                       { }
 
 
