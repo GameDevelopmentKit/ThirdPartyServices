@@ -25,8 +25,8 @@
         {
             var admobCanvasWidth = ADMOB_CANVAS_HEIGHT * Screen.width / Screen.height;
 
-            var connerPosX = (admobCanvasWidth    - MREC_WIDTH)  * (adScreenPosition.x / Screen.safeArea.width);
-            var connerPosY = (ADMOB_CANVAS_HEIGHT - MREC_HEIGHT) * (adScreenPosition.y / Screen.safeArea.height);
+            var connerPosX = (admobCanvasWidth    - MREC_WIDTH)  * (adScreenPosition.x / Screen.width);
+            var connerPosY = (ADMOB_CANVAS_HEIGHT - MREC_HEIGHT) * (adScreenPosition.y / Screen.height);
 
             return new AdScreenPosition(connerPosX, connerPosY);
         }
