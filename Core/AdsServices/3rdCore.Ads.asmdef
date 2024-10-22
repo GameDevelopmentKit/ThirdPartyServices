@@ -10,8 +10,7 @@
     "GameFoundation.Signals",
     "GameFoundation.UIModule",
     "FirebaseRemoteConfig",
-    "GameFoundation.DI",
-    "MaxSdk.Scripts"
+    "GameFoundation.DI"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
