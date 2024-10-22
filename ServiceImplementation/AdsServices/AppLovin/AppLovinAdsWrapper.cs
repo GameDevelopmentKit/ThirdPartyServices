@@ -195,16 +195,16 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public void HideMREC(string placement, AdScreenPosition position)
         {
             var adsId = this.AppLovinSetting.MRECAd[AdPlacement.PlacementWithName(placement)].Id;
-            this.HideMREC(adsId);
+            this.InternalHideMREC(adsId);
         }
 
         public void HideMREC(AdViewPosition adViewPosition)
         {
             var adsId = this.AppLovinSetting.MRECAdIds[adViewPosition].Id;
-            this.HideMREC(adsId);
+            this.InternalHideMREC(adsId);
         }
 
-        public void HideMREC(string adUnitId)
+        public void InternalHideMREC(string adUnitId)
         {
             this.OnMRecAdDismissed(adUnitId);
             MaxSdk.HideMRec(adUnitId);
@@ -233,7 +233,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             foreach (var adUnitId in this.idMRecCreating)
             {
-                this.HideMREC(adUnitId);
+                this.InternalHideMREC(adUnitId);
             }
         }
 
