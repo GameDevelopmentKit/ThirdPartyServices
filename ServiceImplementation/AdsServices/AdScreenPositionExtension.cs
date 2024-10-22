@@ -22,14 +22,18 @@
         #if ADMOB
         public static AdScreenPosition ToAdmobPosition(this AdScreenPosition adScreenPosition)
         {
-            var dpW = Screen.width  * 160 / Screen.dpi;
-            var dpH = Screen.height * 160 / Screen.dpi;
+            var dpW     = ToDp(Screen.width);
+            var dpH     = ToDp(Screen.height);
+            var dpMrecW = ToDp(MREC_WIDTH);
+            var dpMrecH = ToDp(MREC_HEIGHT);
 
-            var connerPosX = dpW * (adScreenPosition.x / Screen.width);
-            var connerPosY = dpH * (adScreenPosition.y / Screen.height);
+            var connerPosX = (dpW - dpMrecW) * (adScreenPosition.x / Screen.width);
+            var connerPosY = (dpH - dpMrecH) * (adScreenPosition.y / Screen.height);
 
             return new AdScreenPosition(connerPosX, connerPosY);
         }
+
+        public static float ToDp(float pixel) { return pixel * 160f / Screen.dpi; }
         #endif
     }
 }
