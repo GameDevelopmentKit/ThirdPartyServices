@@ -35,6 +35,8 @@
         public bool EnableInterCappingTimeFocus => this.enableInterCappingTimeFocus;
         public bool EnableBreakAds              => this.enableBreakAds;
 
+        public string IntersInsteadAoaResumePlacement => this.mIntersInsteadAoaResumePlacement;
+
         public bool CollapsibleRefreshOnScreenShow => this.mCollapsibleRefreshOnScreenShow;
 
         public List<string> CollapsibleIgnoreRefreshOnScreens => this.mCollapsibleIgnoreRefreshOnScreens;
@@ -60,6 +62,8 @@
         [SerializeField] [FoldoutGroup("Misc")] [LabelText("Enable Inter Capping Time Focus", SdfIconType.Download)] private bool enableInterCappingTimeFocus;
 
         [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)] [FoldoutGroup("Misc")] private bool enableBreakAds;
+
+        [SerializeField] [LabelText("Inter AOA Placement")] [FoldoutGroup("Misc")] private string mIntersInsteadAoaResumePlacement = "inter_aoa";
 
         [SerializeField] [LabelText("Banner Load Strategy", SdfIconType.BookmarkFill)] [FoldoutGroup("Misc")] private BannerLoadStrategy bannerLoadStrategy = BannerLoadStrategy.AfterLoading;
 
