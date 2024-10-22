@@ -145,8 +145,6 @@
 
         [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")] private AdId mAOAAdId;
 
-        [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")] private Dictionary_AdViewPosition_AdId mMRECAdIds;
-
         [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")] private Dictionary_AdPlacement_AdId mRECAdIds;
 
         [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomBannerAdIds;

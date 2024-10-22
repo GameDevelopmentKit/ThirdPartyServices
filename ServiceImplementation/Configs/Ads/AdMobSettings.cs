@@ -237,8 +237,6 @@
 
         [SerializeField] [LabelText("Native")] [BoxGroup("Default Id")] private List<AdId> mNativeAdIds;
 
-        [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")] private Dictionary_AdViewPosition_AdId mMRECAdIds;
-
         [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
 
         [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomInterstitialAdIds;
