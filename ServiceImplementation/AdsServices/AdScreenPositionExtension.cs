@@ -27,8 +27,8 @@
             var dpMrecW = ToDp(MREC_WIDTH);
             var dpMrecH = ToDp(MREC_HEIGHT);
 
-            var connerPosX = (dpW - dpMrecW) * (adScreenPosition.x / Screen.width);
-            var connerPosY = (dpH - dpMrecH) * (adScreenPosition.y / Screen.height);
+            var connerPosX = (dpW - Screen.dpi * MREC_WIDTH  / 160f) * (adScreenPosition.x / Screen.width);
+            var connerPosY = (dpH - Screen.dpi * MREC_HEIGHT / 160f) * (adScreenPosition.y / Screen.height);
 
             return new AdScreenPosition(connerPosX, connerPosY);
         }
