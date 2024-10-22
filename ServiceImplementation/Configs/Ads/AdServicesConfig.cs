@@ -92,6 +92,11 @@ namespace ServiceImplementation.Configs.Ads
         /// </summary>
         public bool ResetInterAdIntervalAfterRewardAd { get; private set; }
 
+        /// <summary>
+        ///     Is Show the interstitial ad instead of AOA ad when resume app
+        /// </summary>
+        public bool IsIntersInsteadAoaResume { get; private set; }
+
         #endregion
 
         #region Rewarded
@@ -168,6 +173,7 @@ namespace ServiceImplementation.Configs.Ads
             this.DelayFirstInterstitialAdInterval  = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersADInterval);
             this.DelayFirstInterNewSession         = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersNewSession);
             this.ResetInterAdIntervalAfterRewardAd = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd);
+            this.IsIntersInsteadAoaResume          = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.IsIntersInsteadAoaResume);
 
             #endregion
 

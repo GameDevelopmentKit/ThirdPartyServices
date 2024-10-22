@@ -77,6 +77,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.TryAddAddsConfig(RemoteConfigKey.DelayFirstIntersADInterval, "0");
             this.TryAddAddsConfig(RemoteConfigKey.DelayFirstIntersNewSession, "0");
             this.TryAddAddsConfig(RemoteConfigKey.ResetInterAdIntervalAfterRewardAd, "true");
+            this.TryAddAddsConfig(RemoteConfigKey.IsIntersInsteadAoaResume, "false");
 
             #endregion
 
