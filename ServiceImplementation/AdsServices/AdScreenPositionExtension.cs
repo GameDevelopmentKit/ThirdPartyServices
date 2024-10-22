@@ -23,12 +23,13 @@
         #if ADMOB
         public static AdScreenPosition ToAdmobPosition(this AdScreenPosition adScreenPosition)
         {
-            var admobCanvasWidth = ADMOB_CANVAS_HEIGHT * Screen.width / Screen.height;
-
-            var connerPosX = (admobCanvasWidth    - MREC_WIDTH)  * (adScreenPosition.x / Screen.width);
-            var connerPosY = (ADMOB_CANVAS_HEIGHT - MREC_HEIGHT) * (adScreenPosition.y / Screen.height);
-
-            return new AdScreenPosition(connerPosX, connerPosY);
+            // var admobCanvasWidth = ADMOB_CANVAS_HEIGHT * Screen.width / Screen.height;
+            //
+            // var connerPosX = (admobCanvasWidth    - MREC_WIDTH)  * (adScreenPosition.x / Screen.width);
+            // var connerPosY = (ADMOB_CANVAS_HEIGHT - MREC_HEIGHT) * (adScreenPosition.y / Screen.height);
+            //
+            // return new AdScreenPosition(connerPosX, connerPosY);
+            return adScreenPosition;
         }
         #endif
     }
