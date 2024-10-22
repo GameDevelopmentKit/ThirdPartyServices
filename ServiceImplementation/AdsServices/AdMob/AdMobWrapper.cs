@@ -274,7 +274,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (this.idToMrecViewHandler.TryGetValue(adId.Id, out var bannerViewHandler)) return;
 
-            bannerViewHandler = new BannerViewHandler(adId.Id, AdSize.MediumRectangle, (int)adPosition.x, (int)adPosition.y);
+            var mrecPosition = adPosition.ToAdmobPosition();
+            bannerViewHandler = new BannerViewHandler(adId.Id, AdSize.MediumRectangle, (int)mrecPosition.x, (int)mrecPosition.y);
             this.idToMrecViewHandler.Add(adId.Id, bannerViewHandler);
 
             bannerViewHandler.bannerView.OnBannerAdLoaded     += OnMrecBannerLoaded;
