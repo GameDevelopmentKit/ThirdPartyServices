@@ -14,15 +14,15 @@ namespace Core.AdsServices
             this.y = y;
         }
 
-        public static AdScreenPosition TopCenter    => new AdScreenPosition(Screen.safeArea.width / 2, 0);
-        public static AdScreenPosition TopLeft      => new AdScreenPosition(0,                         0);
-        public static AdScreenPosition TopRight     => new AdScreenPosition(Screen.safeArea.width,     0);
+        public static AdScreenPosition TopCenter    => new AdScreenPosition(Screen.safeArea.width / 2, Screen.safeArea.height);
+        public static AdScreenPosition TopLeft      => new AdScreenPosition(0,                         Screen.safeArea.height);
+        public static AdScreenPosition TopRight     => new AdScreenPosition(Screen.safeArea.width,     Screen.safeArea.height);
         public static AdScreenPosition Centered     => new AdScreenPosition(Screen.safeArea.width / 2, Screen.safeArea.height / 2);
         public static AdScreenPosition CenterLeft   => new AdScreenPosition(0,                         Screen.safeArea.height / 2);
         public static AdScreenPosition CenterRight  => new AdScreenPosition(Screen.safeArea.width,     Screen.safeArea.height / 2);
-        public static AdScreenPosition BottomLeft   => new AdScreenPosition(0,                         Screen.safeArea.height);
-        public static AdScreenPosition BottomCenter => new AdScreenPosition(Screen.safeArea.width / 2, Screen.safeArea.height);
-        public static AdScreenPosition BottomRight  => new AdScreenPosition(Screen.safeArea.width,     Screen.safeArea.height);
+        public static AdScreenPosition BottomLeft   => new AdScreenPosition(0,                         0);
+        public static AdScreenPosition BottomCenter => new AdScreenPosition(Screen.safeArea.width / 2, 0);
+        public static AdScreenPosition BottomRight  => new AdScreenPosition(Screen.safeArea.width,     0);
 
         public static implicit operator Vector2(AdScreenPosition adScreenPosition) { return new Vector2(adScreenPosition.x, adScreenPosition.y); }
 
