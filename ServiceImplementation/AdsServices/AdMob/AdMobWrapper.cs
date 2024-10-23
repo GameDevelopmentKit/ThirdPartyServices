@@ -241,7 +241,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.LoadAllMRec();
             var adId              = this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)];
             var mrecBannerHandler = this.idToMrecViewHandler[adId.Id];
-            var mrecPosition      = (position.ApexToUnityCoordinateSystem() + offset.VectorToUnityCoordinateSystem()).ToAdmobPosition();
+            var mrecPosition      = (position.CanvasToUnityCoordinateSystem() + offset.FlipY()).ToAdmobPosition();
             mrecBannerHandler.bannerView.SetPosition((int)mrecPosition.x, (int)mrecPosition.y);
             mrecBannerHandler.bannerView.Show();
 
@@ -270,7 +270,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (this.idToMrecViewHandler.TryGetValue(adId.Id, out var bannerViewHandler)) return;
 
-            var mrecPosition = adPosition.ApexToUnityCoordinateSystem().ToAdmobPosition();
+            var mrecPosition = adPosition.CanvasToUnityCoordinateSystem().ToAdmobPosition();
             bannerViewHandler = new BannerViewHandler(adId.Id, AdSize.MediumRectangle, (int)mrecPosition.x, (int)mrecPosition.y);
             this.idToMrecViewHandler.Add(adId.Id, bannerViewHandler);
 
