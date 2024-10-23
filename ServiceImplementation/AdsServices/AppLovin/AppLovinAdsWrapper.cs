@@ -103,21 +103,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
                    };
         }
 
-        protected MaxSdkBase.AdViewPosition ConvertAdViewPosition(AdViewPosition adViewPosition) =>
-            adViewPosition switch
-            {
-                AdViewPosition.TopLeft      => MaxSdkBase.AdViewPosition.TopLeft,
-                AdViewPosition.TopCenter    => MaxSdkBase.AdViewPosition.TopCenter,
-                AdViewPosition.TopRight     => MaxSdkBase.AdViewPosition.TopRight,
-                AdViewPosition.CenterLeft   => MaxSdkBase.AdViewPosition.CenterLeft,
-                AdViewPosition.Centered     => MaxSdkBase.AdViewPosition.Centered,
-                AdViewPosition.CenterRight  => MaxSdkBase.AdViewPosition.CenterRight,
-                AdViewPosition.BottomLeft   => MaxSdkBase.AdViewPosition.BottomLeft,
-                AdViewPosition.BottomCenter => MaxSdkBase.AdViewPosition.BottomCenter,
-                AdViewPosition.BottomRight  => MaxSdkBase.AdViewPosition.BottomRight,
-                _                           => MaxSdkBase.AdViewPosition.BottomCenter
-            };
-
         #endregion
 
         #region MREC
@@ -139,63 +124,59 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void CreateAllMRec()
         {
-            foreach (var (position, adUnitId) in this.AppLovinSetting.MRECAdIds)
+            foreach (var (placement, adUnitId) in this.AppLovinSetting.MRECAdIds)
             {
                 var adsId = adUnitId.Id;
                 if (this.idMRecCreating.Contains(adsId)) continue;
                 this.idMRecCreating.Add(adsId);
 
                 this.logService.Log($"Check max init {MaxSdk.IsInitialized()}");
-                MaxSdk.CreateMRec(adUnitId.Id, this.ConvertAdViewPosition(position));
+                MaxSdk.CreateMRec(adUnitId.Id, MaxSdkBase.AdViewPosition.BottomCenter);
             }
         }
-
-        public void ShowMREC(AdViewPosition adViewPosition) { this.InternalShowMREC(adViewPosition); }
-
-        protected virtual void InternalShowMREC(AdViewPosition adViewPosition)
+        
+        public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
-            var adsId = this.AppLovinSetting.MRECAdIds[adViewPosition].Id;
+            var density = MaxSdkUtils.GetScreenDensity();
+            var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.OnMRecAdDisplayed(adsId);
-            MaxSdk.UpdateMRecPosition(adsId, this.ConvertAdViewPosition(adViewPosition));
-            MaxSdk.ShowMRec(this.AppLovinSetting.MRECAdIds[adViewPosition].Id);
+            var mrecPosition = (position + offset).GetMRECPosition();
+            MaxSdk.UpdateMRecPosition(adsId, mrecPosition.x, mrecPosition.y);
+            MaxSdk.ShowMRec(adsId);
         }
 
-        public void HideMREC(AdViewPosition adViewPosition)
+        public bool IsMRECReady(string placement, AdScreenPosition position)
         {
-            var adsId = this.AppLovinSetting.MRECAdIds[adViewPosition].Id;
-            this.HideMREC(adsId);
+            if (!this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var adId)) return false;
+
+            return this.idToMRecLoaded.TryGetValue(adId.Id, out _)
+                && this.idToMRecLoaded[adId.Id];
         }
 
-        public void HideMREC(string adUnitId)
+        public void HideMREC(string placement, AdScreenPosition position)
+        {
+            var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            this.InternalHideMREC(adsId);
+        }
+
+        public void InternalHideMREC(string adUnitId)
         {
             this.OnMRecAdDismissed(adUnitId);
             MaxSdk.HideMRec(adUnitId);
         }
 
-        public void StopMRECAutoRefresh(AdViewPosition adViewPosition) { this.StopMRECAutoRefresh(this.AppLovinSetting.MRECAdIds[adViewPosition].Id); }
-
         public void StopMRECAutoRefresh(string adUnitId) { MaxSdk.StopMRecAutoRefresh(adUnitId); }
 
-        public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { this.StartMRECAutoRefresh(this.AppLovinSetting.MRECAdIds[adViewPosition].Id); }
-
         public void StartMRECAutoRefresh(string adUnitId) { MaxSdk.StartMRecAutoRefresh(adUnitId); }
-
-        public void LoadMREC(AdViewPosition adViewPosition) { this.LoadMREC(this.AppLovinSetting.MRECAdIds[adViewPosition].Id); }
+        
 
         public void LoadMREC(string adUnitId) { MaxSdk.LoadMRec(adUnitId); }
-
-        public bool IsMRECReady(AdViewPosition adViewPosition)
-        {
-            if (!this.AppLovinSetting.MRECAdIds.TryGetValue(adViewPosition, out var adId)) return false;
-            return this.idToMRecLoaded.TryGetValue(adId.Id, out _)
-                   && this.idToMRecLoaded[adId.Id];
-        }
 
         public void HideAllMREC()
         {
             foreach (var adUnitId in this.idMRecCreating)
             {
-                this.HideMREC(adUnitId);
+                this.InternalHideMREC(adUnitId);
             }
         }
 

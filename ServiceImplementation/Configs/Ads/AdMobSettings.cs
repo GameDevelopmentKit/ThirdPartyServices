@@ -101,8 +101,7 @@
         /// <summary>
         /// Gets or sets the default MREC ad identifier.
         /// </summary>
-        public Dictionary_AdViewPosition_AdId MRECAdIds { get => this.mMRECAdIds; set => this.mMRECAdIds = value; }
-
+        public Dictionary<AdPlacement, AdId> MRECAdIds { get => this.mRECAdIds; set => this.mRECAdIds = value as Dictionary_AdPlacement_AdId; }
         /// <summary>
         /// Enables or disables test mode.
         /// </summary>
@@ -238,8 +237,6 @@
 
         [SerializeField] [LabelText("Native")] [BoxGroup("Default Id")] private List<AdId> mNativeAdIds;
 
-        [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")] private Dictionary_AdViewPosition_AdId mMRECAdIds;
-
         [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
 
         [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomInterstitialAdIds;
@@ -249,6 +246,8 @@
         [SerializeField] [LabelText("Rewarded")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomRewardedAdIds;
 
         [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomRewardedInterstitialAdIds;
+
+        [SerializeField] [LabelText("MREC")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mRECAdIds;
 
         [SerializeField] [LabelText("Is Adaptive Banner")] [BoxGroup("Admob Settings")] private bool mIsAdaptiveBannerEnabled = true;
     }
