@@ -103,21 +103,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
                    };
         }
 
-        protected MaxSdkBase.AdViewPosition ConvertAdViewPosition(AdViewPosition adViewPosition) =>
-            adViewPosition switch
-            {
-                AdViewPosition.TopLeft      => MaxSdkBase.AdViewPosition.TopLeft,
-                AdViewPosition.TopCenter    => MaxSdkBase.AdViewPosition.TopCenter,
-                AdViewPosition.TopRight     => MaxSdkBase.AdViewPosition.TopRight,
-                AdViewPosition.CenterLeft   => MaxSdkBase.AdViewPosition.CenterLeft,
-                AdViewPosition.Centered     => MaxSdkBase.AdViewPosition.Centered,
-                AdViewPosition.CenterRight  => MaxSdkBase.AdViewPosition.CenterRight,
-                AdViewPosition.BottomLeft   => MaxSdkBase.AdViewPosition.BottomLeft,
-                AdViewPosition.BottomCenter => MaxSdkBase.AdViewPosition.BottomCenter,
-                AdViewPosition.BottomRight  => MaxSdkBase.AdViewPosition.BottomRight,
-                _                           => MaxSdkBase.AdViewPosition.BottomCenter
-            };
-
         #endregion
 
         #region MREC
@@ -180,11 +165,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.HideMRec(adUnitId);
         }
 
-        public void StopMRECAutoRefresh(AdViewPosition adViewPosition) {  }
-
         public void StopMRECAutoRefresh(string adUnitId) { MaxSdk.StopMRecAutoRefresh(adUnitId); }
-
-        public void StartMRECAutoRefresh(AdViewPosition adViewPosition) {  }
 
         public void StartMRECAutoRefresh(string adUnitId) { MaxSdk.StartMRecAutoRefresh(adUnitId); }
         

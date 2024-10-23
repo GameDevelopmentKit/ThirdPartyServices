@@ -304,14 +304,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.MrecBannerViewDismissed();
         }
 
-        public void StopMRECAutoRefresh(AdViewPosition adViewPosition)
-        {
-        }
-
-        public void StartMRECAutoRefresh(AdViewPosition adViewPosition)
-        {
-        }
-
         public void HideAllMREC() { }
 
         private void LoadAllMRec()
@@ -531,7 +523,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private readonly AdSize     adSize;
         private readonly int x;
         private readonly int y;
-        private readonly AdPosition adPosition;
         private readonly DateTime   lastTimeCreateBanner  = DateTime.Now;
         private readonly TimeSpan   minTimeRecreateBanner = TimeSpan.FromHours(1);
         private          int        loadFailedTime;
@@ -544,14 +535,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.adSize = adSize;
             this.x      = x;
             this.y      = y;
-            this.CreateBannerView();
-        }
-
-        public BannerViewHandler(string adId, AdSize adSize, AdPosition adPosition)
-        {
-            this.adId       = adId;
-            this.adSize     = adSize;
-            this.adPosition = adPosition;
             this.CreateBannerView();
         }
 

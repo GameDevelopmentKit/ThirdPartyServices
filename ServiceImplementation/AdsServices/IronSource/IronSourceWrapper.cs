@@ -282,8 +282,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void ShowMREC(string                     placement, AdScreenPosition position, AdScreenPosition offset) {}
         public bool IsMRECReady(string                  placement, AdScreenPosition position) { return false;}
         public void HideMREC(string                     placement, AdScreenPosition position) { }
-        public void StopMRECAutoRefresh(AdViewPosition  adViewPosition) { }
-        public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
         public void HideAllMREC()                                       { }
 
 

@@ -21,11 +21,6 @@
     }
 
     [Serializable]
-    public class Dictionary_AdViewPosition_AdId : SerializableDictionary<AdViewPosition, AdId>
-    {
-    }
-
-    [Serializable]
     public class Dictionary_AdPlacement_CappingTime : SerializableDictionary<string, CustomCappingTime>
     {
     }
