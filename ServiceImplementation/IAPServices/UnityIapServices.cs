@@ -58,7 +58,7 @@ namespace ServiceImplementation.IAPServices
             this.InitializePurchasing();
         }
 
-        private bool IsInitialized => this.mStoreController != null && this.mStoreExtensionProvider != null;
+        public bool IsInitialized => this.mStoreController != null && this.mStoreExtensionProvider != null;
 
         private void InitializePurchasing()
         {
@@ -140,6 +140,16 @@ namespace ServiceImplementation.IAPServices
                 this.InitializePurchasing();
                 this.logger.Log("BuyProductID FAIL. Not initialized.");
             }
+        }
+        
+        public bool IsProductAvailable(string productId)
+        {
+            if (!this.IsInitialized)
+                return false;
+
+            var product = this.mStoreController.products.WithID(productId);
+
+            return product != null && product.availableToPurchase;
         }
 
         // Restore purchases previously made by this customer. Some platforms automatically restore purchases, like Google. 
