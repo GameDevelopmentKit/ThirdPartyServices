@@ -9,7 +9,6 @@ namespace Core.AnalyticServices.Data
     using GameFoundation.DI;
     using GameFoundation.Signals;
     using UnityEngine;
-    using Utilities.Extension;
 
     public delegate void EventDelegate(IEvent trackedEvent, Dictionary<string, object> data);
 

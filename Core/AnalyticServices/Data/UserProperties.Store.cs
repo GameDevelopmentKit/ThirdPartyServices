@@ -1,10 +1,9 @@
 namespace Core.AnalyticServices.Data
 {
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Runtime.CompilerServices;
+    using Core.AnalyticServices.Tools;
     using UnityEngine;
-    using Utilities.Extension;
 
     /// <summary>
     ///

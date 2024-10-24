@@ -6,7 +6,6 @@ namespace ServiceImplementation.AdsServices
     using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
     using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Signals;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
@@ -14,6 +13,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.PreloadService;
     using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs.Ads;
+    using TheOne.Extensions;
     using VContainer;
     using VContainer.Unity;
     #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
