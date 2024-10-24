@@ -4,9 +4,10 @@
   "references": [
     "GameFoundation.DI",
     "GameFoundation.Signals",
-    "VContainer",
     "GameFoundation.Utilities",
     "GameFoundation.Models",
+    "TheOne.Extensions",
+    "VContainer",
     "ByteBrewSDK",
     "3rd.Configs.Editor",
     "ByteBrewSDK.Editor"

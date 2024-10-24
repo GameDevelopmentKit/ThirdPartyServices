@@ -12,12 +12,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices.Signal;
     using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
+    using TheOne.Extensions;
     using UnityEngine;
     using UnityEngine.Scripting;
     #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS

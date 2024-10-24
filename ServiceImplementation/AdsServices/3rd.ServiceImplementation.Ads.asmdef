@@ -6,7 +6,10 @@
     "EasyMobile.Scripts",
     "3rdCore.Analytic",
     "GameFoundation.DI",
+    "GameFoundation.UIModule",
     "GameFoundation.Utilities",
+    "TheOne.Extensions",
+    "TheOne.Logging",
     "Zenject",
     "VContainer",
     "GameFoundation.Signals",
@@ -20,8 +23,7 @@
     "Amazon.Scripts",
     "Unity.Advertisement.IosSupport",
     "Unity.LevelPlay",
-    "YandexMobileAds.Scripts",
-    "GameFoundation.UIModule"
+    "YandexMobileAds.Scripts"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

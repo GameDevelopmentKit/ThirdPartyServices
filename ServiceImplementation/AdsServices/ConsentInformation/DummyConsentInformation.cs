@@ -1,25 +1,25 @@
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
-    using GameFoundation.Scripts.Utilities.LogService;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     public class DummyConsentInformation : IConsentInformation
     {
         #region Inject
 
-        private readonly ILogService logService;
+        private readonly ILogger logger;
 
         #endregion
 
         [Preserve]
-        public DummyConsentInformation(ILogService logService)
+        public DummyConsentInformation(ILogger logger)
         {
-            this.logService = logService;
+            this.logger = logger;
         }
 
         public void Request()
         {
-            this.logService.Log("Request consent information");
+            this.logger.Debug("Request consent information");
         }
     }
 }
