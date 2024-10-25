@@ -138,6 +138,9 @@ namespace ServiceImplementation.AdsServices
 
             builder.DeclareSignal<AppStateChangeSignal>();
 
+            builder.DeclareSignal<AttDisplayedSignal>();
+            builder.DeclareSignal<AttClosedSignal>();
+
             #endregion
         }
     }
