@@ -24,7 +24,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         public async void Initialize()
         {
             await UniTask.Delay(this.DelayRequestTrackingMillisecond);
-            if (this.thirdPartiesConfig.AdSettings.autoRequestATT) await RequestTracking();
+            if (this.thirdPartiesConfig.AdSettings.autoRequestATT) await this.RequestTracking();
         }
 
         public async UniTask RequestTracking()
