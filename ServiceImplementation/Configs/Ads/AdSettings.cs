@@ -47,7 +47,7 @@
 
         [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Auto Request App Tracking Transparent for iOS")] public bool autoRequestATT = true;
 
-        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Custom App Tracking Transparent for iOS")] public bool customAtt;
+        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Custom App Tracking Transparent for iOS")] [LabelText("Custom Att Scene")] public bool customAtt;
 
         [FoldoutGroup("Misc/ATT (iOS only)/Custom")] [Sirenix.OdinInspector.FilePath(Extensions = "unity")] [ShowIf(nameof(customAtt))] public string attScenePath = "Assets/Scenes/ATTScene.unity";
 
