@@ -1,4 +1,5 @@
-﻿namespace ServiceImplementation.FirebaseAnalyticTracker
+﻿#if FIREBASE_ANALYTIC
+namespace ServiceImplementation.FirebaseAnalyticTracker
 {
     using System;
     using System.Collections.Generic;
@@ -145,4 +146,4 @@
         }
     }
 }
-// #endif
+#endif
