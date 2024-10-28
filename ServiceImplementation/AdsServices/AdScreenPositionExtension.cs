@@ -15,7 +15,8 @@
         
         public static AdScreenPosition FlipY(this AdScreenPosition adScreenPosition)
         {
-            return new AdScreenPosition(adScreenPosition.x, - adScreenPosition.y);
+            var density = MaxSdkUtils.GetScreenDensity();
+            return new AdScreenPosition(adScreenPosition.x, - adScreenPosition.y * density);
         }
 
         #if APPLOVIN
