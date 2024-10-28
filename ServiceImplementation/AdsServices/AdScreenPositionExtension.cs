@@ -16,7 +16,7 @@
         public static AdScreenPosition FlipY(this AdScreenPosition adScreenPosition)
         {
             var density = MaxSdkUtils.GetScreenDensity();
-            return new AdScreenPosition(adScreenPosition.x, - adScreenPosition.y / density);
+            return new AdScreenPosition(adScreenPosition.x, - ToDpi(adScreenPosition.y));
         }
 
         #if APPLOVIN
@@ -45,7 +45,8 @@
             return new AdScreenPosition(connerPosX, connerPosY);
         }
 
-        public static float ToDp(float pixel) { return pixel * 160f / Screen.dpi; }
+        public static float ToDp(float  pixel) { return pixel * 160f / Screen.dpi; }
+        public static float ToDpi(float dp)    { return dp * Screen.dpi / 160f; }
         #endif
     }
 }
