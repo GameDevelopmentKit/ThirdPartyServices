@@ -75,7 +75,7 @@ namespace ServiceImplementation.AdsServices
             builder.Register<PreloadAdService>(Lifetime.Singleton).AsImplementedInterfaces();
             typeof(IAdRevenueTracker).GetDerivedTypes().ForEach(type => builder.Register(type, Lifetime.Singleton).AsImplementedInterfaces());
 
-            builder.Register<AppTrackingServices>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<AppTrackingServices>(Lifetime.Singleton).AsInterfacesAndSelf();
             #if ADMOB
             builder.Register<UmpConsentInformation>(Lifetime.Singleton).AsImplementedInterfaces();
             #else
@@ -137,6 +137,9 @@ namespace ServiceImplementation.AdsServices
             builder.DeclareSignal<AppOpenClickedSignal>();
 
             builder.DeclareSignal<AppStateChangeSignal>();
+
+            builder.DeclareSignal<AttDisplayedSignal>();
+            builder.DeclareSignal<AttClosedSignal>();
 
             #endregion
         }
