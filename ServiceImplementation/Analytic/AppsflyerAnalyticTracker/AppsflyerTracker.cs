@@ -10,7 +10,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
-    using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using GameFoundation.Signals;
