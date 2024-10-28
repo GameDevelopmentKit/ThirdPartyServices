@@ -6,7 +6,7 @@
     public static class AdScreenPositionExtension
     {
         private const int MREC_WIDTH  = 300;
-        private const int MREC_HEIGHT = 250;
+        private const int MREC_HEIGHT = 350;
         
         public static AdScreenPosition CanvasToUnityCoordinateSystem(this AdScreenPosition adScreenPosition)
         {
