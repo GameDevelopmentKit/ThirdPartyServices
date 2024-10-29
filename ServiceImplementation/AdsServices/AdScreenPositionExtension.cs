@@ -6,7 +6,7 @@
     public static class AdScreenPositionExtension
     {
         private const int MREC_WIDTH  = 300;
-        private const int MREC_HEIGHT = 300;
+        private const int MREC_HEIGHT = 250;
         
         public static AdScreenPosition CanvasToUnityCoordinateSystem(this AdScreenPosition adScreenPosition)
         {
@@ -45,7 +45,6 @@
         }
 
         public static float ToDp(float  pixel) { return pixel * 160f / Screen.dpi; }
-        public static float ToDpi(float dp)    { return dp * Screen.dpi / 160f; }
         #endif
     }
 }
