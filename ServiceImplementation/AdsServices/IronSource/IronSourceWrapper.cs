@@ -292,7 +292,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.levelPlayBannerAd = new LevelPlayBannerAd(adsId, LevelPlayAdSize.MEDIUM_RECTANGLE, mrecPosition, placement);
 
             this.levelPlayBannerAd.OnAdLoaded        += this.OnMrecLoaded;
-            this.levelPlayBannerAd.OnAdDisplayed     += this.OnMrecLoaded;
+            this.levelPlayBannerAd.OnAdDisplayed     += this.OnMrecDisplayed;
             this.levelPlayBannerAd.OnAdDisplayFailed += this.OnMrecDisplayFailed;
             this.levelPlayBannerAd.OnAdLoadFailed    += this.OnMrecLoadFailed;
             
@@ -305,7 +305,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.levelPlayBannerAd.HideAd();
             this.levelPlayBannerAd.OnAdLoaded        -= this.OnMrecLoaded;
-            this.levelPlayBannerAd.OnAdDisplayed     -= this.OnMrecLoaded;
+            this.levelPlayBannerAd.OnAdDisplayed     -= this.OnMrecDisplayed;
             this.levelPlayBannerAd.OnAdDisplayFailed -= this.OnMrecDisplayFailed;
             this.levelPlayBannerAd.OnAdLoadFailed    -= this.OnMrecLoadFailed;
             this.levelPlayBannerAd                   =  null;
