@@ -15,7 +15,7 @@
         
         public static AdScreenPosition FlipY(this AdScreenPosition adScreenPosition)
         {
-            return new AdScreenPosition(ToDp(adScreenPosition.x), - ToDp(adScreenPosition.y));
+            return new AdScreenPosition(PixelToDp(adScreenPosition.x), - PixelToDp(adScreenPosition.y));
         }
 
         #if APPLOVIN
@@ -34,8 +34,8 @@
         public static AdScreenPosition ToAdmobPosition(this AdScreenPosition adScreenPosition)
         {
             // calculate in canvas coordinate system
-            var dpW = ToDp(Screen.width);
-            var dpH = ToDp(Screen.height);
+            var dpW = PixelToDp(Screen.width);
+            var dpH = PixelToDp(Screen.height);
 
             var connerPosX = dpW * (adScreenPosition.x / Screen.width) - MREC_WIDTH * (Screen.dpi / 160f) * (adScreenPosition.x / Screen.width) * dpW / Screen.width;
 
@@ -43,8 +43,8 @@
 
             return new AdScreenPosition(connerPosX, connerPosY);
         }
-
-        public static float ToDp(float  pixel) { return pixel * 160f / Screen.dpi; }
         #endif
+        
+        public static float PixelToDp(float pixel) { return pixel * 160f / Screen.dpi; }
     }
 }
