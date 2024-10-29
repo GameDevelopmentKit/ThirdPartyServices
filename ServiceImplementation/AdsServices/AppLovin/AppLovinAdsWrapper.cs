@@ -34,7 +34,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private            Dictionary<AdPlacement, bool> rewardedCompleted = new();
 
         private readonly List<string>                                                         idMRecCreating = new();
-        private readonly Dictionary<string, bool>                                             idToMRecLoaded = new();
         private readonly Dictionary<AdPlacement, KeyValuePair<BannerAdsPosition, BannerSize>> placementToBanner = new();
 
         private bool         isInit;
@@ -147,10 +146,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsMRECReady(string placement, AdScreenPosition position)
         {
-            if (!this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var adId)) return false;
-
-            return this.idToMRecLoaded.TryGetValue(adId.Id, out _)
-                && this.idToMRecLoaded[adId.Id];
+            return this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out _);
         }
 
         public void HideMREC(string placement, AdScreenPosition position)
@@ -631,7 +627,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnMRecAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo maxSdkAdInfo)
         {
             this.StartMRECAutoRefresh(adUnitId);
-            this.idToMRecLoaded[adUnitId] = true;
             var adInfo = new AdInfo(this.AdPlatform, maxSdkAdInfo.AdUnitIdentifier, AdFormatConstants.MREC, maxSdkAdInfo.NetworkName, maxSdkAdInfo.NetworkPlacement, maxSdkAdInfo.Revenue);
             this.signalBus.Fire(new MRecAdLoadedSignal(adUnitId, adInfo));
         }
@@ -640,7 +635,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             this.StopMRECAutoRefresh(adUnitId);
             this.LoadMREC(adUnitId);
-            this.idToMRecLoaded[adUnitId] = false;
             this.signalBus.Fire(new MRecAdLoadFailedSignal(adUnitId));
         }
 
