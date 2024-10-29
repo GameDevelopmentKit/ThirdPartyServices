@@ -15,7 +15,7 @@
         
         public static AdScreenPosition FlipY(this AdScreenPosition adScreenPosition)
         {
-            return new AdScreenPosition(adScreenPosition.x, - adScreenPosition.y * 160f / Screen.dpi);
+            return new AdScreenPosition(ToDp(adScreenPosition.x), - ToDp(adScreenPosition.y));
         }
 
         #if APPLOVIN
