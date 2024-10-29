@@ -124,9 +124,12 @@
         {
             EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin);
             if (this.enableAppLovin)
-                AppLovinSettings.DownloadApplovin();
+                EditorUtils.ModifyPackage(this.enableAppLovin, "com.applovin.mediation.ads", "8.0.1");
             else
+            {
+                EditorUtils.ModifyPackage(this.enableAppLovin, "com.applovin.mediation.ads", "8.0.1");
                 UnityPackageHelper.DeleteFolderIfExists("Assets/MaxSdk");
+            }
         }
 
         private void OnChangeIronSource()
