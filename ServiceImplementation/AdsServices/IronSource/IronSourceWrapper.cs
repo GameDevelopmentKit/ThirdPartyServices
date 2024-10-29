@@ -3,6 +3,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 {
     using System;
     using System.Diagnostics;
+    using com.unity3d.mediation;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
@@ -16,6 +17,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
     using UnityEngine.Scripting;
+    using Debug = UnityEngine.Debug;
 
     public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable, IAdLoadService
     {
@@ -26,17 +28,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private readonly SignalBus          signalBus;
         private readonly ThirdPartiesConfig thirdPartiesConfig;
         private readonly ILogService        logService;
+        private readonly IronSourceSettings ironSourceSettings;
 
         #endregion
 
         [Preserve]
         public IronSourceWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig, ILogService logService)
         {
-            this.analyticServices = analyticServices;
-            this.adServicesConfig = adServicesConfig;
-            this.signalBus = signalBus;
+            this.analyticServices   = analyticServices;
+            this.adServicesConfig   = adServicesConfig;
+            this.signalBus          = signalBus;
             this.thirdPartiesConfig = thirdPartiesConfig;
-            this.logService = logService;
+            this.logService         = logService;
+            this.ironSourceSettings = this.thirdPartiesConfig.AdSettings.IronSource;
         }
 
         public string AdPlatform => AdRevenueConstants.ARSourceIronSource;
@@ -278,13 +282,56 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
 
         #region MREC
-        
-        public void ShowMREC(string                     placement, AdScreenPosition position, AdScreenPosition offset) {}
-        public bool IsMRECReady(string                  placement, AdScreenPosition position) { return false;}
-        public void HideMREC(string                     placement, AdScreenPosition position) { }
+
+        private LevelPlayBannerAd levelPlayBannerAd;
+
+        public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
+        {
+            var mrecPosition       = position == AdScreenPosition.BottomCenter ? LevelPlayBannerPosition.BottomCenter : LevelPlayBannerPosition.TopCenter;
+            var adsId              = this.ironSourceSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            this.levelPlayBannerAd = new LevelPlayBannerAd(adsId, LevelPlayAdSize.MEDIUM_RECTANGLE, mrecPosition, placement);
+
+            this.levelPlayBannerAd.OnAdLoaded        += this.OnMrecLoaded;
+            this.levelPlayBannerAd.OnAdDisplayed     += this.OnMrecLoaded;
+            this.levelPlayBannerAd.OnAdDisplayFailed += this.OnMrecDisplayFailed;
+            this.levelPlayBannerAd.OnAdLoadFailed    += this.OnMrecLoadFailed;
+            
+            this.levelPlayBannerAd.LoadAd();
+            this.levelPlayBannerAd.ShowAd();
+        }
+        public bool IsMRECReady(string                  placement, AdScreenPosition position) { return true;}
+
+        public void HideMREC(string placement, AdScreenPosition position)
+        {
+            this.levelPlayBannerAd.HideAd();
+            this.levelPlayBannerAd.OnAdLoaded        -= this.OnMrecLoaded;
+            this.levelPlayBannerAd.OnAdDisplayed     -= this.OnMrecLoaded;
+            this.levelPlayBannerAd.OnAdDisplayFailed -= this.OnMrecDisplayFailed;
+            this.levelPlayBannerAd.OnAdLoadFailed    -= this.OnMrecLoadFailed;
+            this.levelPlayBannerAd                   =  null;
+        }
         public void HideAllMREC()                                       { }
 
+        private void OnMrecLoaded(LevelPlayAdInfo obj)
+        {
+            Debug.Log($"onelog OnMrecLoaded {obj.ToString()}");
+        }
 
+        private void OnMrecLoadFailed(LevelPlayAdError obj)
+        {
+            Debug.Log($"onelog OnMrecLoadFailed {obj.ToString()}");
+        }
+        
+        private void OnMrecDisplayed(LevelPlayAdInfo obj)
+        {
+            Debug.Log($"onelog OnMrecDisplayed {obj.ToString()}");
+        }
+        
+        private void OnMrecDisplayFailed(LevelPlayAdDisplayInfoError obj)
+        {
+            Debug.Log($"onelog OnMrecDisplayFailed {obj.ToString()}");
+        }
+        
         #endregion
 
         private void ImpressionDataReadyEvent(IronSourceImpressionData impressionData)

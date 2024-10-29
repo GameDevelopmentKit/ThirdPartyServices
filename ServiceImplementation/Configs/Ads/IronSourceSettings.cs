@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using ServiceImplementation.Configs.Common;
     #if UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
     #endif
@@ -22,6 +23,11 @@
                 #endif
             }
         }
+        
+        /// <summary>
+        /// Gets or sets the default MREC ad identifier.
+        /// </summary>
+        public Dictionary<AdPlacement, AdId> MRECAdIds { get => this.mRECAdIds; set => this.mRECAdIds = value as Dictionary_AdPlacement_AdId; }
 
         public bool IsAdaptiveBanner => this.isAdaptiveBanner;
 
@@ -31,6 +37,8 @@
 
         [SerializeField] [OnValueChanged("OnEnableAdQuality")] private bool enableAdQuality = true;
 
+        [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")] private Dictionary_AdPlacement_AdId mRECAdIds;
+        
         #if UNITY_EDITOR
         private void OnEnableAdQuality()
         {
