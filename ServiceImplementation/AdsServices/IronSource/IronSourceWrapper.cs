@@ -90,6 +90,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSource.Agent.setMetaData("is_test_suite", "enable");
             #endif
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
+            LevelPlay.Init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
             #if THEONE_ADS_DEBUG
             IronSource.Agent.setAdaptersDebug(true);
             IronSource.Agent.validateIntegration();
