@@ -2,6 +2,7 @@
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using com.unity3d.mediation;
     using Core.AdsServices;
@@ -283,32 +284,39 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region MREC
 
-        private LevelPlayBannerAd levelPlayBannerAd;
+        private Dictionary<string, LevelPlayBannerAd> idToMRECAd = new();
 
         public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
-            var mrecPosition       = position == AdScreenPosition.BottomCenter ? LevelPlayBannerPosition.BottomCenter : LevelPlayBannerPosition.TopCenter;
-            var adsId              = this.ironSourceSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
-            this.levelPlayBannerAd = new LevelPlayBannerAd(adsId, LevelPlayAdSize.MEDIUM_RECTANGLE, mrecPosition, placement);
+            if (!this.idToMRECAd.ContainsKey(placement))
+            {
+                var mrecPosition = position == AdScreenPosition.BottomCenter ? LevelPlayBannerPosition.BottomCenter : LevelPlayBannerPosition.TopCenter;
+                var adsId        = this.ironSourceSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+                this.idToMRECAd.Add(placement, new LevelPlayBannerAd(adsId, LevelPlayAdSize.MEDIUM_RECTANGLE, mrecPosition, placement));
+            }
+            var mrecAd = this.idToMRECAd[placement];
 
-            this.levelPlayBannerAd.OnAdLoaded        += this.OnMrecLoaded;
-            this.levelPlayBannerAd.OnAdDisplayed     += this.OnMrecDisplayed;
-            this.levelPlayBannerAd.OnAdDisplayFailed += this.OnMrecDisplayFailed;
-            this.levelPlayBannerAd.OnAdLoadFailed    += this.OnMrecLoadFailed;
+            mrecAd.OnAdLoaded        += this.OnMrecLoaded;
+            mrecAd.OnAdLoadFailed    += this.OnMrecLoadFailed;
+            mrecAd.OnAdDisplayed     += this.OnMrecDisplayed;
+            mrecAd.OnAdDisplayFailed += this.OnMrecDisplayFailed;
+            mrecAd.OnAdClicked += this.OnMrecClicked;
             
-            this.levelPlayBannerAd.LoadAd();
-            this.levelPlayBannerAd.ShowAd();
+            mrecAd.LoadAd();
+            mrecAd.ShowAd();
         }
         public bool IsMRECReady(string                  placement, AdScreenPosition position) { return true;}
 
         public void HideMREC(string placement, AdScreenPosition position)
         {
-            this.levelPlayBannerAd.HideAd();
-            this.levelPlayBannerAd.OnAdLoaded        -= this.OnMrecLoaded;
-            this.levelPlayBannerAd.OnAdDisplayed     -= this.OnMrecDisplayed;
-            this.levelPlayBannerAd.OnAdDisplayFailed -= this.OnMrecDisplayFailed;
-            this.levelPlayBannerAd.OnAdLoadFailed    -= this.OnMrecLoadFailed;
-            this.levelPlayBannerAd                   =  null;
+            if (!this.idToMRECAd.TryGetValue(placement, out var mrecAd)) return;
+            mrecAd.HideAd();
+            mrecAd.OnAdLoaded        -= this.OnMrecLoaded;
+            mrecAd.OnAdLoadFailed    -= this.OnMrecLoadFailed;
+            mrecAd.OnAdDisplayed     -= this.OnMrecDisplayed;
+            mrecAd.OnAdDisplayFailed -= this.OnMrecDisplayFailed;
+            mrecAd.OnAdClicked       -= this.OnMrecClicked;
+            
         }
         public void HideAllMREC()                                       { }
 
@@ -330,6 +338,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void OnMrecDisplayFailed(LevelPlayAdDisplayInfoError obj)
         {
             Debug.Log($"onelog OnMrecDisplayFailed {obj.ToString()}");
+        }
+        
+        private void OnMrecClicked(LevelPlayAdInfo obj)
+        {
+            Debug.Log($"onelog OnMrecClicked {obj.ToString()}");
         }
         
         #endregion
