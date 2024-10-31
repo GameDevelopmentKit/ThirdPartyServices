@@ -246,6 +246,29 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
 
         #region Banner
+        
+        private void OnBannerLoaded(LevelPlayAdInfo info)
+        {
+            Debug.Log($"onelog IronSourceWrapper OnBannerLoaded {info.ToString()}");
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnitId, AdFormatConstants.Banner, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new BannerAdLoadedSignal("", adInfo));
+            this.isLoadedBanner = true;
+        }
+
+        private async void OnBannerLoadFailed(LevelPlayAdError info)
+        {
+            Debug.Log($"onelog IronSourceWrapper OnBannerLoadFailed {info.ToString()}");
+            this.signalBus.Fire(new BannerAdLoadFailedSignal("", $"{info.ToString()}"));
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
+            this.ShowBannerAd();
+        }
+        
+        private void OnBannerClicked(LevelPlayAdInfo info)
+        {
+            Debug.Log($"onelog IronSourceWrapper OnBannerClicked {info.ToString()}");
+            var adInfo = new AdInfo(this.AdPlatform, info.adUnitId, AdFormatConstants.Banner, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
+            this.signalBus.Fire(new BannerAdClickedSignal("", adInfo));
+        }
 
         private async void BannerOnAdLoadFailedEvent(IronSourceError obj)
         {
@@ -299,9 +322,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             mrecAd.OnAdLoaded        += this.OnMrecLoaded;
             mrecAd.OnAdLoadFailed    += this.OnMrecLoadFailed;
-            mrecAd.OnAdDisplayed     += this.OnMrecDisplayed;
-            mrecAd.OnAdDisplayFailed += this.OnMrecDisplayFailed;
-            mrecAd.OnAdClicked += this.OnMrecClicked;
+            mrecAd.OnAdClicked       += this.OnMrecClicked;
             
             mrecAd.LoadAd();
             mrecAd.ShowAd();
@@ -314,36 +335,31 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             mrecAd.HideAd();
             mrecAd.OnAdLoaded        -= this.OnMrecLoaded;
             mrecAd.OnAdLoadFailed    -= this.OnMrecLoadFailed;
-            mrecAd.OnAdDisplayed     -= this.OnMrecDisplayed;
-            mrecAd.OnAdDisplayFailed -= this.OnMrecDisplayFailed;
             mrecAd.OnAdClicked       -= this.OnMrecClicked;
             
         }
         public void HideAllMREC()                                       { }
 
-        private void OnMrecLoaded(LevelPlayAdInfo obj)
+        private void OnMrecLoaded(LevelPlayAdInfo info)
         {
-            Debug.Log($"onelog OnMrecLoaded {obj.ToString()}");
+            Debug.Log($"onelog IronSourceWrapper OnMrecLoaded {info.ToString()}");
+            var revenue = info.revenue ?? 0;
+            var adInfo  = new AdInfo(this.AdPlatform, info.adUnitId, AdFormatConstants.MREC, info.adNetwork, info.instanceName, revenue);
+            this.signalBus.Fire(new MRecAdLoadedSignal(info.adUnitId, adInfo));
         }
 
-        private void OnMrecLoadFailed(LevelPlayAdError obj)
+        private void OnMrecLoadFailed(LevelPlayAdError info)
         {
-            Debug.Log($"onelog OnMrecLoadFailed {obj.ToString()}");
+            Debug.Log($"onelog IronSourceWrapper OnMrecLoadFailed {info.ToString()}");
+            this.signalBus.Fire(new MRecAdLoadFailedSignal(info.AdUnitId));
         }
         
-        private void OnMrecDisplayed(LevelPlayAdInfo obj)
+        private void OnMrecClicked(LevelPlayAdInfo info)
         {
-            Debug.Log($"onelog OnMrecDisplayed {obj.ToString()}");
-        }
-        
-        private void OnMrecDisplayFailed(LevelPlayAdDisplayInfoError obj)
-        {
-            Debug.Log($"onelog OnMrecDisplayFailed {obj.ToString()}");
-        }
-        
-        private void OnMrecClicked(LevelPlayAdInfo obj)
-        {
-            Debug.Log($"onelog OnMrecClicked {obj.ToString()}");
+            Debug.Log($"onelog IronSourceWrapper OnMrecClicked {info.ToString()}");
+            var revenue = info.revenue ?? 0;
+            var ad      = new AdInfo(this.AdPlatform, info.adUnitId, AdFormatConstants.MREC, info.adNetwork, info.instanceName, revenue);
+            this.signalBus.Fire(new MRecAdClickedSignal(info.adUnitId, ad));
         }
         
         #endregion
@@ -371,42 +387,53 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         //todo convert ads position
         private bool isLoadedBanner;
+        
+        private LevelPlayBannerAd bannerAd;
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
             if (this.isLoadedBanner)
             {
-                IronSource.Agent.displayBanner();
+                this.bannerAd.ShowAd();
                 return;
             }
 
             var position = bannerAdsPosition switch
             {
-                BannerAdsPosition.Top => IronSourceBannerPosition.TOP,
-                _                     => IronSourceBannerPosition.BOTTOM
+                BannerAdsPosition.Top => LevelPlayBannerPosition.TopCenter,
+                _                     => LevelPlayBannerPosition.BottomCenter
             };
-            IronSource.Agent.loadBanner(this.GetBannerSize(), position);
+            this.bannerAd               = new LevelPlayBannerAd(this.ironSourceSettings.BannerId, this.BannerSize(), position);
             this.isLoadedAdaptiveBanner = true;
+            this.bannerAd.LoadAd();
+            this.bannerAd.ShowAd();
+            
+            this.bannerAd.OnAdLoaded        += this.OnBannerLoaded;
+            this.bannerAd.OnAdLoadFailed    += this.OnBannerLoadFailed;
+            this.bannerAd.OnAdClicked       += this.OnBannerClicked;
         }
 
-        private IronSourceBannerSize GetBannerSize()
+        private LevelPlayAdSize BannerSize()
         {
-            var bannerSize = IronSourceBannerSize.BANNER;
-
-#if ADMOB
+            var bannerSize = LevelPlayAdSize.BANNER;
             if (this.thirdPartiesConfig.AdSettings.IronSource.IsAdaptiveBanner && !this.isLoadedAdaptiveBanner)
             {
-                var width = (int)(Screen.width / GoogleMobileAds.Api.MobileAds.Utils.GetDeviceScale());
-                bannerSize = new IronSourceBannerSize(width, 60);
-                bannerSize.SetAdaptive(true);
+                bannerSize = LevelPlayAdSize.CreateAdaptiveAdSize();
             }
-#endif
 
             return bannerSize;
         }
 
-        public void              HideBannedAd()                      { IronSource.Agent.hideBanner(); }
-        public void              DestroyBannerAd()                   { IronSource.Agent.destroyBanner(); }
+        public void              HideBannedAd()                      { this.bannerAd.HideAd(); }
+
+        public void DestroyBannerAd()
+        {
+            this.bannerAd.OnAdLoaded        += this.OnBannerLoaded;
+            this.bannerAd.OnAdLoadFailed    += this.OnBannerLoadFailed;
+            this.bannerAd.OnAdClicked       += this.OnBannerClicked;
+            this.bannerAd.DestroyAd();
+            this.isLoadedBanner = false;
+        }
         public bool              IsInterstitialAdReady(string place) { return IronSource.Agent.isInterstitialReady(); }
 
         public void ShowInterstitialAd(string place)

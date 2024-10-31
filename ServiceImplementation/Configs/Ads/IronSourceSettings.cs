@@ -29,6 +29,8 @@
         /// </summary>
         public Dictionary<AdPlacement, AdId> MRECAdIds { get => this.mRECAdIds; set => this.mRECAdIds = value as Dictionary_AdPlacement_AdId; }
 
+        public string BannerId => this.bannerId;
+
         public bool IsAdaptiveBanner => this.isAdaptiveBanner;
 
         [SerializeField] [LabelText("App Id")] private AdId mAppId;
@@ -36,8 +38,10 @@
         [SerializeField] private bool isAdaptiveBanner = true;
 
         [SerializeField] [OnValueChanged("OnEnableAdQuality")] private bool enableAdQuality = true;
+        
+        [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Id")] private string bannerId;
 
-        [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")] private Dictionary_AdPlacement_AdId mRECAdIds;
+        [SerializeField] [LabelText("MREC")] [BoxGroup("Custom Id")] private Dictionary_AdPlacement_AdId mRECAdIds;
         
         #if UNITY_EDITOR
         private void OnEnableAdQuality()
