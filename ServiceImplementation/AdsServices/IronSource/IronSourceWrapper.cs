@@ -412,7 +412,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void HideBannedAd()
         {
             if (!this.isLevelPlayInitialized) return;
-            this.bannerAd.HideAd();
+            this.bannerAd?.HideAd();
         }
 
         public void DestroyBannerAd()
