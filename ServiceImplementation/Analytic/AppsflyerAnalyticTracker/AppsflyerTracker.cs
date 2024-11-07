@@ -170,7 +170,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             var logRevenue = new AFAdRevenueData(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Currency, adsRevenueEvent.Revenue);
             AppsFlyer.logAdRevenue(logRevenue, parameters);
-            Debug.Log($"Appsflyer: On Event Ad Revenue - {adsRevenueEvent.AdUnit} - {adsRevenueEvent.AdFormat} - {adsRevenueEvent.Placement} - {adsRevenueEvent.Currency} - {adsRevenueEvent.Revenue}");
+            Debug.Log($"Appsflyer: On Event Ad Revenue - adUnit {adsRevenueEvent.AdUnit} - AdFormat {adsRevenueEvent.AdFormat} - AdNetwork {adsRevenueEvent.AdNetwork} - mediationNetworkType {mediationNetworkType} - {adsRevenueEvent.Placement} - {adsRevenueEvent.Currency} - {adsRevenueEvent.Revenue}");
         }
     }
 }
