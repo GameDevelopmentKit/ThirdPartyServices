@@ -125,7 +125,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
             {
-                Debug.LogError("trackedEvent in TrackIAP is not of correct type");
+                Debug.LogError("Appsflyer: trackedEvent in TrackIAP is not of correct type");
 
                 return;
             }
@@ -146,7 +146,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
-                Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
+                Debug.LogError("Appsflyer: trackedEvent in AdsRevenue is not of correct type");
                 return;
             }
 
@@ -170,6 +170,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             var logRevenue = new AFAdRevenueData(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Currency, adsRevenueEvent.Revenue);
             AppsFlyer.logAdRevenue(logRevenue, parameters);
+            Debug.Log($"Appsflyer: On Event Ad Revenue - adUnit {adsRevenueEvent.AdUnit} - AdFormat {adsRevenueEvent.AdFormat} - AdNetwork {adsRevenueEvent.AdNetwork} - mediationNetworkType {mediationNetworkType} - {adsRevenueEvent.Placement} - {adsRevenueEvent.Currency} - {adsRevenueEvent.Revenue}");
         }
     }
 }
