@@ -122,13 +122,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             return this.aoaAdLoadedInstance.IsAoaAdAvailable && !this.IsShowingAOAAd;
         }
 
-        public void ShowAOAAds()
+        public void ShowAOAAds(string placement)
         {
+            this.aoaAdPlacement = placement;
             this.aoaAdLoadedInstance.Show();
             this.LoadAppOpenAd();
         }
 
         private LoadedAppOpenAd aoaAdLoadedInstance = new();
+        private string aoaAdPlacement;
 
         private class LoadedAppOpenAd
         {
@@ -195,31 +197,39 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 appOpenAd.OnAdFullScreenContentFailed += this.AOAHandleAdFullScreenContentFailed;
                 appOpenAd.OnAdFullScreenContentOpened += this.AOAHandleAdFullScreenContentOpened;
                 appOpenAd.OnAdImpressionRecorded      += this.AOAHandleAdImpressionRecorded;
+                appOpenAd.OnAdClicked                 += this.AOAHandleAdClicked;
                 appOpenAd.OnAdPaid                    += this.AOAHandleAdPaid;
 
                 this.aoaAdLoadedInstance.Init(appOpenAd);
             }
         }
 
+        private void AOAHandleAdClicked()
+        {
+            this.logService.Log("oneLog: Clicked app open ad");
+            var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
+            this.signalBus.Fire(new AppOpenClickedSignal(this.aoaAdPlacement, adRevenueEvent));
+        }
+
         private void AOAHandleAdFullScreenContentClosed()
         {
             this.logService.Log("oneLog: Closed app open ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
-            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal("", adRevenueEvent));
+            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adRevenueEvent));
             this.IsShowingAOAAd = false;
         }
 
         private void AOAHandleAdFullScreenContentFailed(AdError args)
         {
             this.logService.Log($"oneLog: Failed to present the ad (reason: {args.GetMessage()})");
-            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal("", args.GetMessage()));
+            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(this.aoaAdPlacement, args.GetMessage()));
         }
 
         private void AOAHandleAdFullScreenContentOpened()
         {
             this.logService.Log("oneLog: Displayed app open ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
-            this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal("", adRevenueEvent));
+            this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(this.aoaAdPlacement, adRevenueEvent));
             this.IsShowingAOAAd = true;
         }
 
