@@ -563,7 +563,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         internal void CreatBannerIfNeed()
         {
-            if (DateTime.Now - this.lastTimeCreateBanner < this.minTimeRecreateBanner) return;
             this.CreatBanner();
         }
         
