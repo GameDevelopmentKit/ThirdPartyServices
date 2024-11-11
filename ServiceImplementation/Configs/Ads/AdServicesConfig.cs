@@ -134,6 +134,11 @@ namespace ServiceImplementation.Configs.Ads
         ///     Auto expand collapsible banner ad when refresh
         /// </summary>
         public bool CollapsibleBannerExpandOnRefreshEnabled { get; private set; }
+        
+        /// <summary>
+        ///     The interval refresh mrec ad
+        /// </summary>
+        public int MrecRefreshInterval { get; private set; }
 
         #endregion
 
@@ -190,6 +195,12 @@ namespace ServiceImplementation.Configs.Ads
             this.EnableCollapsibleBannerFallback          = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBannerFallback);
             this.CollapsibleBannerAutoRefreshEnabled      = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerAutoRefreshEnabled);
             this.CollapsibleBannerExpandOnRefreshEnabled  = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled);
+
+            #endregion
+
+            #region MREC
+
+            this.MrecRefreshInterval = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.MrecRefreshInterval);
 
             #endregion
         }

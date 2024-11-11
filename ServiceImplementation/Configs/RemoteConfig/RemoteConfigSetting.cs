@@ -97,6 +97,12 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             #endregion
 
+            #region MREC
+
+            this.TryAddAddsConfig(RemoteConfigKey.MrecRefreshInterval, "10"); 
+
+            #endregion
+
             #endregion
         }
 

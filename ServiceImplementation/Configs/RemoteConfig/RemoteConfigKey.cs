@@ -53,5 +53,11 @@
         public const string CollapsibleBannerExpandOnRefreshEnabled  = "collapsible_banner_expand_on_refresh_enabled";
 
         #endregion
+
+        #region MREC
+
+        public const string MrecRefreshInterval = "mrec_refresh_interval";
+
+        #endregion
     }
 }

@@ -11,6 +11,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using GameFoundation.DI;
+    using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
     using ServiceImplementation.Configs;
@@ -277,7 +278,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region MREC
 
-        private Dictionary<string, LevelPlayBannerAd> idToMRECAd = new();
+        private readonly Dictionary<string, LevelPlayBannerAd> idToMRECAd = new();
 
         public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
@@ -313,7 +314,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             mrecAd.HideAd();
         }
 
-        public void HideAllMREC() { }
+        public void HideAllMREC() { this.idToMRECAd.ForEach(x => x.Value.HideAd()); }
+
+        public void DestroyMREC(string placement, AdScreenPosition position)
+        {
+            if (!this.isLevelPlayInitialized) return;
+            if (!this.idToMRECAd.TryGetValue(placement, out var mrecAd)) return;
+            mrecAd.DestroyAd();
+            this.idToMRECAd.Remove(placement);
+        }
 
         private void OnMrecLoaded(LevelPlayAdInfo info)
         {
