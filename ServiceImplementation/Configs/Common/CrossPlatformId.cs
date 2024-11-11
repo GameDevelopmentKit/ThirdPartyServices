@@ -13,6 +13,7 @@
         [SerializeField] [LabelText("IOS Id", SdfIconType.Apple)] protected string mIosId;
 
         [SerializeField] [LabelText("Android Id", SdfIconType.Google)] protected string mAndroidId;
+        [SerializeField] [LabelText("Web Id", SdfIconType.Google)] protected string mWebId;
 
         /// <summary>
         /// Gets the ad ID corresponding to the current platform.
@@ -27,6 +28,8 @@
                 return this.AndroidId;
                 #elif UNITY_IOS
                 return IosId;
+                #elif UNITY_WEBGL
+                return this.AndroidId;
                 #else
                 return string.Empty;
                 #endif
