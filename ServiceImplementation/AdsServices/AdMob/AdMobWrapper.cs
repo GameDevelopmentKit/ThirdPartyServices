@@ -292,6 +292,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             void OnMrecBannerLoadFailed(LoadAdError _)
             {
                 Debug.Log("mrec load failed");
+                this.idToMrecViewHandler.Remove(adId.Id);
             }
         }
 
