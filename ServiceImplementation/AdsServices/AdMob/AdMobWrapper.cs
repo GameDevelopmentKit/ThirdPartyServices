@@ -311,10 +311,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void DestroyMREC(string placement, AdScreenPosition position)
         {
-            var mrecBannerView = this.idToMrecViewHandler[this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id];
+            var adUnitId       = this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            var mrecBannerView = this.idToMrecViewHandler[adUnitId];
 
             if (mrecBannerView.bannerView == null) return;
             mrecBannerView.DestroyBanner();
+            this.idToMrecViewHandler.Remove(adUnitId);
             this.MrecBannerViewDismissed();
         }
 
