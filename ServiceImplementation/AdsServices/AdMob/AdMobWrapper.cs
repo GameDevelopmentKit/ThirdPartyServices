@@ -235,16 +235,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #region MREC
 
         private readonly Dictionary<string, BannerViewHandler> idToMrecViewHandler = new();
-        private          BannerViewHandler                     currentBannerViewHandler;
 
         public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             this.LoadAllMRec();
             var adId              = this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)];
-            this.currentBannerViewHandler = this.idToMrecViewHandler[adId.Id];
+            var mrecBannerHandler = this.idToMrecViewHandler[adId.Id];
             var mrecPosition      = position.CanvasToUnityCoordinateSystem().ToAdmobPosition() + offset.FlipY();
-            this.currentBannerViewHandler.bannerView.SetPosition((int)mrecPosition.x, (int)mrecPosition.y);
-            this.currentBannerViewHandler.bannerView.Show();
+            mrecBannerHandler.bannerView.SetPosition((int)mrecPosition.x, (int)mrecPosition.y);
+            mrecBannerHandler.bannerView.Show();
             this.MrecBannerViewDisplay();
         }
 
@@ -315,7 +314,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             var mrecBannerView = this.idToMrecViewHandler[this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id];
 
             if (mrecBannerView.bannerView == null) return;
-            mrecBannerView.bannerView.Destroy();
+            mrecBannerView.DestroyBanner();
             this.MrecBannerViewDismissed();
         }
 
@@ -578,7 +577,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.loadFailedTime = 0;
         }
 
-        private void DestroyBanner()
+        internal void DestroyBanner()
         {
             if (this.bannerView == null) return;
             this.bannerView.OnBannerAdLoaded     -= this.OnBannerLoaded;
