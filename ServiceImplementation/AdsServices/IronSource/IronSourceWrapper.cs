@@ -302,7 +302,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             mrecAd.ShowAd();
         }
 
-        public bool IsMRECReady(string placement, AdScreenPosition position)
+        public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             return this.idToMRECAd.TryGetValue(placement, out _);
         }

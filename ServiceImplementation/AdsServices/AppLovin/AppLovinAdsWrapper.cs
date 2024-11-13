@@ -143,7 +143,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.ShowMRec(adsId);
         }
 
-        public bool IsMRECReady(string placement, AdScreenPosition position)
+        public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             return this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out _);
         }

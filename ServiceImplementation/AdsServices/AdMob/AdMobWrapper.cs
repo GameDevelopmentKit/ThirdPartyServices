@@ -247,20 +247,20 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.MrecBannerViewDisplay();
         }
 
-        public bool IsMRECReady(string placement, AdScreenPosition position)
+        public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             var adPlacement = AdPlacement.PlacementWithName(placement);
             if (!this.ADMobSettings.MRECAdIds.TryGetValue(adPlacement, out var adId)) return false;
             var isMrecHandlerCreate = this.idToMrecViewHandler.ContainsKey(adId.Id);
             if (!isMrecHandlerCreate)
             {
-                this.LoadMREC(placement, position);
+                this.LoadMREC(placement, position, offset);
             }
 
             return this.idToMrecViewHandler[adId.Id].bannerView != null;
         }
 
-        public void LoadMREC(string placement, AdScreenPosition adPosition)
+        public void LoadMREC(string placement, AdScreenPosition adPosition, AdScreenPosition offset)
         {
             if (!this.ADMobSettings.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var adId))
             {
@@ -269,8 +269,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (this.idToMrecViewHandler.TryGetValue(adId.Id, out var bannerViewHandler)) return;
 
-            // load mrec first time out side screen
-            bannerViewHandler = new BannerViewHandler(adId.Id, AdSize.MediumRectangle, Screen.width, Screen.height);
+            var mrecPosition = adPosition.CanvasToUnityCoordinateSystem().ToAdmobPosition() + offset.FlipY();
+            bannerViewHandler = new BannerViewHandler(adId.Id, AdSize.MediumRectangle, (int)mrecPosition.x, (int)mrecPosition.y);
             this.idToMrecViewHandler.Add(adId.Id, bannerViewHandler);
 
             bannerViewHandler.bannerView.OnBannerAdLoaded     += OnMrecBannerLoaded;
