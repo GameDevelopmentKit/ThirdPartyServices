@@ -238,7 +238,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
-            this.LoadAllMRec();
+            // this.LoadAllMRec();
             var adId              = this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)];
             var mrecBannerHandler = this.idToMrecViewHandler[adId.Id];
             var mrecPosition      = position.CanvasToUnityCoordinateSystem().ToAdmobPosition() + offset.FlipY();
