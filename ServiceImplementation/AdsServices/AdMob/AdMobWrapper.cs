@@ -291,6 +291,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             void OnMrecBannerLoadFailed(LoadAdError _)
             {
                 Debug.Log("mrec load failed");
+                this.idToMrecViewHandler[adId.Id].DestroyBanner();
                 this.idToMrecViewHandler.Remove(adId.Id);
             }
         }
@@ -311,12 +312,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void DestroyMREC(string placement, AdScreenPosition position)
         {
-            var adUnitId       = this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
-            var mrecBannerView = this.idToMrecViewHandler[adUnitId];
-
-            if (mrecBannerView.bannerView == null) return;
-            mrecBannerView.DestroyBanner();
-            this.idToMrecViewHandler.Remove(adUnitId);
+            foreach (var mrec in this.idToMrecViewHandler)
+            {
+                mrec.Value.DestroyBanner();
+            }
+            this.idToMrecViewHandler.Clear();
             this.MrecBannerViewDismissed();
         }
 
