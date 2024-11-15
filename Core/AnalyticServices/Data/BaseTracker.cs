@@ -69,7 +69,7 @@ namespace Core.AnalyticServices.Data
         /// <summary>
         /// base constructor for trackers which sets up when/how events and states should be tracked
         /// </summary>
-        public BaseTracker(SignalBus signalBus, AnalyticConfig analyticConfig)
+        public BaseTracker(ISignalBus signalBus, AnalyticConfig analyticConfig)
         {
             this.analyticConfig = analyticConfig;
             signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);

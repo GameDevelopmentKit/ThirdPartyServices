@@ -19,7 +19,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
         private readonly List<IAdLoadService>          adLoadServices;
         private readonly ILogService                   logger;
         private readonly AdServicesConfig              adServicesConfig;
-        private readonly SignalBus                     signalBus;
+        private readonly ISignalBus                    signalBus;
         private readonly IAnalyticServices             analyticServices;
         private readonly List<IAOAAdService>           aOaAdServices;
         private readonly UnScaleInGameStopWatchManager unScaleInGameStopWatchManager;
@@ -30,7 +30,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
         private Dictionary<(IAdLoadService, string), UnScaleInGameStopWatch> rewardAdStopwatch       = new();
         private Dictionary<IAOAAdService, UnScaleInGameStopWatch>            aoaAdStartTime          = new();
 
-        public PreloadAdService(List<IAdLoadService> adLoadServices, ILogService logger, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices,
+        public PreloadAdService(List<IAdLoadService> adLoadServices, ILogService logger, AdServicesConfig adServicesConfig, ISignalBus signalBus, IAnalyticServices analyticServices,
             List<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
         {
             this.adLoadServices                = adLoadServices;

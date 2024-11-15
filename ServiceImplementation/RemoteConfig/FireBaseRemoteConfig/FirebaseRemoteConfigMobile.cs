@@ -17,7 +17,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     internal class FirebaseRemoteConfigMobile : MonoBehaviour, IRemoteConfig, IInitializable
     {
         [Inject] private readonly ILogService logger;
-        [Inject] private readonly SignalBus   signalBus;
+        [Inject] private readonly ISignalBus  signalBus;
         public                    bool        IsConfigFetchedSucceed { get; private set; }
 
         private void Start() { this.InitFirebase(); }

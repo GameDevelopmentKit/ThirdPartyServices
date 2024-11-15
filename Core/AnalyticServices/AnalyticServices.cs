@@ -33,14 +33,14 @@ namespace Core.AnalyticServices
     public class AnalyticServices : IAnalyticServices
     {
         private readonly DeviceInfo         deviceInfo;
-        private readonly SignalBus          signalBus;
+        private readonly ISignalBus         signalBus;
         private readonly EventTrackedSignal eventTrackedSignal;
 
         private TaskCompletionSource<bool> started;
 
         public UserProperties UserProperties { get; }
 
-        public AnalyticServices(DeviceInfo deviceInfo, SignalBus signalBus)
+        public AnalyticServices(DeviceInfo deviceInfo, ISignalBus signalBus)
         {
             this.deviceInfo         = deviceInfo;
             this.signalBus          = signalBus;

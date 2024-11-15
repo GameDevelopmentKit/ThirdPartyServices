@@ -8,11 +8,11 @@ namespace ServiceImplementation.Configs.Ads
     {
         #region Constructor
 
-        private readonly SignalBus           signalBus;
+        private readonly ISignalBus          signalBus;
         private readonly IRemoteConfig       remoteConfig;
         private readonly RemoteConfigSetting remoteConfigSetting;
 
-        public AdServicesConfig(SignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
+        public AdServicesConfig(ISignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
         {
             this.signalBus           = signalBus;
             this.remoteConfig        = remoteConfig;

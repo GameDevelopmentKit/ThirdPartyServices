@@ -30,16 +30,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     {
         #region inject
 
-        private readonly ILogService        logService;
-        private readonly SignalBus          signalBus;
-        private readonly IReadOnlyList<IAdServices>        adServices;
-        private readonly IAnalyticServices  analyticService;
-        private readonly ThirdPartiesConfig thirdPartiesConfig;
-        private readonly AdServicesConfig   adServicesConfig;
+        private readonly ILogService                logService;
+        private readonly ISignalBus                 signalBus;
+        private readonly IReadOnlyList<IAdServices> adServices;
+        private readonly IAnalyticServices          analyticService;
+        private readonly ThirdPartiesConfig         thirdPartiesConfig;
+        private readonly AdServicesConfig           adServicesConfig;
 
         #endregion
 
-        public AdMobWrapper(ILogService logService,         SignalBus        signalBus, IEnumerable<IAdServices> adServices, IAnalyticServices analyticService,
+        public AdMobWrapper(ILogService logService,         ISignalBus        signalBus, IEnumerable<IAdServices> adServices, IAnalyticServices analyticService,
             ThirdPartiesConfig          thirdPartiesConfig, AdServicesConfig adServicesConfig)
         {
             this.logService         = logService;

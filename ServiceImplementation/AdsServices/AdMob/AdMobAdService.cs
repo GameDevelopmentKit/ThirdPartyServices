@@ -24,10 +24,10 @@ namespace ServiceImplementation.AdsServices.AdMob
         #region Constructor
 
         private readonly AdMobSettings     config;
-        private readonly SignalBus         signalBus;
+        private readonly ISignalBus        signalBus;
         private readonly IAnalyticServices analyticService;
 
-        public AdMobAdService(ThirdPartiesConfig config, SignalBus signalBus, IAnalyticServices analyticService)
+        public AdMobAdService(ThirdPartiesConfig config, ISignalBus signalBus, IAnalyticServices analyticService)
         {
             this.config          = config.AdSettings.AdMob;
             this.signalBus       = signalBus;

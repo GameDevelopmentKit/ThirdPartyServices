@@ -10,9 +10,9 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
     public class ApplovinAdRevenueTracker : IAdRevenueTracker
     {
         private readonly IAnalyticServices analyticServices;
-        private readonly SignalBus         signalBus;
+        private readonly ISignalBus        signalBus;
 
-        public ApplovinAdRevenueTracker(IAnalyticServices analyticServices, SignalBus signalBus)
+        public ApplovinAdRevenueTracker(IAnalyticServices analyticServices, ISignalBus signalBus)
         {
             this.analyticServices = analyticServices;
             this.signalBus        = signalBus;

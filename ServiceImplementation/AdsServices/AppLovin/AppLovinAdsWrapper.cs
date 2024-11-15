@@ -20,7 +20,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         #region Inject
 
         private readonly ILogService logService;
-        private readonly SignalBus   signalBus;
+        private readonly ISignalBus   signalBus;
 
         #endregion
 
@@ -41,7 +41,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #endregion
 
-        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus,
+        public AppLovinAdsWrapper(ILogService logService, ISignalBus signalBus,
             ThirdPartiesConfig thirdPartiesConfig)
         {
             this.logService      = logService;

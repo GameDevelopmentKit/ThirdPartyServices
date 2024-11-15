@@ -31,7 +31,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
         };
 
-        public AppsflyerTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
+        public AppsflyerTracker(ILogService logger, ISignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
             this.logger              = logger;
             this.customizationConfig = customizationConfig;

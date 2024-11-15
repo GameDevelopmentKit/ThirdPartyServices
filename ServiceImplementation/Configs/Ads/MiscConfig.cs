@@ -10,13 +10,13 @@ namespace ServiceImplementation.Configs.Ads
 
         #region Inject
 
-        private readonly SignalBus           signalBus;
+        private readonly ISignalBus          signalBus;
         private readonly IRemoteConfig       remoteConfig;
         private readonly RemoteConfigSetting remoteConfigSetting;
 
         #endregion
 
-        public MiscConfig(SignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
+        public MiscConfig(ISignalBus signalBus, IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting)
         {
             this.signalBus           = signalBus;
             this.remoteConfig        = remoteConfig;
