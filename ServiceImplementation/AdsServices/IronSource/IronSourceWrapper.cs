@@ -401,6 +401,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (!this.isLevelPlayInitialized) return; //todo: handle wait to show when not initialized
             if (this.isLoadedBanner)
             {
+                this.logService.Log("onelog IronSourceWrapper ShowBannerAd: show banner loaded");
                 this.bannerAd.ShowAd();
                 return;
             }
@@ -420,6 +421,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             this.bannerAd.LoadAd();
             this.bannerAd.ShowAd();
+            this.logService.Log("onelog IronSourceWrapper ShowBannerAd: show new banner");
         }
 
         private LevelPlayAdSize BannerSize()
