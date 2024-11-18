@@ -133,7 +133,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 MaxSdk.CreateMRec(adUnitId.Id, MaxSdkBase.AdViewPosition.BottomCenter);
             }
         }
-        
+
         public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
@@ -163,7 +163,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public void StopMRECAutoRefresh(string adUnitId) { MaxSdk.StopMRecAutoRefresh(adUnitId); }
 
         public void StartMRECAutoRefresh(string adUnitId) { MaxSdk.StartMRecAutoRefresh(adUnitId); }
-        
+
 
         public void LoadMREC(string adUnitId) { MaxSdk.LoadMRec(adUnitId); }
 
@@ -338,6 +338,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #region AOA
 
+        private string aoaAdPlacement;
+
         private void InitAOAAds()
         {
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return;
@@ -367,14 +369,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnAppOpenDisplayFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)
         {
             this.logService.Log($"onelog: OnAppOpenDisplayFailedEvent: {arg2.Message}");
-            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(arg1, arg2.Message));
+            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(this.aoaAdPlacement, arg2.Message));
         }
 
         private void OnAppOpenDisplayedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
             this.logService.Log($"onelog: OnAppOpenDisplayedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.AppOpen, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
-            this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(arg1, adInfo));
+            this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(this.aoaAdPlacement, adInfo));
             this.IsShowingAOAAd = true;
         }
 
@@ -382,7 +384,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             this.logService.Log($"onelog: OnAppOpenClickedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.AppOpen, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
-            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(arg1, adInfo));
+            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adInfo));
         }
 
         private void OnAppOpenLoadFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2)
@@ -404,8 +406,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
             return MaxSdk.IsAppOpenAdReady(this.AppLovinSetting.DefaultAOAAdId.Id) && !this.IsShowingAOAAd;
         }
 
-        public void ShowAOAAds()
+        public void ShowAOAAds(string placement)
         {
+            this.aoaAdPlacement = placement;
             MaxSdk.ShowAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.Id);
             this.InternalLoadAppOpenAd();
         }
@@ -414,7 +417,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             this.logService.Log($"onelog: OnAppOpenDismissedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.AppOpen, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
-            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal("", adInfo));
+            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adInfo));
             this.InternalLoadAppOpenAd();
             this.IsShowingAOAAd = false;
         }
