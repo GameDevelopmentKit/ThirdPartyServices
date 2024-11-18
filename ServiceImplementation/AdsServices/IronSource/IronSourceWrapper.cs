@@ -93,12 +93,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.InitAdQuality();
         }
 
-        private void OnLevelPlayInitSuccess(LevelPlayConfiguration obj) => this.isLevelPlayInitialized = true;
+        private void OnLevelPlayInitSuccess(LevelPlayConfiguration obj)
+        {
+            this.logService.Log($"oneLog: IronSourceWrapper OnLevelPlayInitSuccess IsAdQualityEnabled {obj.IsAdQualityEnabled}");
+            this.isLevelPlayInitialized = true;
+        }
 
-        private void OnLevelPlayInitFailed(LevelPlayInitError obj) => this.InitLevelPlaySdk();
+        private void OnLevelPlayInitFailed(LevelPlayInitError obj) 
+        {
+            this.logService.Log($"oneLog: IronSourceWrapper OnLevelPlayInitFailed {obj.ToString()}");
+            this.InitLevelPlaySdk();
+        }
 
         private void InitLevelPlaySdk()
         {
+            this.logService.Log($"oneLog: IronSourceWrapper InitLevelPlaySdk");
             LevelPlay.Init(this.thirdPartiesConfig.AdSettings.IronSource.AppId, adFormats: new[] { LevelPlayAdFormat.BANNER });
         }
 
