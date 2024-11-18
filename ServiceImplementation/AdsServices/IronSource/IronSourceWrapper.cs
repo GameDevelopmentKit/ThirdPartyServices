@@ -4,12 +4,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Threading;
+    using System.Threading.Tasks;
     using com.unity3d.mediation;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
@@ -52,7 +55,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private bool   isGotRewarded;
         private string interstitialPlacement, rewardedPlacement;
 
-        private bool isLevelPlayInitialized;
+        private bool                       isLevelPlayInitialized;
+        private CancellationTokenSource    levelPlayInitializedCts;
 
         public void Initialize()
         {
@@ -399,7 +403,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
             this.logService.Log("onelog IronSourceWrapper ShowBannerAd");
-            if (!this.isLevelPlayInitialized) return; //todo: handle wait to show when not initialized
+            try
+            {
+                this.ResetLevelPlayInitializedCts();
+                UniTask.WaitUntil(() => this.isLevelPlayInitialized, cancellationToken: (this.levelPlayInitializedCts = new()).Token);
+            }
+            catch (Exception e)
+            {
+                return;
+            }
             if (this.isLoadedBanner)
             {
                 this.logService.Log("onelog IronSourceWrapper ShowBannerAd: show banner loaded");
@@ -430,8 +442,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             return this.thirdPartiesConfig.AdSettings.IronSource.IsAdaptiveBanner ? LevelPlayAdSize.CreateAdaptiveAdSize() : LevelPlayAdSize.BANNER;
         }
 
+        private void ResetLevelPlayInitializedCts()
+        {
+            this.levelPlayInitializedCts.Cancel();
+            this.levelPlayInitializedCts.Dispose();
+            this.levelPlayInitializedCts = null;
+        }
+
         public void HideBannedAd()
         {
+            this.ResetLevelPlayInitializedCts();
             if (!this.isLevelPlayInitialized) return;
             this.bannerAd?.HideAd();
         }
