@@ -398,6 +398,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
+            this.logService.Log("onelog IronSourceWrapper ShowBannerAd");
             if (!this.isLevelPlayInitialized) return; //todo: handle wait to show when not initialized
             if (this.isLoadedBanner)
             {
