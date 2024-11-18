@@ -3,6 +3,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using AdjustSdk;
     using Core.AnalyticServices;
@@ -47,6 +48,8 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             var adjustEvent = new AdjustEvent(name);
 
+            var eventDataString = "";
+
             if (data != null)
             {
                 foreach (var (key, value) in data)
@@ -54,7 +57,10 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                     if (key == null || value == null) continue;
                     adjustEvent.AddCallbackParameter(key, value.ToString());
                 }
+                eventDataString = string.Join(", ", data.Select(x => $"{x.Key}: {x.Value}"));
             }
+
+            Debug.Log($"Adjust: On Event {name} with data: {eventDataString}");
 
             Adjust.TrackEvent(adjustEvent);
         }
@@ -123,6 +129,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             adjustRevenue.AdRevenueUnit = adsRevenueEvent.AdUnit;
             adjustRevenue.AdRevenuePlacement = adsRevenueEvent.Placement;
             Adjust.TrackAdRevenue(adjustRevenue);
+            Debug.Log($"Adjust: On Event Ad Revenue");
         }
     }
 }
