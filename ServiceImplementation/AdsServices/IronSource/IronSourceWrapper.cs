@@ -410,7 +410,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
             catch (Exception e)
             {
-                return;
+                this.logService.Log($"onelog IronSourceWrapper ShowBannerAd Exception {e.Message}");
+                throw;
             }
             if (this.isLoadedBanner)
             {
