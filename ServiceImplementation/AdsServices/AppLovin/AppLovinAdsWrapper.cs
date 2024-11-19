@@ -33,7 +33,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private            AdPlacement                   currentShowingRewarded;
         private            Dictionary<AdPlacement, bool> rewardedCompleted = new();
 
-        private readonly List<string>                                                         idMRecCreating = new();
+        private readonly List<string>                                                         idMRecCreated = new();
         private readonly Dictionary<AdPlacement, KeyValuePair<BannerAdsPosition, BannerSize>> placementToBanner = new();
 
         private bool         isInit;
@@ -126,8 +126,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             foreach (var (placement, adUnitId) in this.AppLovinSetting.MRECAdIds)
             {
                 var adsId = adUnitId.Id;
-                if (this.idMRecCreating.Contains(adsId)) continue;
-                this.idMRecCreating.Add(adsId);
+                if (this.idMRecCreated.Contains(adsId)) continue;
+                this.idMRecCreated.Add(adsId);
 
                 this.logService.Log($"Check max init {MaxSdk.IsInitialized()}");
                 MaxSdk.CreateMRec(adUnitId.Id, MaxSdkBase.AdViewPosition.BottomCenter);
@@ -159,6 +159,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.OnMRecAdDismissed(adsId);
             MaxSdk.DestroyMRec(adsId);
+            this.idMRecCreated.Remove(adsId);
+            this.CreateAllMRec();
         }
 
         public void InternalHideMREC(string adUnitId)
@@ -176,7 +178,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void HideAllMREC()
         {
-            foreach (var adUnitId in this.idMRecCreating)
+            foreach (var adUnitId in this.idMRecCreated)
             {
                 this.InternalHideMREC(adUnitId);
             }
