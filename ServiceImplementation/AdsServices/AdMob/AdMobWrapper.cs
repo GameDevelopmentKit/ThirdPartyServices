@@ -367,7 +367,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                .ForEach(adInfo => this.signalBus.Fire(new MRecAdLoadedSignal("", adInfo)));
         }
 
-        private void MRECAdHandlePaid(AdValue obj) => this.ADMobSettings.MRECAdIds.ForEach(pair => this.AdMobHandlePaidEvent(obj, pair.Value.Id, AdFormatConstants.MREC));
+        private void MRECAdHandlePaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, this.ADMobSettings.MRECAdIds.First().Value.Id, AdFormatConstants.MREC);
 
 #endregion
 
