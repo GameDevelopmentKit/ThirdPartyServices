@@ -406,12 +406,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             try
             {
                 this.ResetLevelPlayInitializedCts();
-                UniTask.WaitUntil(() => this.isLevelPlayInitialized, cancellationToken: (this.levelPlayInitializedCts = new()).Token);
+                this.levelPlayInitializedCts = new();
+                UniTask.WaitUntil(() => this.isLevelPlayInitialized, cancellationToken: this.levelPlayInitializedCts.Token);
             }
             catch (Exception e)
             {
-                this.logService.Log($"onelog IronSourceWrapper ShowBannerAd Exception {e.Message}");
-                throw;
+                // ignore
+                return;
             }
             if (this.isLoadedBanner)
             {
@@ -445,8 +446,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void ResetLevelPlayInitializedCts()
         {
-            this.levelPlayInitializedCts.Cancel();
-            this.levelPlayInitializedCts.Dispose();
+            this.levelPlayInitializedCts?.Cancel();
+            this.levelPlayInitializedCts?.Dispose();
             this.levelPlayInitializedCts = null;
         }
 
