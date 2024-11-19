@@ -1,4 +1,4 @@
-namespace Editor
+namespace ThirdParty.WebGL.Editor
 {
     using ServiceImplementation.Configs;
     using UnityEditor.Build;
