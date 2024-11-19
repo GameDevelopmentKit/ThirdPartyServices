@@ -402,43 +402,41 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
-            this.logService.Log("onelog IronSourceWrapper ShowBannerAd");
-            try
+            this.logService.Log("oneLog: IronSourceWrapper ShowBannerAd");
+            this.ResetLevelPlayInitializedCts();
+            this.levelPlayInitializedCts = new();
+            UniTask.WaitUntil(() => this.isLevelPlayInitialized, cancellationToken: this.levelPlayInitializedCts.Token).ContinueWith(InternalShowBannerAd).Forget();
+            return;
+
+            void InternalShowBannerAd()
             {
-                this.ResetLevelPlayInitializedCts();
-                this.levelPlayInitializedCts = new();
-                UniTask.WaitUntil(() => this.isLevelPlayInitialized, cancellationToken: this.levelPlayInitializedCts.Token);
-            }
-            catch (Exception e)
-            {
-                // ignore
-                return;
-            }
-            if (this.isLoadedBanner)
-            {
-                this.logService.Log("onelog IronSourceWrapper ShowBannerAd: show banner loaded");
+                if (this.isLoadedBanner)
+                {
+                    this.logService.Log("oneLog: IronSourceWrapper ShowBannerAd: show banner loaded");
+                    this.bannerAd.ShowAd();
+
+                    return;
+                }
+
+                var position = bannerAdsPosition switch
+                               {
+                                   BannerAdsPosition.Top => LevelPlayBannerPosition.TopCenter,
+                                   _                     => LevelPlayBannerPosition.BottomCenter
+                               };
+                this.bannerAd = new(this.ironSourceSettings.BannerId, this.BannerSize(), position);
+
+                this.bannerAd.OnAdLoaded     += this.OnBannerLoaded;
+                this.bannerAd.OnAdLoadFailed += this.OnBannerLoadFailed;
+                this.bannerAd.OnAdClicked    += this.OnBannerClicked;
+                this.bannerAd.OnAdDisplayed  += this.BannerOnAdScreenPresentedEvent;
+                this.bannerAd.OnAdCollapsed  += this.BannerOnAdScreenDismissedEvent;
+
+                this.bannerAd.LoadAd();
                 this.bannerAd.ShowAd();
-                return;
+                this.logService.Log("oneLog: IronSourceWrapper ShowBannerAd: show new banner");
             }
-
-            var position = bannerAdsPosition switch
-            {
-                BannerAdsPosition.Top => LevelPlayBannerPosition.TopCenter,
-                _                     => LevelPlayBannerPosition.BottomCenter
-            };
-            this.bannerAd = new(this.ironSourceSettings.BannerId, this.BannerSize(), position);
-
-            this.bannerAd.OnAdLoaded     += this.OnBannerLoaded;
-            this.bannerAd.OnAdLoadFailed += this.OnBannerLoadFailed;
-            this.bannerAd.OnAdClicked    += this.OnBannerClicked;
-            this.bannerAd.OnAdDisplayed  += this.BannerOnAdScreenPresentedEvent;
-            this.bannerAd.OnAdCollapsed  += this.BannerOnAdScreenDismissedEvent;
-
-            this.bannerAd.LoadAd();
-            this.bannerAd.ShowAd();
-            this.logService.Log("onelog IronSourceWrapper ShowBannerAd: show new banner");
         }
-
+        
         private LevelPlayAdSize BannerSize()
         {
             return this.thirdPartiesConfig.AdSettings.IronSource.IsAdaptiveBanner ? LevelPlayAdSize.CreateAdaptiveAdSize() : LevelPlayAdSize.BANNER;
