@@ -58,6 +58,8 @@ namespace ServiceImplementation.AdsServices.Yandex
         private bool   IsRewardedAdReward             { get; set; }
         public string AdPlatform => AdRevenueConstants.ARSourceYandex;
 
+        private string aoaAdPlacement;
+
         private Banner               banner;
         private AppOpenAdLoader      appOpenAdLoader;
         private AppOpenAd            appOpenAd;
@@ -406,14 +408,14 @@ namespace ServiceImplementation.AdsServices.Yandex
         {
             this.logService.Log($"onelog: Yandex: HandleAoaAdClicked");
             var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.AoaAdId.Id, AdFormatConstants.AppOpen);
-            this.signalBus.Fire(new AppOpenClickedSignal("", adInfo));
+            this.signalBus.Fire(new AppOpenClickedSignal(this.aoaAdPlacement, adInfo));
         }
 
         private void HandleAoaAdShown(object sender, EventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleAoaAdShown");
             var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.AoaAdId.Id, AdFormatConstants.AppOpen);
-            this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal("", adInfo));
+            this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(this.aoaAdPlacement, adInfo));
             this.IsShowingAoaAd = true;
         }
 
@@ -421,7 +423,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         {
             this.logService.Log($"onelog: Yandex: HandleAoaAdDismissed");
             var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.AoaAdId.Id, AdFormatConstants.AppOpen);
-            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal("", adInfo));
+            this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adInfo));
             this.DestroyAoaAd();
             this.LoadAoaAd();
             this.IsShowingAoaAd = false;
@@ -430,7 +432,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         private void HandleAoaAdFailedToShow(object sender, AdFailureEventArgs args)
         {
             this.logService.Log($"onelog: Yandex: HandleAdFailedToShow event received with message: {args.Message}");
-            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal("", args.Message));
+            this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(this.aoaAdPlacement, args.Message));
             this.DestroyAoaAd();
             this.LoadAoaAd();
         }
@@ -441,8 +443,11 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         public bool IsAOAReady() => this.appOpenAd != null && !this.IsShowingAoaAd;
 
-        public void ShowAOAAds() => this.appOpenAd?.Show();
-
+        public void ShowAOAAds(string placement)
+        {
+            this.aoaAdPlacement = placement;
+            this.appOpenAd?.Show();
+        }
         #endregion
 
         #endregion
