@@ -21,7 +21,7 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
         protected override TaskCompletionSource<bool>        TrackerReady         { get; } = new TaskCompletionSource<bool>();
         protected override Dictionary<Type, EventDelegate>   CustomEventDelegates { get; }
 
-        public FirebaseAnalyticTracker(SignalBus signalBus, IRemoteConfig remoteConfig, ILogService logger, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) :
+        public FirebaseAnalyticTracker(ISignalBus signalBus, IRemoteConfig remoteConfig, ILogService logger, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) :
             base(signalBus, analyticConfig)
         {
             this.remoteConfig        = remoteConfig;

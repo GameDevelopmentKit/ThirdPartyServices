@@ -17,7 +17,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         private readonly ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
-        public AdjustTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus,
+        public AdjustTracker(ILogService logger, ISignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus,
             analyticConfig)
         {
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
