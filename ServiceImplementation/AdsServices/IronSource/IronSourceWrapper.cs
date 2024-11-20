@@ -4,12 +4,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Threading;
     using com.unity3d.mediation;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
@@ -51,7 +53,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private bool   isGotRewarded;
         private string interstitialPlacement, rewardedPlacement;
 
-        private bool isLevelPlayInitialized;
+        private bool                    isLevelPlayInitialized;
+        private CancellationTokenSource levelPlayInitializedCts;
 
         public void Initialize()
         {
@@ -92,12 +95,21 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.InitAdQuality();
         }
 
-        private void OnLevelPlayInitSuccess(LevelPlayConfiguration obj) => this.isLevelPlayInitialized = true;
+        private void OnLevelPlayInitSuccess(LevelPlayConfiguration obj)
+        {
+            this.logService.Log($"oneLog: IronSourceWrapper OnLevelPlayInitSuccess IsAdQualityEnabled {obj.IsAdQualityEnabled}");
+            this.isLevelPlayInitialized = true;
+        }
 
-        private void OnLevelPlayInitFailed(LevelPlayInitError obj) => this.InitLevelPlaySdk();
+        private void OnLevelPlayInitFailed(LevelPlayInitError obj)
+        {
+            this.logService.Log($"oneLog: IronSourceWrapper OnLevelPlayInitFailed {obj}");
+            this.InitLevelPlaySdk();
+        }
 
         private void InitLevelPlaySdk()
         {
+            this.logService.Log($"oneLog: IronSourceWrapper InitLevelPlaySdk");
             LevelPlay.Init(this.thirdPartiesConfig.AdSettings.IronSource.AppId, adFormats: new[] { LevelPlayAdFormat.BANNER });
         }
 
@@ -380,28 +392,46 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
-            if (!this.isLevelPlayInitialized) return; //todo: handle wait to show when not initialized
-            if (this.isLoadedBanner)
+            this.logService.Log("oneLog: IronSourceWrapper ShowBannerAd");
+            this.ResetLevelPlayInitializedCts();
+            this.levelPlayInitializedCts = new();
+            UniTask.WaitUntil(() => this.isLevelPlayInitialized, cancellationToken: this.levelPlayInitializedCts.Token).ContinueWith(InternalShowBannerAd).Forget();
+            return;
+
+            void InternalShowBannerAd()
             {
+                if (this.isLoadedBanner)
+                {
+                    this.logService.Log("oneLog: IronSourceWrapper ShowBannerAd: show banner loaded");
+                    this.bannerAd.ShowAd();
+
+                    return;
+                }
+
+                var position = bannerAdsPosition switch
+                               {
+                                   BannerAdsPosition.Top => LevelPlayBannerPosition.TopCenter,
+                                   _                     => LevelPlayBannerPosition.BottomCenter
+                               };
+                this.bannerAd = new(this.ironSourceSettings.BannerId, this.BannerSize(), position);
+
+                this.bannerAd.OnAdLoaded     += this.OnBannerLoaded;
+                this.bannerAd.OnAdLoadFailed += this.OnBannerLoadFailed;
+                this.bannerAd.OnAdClicked    += this.OnBannerClicked;
+                this.bannerAd.OnAdDisplayed  += this.BannerOnAdScreenPresentedEvent;
+                this.bannerAd.OnAdCollapsed  += this.BannerOnAdScreenDismissedEvent;
+
+                this.bannerAd.LoadAd();
                 this.bannerAd.ShowAd();
-                return;
+                this.logService.Log("oneLog: IronSourceWrapper ShowBannerAd: show new banner");
             }
-
-            var position = bannerAdsPosition switch
-            {
-                BannerAdsPosition.Top => LevelPlayBannerPosition.TopCenter,
-                _                     => LevelPlayBannerPosition.BottomCenter
-            };
-            this.bannerAd = new(this.ironSourceSettings.BannerId, this.BannerSize(), position);
-
-            this.bannerAd.OnAdLoaded     += this.OnBannerLoaded;
-            this.bannerAd.OnAdLoadFailed += this.OnBannerLoadFailed;
-            this.bannerAd.OnAdClicked    += this.OnBannerClicked;
-            this.bannerAd.OnAdDisplayed  += this.BannerOnAdScreenPresentedEvent;
-            this.bannerAd.OnAdCollapsed  += this.BannerOnAdScreenDismissedEvent;
-
-            this.bannerAd.LoadAd();
-            this.bannerAd.ShowAd();
+        }
+        
+        private void ResetLevelPlayInitializedCts()
+        {
+            this.levelPlayInitializedCts?.Cancel();
+            this.levelPlayInitializedCts?.Dispose();
+            this.levelPlayInitializedCts = null;
         }
 
         private LevelPlayAdSize BannerSize()
@@ -411,6 +441,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void HideBannedAd()
         {
+            this.ResetLevelPlayInitializedCts();
             if (!this.isLevelPlayInitialized) return;
             this.bannerAd?.HideAd();
         }
