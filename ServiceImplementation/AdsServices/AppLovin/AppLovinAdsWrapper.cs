@@ -628,6 +628,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnMRecAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo maxSdkAdInfo)
         {
+            Debug.Log($"oneLog: AppLovinAdsWrapper: OnMRecAdLoadedEvent: {adUnitId}");
             this.StartMRECAutoRefresh(adUnitId);
             var adInfo = new AdInfo(this.AdPlatform, maxSdkAdInfo.AdUnitIdentifier, AdFormatConstants.MREC, maxSdkAdInfo.NetworkName, maxSdkAdInfo.NetworkPlacement, maxSdkAdInfo.Revenue);
             this.signalBus.Fire(new MRecAdLoadedSignal(adUnitId, adInfo));
@@ -635,6 +636,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnMRecAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo error)
         {
+            Debug.Log($"oneLog: AppLovinAdsWrapper: OnMRecAdLoadFailedEvent: {error}");
             this.StopMRECAutoRefresh(adUnitId);
             this.LoadMREC(adUnitId);
             this.signalBus.Fire(new MRecAdLoadFailedSignal(adUnitId));
