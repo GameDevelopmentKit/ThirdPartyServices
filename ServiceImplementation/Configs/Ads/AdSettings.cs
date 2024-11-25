@@ -32,8 +32,11 @@
 
         #region Misc
 
-        public bool EnableInterCappingTimeFocus => this.enableInterCappingTimeFocus;
-        public bool EnableBreakAds              => this.enableBreakAds;
+        public bool   EnableInterCappingTimeFocus  => this.enableInterCappingTimeFocus;
+        public bool   EnableBreakAds               => this.enableBreakAds;
+        public bool   IsBreakAdsRewardCurrency     => this.isBreakAdsRewardCurrency;
+        public string BreakAdsRewardCurrency       => this.breakAdsRewardCurrency;
+        public int    BreakAdsRewardCurrencyAmount => this.breakAdsRewardCurrencyAmount;
 
         public string IntersInsteadAoaResumePlacement => this.mIntersInsteadAoaResumePlacement;
 
@@ -61,7 +64,13 @@
 
         [SerializeField] [FoldoutGroup("Misc")] [LabelText("Enable Inter Capping Time Focus", SdfIconType.Download)] private bool enableInterCappingTimeFocus;
 
-        [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)] [FoldoutGroup("Misc")] private bool enableBreakAds;
+        [SerializeField] [FoldoutGroup("Misc/Break Ads")] [LabelText("Break Ads Screen", SdfIconType.CupStraw)] private bool enableBreakAds;
+
+        [SerializeField] [FoldoutGroup("Misc/Break Ads")] [ShowIf(nameof(enableBreakAds))] [LabelText("Is Reward Currency")] private bool isBreakAdsRewardCurrency;
+
+        [SerializeField] [FoldoutGroup("Misc/Break Ads")] [ShowIf(nameof(isBreakAdsRewardCurrency))] [LabelText("Currency")] private string breakAdsRewardCurrency = "Coin";
+
+        [SerializeField] [FoldoutGroup("Misc/Break Ads")] [ShowIf(nameof(isBreakAdsRewardCurrency))] [LabelText("Amount")] private int breakAdsRewardCurrencyAmount = 1;
 
         [SerializeField] [LabelText("Inter AOA Placement")] [FoldoutGroup("Misc")] private string mIntersInsteadAoaResumePlacement = "inter_aoa";
 
