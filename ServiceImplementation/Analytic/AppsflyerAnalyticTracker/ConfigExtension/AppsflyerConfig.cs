@@ -19,6 +19,7 @@ namespace Core.AnalyticServices
         {
             #if UNITY_EDITOR
             EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
+            //need to use this method because of the purchase connector, if we can import the purchase connector through UPM then we can change it
             EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "com.theone.appsflyer-unity-plugin", "https://github.com/The1Studio/appsflyer.git?path=Assets/AppsFlyer#appsflyer_sdk-purchase_sdk");
             #endif
         }
@@ -43,13 +44,13 @@ namespace Core.AnalyticServices
         {
             get
             {
-#if UNITY_ANDROID
+                #if UNITY_ANDROID
                 return this.appsflyerDevKeyAndroid;
-#elif UNITY_IOS
+                #elif UNITY_IOS
                     return this.appsflyerDevKeyIos;
-#elif UNITY_WSA_10_0
+                #elif UNITY_WSA_10_0
                     return this.appsflyerDevKeyUwp;
-#endif
+                #endif
                 return null;
             }
         }
@@ -58,25 +59,21 @@ namespace Core.AnalyticServices
         /// 
         /// </summary>
         public string AppsflyerAppId
-#if UNITY_IOS
+            #if UNITY_IOS
             => this.appsflyerAppIdIos;
-#elif UNITY_ANDROID
-            => Application.identifier;
-#elif UNITY_WSA_10_0 && !UNITY_EDITOR
+            #elif UNITY_ANDROID
+            =>
+                Application.identifier;
+        #elif UNITY_WSA_10_0 && !UNITY_EDITOR
             => this.appsflyerAppIdUWP;
-#else
+        #else
             => string.Empty;
-#endif
+        #endif
 
-        [Header("DevKey")][BoxGroup("Appsflyer")]
-        [SerializeField] private string appsflyerDevKeyIos;
-        [BoxGroup("Appsflyer")]
-        [SerializeField] private string appsflyerDevKeyAndroid;
+        [Header("DevKey")] [BoxGroup("Appsflyer")] [SerializeField] private string appsflyerDevKeyIos;
+        [BoxGroup("Appsflyer")] [SerializeField]                    private string appsflyerDevKeyAndroid;
 
-        [Header("App Id")]
-        [BoxGroup("Appsflyer")]
-        [ValidateInput("ValidateAppIdIos", "Appsflyer App Id must start with 'id'", InfoMessageType.Error)]
-        [SerializeField] private string appsflyerAppIdIos;
+        [Header("App Id")] [BoxGroup("Appsflyer")] [ValidateInput("ValidateAppIdIos", "Appsflyer App Id must start with 'id'", InfoMessageType.Error)] [SerializeField] private string appsflyerAppIdIos;
 
         private bool ValidateAppIdIos(string value) { return string.IsNullOrEmpty(value) || this.appsflyerAppIdIos.StartsWith("id"); }
         #endif
