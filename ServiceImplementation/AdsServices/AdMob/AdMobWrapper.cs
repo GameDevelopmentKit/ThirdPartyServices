@@ -301,6 +301,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             void OnMrecBannerLoadFailed(LoadAdError _)
             {
                 Debug.Log("mrec load failed");
+                var bannerView = this.idToMrecViewHandler[adId.Id].bannerView;
+                bannerViewHandler.bannerView.OnBannerAdLoaded     -= OnMrecBannerLoaded;
+                bannerViewHandler.bannerView.OnBannerAdLoadFailed -= OnMrecBannerLoadFailed;
+
+                bannerViewHandler.bannerView.OnBannerAdLoaded     -= this.BannerViewOnAdLoaded;
+                bannerViewHandler.bannerView.OnBannerAdLoadFailed -= this.BannerViewOnAdLoadFailed;
+                bannerViewHandler.bannerView.OnAdClicked          -= this.BannerViewOnAdClicked;
+                bannerViewHandler.bannerView.OnAdPaid             -= this.MRECAdHandlePaid;
+                
                 this.idToMrecViewHandler[adId.Id].DestroyBanner();
                 this.idToMrecViewHandler.Remove(adId.Id);
             }
@@ -569,8 +578,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.bannerView.LoadAd(new AdRequest());
             #endif
 
-            this.bannerView.OnBannerAdLoaded     += this.OnBannerLoaded;
-            this.bannerView.OnBannerAdLoadFailed += this.OnBannerLoadFailed;
+            // this.bannerView.OnBannerAdLoaded     += this.OnBannerLoaded;
+            // this.bannerView.OnBannerAdLoadFailed += this.OnBannerLoadFailed;
         }
 
         internal void CreatBannerIfNeed()
@@ -592,8 +601,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         internal void DestroyBanner()
         {
             if (this.bannerView == null) return;
-            this.bannerView.OnBannerAdLoaded     -= this.OnBannerLoaded;
-            this.bannerView.OnBannerAdLoadFailed -= this.OnBannerLoadFailed;
+            // this.bannerView.OnBannerAdLoaded     -= this.OnBannerLoaded;
+            // this.bannerView.OnBannerAdLoadFailed -= this.OnBannerLoadFailed;
             this.bannerView.Destroy();
             this.bannerView = null;
         }
