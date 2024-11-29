@@ -130,7 +130,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 this.idMRecCreating.Add(adsId);
 
                 this.logService.Log($"Check max init {MaxSdk.IsInitialized()}");
-                MaxSdk.CreateMRec(adUnitId.Id, MaxSdkBase.AdViewPosition.BottomCenter);
+                MaxSdk.CreateMRec(adUnitId.Id, Screen.width * 2, Screen.height * 2);
             }
         }
 
