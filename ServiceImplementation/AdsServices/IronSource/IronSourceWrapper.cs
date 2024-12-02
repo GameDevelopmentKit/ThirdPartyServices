@@ -87,6 +87,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             LevelPlay.OnInitSuccess += this.OnLevelPlayInitSuccess;
             LevelPlay.OnInitFailed  += this.OnLevelPlayInitFailed;
             this.InitLevelPlaySdk();
+            this.InitMRECAds();
 
             #if THEONE_ADS_DEBUG
             IronSource.Agent.setAdaptersDebug(true);
@@ -289,7 +290,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region MREC
 
-        private Dictionary<string, LevelPlayBannerAd> idToMRECAd = new();
+        private readonly Dictionary<string, LevelPlayBannerAd> idToMRECAd     = new();
+        private readonly List<string>                          mrecPlacements = new();
+
+        private void InitMRECAds()
+        {
+            if (this.ironSourceSettings.MRECAdIds.Count == 0) return;
+            foreach (var mrecAdId in this.ironSourceSettings.MRECAdIds)
+            {
+                this.mrecPlacements.Add(mrecAdId.Key.Name);
+            }
+        }
 
         public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
@@ -315,7 +326,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public bool IsMRECReady(string placement, AdScreenPosition position)
         {
-            return this.idToMRECAd.TryGetValue(placement, out _);
+            return this.mrecPlacements.Contains(placement);
         }
 
         public void HideMREC(string placement, AdScreenPosition position)
