@@ -23,7 +23,9 @@
         public const string MinPauseSecondToShowAoaAD = "min_pause_second_to_show_aoa_ad";
         public const string AoaStartSession           = "aoa_start_session";
         public const string UseAoaAdmob               = "use_aoa_admob";
-        public const string UseAoaResume               = "use_aoa_resume";
+        public const string AoaAdResumeStartLevel     = "aoa_resume_start_level";
+        public const string AoaAdResumeStartSession   = "aoa_resume_start_session";
+        public const string UseAoaResume              = "aoa_resume_start_session";
 
         #endregion
 

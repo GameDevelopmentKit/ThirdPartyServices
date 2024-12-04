@@ -58,6 +58,10 @@ namespace ServiceImplementation.Configs.Ads
         public int   AOAStartSession           { get; private set; }
         public bool  UseAoaAdmob               { get; private set; }
         public bool  UseAoaResume              { get; private set; }
+        
+        // level >= AOAResumeAdStartLevel || session >= AOAResumeAdStartSession => show AOA ad
+        public int   AOAResumeAdStartLevel     { get; private set; } // necessary and sufficient conditions - The level to start showing AOA ad when resume app
+        public int   AOAResumeAdStartSession   { get; private set; } // necessary and sufficient conditions - The session to start showing AOA ad when resume app
 
         #endregion
 
@@ -163,6 +167,8 @@ namespace ServiceImplementation.Configs.Ads
             this.MinPauseSecondToShowAoaAd = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.MinPauseSecondToShowAoaAD);
             this.AOAStartSession           = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaStartSession);
             this.UseAoaAdmob               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.UseAoaAdmob);
+            this.AOAResumeAdStartLevel     = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaAdResumeStartLevel);
+            this.AOAResumeAdStartSession   = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaAdResumeStartSession);
             this.UseAoaResume              = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.UseAoaResume);
 
             #endregion
