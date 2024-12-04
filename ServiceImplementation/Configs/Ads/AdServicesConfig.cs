@@ -57,6 +57,7 @@ namespace ServiceImplementation.Configs.Ads
         public int   MinPauseSecondToShowAoaAd { get; private set; }
         public int   AOAStartSession           { get; private set; }
         public bool  UseAoaAdmob               { get; private set; }
+        public bool  UseAoaResume              { get; private set; }
 
         #endregion
 
@@ -162,6 +163,7 @@ namespace ServiceImplementation.Configs.Ads
             this.MinPauseSecondToShowAoaAd = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.MinPauseSecondToShowAoaAD);
             this.AOAStartSession           = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaStartSession);
             this.UseAoaAdmob               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.UseAoaAdmob);
+            this.UseAoaResume              = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.UseAoaResume);
 
             #endregion
 
