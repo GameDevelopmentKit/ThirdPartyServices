@@ -10,7 +10,7 @@ namespace ServiceImplementation.IAPServices
     {
         public static void RegisterIAPService(this IContainerBuilder builder)
         {
-            #if THEONE_IAP
+            #if THEONE_IAP && !UNITY_EDITOR
             builder.Register<UnityIapServices>(Lifetime.Singleton).AsImplementedInterfaces();
             #else
             builder.Register<DummyIapServices>(Lifetime.Singleton).AsImplementedInterfaces();
