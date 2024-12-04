@@ -25,7 +25,7 @@
         public const string UseAoaAdmob               = "use_aoa_admob";
         public const string AoaAdResumeStartLevel     = "aoa_resume_start_level";
         public const string AoaAdResumeStartSession   = "aoa_resume_start_session";
-        public const string UseAoaResume              = "aoa_resume_start_session";
+        public const string UseAoaResume              = "use_aoa_resume";
 
         #endregion
 
