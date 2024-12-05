@@ -26,6 +26,7 @@
         public const string AoaAdResumeStartLevel     = "aoa_resume_start_level";
         public const string AoaAdResumeStartSession   = "aoa_resume_start_session";
         public const string UseAoaResume              = "use_aoa_resume";
+        public const string AoaFirstOpen              = "aoa_first_open";
 
         #endregion
 
