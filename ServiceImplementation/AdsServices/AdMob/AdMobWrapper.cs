@@ -254,24 +254,23 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             var mrecPosition      = position.CanvasToUnityCoordinateSystem().ToAdmobPosition() + offset.FlipY();
             mrecBannerHandler.bannerView.SetPosition((int)mrecPosition.x, (int)mrecPosition.y);
             mrecBannerHandler.bannerView.Show();
-
             this.MrecBannerViewDisplay();
         }
 
-        public bool IsMRECReady(string placement, AdScreenPosition position)
+        public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             var adPlacement = AdPlacement.PlacementWithName(placement);
             if (!this.ADMobSettings.MRECAdIds.TryGetValue(adPlacement, out var adId)) return false;
             var isMrecHandlerCreate = this.idToMrecViewHandler.ContainsKey(adId.Id);
             if (!isMrecHandlerCreate)
             {
-                this.LoadMREC(placement, position);
+                this.LoadMREC(placement, position, offset);
             }
 
             return this.idToMrecViewHandler[adId.Id].bannerView != null;
         }
 
-        public void LoadMREC(string placement, AdScreenPosition adPosition)
+        public void LoadMREC(string placement, AdScreenPosition adPosition, AdScreenPosition offset)
         {
             if (!this.ADMobSettings.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var adId))
             {
@@ -280,7 +279,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (this.idToMrecViewHandler.TryGetValue(adId.Id, out var bannerViewHandler)) return;
 
-            var mrecPosition = adPosition.CanvasToUnityCoordinateSystem().ToAdmobPosition();
+            var mrecPosition = adPosition.CanvasToUnityCoordinateSystem().ToAdmobPosition() + offset.FlipY();
             bannerViewHandler = new BannerViewHandler(adId.Id, AdSize.MediumRectangle, (int)mrecPosition.x, (int)mrecPosition.y);
             this.idToMrecViewHandler.Add(adId.Id, bannerViewHandler);
 
@@ -296,16 +295,26 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             void OnMrecBannerLoaded()
             {
-                Debug.Log("mrec loaded");
+                Debug.Log("oneLog: AdMobWrapper LoadMREC mrec loaded");
             }
 
             void OnMrecBannerLoadFailed(LoadAdError _)
             {
-                Debug.Log("mrec load failed");
+                Debug.Log("oneLog: AdMobWrapper LoadMREC mrec load failed");
+                bannerViewHandler.bannerView.OnBannerAdLoaded     -= OnMrecBannerLoaded;
+                bannerViewHandler.bannerView.OnBannerAdLoadFailed -= OnMrecBannerLoadFailed;
+
+                bannerViewHandler.bannerView.OnBannerAdLoaded     -= this.BannerViewOnAdLoaded;
+                bannerViewHandler.bannerView.OnBannerAdLoadFailed -= this.BannerViewOnAdLoadFailed;
+                bannerViewHandler.bannerView.OnAdClicked          -= this.BannerViewOnAdClicked;
+                bannerViewHandler.bannerView.OnAdPaid             -= this.MRECAdHandlePaid;
+                
+                this.idToMrecViewHandler[adId.Id].DestroyBanner();
+                this.idToMrecViewHandler.Remove(adId.Id);
             }
         }
 
-        public void HideMREC(string placement, AdScreenPosition position)
+        public void HideMREC(string placement)
         {
             var mrecBannerView = this.idToMrecViewHandler[this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id];
 
@@ -314,7 +323,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.MrecBannerViewDismissed();
         }
 
-        public void HideAllMREC() { }
+        public void HideAllMREC()
+        {
+            this.idToMrecViewHandler.ForEach(x => x.Value.bannerView?.Hide());
+        }
+        
+        public void DestroyMREC(string placement)
+        {
+            var adsId          = this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            var mrecBannerView = this.idToMrecViewHandler[adsId];
+            mrecBannerView.DestroyBanner();
+            this.idToMrecViewHandler.Remove(adsId);
+            this.MrecBannerViewDismissed();
+        }
 
         private void LoadAllMRec()
         {
@@ -554,7 +575,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             #if !UNITY_EDITOR
             this.bannerView.LoadAd(new AdRequest());
             #endif
-
+            
             this.bannerView.OnBannerAdLoaded     += this.OnBannerLoaded;
             this.bannerView.OnBannerAdLoadFailed += this.OnBannerLoadFailed;
         }
@@ -571,9 +592,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.loadFailedTime = 0;
         }
 
-        private void DestroyBanner()
+        internal void DestroyBanner()
         {
             if (this.bannerView == null) return;
+            this.bannerView.OnBannerAdLoaded     -= this.OnBannerLoaded;
+            this.bannerView.OnBannerAdLoadFailed -= this.OnBannerLoadFailed;
             this.bannerView.Destroy();
             this.bannerView = null;
         }
