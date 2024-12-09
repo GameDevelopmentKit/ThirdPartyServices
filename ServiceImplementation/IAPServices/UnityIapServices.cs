@@ -8,6 +8,7 @@ namespace ServiceImplementation.IAPServices
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
+    using Newtonsoft.Json;
     using ServiceImplementation.IAPServices.Signals;
     using Unity.Services.Core;
     using Unity.Services.Core.Environments;
@@ -333,6 +334,11 @@ namespace ServiceImplementation.IAPServices
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
             var productId = args.purchasedProduct.definition.id;
+            var receipt   = args.purchasedProduct.receipt;
+            var quantity  = this.GetPurchaseQuantityFromReceipt(receipt);
+
+            this.logger.Log($"onelog: IAP ProcessPurchase {productId} : {quantity}");
+
             if (this.onPurchaseComplete == null)
             {
                 this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(productId));
@@ -346,6 +352,27 @@ namespace ServiceImplementation.IAPServices
             this.onPurchaseComplete = null;
 
             return PurchaseProcessingResult.Complete;
+        }
+
+        private int GetPurchaseQuantityFromReceipt(string receipt)
+        {
+            this.logger.Log($"onelog: IAP GetPurchaseQuantityFromReceipt receipt {receipt}");
+            try
+            {
+                var receiptData = JsonConvert.DeserializeObject<GooglePurchaseReceipt>(receipt);
+                return receiptData.purchaseQuantity;
+            }
+            catch (Exception e)
+            {
+                this.logger.Log($"onelog: IAP GetPurchaseQuantityFromReceipt {e.Message}");
+                return 1; // Default to 1 if quantity is not available or parsing fails or not is PlayStore
+            }
+        }
+
+        [Serializable]
+        public class GooglePurchaseReceipt
+        {
+            public int purchaseQuantity;
         }
 
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
