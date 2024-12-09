@@ -141,6 +141,20 @@ namespace ServiceImplementation.Configs.Ads
 
         #endregion
 
+        #region MREC
+        
+        /// <summary>
+        ///     Enable interval refresh mrec ad
+        /// </summary>
+        public bool EnableMrecRefreshInterval { get; private set; }
+
+        /// <summary>
+        ///     The interval refresh mrec ad
+        /// </summary>
+        public int MrecRefreshInterval { get; private set; }        
+
+        #endregion
+
         private void FetchRemoteConfig()
         {
             #region General
@@ -196,6 +210,13 @@ namespace ServiceImplementation.Configs.Ads
             this.EnableCollapsibleBannerFallback          = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBannerFallback);
             this.CollapsibleBannerAutoRefreshEnabled      = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerAutoRefreshEnabled);
             this.CollapsibleBannerExpandOnRefreshEnabled  = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled);
+
+            #endregion
+            
+            #region MREC
+
+            this.EnableMrecRefreshInterval = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableMrecRefreshInterval);
+            this.MrecRefreshInterval       = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.MrecRefreshInterval);
 
             #endregion
         }

@@ -324,19 +324,33 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             mrecAd.ShowAd();
         }
 
-        public bool IsMRECReady(string placement, AdScreenPosition position)
+        public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             return this.mrecPlacements.Contains(placement);
         }
 
-        public void HideMREC(string placement, AdScreenPosition position)
+        public void HideMREC(string placement)
         {
             if (!this.isLevelPlayInitialized) return;
             if (!this.idToMRECAd.TryGetValue(placement, out var mrecAd)) return;
             mrecAd.HideAd();
         }
 
-        public void HideAllMREC() { }
+        public void HideAllMREC()
+        {
+            foreach (var (_, mrecAd) in this.idToMRECAd)
+            {
+                mrecAd.HideAd();
+            }
+        }
+        
+        public void DestroyMREC(string placement)
+        {
+            if (!this.isLevelPlayInitialized) return;
+            if (!this.idToMRECAd.TryGetValue(placement, out var mrecAd)) return;
+            mrecAd.DestroyAd();
+            this.idToMRECAd.Remove(placement);
+        }
 
         private void OnMrecLoaded(LevelPlayAdInfo info)
         {
