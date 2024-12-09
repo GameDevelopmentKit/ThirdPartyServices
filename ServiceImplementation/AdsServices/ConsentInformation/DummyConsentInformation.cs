@@ -17,9 +17,13 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             this.logService = logService;
         }
 
-        public void Request()
+        public bool CanRequestAds() => true;
+
+        public void RequestConsent()
         {
             this.logService.Log("Request consent information");
         }
+
+        public bool IsRequestingConsent() => false;
     }
 }

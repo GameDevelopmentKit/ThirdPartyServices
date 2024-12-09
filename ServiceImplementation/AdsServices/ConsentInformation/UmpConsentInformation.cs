@@ -12,14 +12,24 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         private readonly ILogService logService;
 
+        [Preserve]
+        public UmpConsentInformation(ILogService logService)
+        {
+            this.logService = logService;
+        }
+
         #endregion
 
-        [Preserve]
-        public UmpConsentInformation(ILogService logService) { this.logService = logService; }
+        private bool isRequesting;
 
-        public void Initialize() { this.Request(); }
+        public void Initialize()
+        {
+            this.RequestConsent();
+        }
 
-        public void Request()
+        public bool CanRequestAds() => ConsentInformation.CanRequestAds();
+
+        public void RequestConsent()
         {
             var request = new ConsentRequestParameters
             {
@@ -29,6 +39,8 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             ConsentInformation.Update(request, this.OnConsentInfoUpdated);
         }
 
+        public bool IsRequestingConsent() => this.isRequesting;
+
         private void OnConsentInfoUpdated(FormError consentError)
         {
             if (consentError != null)
@@ -37,13 +49,16 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 return;
             }
 
-#if UNITY_IOS
+            #if UNITY_IOS
             if (AttHelper.IsRequestTrackingComplete()) return;
-#endif
+            #endif
 
-#if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
+            #if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
+            this.isRequesting = true;
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
             {
+                this.isRequesting = false;
+
                 if (formError != null)
                 {
                     // Consent gathering failed.
@@ -54,7 +69,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 // Consent has been gathered.
                 this.logService.Log($"onelog: ConsentForm.LoadAndShowConsentFormIfRequired Success");
             });
-#endif
+            #endif
         }
     }
 }
