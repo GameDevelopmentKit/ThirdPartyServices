@@ -2,6 +2,8 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 {
     public interface IConsentInformation
     {
-        void Request();
+        bool CanRequestAds();
+        void RequestConsent();
+        bool IsRequestingConsent();
     }
 }
