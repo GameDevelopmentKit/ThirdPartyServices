@@ -98,6 +98,13 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.TryAddAddsConfig(RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled, "false");
 
             #endregion
+            
+            #region MREC
+
+            this.TryAddAddsConfig(RemoteConfigKey.EnableMrecRefreshInterval, "false"); 
+            this.TryAddAddsConfig(RemoteConfigKey.MrecRefreshInterval, "10"); 
+
+            #endregion
 
             #endregion
         }
