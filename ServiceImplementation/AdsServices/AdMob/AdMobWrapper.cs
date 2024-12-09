@@ -5,7 +5,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
-    using System.Threading;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
@@ -590,6 +589,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         internal void DestroyBanner()
         {
+            Debug.Log("oneLog: AdmobWrapper BannerViewHandler DestroyBanner start");
             if (this.bannerView == null) return;
             this.bannerView.Destroy();
             this.bannerView = null;
