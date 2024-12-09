@@ -162,6 +162,18 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.InternalHideMREC(adsId);
         }
+        
+        public void DestroyMREC(string placement)
+        {
+            var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            this.InternalDestroyMREC(adsId);
+        }
+        
+        public void InternalDestroyMREC(string adUnitId)
+        {
+            this.OnMRecAdDismissed(adUnitId);
+            MaxSdk.DestroyMRec(adUnitId);
+        }
 
         public void DestroyMREC(string placement)
         {
