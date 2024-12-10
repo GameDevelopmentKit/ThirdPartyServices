@@ -356,23 +356,42 @@ namespace ServiceImplementation.IAPServices
 
         private int GetPurchaseQuantityFromReceipt(string receipt)
         {
-            this.logger.Log($"onelog: IAP GetPurchaseQuantityFromReceipt receipt {receipt}");
+            #if UNITY_IOS
+                return 1;
+            #endif
+
             try
             {
-                var receiptData = JsonConvert.DeserializeObject<GooglePurchaseReceipt>(receipt);
-                return receiptData.purchaseQuantity;
+                Debug.Log($"onelog: IAP receipt: {receipt}");
+                var googlePlayReceipt = JsonConvert.DeserializeObject<GooglePlayReceipt>(receipt);
+                Debug.Log($"onelog: IAP receipt payload: {googlePlayReceipt.Payload}");
+                var playReceiptPlayload = JsonConvert.DeserializeObject<GooglePlayReceiptPlayload>(googlePlayReceipt.Payload);
+                Debug.Log($"onelog: IAP receipt payload json: {playReceiptPlayload.Json}");
+                var playReceiptPlayloadJson = JsonConvert.DeserializeObject<GooglePlayReceiptPayloadJson>(playReceiptPlayload.Json);
+                Debug.Log($"onelog: IAP quantity: {playReceiptPlayloadJson.Quantity}");
+
+                return playReceiptPlayloadJson.Quantity;
             }
             catch (Exception e)
             {
-                this.logger.Log($"onelog: IAP GetPurchaseQuantityFromReceipt {e.Message}");
-                return 1; // Default to 1 if quantity is not available or parsing fails or not is PlayStore
+                this.logger.Log($"onelog: IAP Fail GetPurchaseQuantityFromReceipt {e.Message}");
+                return 1; // Default to 1 if quantity is not available or parsing fails
             }
         }
 
-        [Serializable]
-        public class GooglePurchaseReceipt
+        public class GooglePlayReceipt
         {
-            public int purchaseQuantity;
+            public string Payload { get; set; }
+        }
+
+        public class GooglePlayReceiptPlayload
+        {
+            [JsonProperty("json")] public string Json { get; set; }
+        }
+
+        public class GooglePlayReceiptPayloadJson
+        {
+            [JsonProperty("quantity")] public int Quantity { get; set; }
         }
 
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
