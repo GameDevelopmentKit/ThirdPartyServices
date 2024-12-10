@@ -248,6 +248,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
+            Debug.Log("oneLog: AdmobWrapper Showmrec");
             this.LoadAllMRec();
             var adId              = this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)];
             var mrecBannerHandler = this.idToMrecViewHandler[adId.Id];
@@ -260,6 +261,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public bool IsMRECReady(string placement, AdScreenPosition position)
         {
+            Debug.Log("oneLog: AdmobWrapper ismrecready start");
             var adPlacement = AdPlacement.PlacementWithName(placement);
             if (!this.ADMobSettings.MRECAdIds.TryGetValue(adPlacement, out var adId)) return false;
             var isMrecHandlerCreate = this.idToMrecViewHandler.ContainsKey(adId.Id);
@@ -268,11 +270,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.LoadMREC(placement, position);
             }
 
+            Debug.Log("oneLog: AdmobWrapper ismrecready check null bannerview");
             return this.idToMrecViewHandler[adId.Id].bannerView != null;
         }
 
         public void LoadMREC(string placement, AdScreenPosition adPosition)
         {
+            Debug.Log("oneLog: AdmobWrapper LoadMREC start");
             if (!this.ADMobSettings.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var adId))
             {
                 return;
@@ -550,6 +554,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void CreateBannerView()
         {
+            Debug.Log("oneLog: AdmobWrapper bannerviewhandler creat bannerview");
             this.bannerView = new BannerView(this.adId, this.adSize, this.x, this.y);
             #if !UNITY_EDITOR
             this.bannerView.LoadAd(new AdRequest());
