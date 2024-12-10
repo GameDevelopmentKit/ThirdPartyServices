@@ -31,6 +31,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         public void RequestConsent()
         {
+            this.isRequesting = true;
             var request = new ConsentRequestParameters
             {
                 TagForUnderAgeOfConsent = false
@@ -46,15 +47,19 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             if (consentError != null)
             {
                 this.logService.Error($"onelog: OnConsentInfoUpdated Error {consentError.Message}");
+                this.isRequesting = false;
                 return;
             }
 
             #if UNITY_IOS
-            if (AttHelper.IsRequestTrackingComplete()) return;
+            if (AttHelper.IsRequestTrackingComplete())
+            {
+                this.isRequesting = false;
+                return;
+            }
             #endif
 
             #if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
-            this.isRequesting = true;
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
             {
                 this.isRequesting = false;
