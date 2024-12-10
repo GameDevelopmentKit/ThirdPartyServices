@@ -145,7 +145,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
-            return this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out _);
+            var isMrecReady = this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var adsId);
+            Debug.Log($"oneLog: ApplovinAdsWrapper isMRECReady: {isMrecReady}, placement: {placement}, adsId: {adsId?.Id}");
+            return isMrecReady;
         }
 
         public void HideMREC(string placement)
