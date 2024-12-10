@@ -259,6 +259,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
+            Debug.Log("oneLog: AdmobWrapper IsMRECReady start");
             var adPlacement = AdPlacement.PlacementWithName(placement);
             if (!this.ADMobSettings.MRECAdIds.TryGetValue(adPlacement, out var adId)) return false;
             var isMrecHandlerCreate = this.idToMrecViewHandler.ContainsKey(adId.Id);
@@ -266,7 +267,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             {
                 this.LoadMREC(placement, position, offset);
             }
-
+            Debug.Log("oneLog: AdmobWrapper IsMRECReady check banner view is null");
             return this.idToMrecViewHandler[adId.Id].bannerView != null;
         }
 
@@ -277,7 +278,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 return;
             }
 
+            Debug.Log("oneLog: AdmobWrapper LoadMREC start");
             if (this.idToMrecViewHandler.TryGetValue(adId.Id, out var bannerViewHandler)) return;
+            Debug.Log("oneLog: AdmobWrapper LoadMREC creat new banner");
 
             var mrecPosition = adPosition.CanvasToUnityCoordinateSystem().ToAdmobPosition() + offset.FlipY();
             bannerViewHandler = new BannerViewHandler(adId.Id, AdSize.MediumRectangle, (int)mrecPosition.x, (int)mrecPosition.y);
@@ -571,6 +574,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void CreateBannerView()
         {
+            Debug.Log("oneLog: AdmobWrapper BannerViewHandler creatbanner view");
             this.bannerView = new BannerView(this.adId, this.adSize, this.x, this.y);
             #if !UNITY_EDITOR
             this.bannerView.LoadAd(new AdRequest());
@@ -594,7 +598,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         internal void DestroyBanner()
         {
+            Debug.Log("oneLog: AdmobWrapper BannerViewHandler DestroyBanner start");
             if (this.bannerView == null) return;
+            Debug.Log("oneLog: AdmobWrapper BannerViewHandler DestroyBanner end");
             this.bannerView.OnBannerAdLoaded     -= this.OnBannerLoaded;
             this.bannerView.OnBannerAdLoadFailed -= this.OnBannerLoadFailed;
             this.bannerView.Destroy();
