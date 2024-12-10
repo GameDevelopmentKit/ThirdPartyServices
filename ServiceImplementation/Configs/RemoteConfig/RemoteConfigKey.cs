@@ -27,6 +27,7 @@
         public const string AoaAdResumeStartSession   = "aoa_resume_start_session";
         public const string UseAoaResume              = "use_aoa_resume";
         public const string AoaFirstOpen              = "show_open_ads_first_open";
+        public const string AoaStartGame              = "show_open_ads_start_game";
 
         #endregion
 
