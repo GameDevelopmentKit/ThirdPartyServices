@@ -1,5 +1,6 @@
 ﻿namespace ServiceImplementation.FireBaseRemoteConfig
 {
+    using System.Threading.Tasks;
     using UnityEngine.Scripting;
 
     [Preserve]
@@ -11,6 +12,8 @@
         {
             return "";
         }
+        
+        public Task FetchDataAsync() { return Task.CompletedTask; }
 
         public bool GetRemoteConfigBoolValue(string key, bool defaultValue)
         {
