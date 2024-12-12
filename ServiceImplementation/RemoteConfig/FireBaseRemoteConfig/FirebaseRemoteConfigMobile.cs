@@ -10,6 +10,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
+    using UnityEngine;
     using UnityEngine.Scripting;
 
     /// <summary>
@@ -19,14 +20,16 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     {
         private readonly ILogService logger;
         private readonly SignalBus   signalBus;
+        private readonly RemoteConfigSetting remoteConfigSetting;
 
         [Preserve]
-        public FirebaseRemoteConfigMobile(ILogService logger, SignalBus signalBus)
+        public FirebaseRemoteConfigMobile(ILogService logger, SignalBus signalBus, RemoteConfigSetting remoteConfigSetting)
         {
             this.logger    = logger;
             this.signalBus = signalBus;
+            this.remoteConfigSetting = remoteConfigSetting;
         }
-
+  
         public bool IsConfigFetchedSucceed { get; private set; }
 
         public void Initialize()
@@ -52,13 +55,22 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             return fetchTask.ContinueWithOnMainThread(this.FetchComplete);
         }
-
+        
+        private async Task ReloadDataAsync()
+        {
+            await Task.Delay(TimeSpan.FromSeconds(this.remoteConfigSetting.FirebaseReloadInterval));
+            await this.FetchDataAsync();
+        }
+        
         private void FetchComplete(Task fetchTask)
         {
             if (fetchTask.IsCanceled)
                 this.logger.Log($"onelog: FirebaseRemoteConfig Fetch canceled.");
             else if (fetchTask.IsFaulted)
-                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch encountered an error.");
+            {
+                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch encountered an error");
+                this.ReloadDataAsync();
+            }
             else if (fetchTask.IsCompleted) this.logger.Log($"onelog: FirebaseRemoteConfig Fetch completed successfully!");
 
             var info = FirebaseRemoteConfig.DefaultInstance.Info;
