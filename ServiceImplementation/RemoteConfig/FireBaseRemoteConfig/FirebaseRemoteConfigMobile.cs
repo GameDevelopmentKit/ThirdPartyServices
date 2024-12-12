@@ -55,16 +55,21 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             return fetchTask.ContinueWithOnMainThread(this.FetchComplete);
         }
-
-        private async void FetchComplete(Task fetchTask)
+        
+        private async Task ReloadDataAsync()
+        {
+            await Task.Delay(TimeSpan.FromSeconds(this.remoteConfigSetting.FirebaseReloadInterval));
+            await this.FetchDataAsync();
+        }
+        
+        private void FetchComplete(Task fetchTask)
         {
             if (fetchTask.IsCanceled)
                 this.logger.Log($"onelog: FirebaseRemoteConfig Fetch canceled.");
             else if (fetchTask.IsFaulted)
             {
-                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch encountered an error.");
-                await Task.Delay(TimeSpan.FromSeconds(this.remoteConfigSetting.FirebaseReloadInterval));
-                await this.FetchDataAsync();
+                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch encountered an error");
+                this.ReloadDataAsync();
             }
             else if (fetchTask.IsCompleted) this.logger.Log($"onelog: FirebaseRemoteConfig Fetch completed successfully!");
 
