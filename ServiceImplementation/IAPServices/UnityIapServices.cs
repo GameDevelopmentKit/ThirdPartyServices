@@ -363,6 +363,17 @@ namespace ServiceImplementation.IAPServices
             try
             {
                 Debug.Log($"onelog: IAP receipt: {receipt}");
+
+                int pageSize = 500;
+                var index = 0;
+
+                while (index < receipt.Length)
+                {
+                    var str = receipt.Substring(index, Math.Min(pageSize, receipt.Length - index));
+                    Debug.Log($"onelog: IAP receipt page: {str}");
+                    index += pageSize;
+                }
+
                 var googlePlayReceipt = JsonConvert.DeserializeObject<GooglePlayReceipt>(receipt);
                 Debug.Log($"onelog: IAP receipt payload: {googlePlayReceipt.Payload}");
                 var playReceiptPlayload = JsonConvert.DeserializeObject<GooglePlayReceiptPlayload>(googlePlayReceipt.Payload);
