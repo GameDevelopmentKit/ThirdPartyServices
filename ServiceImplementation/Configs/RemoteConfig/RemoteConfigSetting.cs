@@ -22,7 +22,8 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         public static string ResourcePath = $"GameConfigs/{nameof(RemoteConfigSetting)}";
 
         [OnValueChanged("OnRemoteConfigProviderTypeChanged")] [LabelText("Remote Config Provider Type")] [LabelWidth(200)] [GUIColor(1, 1, 0)] public RemoteConfigProviderType RemoteConfigProviderType = RemoteConfigProviderType.FireBase;
-
+        [SerializeField] [BoxGroup("Firebase reload")] private int firebaseReloadInterval   = 5;
+        public int FirebaseReloadInterval => this.firebaseReloadInterval;
         public List<RemoteConfig> AdsRemoteConfigs  => this.mAdsRemoteConfigs;
         public List<RemoteConfig> MiscRemoteConfigs => this.mMiscRemoteConfigs;
         public List<RemoteConfig> GameRemoteConfigs => this.mGameRemoteConfigs;
