@@ -1,15 +1,12 @@
 namespace ServiceImplementation.FireBaseRemoteConfig
 {
     using System;
-    using System.Threading.Tasks;
     using Cysharp.Threading.Tasks;
 
     public interface IRemoteConfig
     {
         bool   IsConfigFetchedSucceed { get; }
         string GetRemoteConfigStringValue(string key, string defaultValue = "");
-
-        Task FetchDataAsync();
 
         async void GetRemoteConfigStringValueAsync(string key, Action<string> setter, string defaultValue = "")
         {

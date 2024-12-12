@@ -2,7 +2,6 @@
 namespace ServiceImplementation.ByteBrewRemoteConfig
 {
     using System.Globalization;
-    using System.Threading.Tasks;
     using ByteBrewSDK;
     using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
@@ -31,12 +30,11 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
         public bool IsConfigFetchedSucceed { get; private set; }
 
         public string GetRemoteConfigStringValue(string key, string defaultValue = "") { return ByteBrew.GetRemoteConfigForKey(key, defaultValue); }
-        public Task   FetchDataAsync()                                            { return Task.CompletedTask; }
-        public bool   GetRemoteConfigBoolValue(string   key, bool   defaultValue) { return bool.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString())); }
-        public long   GetRemoteConfigLongValue(string   key, long   defaultValue) { return long.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString())); }
+        public bool   GetRemoteConfigBoolValue(string key, bool defaultValue) { return bool.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString())); }
+        public long   GetRemoteConfigLongValue(string key, long defaultValue) { return long.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString())); }
         public double GetRemoteConfigDoubleValue(string key, double defaultValue) { return double.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString(CultureInfo.InvariantCulture))); }
-        public int    GetRemoteConfigIntValue(string    key, int    defaultValue) { return int.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString())); }
-        public float  GetRemoteConfigFloatValue(string  key, float  defaultValue) { return float.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString(CultureInfo.InvariantCulture))); }
+        public int    GetRemoteConfigIntValue(string key, int defaultValue) { return int.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString())); }
+        public float  GetRemoteConfigFloatValue(string key, float defaultValue) { return float.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString(CultureInfo.InvariantCulture))); }
 
         public async void Initialize()
         {

@@ -44,7 +44,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             });
         }
 
-        public Task FetchDataAsync()
+        private Task FetchDataAsync()
         {
             var fetchTask =
                 FirebaseRemoteConfig.DefaultInstance.FetchAsync(
