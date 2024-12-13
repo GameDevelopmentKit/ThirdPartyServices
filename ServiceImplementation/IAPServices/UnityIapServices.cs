@@ -19,9 +19,10 @@ namespace ServiceImplementation.IAPServices
 
     public class UnityIapServices : IIapServices, IStoreListener
     {
-        private Action<string>     onPurchaseComplete, onPurchaseFailed;
-        private IStoreController   mStoreController;
-        private IExtensionProvider mStoreExtensionProvider;
+        private Action<string, int> onPurchaseComplete;
+        private Action<string>      onPurchaseFailed;
+        private IStoreController    mStoreController;
+        private IExtensionProvider  mStoreExtensionProvider;
 
         #region inject
 
@@ -118,7 +119,7 @@ namespace ServiceImplementation.IAPServices
             return s;
         }
 
-        public void BuyProductID(string productId, Action<string> onComplete, Action<string> onFailed = null)
+        public void BuyProductID(string productId, Action<string, int> onComplete, Action<string> onFailed = null)
         {
             if (this.IsInitialized)
             {
@@ -195,7 +196,7 @@ namespace ServiceImplementation.IAPServices
                     foreach (var iapPack in this.iapPacks)
                     {
                         if (!this.IsProductOwned(iapPack.Value.Id)) continue;
-                        this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(iapPack.Value.Id));
+                        this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(iapPack.Value.Id, 1));
                     }
 
                     onComplete?.Invoke();
@@ -337,18 +338,18 @@ namespace ServiceImplementation.IAPServices
             var receipt   = args.purchasedProduct.receipt;
             var quantity  = this.GetPurchaseQuantityFromReceipt(receipt);
 
-            this.logger.Log($"onelog: IAP ProcessPurchase {productId} : {quantity}");
+            this.logger.Log($"onelog: IAP ProcessPurchase {productId} quantity: {quantity}");
 
             if (this.onPurchaseComplete == null)
             {
-                this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(productId));
+                this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(productId, quantity));
             }
             else
             {
-                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal(this.GetProductData(productId)));
+                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal(this.GetProductData(productId), quantity));
             }
 
-            this.onPurchaseComplete?.Invoke(productId);
+            this.onPurchaseComplete?.Invoke(productId, quantity);
             this.onPurchaseComplete = null;
 
             return PurchaseProcessingResult.Complete;
@@ -362,24 +363,9 @@ namespace ServiceImplementation.IAPServices
 
             try
             {
-                Debug.Log($"onelog: IAP receipt: {receipt}");
-
-                int pageSize = 500;
-                var index = 0;
-
-                while (index < receipt.Length)
-                {
-                    var str = receipt.Substring(index, Math.Min(pageSize, receipt.Length - index));
-                    Debug.Log($"onelog: IAP receipt page: {str}");
-                    index += pageSize;
-                }
-
-                var googlePlayReceipt = JsonConvert.DeserializeObject<GooglePlayReceipt>(receipt);
-                Debug.Log($"onelog: IAP receipt payload: {googlePlayReceipt.Payload}");
-                var playReceiptPlayload = JsonConvert.DeserializeObject<GooglePlayReceiptPlayload>(googlePlayReceipt.Payload);
-                Debug.Log($"onelog: IAP receipt payload json: {playReceiptPlayload.json}");
+                var googlePlayReceipt       = JsonConvert.DeserializeObject<GooglePlayReceipt>(receipt);
+                var playReceiptPlayload     = JsonConvert.DeserializeObject<GooglePlayReceiptPlayload>(googlePlayReceipt.Payload);
                 var playReceiptPlayloadJson = JsonConvert.DeserializeObject<GooglePlayReceiptPayloadJson>(playReceiptPlayload.json);
-                Debug.Log($"onelog: IAP quantity: {playReceiptPlayloadJson.quantity}");
 
                 return playReceiptPlayloadJson.quantity;
             }
