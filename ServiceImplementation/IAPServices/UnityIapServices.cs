@@ -377,11 +377,11 @@ namespace ServiceImplementation.IAPServices
                 var googlePlayReceipt = JsonConvert.DeserializeObject<GooglePlayReceipt>(receipt);
                 Debug.Log($"onelog: IAP receipt payload: {googlePlayReceipt.Payload}");
                 var playReceiptPlayload = JsonConvert.DeserializeObject<GooglePlayReceiptPlayload>(googlePlayReceipt.Payload);
-                Debug.Log($"onelog: IAP receipt payload json: {playReceiptPlayload.Json}");
-                var playReceiptPlayloadJson = JsonConvert.DeserializeObject<GooglePlayReceiptPayloadJson>(playReceiptPlayload.Json);
-                Debug.Log($"onelog: IAP quantity: {playReceiptPlayloadJson.Quantity}");
+                Debug.Log($"onelog: IAP receipt payload json: {playReceiptPlayload.json}");
+                var playReceiptPlayloadJson = JsonConvert.DeserializeObject<GooglePlayReceiptPayloadJson>(playReceiptPlayload.json);
+                Debug.Log($"onelog: IAP quantity: {playReceiptPlayloadJson.quantity}");
 
-                return playReceiptPlayloadJson.Quantity;
+                return playReceiptPlayloadJson.quantity;
             }
             catch (Exception e)
             {
@@ -392,19 +392,22 @@ namespace ServiceImplementation.IAPServices
 
         #region Google Play Receipt Quantity
 
-        public class GooglePlayReceipt
+        [Preserve]
+        public record GooglePlayReceipt
         {
-            public string Payload { get; set; }
+            [Preserve] public string Payload { get; set; }
         }
 
+        [Preserve]
         public class GooglePlayReceiptPlayload
         {
-            [JsonProperty("json")] public string Json { get; set; }
+            [Preserve] public string json { get; set; }
         }
 
+        [Preserve]
         public class GooglePlayReceiptPayloadJson
         {
-            [JsonProperty("quantity")] public int Quantity { get; set; }
+            [Preserve] public int quantity { get; set; }
         }
 
         #endregion
