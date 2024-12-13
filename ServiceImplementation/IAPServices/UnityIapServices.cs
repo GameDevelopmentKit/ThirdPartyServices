@@ -390,20 +390,27 @@ namespace ServiceImplementation.IAPServices
             }
         }
 
+        #region Google Play Receipt Quantity
+
+        [Preserve]
         public class GooglePlayReceipt
         {
             public string Payload { get; set; }
         }
 
+        [Preserve]
         public class GooglePlayReceiptPlayload
         {
             [JsonProperty("json")] public string Json { get; set; }
         }
 
+        [Preserve]
         public class GooglePlayReceiptPayloadJson
         {
             [JsonProperty("quantity")] public int Quantity { get; set; }
         }
+
+        #endregion
 
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
         {
