@@ -18,7 +18,7 @@ namespace ServiceImplementation.IAPServices
 
         public string GetPriceById(string productId, string defaultPrice)
         {
-            return defaultPrice;
+            return $"${defaultPrice}";
         }
 
         public void RestorePurchases(Action onComplete)
