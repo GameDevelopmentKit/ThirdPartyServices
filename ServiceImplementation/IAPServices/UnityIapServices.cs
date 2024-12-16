@@ -8,6 +8,7 @@ namespace ServiceImplementation.IAPServices
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
+    using Newtonsoft.Json;
     using ServiceImplementation.IAPServices.Signals;
     using Unity.Services.Core;
     using Unity.Services.Core.Environments;
@@ -18,9 +19,10 @@ namespace ServiceImplementation.IAPServices
 
     public class UnityIapServices : IIapServices, IStoreListener
     {
-        private Action<string>     onPurchaseComplete, onPurchaseFailed;
-        private IStoreController   mStoreController;
-        private IExtensionProvider mStoreExtensionProvider;
+        private Action<string, int> onPurchaseComplete;
+        private Action<string>      onPurchaseFailed;
+        private IStoreController    mStoreController;
+        private IExtensionProvider  mStoreExtensionProvider;
 
         #region inject
 
@@ -117,7 +119,7 @@ namespace ServiceImplementation.IAPServices
             return s;
         }
 
-        public void BuyProductID(string productId, Action<string> onComplete, Action<string> onFailed = null)
+        public void BuyProductID(string productId, Action<string, int> onComplete, Action<string> onFailed = null)
         {
             if (this.IsInitialized)
             {
@@ -194,7 +196,7 @@ namespace ServiceImplementation.IAPServices
                     foreach (var iapPack in this.iapPacks)
                     {
                         if (!this.IsProductOwned(iapPack.Value.Id)) continue;
-                        this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(iapPack.Value.Id));
+                        this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(iapPack.Value.Id, 1));
                     }
 
                     onComplete?.Invoke();
@@ -333,20 +335,68 @@ namespace ServiceImplementation.IAPServices
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
             var productId = args.purchasedProduct.definition.id;
+            var receipt   = args.purchasedProduct.receipt;
+            var quantity  = this.GetPurchaseQuantityFromReceipt(receipt);
+
+            this.logger.Log($"onelog: IAP ProcessPurchase {productId} quantity: {quantity}");
+
             if (this.onPurchaseComplete == null)
             {
-                this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(productId));
+                this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(productId, quantity));
             }
             else
             {
-                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal(this.GetProductData(productId)));
+                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal(this.GetProductData(productId), quantity));
             }
 
-            this.onPurchaseComplete?.Invoke(productId);
+            this.onPurchaseComplete?.Invoke(productId, quantity);
             this.onPurchaseComplete = null;
 
             return PurchaseProcessingResult.Complete;
         }
+
+        private int GetPurchaseQuantityFromReceipt(string receipt)
+        {
+            #if UNITY_IOS
+                return 1;
+            #endif
+
+            try
+            {
+                var googlePlayReceipt       = JsonConvert.DeserializeObject<GooglePlayReceipt>(receipt);
+                var playReceiptPlayload     = JsonConvert.DeserializeObject<GooglePlayReceiptPlayload>(googlePlayReceipt.Payload);
+                var playReceiptPlayloadJson = JsonConvert.DeserializeObject<GooglePlayReceiptPayloadJson>(playReceiptPlayload.json);
+
+                return playReceiptPlayloadJson.quantity;
+            }
+            catch (Exception e)
+            {
+                this.logger.Log($"onelog: IAP Fail GetPurchaseQuantityFromReceipt {e.Message}");
+                return 1; // Default to 1 if quantity is not available or parsing fails
+            }
+        }
+
+        #region Google Play Receipt Quantity
+
+        [Preserve]
+        public record GooglePlayReceipt
+        {
+            [Preserve] public string Payload { get; set; }
+        }
+
+        [Preserve]
+        public class GooglePlayReceiptPlayload
+        {
+            [Preserve] public string json { get; set; }
+        }
+
+        [Preserve]
+        public class GooglePlayReceiptPayloadJson
+        {
+            [Preserve] public int quantity { get; set; }
+        }
+
+        #endregion
 
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
         {
