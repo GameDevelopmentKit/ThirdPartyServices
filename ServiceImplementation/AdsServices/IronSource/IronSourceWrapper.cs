@@ -22,14 +22,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private readonly IAnalyticServices  analyticServices;
         private readonly AdServicesConfig   adServicesConfig;
-        private readonly SignalBus          signalBus;
+        private readonly ISignalBus          signalBus;
         private readonly ThirdPartiesConfig thirdPartiesConfig;
         private readonly ILogService        logService;
 
         #endregion
 
 
-        public IronSourceWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig, ILogService logService)
+        public IronSourceWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, ISignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig, ILogService logService)
         {
             this.analyticServices   = analyticServices;
             this.adServicesConfig   = adServicesConfig;
@@ -49,7 +49,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void Initialize()
         {
-            this.logService.Log("oneLog: IronSourceWrapper Initialize");
+            this.logService.Log("IronSourceWrapper Initialize");
             IronSourceEvents.onImpressionDataReadyEvent += this.ImpressionDataReadyEvent;
             //Add AdInfo Rewarded Video Events
             IronSourceRewardedVideoEvents.onAdOpenedEvent      += this.RewardedVideoOnAdOpenedEvent;
@@ -132,7 +132,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void RewardedVideoOnAdUnavailable()
         {
-            this.logService.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdUnavailable");
+            this.logService.Log($"IronSourceWrapper RewardedVideoOnAdUnavailable");
             this.rewardedStopwatch.Stop();
             this.signalBus.Fire(new RewardedAdLoadFailedSignal("", "", this.rewardedStopwatch.ElapsedMilliseconds));
         }
@@ -159,7 +159,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.onRewardFailed?.Invoke();
             this.onRewardFailed = null;
-            this.logService.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdShowFailedEvent. Message: {obj.getDescription()}");
+            this.logService.Log($"IronSourceWrapper RewardedVideoOnAdShowFailedEvent. Message: {obj.getDescription()}");
             var adInfo = new AdInfo(this.AdPlatform, info.adUnit, info.adUnit, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new RewardedAdShowFailedSignal(this.rewardedPlacement, obj.getDescription(),adInfo));
         }
@@ -189,7 +189,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void InterstitialOnAdShowFailedEvent(IronSourceError arg1, IronSourceAdInfo arg2)
         {
-            this.logService.Log($"oneLog: IronSourceWrapper InterstitialOnAdShowFailedEvent, Message: {arg1.getDescription()}");
+            this.logService.Log($"IronSourceWrapper InterstitialOnAdShowFailedEvent, Message: {arg1.getDescription()}");
             this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(this.interstitialPlacement));
         }
         private void InterstitialOnAdShowSucceededEvent(IronSourceAdInfo obj)                     { }
@@ -198,7 +198,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void InterstitialOnAdLoadFailed(IronSourceError obj)
         {
             this.stopwatchInterstitial.Stop();
-            this.logService.Log($"oneLog: IronSourceWrapper InterstitialOnAdLoadFailed, Message: {obj.getDescription()}");
+            this.logService.Log($"IronSourceWrapper InterstitialOnAdLoadFailed, Message: {obj.getDescription()}");
             this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription(), this.stopwatchInterstitial.ElapsedMilliseconds));
         }
 
@@ -228,7 +228,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private async void BannerOnAdLoadFailedEvent(IronSourceError obj)
         {
-            this.logService.Log($"oneLog: IronSourceWrapper BannerOnAdLoadFailedEvent, Message: {obj.getDescription()}");
+            this.logService.Log($"IronSourceWrapper BannerOnAdLoadFailedEvent, Message: {obj.getDescription()}");
             this.signalBus.Fire(new BannerAdLoadFailedSignal("", $"{obj.getDescription()}"));
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             this.ShowBannerAd();

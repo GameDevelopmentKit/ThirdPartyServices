@@ -6,6 +6,6 @@ namespace Core.AdsServices
     public interface IAOAAdService
     {
         bool IsAOAReady();
-        void ShowAOAAds();
+        void ShowAOAAds(string placement);
     }
 }

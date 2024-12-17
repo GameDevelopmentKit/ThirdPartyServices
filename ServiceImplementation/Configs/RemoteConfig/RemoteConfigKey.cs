@@ -13,14 +13,18 @@
         public const string EnableNativeAD               = "enable_native_ad";
         public const string EnableCollapsibleBanner      = "enable_collapsible_banner";
         public const string IntervalLoadAds              = "interval_load_ads";
+        public const string EnableAds                    = "enable_ads";
 
         #endregion
 
         #region AOA
 
+        public const string AOALoadingThreshold       = "aoa_loading_threshold";
         public const string MinPauseSecondToShowAoaAD = "min_pause_second_to_show_aoa_ad";
         public const string AoaStartSession           = "aoa_start_session";
         public const string UseAoaAdmob               = "use_aoa_admob";
+        public const string AoaAdResumeStartLevel     = "aoa_resume_start_level";
+        public const string AoaAdResumeStartSession   = "aoa_resume_start_session";
 
         #endregion
 
@@ -32,6 +36,7 @@
         public const string DelayFirstIntersADInterval        = "delay_first_inters_ad_interval";
         public const string DelayFirstIntersNewSession        = "delay_first_inters_new_session";
         public const string ResetInterAdIntervalAfterRewardAd = "reset_inter_ad_interval_after_reward_ad";
+        public const string IsIntersInsteadAoaResume          = "is_inters_instead_aoa_resume";
 
         #endregion
 
@@ -43,10 +48,11 @@
 
         #region Collapsible
 
-        public const string CollapsibleBannerADInterval             = "colapsible_banner_ad_interval";
-        public const string EnableCollapsibleBannerFallback         = "enable_collapsible_banner_fallback";
-        public const string CollapsibleBannerAutoRefreshEnabled     = "collapsible_banner_auto_refresh_enabled";
-        public const string CollapsibleBannerExpandOnRefreshEnabled = "collapsible_banner_expand_on_refresh_enabled";
+        public const string CollapsibleBannerADInterval              = "colapsible_banner_ad_interval";
+        public const string CollapsibleBannerExpandOnRefreshInterval = "collapsible_banner_expand_on_refresh_interval";
+        public const string EnableCollapsibleBannerFallback          = "enable_collapsible_banner_fallback";
+        public const string CollapsibleBannerAutoRefreshEnabled      = "collapsible_banner_auto_refresh_enabled";
+        public const string CollapsibleBannerExpandOnRefreshEnabled  = "collapsible_banner_expand_on_refresh_enabled";
 
         #endregion
     }
