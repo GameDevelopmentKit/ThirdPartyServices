@@ -14,10 +14,11 @@ namespace ServiceImplementation.IAPServices
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
+    using UnityEngine.Purchasing.Extension;
     using UnityEngine.Purchasing.Security;
     using UnityEngine.Scripting;
 
-    public class UnityIapServices : IIapServices, IStoreListener
+    public class UnityIapServices : IIapServices, IDetailedStoreListener
     {
         private Action<string, int> onPurchaseComplete;
         private Action<string>      onPurchaseFailed;
@@ -36,7 +37,7 @@ namespace ServiceImplementation.IAPServices
         [Preserve]
         public UnityIapServices(ILogService log, SignalBus signalBus)
         {
-            this.logger = log;
+            this.logger    = log;
             this.signalBus = signalBus;
         }
 
@@ -56,7 +57,7 @@ namespace ServiceImplementation.IAPServices
             catch (Exception exception)
             {
                 // An error occurred during services initialization.
-                this.logger.Log($"init failed {exception.Message}");
+                this.logger.Log($"onelog: IAP init failed {exception.Message}");
             }
 
             this.InitializePurchasing();
@@ -81,18 +82,18 @@ namespace ServiceImplementation.IAPServices
             for (var i = 0; i < this.iapPacks.Count; i++)
             {
                 var current = this.iapPacks.ElementAt(i);
-                builder.AddProduct(current.Value.Id, this.ConvertToUnityProductType(current.Value.ProductType));
+                builder.AddProduct(current.Value.Id, ConvertToUnityProductType(current.Value.ProductType));
             }
         }
 
-        private UnityEngine.Purchasing.ProductType ConvertToUnityProductType(ProductType productType)
+        private static UnityEngine.Purchasing.ProductType ConvertToUnityProductType(ProductType productType)
         {
             return productType switch
             {
                 ProductType.Consumable    => UnityEngine.Purchasing.ProductType.Consumable,
                 ProductType.Subscription  => UnityEngine.Purchasing.ProductType.Subscription,
                 ProductType.NonConsumable => UnityEngine.Purchasing.ProductType.NonConsumable,
-                _                         => UnityEngine.Purchasing.ProductType.Consumable
+                _                         => UnityEngine.Purchasing.ProductType.Consumable,
             };
         }
 
@@ -113,7 +114,7 @@ namespace ServiceImplementation.IAPServices
             }
             catch (Exception e)
             {
-                this.logger.Log($"GetPriceById {e.Message}");
+                this.logger.Log($"onelog: IAP GetPriceById {e.Message}");
             }
 
             return s;
@@ -129,7 +130,7 @@ namespace ServiceImplementation.IAPServices
 
                 if (product is { availableToPurchase: true })
                 {
-                    this.logger.Log($"Purchasing product asychronously: '{product.definition.id}'");
+                    this.logger.Log($"onelog: IAP Purchasing product asychronously: '{product.definition.id}'");
 
                     this.onPurchaseComplete = onComplete;
                     this.mStoreController.InitiatePurchase(product);
@@ -137,13 +138,13 @@ namespace ServiceImplementation.IAPServices
                 else
                 {
                     this.onPurchaseFailed = onFailed;
-                    this.logger.Log("BuyProductID: FAIL. Not purchasing product, either is not found or is not available for purchase");
+                    this.logger.Log("onelog: IAP BuyProductID: FAIL. Not purchasing product, either is not found or is not available for purchase");
                 }
             }
             else
             {
                 this.InitializePurchasing();
-                this.logger.Log("BuyProductID FAIL. Not initialized.");
+                this.logger.Log("onelog: IAP BuyProductID FAIL. Not initialized.");
             }
         }
 
@@ -167,7 +168,7 @@ namespace ServiceImplementation.IAPServices
             if (!this.IsInitialized)
             {
                 // ... report the situation and stop restoring. Consider either waiting longer, or retrying initialization.
-                this.logger.Log("RestorePurchases FAIL. Not initialized.");
+                this.logger.Log("onelog: IAP RestorePurchases FAIL. Not initialized.");
 
                 return;
             }
@@ -178,7 +179,7 @@ namespace ServiceImplementation.IAPServices
                 this.signalBus.Fire<OnStartDoingIAPSignal>();
 
                 // ... begin restoring purchases
-                this.logger.Log("RestorePurchases started ...");
+                this.logger.Log("onelog: IAP RestorePurchases started ...");
 
                 // Fetch the Apple store-specific subsystem.
                 var apple = this.mStoreExtensionProvider.GetExtension<IAppleExtensions>();
@@ -189,7 +190,7 @@ namespace ServiceImplementation.IAPServices
                 {
                     // The first phase of restoration. If no more responses are received on ProcessPurchase then
                     // no purchases are available to be restored.
-                    this.logger.Log("RestorePurchases continuing: " + result + ". If no further messages, no purchases available to restore.");
+                    this.logger.Log("onelog: IAP RestorePurchases continuing: " + result + ". If no further messages, no purchases available to restore.");
 
                     if (!result) return;
 
@@ -206,17 +207,15 @@ namespace ServiceImplementation.IAPServices
             else
             {
                 // We are not running on an Apple device. No work is necessary to restore purchases.
-                this.logger.Log("RestorePurchases FAIL. Not supported on this platform. Current = " + Application.platform);
+                this.logger.Log("onelog: IAP RestorePurchases FAIL. Not supported on this platform. Current = " + Application.platform);
             }
         }
 
         public bool IsProductOwned(string productId)
         {
-            if (!this.IsInitialized)
-                return false;
+            if (!this.IsInitialized) return false;
 
-            if (string.IsNullOrEmpty(productId))
-                return false;
+            if (string.IsNullOrEmpty(productId)) return false;
 
             var pd = this.mStoreController.products.WithID(productId);
 
@@ -236,8 +235,8 @@ namespace ServiceImplementation.IAPServices
 
             return new ProductData()
             {
-                Id = productId,
-                Price = product.metadata.localizedPrice,
+                Id           = productId,
+                Price        = product.metadata.localizedPrice,
                 CurrencyCode = product.metadata.isoCurrencyCode
             };
         }
@@ -251,7 +250,7 @@ namespace ServiceImplementation.IAPServices
             // Does the receipt has some content?
             if (string.IsNullOrEmpty(receipt))
             {
-                this.logger.Log("Receipt Validation: receipt is null or empty.");
+                this.logger.Log("onelog: IAP Receipt Validation: receipt is null or empty.");
 
                 return false;
             }
@@ -261,7 +260,7 @@ namespace ServiceImplementation.IAPServices
             #if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS
 
             byte[] googlePlayTangleData = null;
-            byte[] appleTangleData = null;
+            byte[] appleTangleData      = null;
 
             // Here we populate the secret keys for each platform.
             // Note that the code is disabled in the editor for it to not stop the EM editor code (due to ClassNotFound error)
@@ -296,7 +295,7 @@ namespace ServiceImplementation.IAPServices
                     // For informational purposes, we list the receipt(s)
                     if (logReceiptContent)
                     {
-                        this.logger.Log("Receipt contents:");
+                        this.logger.Log("onelog: IAP Receipt contents:");
 
                         foreach (var productReceipt in result)
                         {
@@ -319,18 +318,15 @@ namespace ServiceImplementation.IAPServices
 
         public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
         {
-            this.logger.Log("OnInitialized: PASS");
-            this.mStoreController = controller;
+            this.logger.Log("onelog: IAP OnInitialized: PASS");
+            this.mStoreController        = controller;
             this.mStoreExtensionProvider = extensions;
         }
 
         public void OnInitializeFailed(InitializationFailureReason error, string message) { }
 
-        public void OnInitializeFailed(InitializationFailureReason error)
-        {
-            // Purchasing set-up has not succeeded. Check error for reason. Consider sharing this reason with the user.
-            this.logger.Log("OnInitializeFailed InitializationFailureReason:" + error);
-        }
+        [Obsolete]
+        public void OnInitializeFailed(InitializationFailureReason error) { }
 
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
@@ -358,7 +354,7 @@ namespace ServiceImplementation.IAPServices
         private int GetPurchaseQuantityFromReceipt(string receipt)
         {
             #if UNITY_IOS
-                return 1;
+            return 1;
             #endif
 
             try
@@ -398,14 +394,17 @@ namespace ServiceImplementation.IAPServices
 
         #endregion
 
-        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
+        public void OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
         {
             var productId = product.definition.id;
             this.onPurchaseFailed?.Invoke(productId);
             this.onPurchaseFailed = null;
-            this.signalBus.Fire(new OnIAPPurchaseFailedSignal(productId, failureReason.ToString()));
-            this.logger.Log($"OnPurchaseFailed: FAIL. Product: '{productId}', PurchaseFailureReason: {failureReason}");
+            this.signalBus.Fire(new OnIAPPurchaseFailedSignal(productId, failureDescription.reason.ToString()));
+            this.logger.Log($"onelog: IAP OnPurchaseFailed: FAIL. Product: '{productId}', Reason: {failureDescription.reason}, Message: {failureDescription.message}");
         }
+
+        [Obsolete]
+        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason) { }
     }
 }
 #endif
