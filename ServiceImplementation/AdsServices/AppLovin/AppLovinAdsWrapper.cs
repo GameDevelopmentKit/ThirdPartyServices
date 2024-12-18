@@ -138,7 +138,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.OnMRecAdDisplayed(adsId);
-            var mrecPosition = position.CanvasToUnityCoordinateSystem().ToApplovinPosition() + offset.FlipY();
+            var mrecPosition = (position - offset).CanvasToUnityCoordinateSystem().ToApplovinPosition();
             MaxSdk.UpdateMRecPosition(adsId, mrecPosition.x, mrecPosition.y);
             MaxSdk.ShowMRec(adsId);
         }
