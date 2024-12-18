@@ -21,7 +21,7 @@ namespace ServiceImplementation.IAPServices
             return $"${defaultPrice}";
         }
 
-        public void RestorePurchases(Action onComplete)
+        public void RestorePurchases(Action onComplete, Action onFailed = null)
         {
             onComplete?.Invoke();
         }
