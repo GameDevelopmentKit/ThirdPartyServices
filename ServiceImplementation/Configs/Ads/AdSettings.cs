@@ -18,7 +18,7 @@
     {
         Instantiate,
         AfterLoading,
-        Manually
+        Manually,
     }
 
     [Serializable]
@@ -30,16 +30,17 @@
         public YandexSettings      Yandex       => this.mYandex;
         public ImmersiveAdsSetting ImmersiveAds => this.mImmersiveAds;
 
-#region Misc
+        #region Misc
 
         public bool EnableInterCappingTimeFocus => this.enableInterCappingTimeFocus;
-        public bool EnableBreakAds { get { return this.enableBreakAds; } }
+        public bool EnableBreakAds              => this.enableBreakAds;
 
         public bool CollapsibleRefreshOnScreenShow => this.mCollapsibleRefreshOnScreenShow;
 
         public List<string> CollapsibleIgnoreRefreshOnScreens => this.mCollapsibleIgnoreRefreshOnScreens;
 
-        public BannerLoadStrategy BannerLoadStrategy { get { return this.bannerLoadStrategy; } }
+        public BannerLoadStrategy BannerLoadStrategy => this.bannerLoadStrategy;
+        public float              AOAThreshHold      => this.mAOAThreshHold;
 
         #region ATT (iOS only)
 
@@ -55,12 +56,8 @@
         #endregion
 
         #endregion
-
-        /// <summary>
-        /// AOA threshold
-        /// </summary>
-        public float AOAThreshHold { get { return this.mAOAThreshHold; } }
-
+        [SerializeField] [FoldoutGroup("Misc")] [LabelText("AOA ThreshHold", SdfIconType.CupStraw)]
+        private float mAOAThreshHold = 5f;
         public BannerAdsPosition BannerPosition => this.mBannerPosition;
 
         [SerializeField] [FoldoutGroup("Misc")] [LabelText("Banner Position", SdfIconType.BookmarkFill)]
@@ -68,9 +65,6 @@
 
         [SerializeField] [FoldoutGroup("Misc")] [LabelText("Enable Inter Capping Time Focus", SdfIconType.Download)]
         private bool enableInterCappingTimeFocus;
-
-        [SerializeField] [LabelText("AOA ThreshHold", SdfIconType.Download)] [FoldoutGroup("Misc")]
-        private float mAOAThreshHold = 5f;
 
         [SerializeField] [LabelText("Break Ads Screen", SdfIconType.CupStraw)] [FoldoutGroup("Misc")]
         private bool enableBreakAds;
@@ -92,7 +86,7 @@
         [Tooltip("Collapsible Banner will ignore auto refresh on screens")]
         [ShowIf("mEnableCollapsibleBanner")]
         [FoldoutGroup("Misc/Collapsible Banner")]
-        private List<string> mCollapsibleIgnoreRefreshOnScreens = new List<string>();
+        private List<string> mCollapsibleIgnoreRefreshOnScreens = new();
 
         [SerializeField] [LabelText("AdMob", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdMob")]
         private bool enableAdMob;
@@ -124,6 +118,8 @@
         [SerializeField] [ShowIf("enableImmersiveAds")] [HideLabel] [FoldoutGroup("ImmersiveAds")]
         private ImmersiveAdsSetting mImmersiveAds;
 
+      
+
 #if UNITY_EDITOR
 
         private const string AdModSymbol             = "ADMOB";
@@ -142,43 +138,36 @@
         private void OnChangeAppLovin()
         {
             EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin);
+
             if (this.enableAppLovin)
-            {
                 AppLovinSettings.DownloadApplovin();
-            }
             else
-            {
                 UnityPackageHelper.DeleteFolderIfExists("Assets/MaxSdk");
-            }
         }
 
         private void OnChangeIronSource()
         {
             EditorUtils.SetDefineSymbol(IronSourceSymbol, this.enableIronSource);
             EditorUtils.ModifyPackage(this.enableIronSource, "com.unity.services.levelplay", "8.1.0");
-            if (!this.enableIronSource)
-            {
-                UnityPackageHelper.DeleteFolderIfExists("Assets/LevelPlay");
-            }
+            if (!this.enableIronSource) UnityPackageHelper.DeleteFolderIfExists("Assets/LevelPlay");
         }
 
         private void OnChangeYandex()
         {
             EditorUtils.SetDefineSymbol(YandexSymbol, this.enableYandex);
+
             if (this.enableYandex)
             {
                 this.mYandex.Dashboard.ResetCacheNetworkAdapters();
                 this.mYandex.Dashboard.DownloadSDK();
             }
             else
-            {
                 UnityPackageHelper.DeleteFolderIfExists("Assets/YandexMobileAds");
-            }
         }
 
         private void OnChangeCollapsibleBanner() { EditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner); }
 
-        private void OnChangeImmersiveAds()      { EditorUtils.SetDefineSymbol(ImmersiveAdsSymbol,      this.enableImmersiveAds);}
+        private void OnChangeImmersiveAds() { EditorUtils.SetDefineSymbol(ImmersiveAdsSymbol, this.enableImmersiveAds); }
 
         private static bool DeleteFolderIfExists(string folderPath)
         {
@@ -195,21 +184,24 @@
 
             return false;
         }
-        
-        [FoldoutGroup("Misc/ATT (iOS only)/Custom")] [Button] [ShowIf(nameof(customAtt))]
+
+        [FoldoutGroup("Misc/ATT (iOS only)/Custom")]
+        [Button]
+        [ShowIf(nameof(customAtt))]
         private void SetupCustomAtt()
         {
             if (string.IsNullOrEmpty(this.attScenePath) || !File.Exists(this.attScenePath))
             {
-                EditorWindow.focusedWindow.ShowNotification(new GUIContent("ATT Scene Path is not valid!"));
+                EditorWindow.focusedWindow.ShowNotification(new("ATT Scene Path is not valid!"));
+
                 return;
             }
 
             var scenes = EditorBuildSettings.scenes.ToList();
             scenes.RemoveAll(x => x.path == this.attScenePath);
-            scenes.Insert(0, new EditorBuildSettingsScene(this.attScenePath, true));
+            scenes.Insert(0, new(this.attScenePath, true));
             EditorBuildSettings.scenes = scenes.ToArray();
-            EditorWindow.focusedWindow.ShowNotification(new GUIContent("Setup ATT Scene Path successfully"));
+            EditorWindow.focusedWindow.ShowNotification(new("Setup ATT Scene Path successfully"));
         }
 
 #endif
