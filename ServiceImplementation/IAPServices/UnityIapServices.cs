@@ -150,7 +150,7 @@ namespace ServiceImplementation.IAPServices
 
         // Restore purchases previously made by this customer. Some platforms automatically restore purchases, like Google.
         // Apple currently requires explicit purchase restoration for IAP, conditionally displaying a password prompt.
-        public void RestorePurchases(Action onComplete = null)
+        public void RestorePurchases(Action onComplete = null, Action onFailed = null)
         {
             #if FAKE_RESTORE_PURCHASE
             foreach (var iapPack in this.iapPacks)
@@ -169,7 +169,7 @@ namespace ServiceImplementation.IAPServices
             {
                 // ... report the situation and stop restoring. Consider either waiting longer, or retrying initialization.
                 this.logger.Log("onelog: IAP RestorePurchases FAIL. Not initialized.");
-
+                onFailed?.Invoke();
                 return;
             }
 
@@ -192,7 +192,11 @@ namespace ServiceImplementation.IAPServices
                     // no purchases are available to be restored.
                     this.logger.Log("onelog: IAP RestorePurchases continuing: " + result + ". If no further messages, no purchases available to restore.");
 
-                    if (!result) return;
+                    if (!result)
+                    {
+                        onFailed?.Invoke();
+                        return;
+                    }
 
                     foreach (var iapPack in this.iapPacks)
                     {
@@ -208,6 +212,7 @@ namespace ServiceImplementation.IAPServices
             {
                 // We are not running on an Apple device. No work is necessary to restore purchases.
                 this.logger.Log("onelog: IAP RestorePurchases FAIL. Not supported on this platform. Current = " + Application.platform);
+                onFailed?.Invoke();
             }
         }
 

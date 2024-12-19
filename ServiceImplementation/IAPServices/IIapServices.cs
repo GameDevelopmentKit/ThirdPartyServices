@@ -8,7 +8,7 @@
         void        InitIapServices(Dictionary<string, IAPModel> iapPack,   string              environment = "production");
         void        BuyProductID(string                          productId, Action<string, int> onComplete  = null, Action<string> onFailed = null);
         string      GetPriceById(string                          productId, string              defaultPrice);
-        void        RestorePurchases(Action                      onComplete);
+        void        RestorePurchases(Action                      onComplete, Action onFail = null);
         bool        IsProductOwned(string                        productId);
         ProductData GetProductData(string                        productId);
     }
