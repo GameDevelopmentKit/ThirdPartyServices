@@ -23,7 +23,7 @@ namespace Core.AdsServices
 
         bool IsInterstitialAdReady(string place);
 
-        void ShowInterstitialAd(string place);
+        void ShowInterstitialAd(string place,Action finishIfFailed = null);
 
         #endregion
 

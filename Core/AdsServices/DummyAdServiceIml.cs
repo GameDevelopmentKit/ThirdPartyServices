@@ -34,7 +34,7 @@ namespace Core.AdsServices
         public void DestroyBannerAd()                   { this.logService.Log($"Dummy destroy banner ad"); }
         public bool IsInterstitialAdReady(string place) { return true; }
 
-        public void ShowInterstitialAd(string place)
+        public void ShowInterstitialAd(string place,Action finishIfFailed = null)
         {
             this.logService.Log($"Dummy show Interstitial ad at {place}");
             this.signalBus.Fire(new InterstitialAdClosedSignal(place,null));

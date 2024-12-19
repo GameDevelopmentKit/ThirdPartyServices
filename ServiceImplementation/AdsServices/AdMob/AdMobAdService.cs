@@ -154,9 +154,14 @@ namespace ServiceImplementation.AdsServices.AdMob
             });
         }
 
-        public void ShowInterstitialAd(string place)
+        public void ShowInterstitialAd(string place, Action finishIfFailed = null)
         {
-            if (!this.IsInterstitialAdReady(place)) return;
+            if (!this.IsInterstitialAdReady(place))
+            {
+                finishIfFailed?.Invoke();
+                return;
+            }
+
             var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultInterstitialAdId.Id, InterstitialAdFormat);
 
             #region Events
@@ -278,7 +283,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     AdNetwork          = "AdMob",
                     AdUnit             = adUnit,
                     NetworkPlacement   = placement,
-                    Revenue            = adValue.Value/1e6,
+                    Revenue            = adValue.Value / 1e6,
                     Currency           = adValue.CurrencyCode,
                 };
 
@@ -287,7 +292,6 @@ namespace ServiceImplementation.AdsServices.AdMob
 
                 this.analyticService.Track(adsRevenueEvent);
 #endif
-               
             };
         }
 
@@ -345,6 +349,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             collapsibleBannerView.Hide();
             this.IsCollapsibleLoading[bannerAdsPosition]   = true;
             this.collapsibleBannerViews[bannerAdsPosition] = collapsibleBannerView;
+
             return;
 
             void AddPramsCollapsible()
@@ -357,7 +362,7 @@ namespace ServiceImplementation.AdsServices.AdMob
         public void ShowCollapsibleBannerAd(bool useNewGuid, BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom)
         {
             if (!this.collapsibleBannerViews.TryGetValue(bannerAdsPosition, out var collapsibleBannerView)) return;
-            
+
             collapsibleBannerView.Show();
         }
 

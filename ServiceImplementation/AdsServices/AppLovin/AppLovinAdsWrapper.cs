@@ -297,10 +297,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
             return isPlacementReady && MaxSdk.IsInterstitialReady(id);
         }
 
-        public void ShowInterstitialAd(string place)
+        public void ShowInterstitialAd(string place,Action finishIfFailed = null)
         {
             var placement = AdPlacement.PlacementWithName(place);
-            this.InternalShowInterstitialAd(placement);
+            this.InternalShowInterstitialAd(placement,finishIfFailed);
         }
 
         public bool TryGetInterstitialPlacementId(string place, out string id)
@@ -319,9 +319,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.LoadInterstitial(id);
         }
 
-        private void InternalShowInterstitialAd(AdPlacement adPlacement)
+        private void InternalShowInterstitialAd(AdPlacement adPlacement,Action finishIfFailed)
         {
-            if (!this.TryGetInterstitialPlacementId(adPlacement.Name, out var id)) return;
+            if (!this.TryGetInterstitialPlacementId(adPlacement.Name, out var id))
+            {
+                finishIfFailed?.Invoke();
+                return;
+            }
+
             MaxSdk.ShowInterstitial(id, adPlacement.Name);
             this.currentShowingInterstitial = adPlacement;
         }
