@@ -133,11 +133,12 @@ namespace ServiceImplementation.IAPServices
                     this.logger.Log($"onelog: IAP Purchasing product asychronously: '{product.definition.id}'");
 
                     this.onPurchaseComplete = onComplete;
+                    this.onPurchaseFailed = onFailed;
                     this.mStoreController.InitiatePurchase(product);
                 }
                 else
                 {
-                    this.onPurchaseFailed = onFailed;
+                    onFailed?.Invoke(productId);
                     this.logger.Log("onelog: IAP BuyProductID: FAIL. Not purchasing product, either is not found or is not available for purchase");
                 }
             }
