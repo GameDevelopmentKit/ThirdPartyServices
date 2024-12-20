@@ -89,7 +89,7 @@ namespace Core.AdsServices.Native
             if (!this.isEnable) return;
             if (this == null) return;
             await UniTask.SwitchToMainThread();
-            this.nativeAdsService?.DrawNativeAds(this);
+            this.nativeAdsService?.ShowNativeAds(this);
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             this.IntervalCall();
         }
