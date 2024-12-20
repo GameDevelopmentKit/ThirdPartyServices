@@ -145,6 +145,7 @@ namespace ServiceImplementation.IAPServices
             else
             {
                 this.InitializePurchasing();
+                onFailed?.Invoke(productId);
                 this.logger.Log("onelog: IAP BuyProductID FAIL. Not initialized.");
             }
         }
