@@ -599,10 +599,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         internal void DestroyBanner()
         {
             Debug.Log("oneLog: AdmobWrapper BannerViewHandler DestroyBanner start");
-            if (this.bannerView == null) return;
-            Debug.Log("oneLog: AdmobWrapper BannerViewHandler DestroyBanner end");
             this.bannerView.OnBannerAdLoaded     -= this.OnBannerLoaded;
             this.bannerView.OnBannerAdLoadFailed -= this.OnBannerLoadFailed;
+            if (this.bannerView == null) return;
+            Debug.Log("oneLog: AdmobWrapper BannerViewHandler DestroyBanner end");
             this.bannerView.Destroy();
             this.bannerView = null;
         }
