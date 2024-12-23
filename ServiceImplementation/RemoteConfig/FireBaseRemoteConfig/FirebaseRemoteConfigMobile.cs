@@ -29,7 +29,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.signalBus = signalBus;
             this.remoteConfigSetting = remoteConfigSetting;
         }
-  
+
         public bool IsConfigFetchedSucceed { get; private set; }
 
         public void Initialize()
@@ -49,19 +49,23 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private Task FetchDataAsync()
         {
+            #if UNITY_EDITOR
+            // cause error log in editor
+            return Task.CompletedTask;
+            #endif
             var fetchTask =
                 FirebaseRemoteConfig.DefaultInstance.FetchAsync(
                     TimeSpan.Zero);
 
             return fetchTask.ContinueWithOnMainThread(this.FetchComplete);
         }
-        
+
         private async Task ReloadDataAsync()
         {
             await Task.Delay(TimeSpan.FromSeconds(this.remoteConfigSetting.FirebaseReloadInterval));
             await this.FetchDataAsync();
         }
-        
+
         private void FetchComplete(Task fetchTask)
         {
             if (fetchTask.IsCanceled)
