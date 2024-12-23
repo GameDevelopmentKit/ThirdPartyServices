@@ -5,6 +5,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Threading;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
@@ -553,13 +554,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
     public class BannerViewHandler
     {
-        private readonly string     adId;
-        private readonly AdSize     adSize;
-        private readonly int x;
-        private readonly int y;
-        private readonly DateTime   lastTimeCreateBanner  = DateTime.Now;
-        private readonly TimeSpan   minTimeRecreateBanner = TimeSpan.FromHours(1);
-        private          int        loadFailedTime;
+        private readonly string                  adId;
+        private readonly AdSize                  adSize;
+        private readonly int                     x;
+        private readonly int                     y;
+        private readonly DateTime                lastTimeCreateBanner  = DateTime.Now;
+        private readonly TimeSpan                minTimeRecreateBanner = TimeSpan.FromHours(1);
+        private          int                     loadFailedTime;
+        private          CancellationTokenSource loadBannerCts;
 
         internal BannerView bannerView;
 
@@ -599,6 +601,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         internal void DestroyBanner()
         {
             Debug.Log("oneLog: AdmobWrapper BannerViewHandler DestroyBanner start");
+            this.ResetBannerCts();
             this.bannerView.OnBannerAdLoaded     -= this.OnBannerLoaded;
             this.bannerView.OnBannerAdLoadFailed -= this.OnBannerLoadFailed;
             if (this.bannerView == null) return;
@@ -611,8 +614,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.loadFailedTime += 1;
             this.DestroyBanner();
-            await UniTask.Delay(TimeSpan.FromSeconds(Mathf.Pow(2, this.loadFailedTime)), DelayType.Realtime);
+            await UniTask.Delay(TimeSpan.FromSeconds(Mathf.Pow(2, this.loadFailedTime)), DelayType.Realtime, cancellationToken: (this.loadBannerCts = new()).Token);
             this.CreateBannerView();
+        }
+        
+        private void ResetBannerCts()
+        {
+            this.loadBannerCts?.Cancel();
+            this.loadBannerCts?.Dispose();
+            this.loadBannerCts = null;
         }
     }
     #endif
