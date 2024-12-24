@@ -554,14 +554,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
     public class BannerViewHandler
     {
-        private readonly string                  adId;
-        private readonly AdSize                  adSize;
-        private readonly int                     x;
-        private readonly int                     y;
-        private readonly DateTime                lastTimeCreateBanner  = DateTime.Now;
-        private readonly TimeSpan                minTimeRecreateBanner = TimeSpan.FromHours(1);
-        private          int                     loadFailedTime;
-        private          CancellationTokenSource loadBannerCts;
+        private readonly string   adId;
+        private readonly AdSize   adSize;
+        private readonly int      x;
+        private readonly int      y;
+        private readonly DateTime lastTimeCreateBanner  = DateTime.Now;
+        private readonly TimeSpan minTimeRecreateBanner = TimeSpan.FromHours(1);
 
         internal BannerView bannerView;
 
@@ -581,9 +579,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             #if !UNITY_EDITOR
             this.bannerView.LoadAd(new AdRequest());
             #endif
-            
-            this.bannerView.OnBannerAdLoaded     += this.OnBannerLoaded;
-            this.bannerView.OnBannerAdLoadFailed += this.OnBannerLoadFailed;
         }
 
         internal void CreatBannerIfNeed()
@@ -593,37 +588,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.CreateBannerView();
         }
 
-        private void OnBannerLoaded()
-        {
-            this.loadFailedTime = 0;
-        }
-
         internal void DestroyBanner()
         {
-            Debug.Log("oneLog: AdmobWrapper BannerViewHandler DestroyBanner start");
-            this.ResetBannerCts();
-            this.bannerView.OnBannerAdLoaded     -= this.OnBannerLoaded;
-            this.bannerView.OnBannerAdLoadFailed -= this.OnBannerLoadFailed;
             if (this.bannerView == null) return;
-            Debug.Log("oneLog: AdmobWrapper BannerViewHandler DestroyBanner end");
             this.bannerView.Destroy();
             this.bannerView = null;
         }
-
-        private async void OnBannerLoadFailed(LoadAdError obj)
-        {
-            this.loadFailedTime += 1;
-            this.DestroyBanner();
-            await UniTask.Delay(TimeSpan.FromSeconds(Mathf.Pow(2, this.loadFailedTime)), DelayType.Realtime, cancellationToken: (this.loadBannerCts = new()).Token);
-            this.CreateBannerView();
-        }
         
-        private void ResetBannerCts()
-        {
-            this.loadBannerCts?.Cancel();
-            this.loadBannerCts?.Dispose();
-            this.loadBannerCts = null;
-        }
+        
     }
     #endif
 }
