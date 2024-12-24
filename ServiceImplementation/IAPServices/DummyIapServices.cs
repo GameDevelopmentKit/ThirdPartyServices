@@ -11,17 +11,17 @@ namespace ServiceImplementation.IAPServices
         {
         }
 
-        public void BuyProductID(string productId, Action<string> onComplete = null, Action<string> onFailed = null)
+        public void BuyProductID(string productId, Action<string, int> onComplete = null, Action<string> onFailed = null)
         {
-            onComplete?.Invoke(productId);
+            onComplete?.Invoke(productId, 1);
         }
 
         public string GetPriceById(string productId, string defaultPrice)
         {
-            return $"$2.99";
+            return $"${defaultPrice}";
         }
 
-        public void RestorePurchases(Action onComplete)
+        public void RestorePurchases(Action onComplete, Action onFailed = null)
         {
             onComplete?.Invoke();
         }
