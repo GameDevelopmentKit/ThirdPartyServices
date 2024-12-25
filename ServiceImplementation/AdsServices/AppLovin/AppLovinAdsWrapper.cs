@@ -136,6 +136,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
+            this.CreateAllMRec();
             var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.OnMRecAdDisplayed(adsId);
             var mrecPosition = position.CanvasToUnityCoordinateSystem().ToApplovinPosition() + offset.FlipY();
@@ -155,15 +156,16 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.InternalHideMREC(adsId);
         }
-        
+
         public void DestroyMREC(string placement)
         {
             var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.InternalDestroyMREC(adsId);
         }
-        
+
         public void InternalDestroyMREC(string adUnitId)
         {
+            this.idMRecCreating.Remove(adUnitId);
             this.OnMRecAdDismissed(adUnitId);
             MaxSdk.DestroyMRec(adUnitId);
         }
