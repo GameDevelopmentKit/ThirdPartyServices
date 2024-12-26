@@ -552,6 +552,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void OnBannerLoadFailed(LoadAdError obj)
         {
+            Debug.Log("oneLog: AdMobWrapper: banner load failed");
             this.DestroyBanner();
             UniTask.WhenAll(UniTask.Delay(TimeSpan.FromSeconds(Mathf.Pow(2, this.retryTime++)), DelayType.Realtime), UniTask.WaitUntil(() => !this.isHidden))
                 .AttachExternalCancellation((this.retryLoadCts = new()).Token)
