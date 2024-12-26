@@ -5,6 +5,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Threading;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
@@ -254,6 +255,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             var mrecPosition      = position.CanvasToUnityCoordinateSystem().ToAdmobPosition() + offset.FlipY();
             mrecBannerHandler.bannerView.SetPosition((int)mrecPosition.x, (int)mrecPosition.y);
             mrecBannerHandler.bannerView.Show();
+            mrecBannerHandler.ShowBanner();
             this.MrecBannerViewDisplay();
         }
 
@@ -323,6 +325,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (mrecBannerView.bannerView == null) return;
             mrecBannerView.bannerView.Hide();
+            mrecBannerView.HideBanner();
             this.MrecBannerViewDismissed();
         }
 
@@ -553,12 +556,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
     public class BannerViewHandler
     {
-        private readonly string   adId;
-        private readonly AdSize   adSize;
-        private readonly int      x;
-        private readonly int      y;
-        private readonly DateTime lastTimeCreateBanner  = DateTime.Now;
-        private readonly TimeSpan minTimeRecreateBanner = TimeSpan.FromHours(1);
+        private readonly string                  adId;
+        private readonly AdSize                  adSize;
+        private readonly int                     x;
+        private readonly int                     y;
+        private readonly DateTime                lastTimeCreateBanner  = DateTime.Now;
+        private readonly TimeSpan                minTimeRecreateBanner = TimeSpan.FromHours(1);
+        private          int                     loadFailedTime;
+        private          CancellationTokenSource bannerCts;
+        private          bool                    isListenEvent;
 
         internal BannerView bannerView;
 
@@ -573,13 +579,29 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void CreateBannerView()
         {
-            Debug.Log("oneLog: AdmobWrapper BannerViewHandler creatbanner view");
             this.bannerView = new BannerView(this.adId, this.adSize, this.x, this.y);
             #if !UNITY_EDITOR
             this.bannerView.LoadAd(new AdRequest());
             #endif
+            
+            this.bannerView.OnBannerAdLoaded     += this.OnBannerLoaded;
+            this.bannerView.OnBannerAdLoadFailed += this.OnBannerLoadFailed;
+            this.isListenEvent                   =  true;
         }
 
+        private void OnBannerLoaded()
+        {
+            this.loadFailedTime = 0;
+        }
+        
+        private async void OnBannerLoadFailed(LoadAdError obj)
+        {
+            this.loadFailedTime += 1;
+            this.DestroyBanner();
+            await UniTask.Delay(TimeSpan.FromSeconds(Mathf.Pow(2, this.loadFailedTime)), DelayType.Realtime, cancellationToken: (this.bannerCts = new()).Token);
+            this.CreateBannerView();
+        }
+        
         internal void CreatBannerIfNeed()
         {
             if (DateTime.Now - this.lastTimeCreateBanner < this.minTimeRecreateBanner) return;
@@ -589,13 +611,31 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         internal void DestroyBanner()
         {
-            Debug.Log("oneLog: AdmobWrapper BannerViewHandler DestroyBanner start");
+            this.isListenEvent                   =  false;
+            this.bannerView.OnBannerAdLoaded     -= this.OnBannerLoaded;
+            this.bannerView.OnBannerAdLoadFailed -= this.OnBannerLoadFailed;
             if (this.bannerView == null) return;
             this.bannerView.Destroy();
             this.bannerView = null;
         }
-        
-        
+
+        internal void HideBanner()
+        {
+            this.isListenEvent = false;
+            this.bannerView.OnBannerAdLoaded     -= this.OnBannerLoaded;
+            this.bannerView.OnBannerAdLoadFailed -= this.OnBannerLoadFailed;
+            this.bannerCts.Cancel();
+            this.bannerCts.Dispose();
+            this.bannerCts = null;
+        }
+
+        internal void ShowBanner()
+        {
+            if (this.isListenEvent) return;
+            this.isListenEvent = true;
+            this.bannerView.OnBannerAdLoaded     += this.OnBannerLoaded;
+            this.bannerView.OnBannerAdLoadFailed += this.OnBannerLoadFailed;
+        }
     }
     #endif
 }
