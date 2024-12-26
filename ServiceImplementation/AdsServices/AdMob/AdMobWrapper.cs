@@ -328,7 +328,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void HideAllMREC()
         {
-            this.idToMrecViewHandler.ForEach(x => x.Value.bannerView?.Hide());
+            this.idToMrecViewHandler.ForEach(x => this.HideMREC(x.Key));
         }
         
         public void DestroyMREC(string placement)
