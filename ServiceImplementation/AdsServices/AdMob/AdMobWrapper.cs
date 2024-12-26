@@ -307,6 +307,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void HideMREC(string placement, AdScreenPosition position)
         {
+            this.HideMRECInternal(placement);
+        }
+
+        private void HideMRECInternal(string placement)
+        {
             var mrecBannerView = this.idToMrecViewHandler[this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id];
 
             if (mrecBannerView.bannerView == null) return;
@@ -314,7 +319,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.MrecBannerViewDismissed();
         }
 
-        public void HideAllMREC() { }
+        public void HideAllMREC()
+        {
+            foreach (var place in this.idToMrecViewHandler.Keys) this.HideMRECInternal(place);
+        }
 
         private void LoadAllMRec()
         {
