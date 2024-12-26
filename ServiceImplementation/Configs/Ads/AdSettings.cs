@@ -48,7 +48,9 @@
 
         #region ATT (iOS only)
 
-        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Auto Request App Tracking Transparent for iOS")] public bool autoRequestATT = true;
+        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Auto Request App Tracking Transparent for iOS")] [ShowIf("@!customAtt")] [SerializeField] private bool autoRequestATT = true;
+
+        public bool AutoRequestATT => this.autoRequestATT && !this.customAtt;
 
         [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Custom App Tracking Transparent for iOS")] [LabelText("Custom Att Scene")] public bool customAtt;
 
