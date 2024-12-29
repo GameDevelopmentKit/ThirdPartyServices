@@ -198,5 +198,18 @@ namespace ServiceImplementation.Configs.Ads
 
             #endregion
         }
+        
+        public void SetAllAdsEnable(bool enable)
+        {
+            this.EnableAds                    = enable;
+            this.EnableBannerAd               = enable;
+            this.EnableInterstitialAd         = enable;
+            this.EnableMRECAd                 = enable;
+            this.EnableAOAAd                  = enable;
+            this.EnableRewardedAd             = enable;
+            this.EnableRewardedInterstitialAd = enable;
+            this.EnableNativeAd               = enable;
+            this.EnableCollapsibleBanner      = enable;
+        }
     }
 }
