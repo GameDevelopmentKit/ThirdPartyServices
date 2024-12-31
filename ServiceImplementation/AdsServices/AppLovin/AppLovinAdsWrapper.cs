@@ -59,6 +59,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
 #if THEONE_ADS_DEBUG
             MaxSdk.SetCreativeDebuggerEnabled(true);
 #endif
+            
+#if BRAVESTARS
+            MaxSdk.SetHasUserConsent(true);
+            MaxSdk.SetDoNotSell(false);
+#endif
+            
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
             MaxSdk.InitializeSdk();
 
