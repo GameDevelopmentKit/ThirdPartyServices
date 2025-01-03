@@ -34,7 +34,7 @@
         public AdId CollapsibleBannerAdId
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mCollapsibleBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/2934735716","ca-app-pub-3940256099942544/6300978111") : this.mCollapsibleBannerAdId;
+            get => !string.IsNullOrEmpty(this.mCollapsibleBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/8388050270","ca-app-pub-3940256099942544/2014213617") : this.mCollapsibleBannerAdId;
             #else
             get => this.mCollapsibleBannerAdId;
             #endif
