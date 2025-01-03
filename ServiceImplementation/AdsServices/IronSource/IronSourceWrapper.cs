@@ -82,6 +82,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             #if THEONE_ADS_DEBUG
             IronSource.Agent.setMetaData("is_test_suite", "enable");
             #endif
+            LevelPlay.SetPauseGame(true);
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
 
             LevelPlay.OnInitSuccess += this.OnLevelPlayInitSuccess;
@@ -437,7 +438,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.logService.Log("oneLog: IronSourceWrapper ShowBannerAd: show new banner");
             }
         }
-        
+
         private void ResetLevelPlayInitializedCts()
         {
             this.levelPlayInitializedCts?.Cancel();

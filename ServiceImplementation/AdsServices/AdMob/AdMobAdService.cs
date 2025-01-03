@@ -302,11 +302,15 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         #region Collapsible Banner
 
-        private bool       isAvailableShowCollapsibleBanner;
         private BannerView collapsibleBannerView;
-        private string     collapsibleBannerGuid = GetNewGuid();
 
+        [Obsolete("Use ShowCollapsibleBannerAd(BannerAdsPosition bannerAdsPosition) instead.")]
         public void ShowCollapsibleBannerAd(bool useNewGuid, BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom)
+        {
+            this.ShowCollapsibleBannerAd(bannerAdsPosition);
+        }
+
+        public void ShowCollapsibleBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom)
         {
             if (string.IsNullOrEmpty(this.config.CollapsibleBannerAdId.Id))
             {
@@ -314,48 +318,33 @@ namespace ServiceImplementation.AdsServices.AdMob
                 return;
             }
 
-            this.collapsibleBannerGuid = useNewGuid ? GetNewGuid() : this.collapsibleBannerGuid;
+            var adSize   = this.config.IsAdaptiveBannerEnabled ? AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth) : AdSize.Banner;
+            var position = bannerAdsPosition.ToAdMobAdPosition();
 
-            if (this.collapsibleBannerView == null)
+            if (this.collapsibleBannerView is not null)
             {
-                var adSize = this.config.IsAdaptiveBannerEnabled ? AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth) : AdSize.Banner;
-                this.collapsibleBannerView = new BannerView(this.config.CollapsibleBannerAdId.Id, adSize, bannerAdsPosition.ToAdMobAdPosition());
-
-                #region Events
-
-                this.collapsibleBannerView.OnBannerAdLoaded += () => this.OnCollapsibleBannerLoaded(AdFormatConstants.CollapsibleBanner);
-                this.collapsibleBannerView.OnBannerAdLoadFailed += error => this.OnCollapsibleBannerLoadFailed(AdFormatConstants.CollapsibleBanner, error);
-                this.collapsibleBannerView.OnAdFullScreenContentOpened += () => this.OnCollapsibleBannerPresented(AdFormatConstants.CollapsibleBanner);
-                this.collapsibleBannerView.OnAdFullScreenContentClosed += () => this.OnCollapsibleBannerDismissed(AdFormatConstants.CollapsibleBanner);
-                this.collapsibleBannerView.OnAdClicked += () => this.OnCollapsibleBannerClicked(AdFormatConstants.CollapsibleBanner);
-                this.collapsibleBannerView.OnAdPaid += this.TrackAdRevenue(AdFormatConstants.CollapsibleBanner, AdFormatConstants.CollapsibleBanner, this.config.CollapsibleBannerAdId.Id);
-
-                #endregion
+                this.collapsibleBannerView.SetPosition(position);
+                this.collapsibleBannerView.Show();
+                Debug.Log("onelog: ShowCollapsibleBannerAd - Show CollapsibleBanner.");
+                return;
             }
 
-            this.isAvailableShowCollapsibleBanner = true;
+            this.collapsibleBannerView                             =  new(this.config.CollapsibleBannerAdId.Id, adSize, position);
+            this.collapsibleBannerView.OnBannerAdLoaded            += () => this.OnCollapsibleBannerLoaded(AdFormatConstants.CollapsibleBanner);
+            this.collapsibleBannerView.OnBannerAdLoadFailed        += error => this.OnCollapsibleBannerLoadFailed(AdFormatConstants.CollapsibleBanner, error);
+            this.collapsibleBannerView.OnAdFullScreenContentOpened += () => this.OnCollapsibleBannerPresented(AdFormatConstants.CollapsibleBanner);
+            this.collapsibleBannerView.OnAdFullScreenContentClosed += () => this.OnCollapsibleBannerDismissed(AdFormatConstants.CollapsibleBanner);
+            this.collapsibleBannerView.OnAdClicked                 += () => this.OnCollapsibleBannerClicked(AdFormatConstants.CollapsibleBanner);
+            this.collapsibleBannerView.OnAdPaid                    += this.TrackAdRevenue(AdFormatConstants.CollapsibleBanner, AdFormatConstants.CollapsibleBanner, this.config.CollapsibleBannerAdId.Id);
+
             var request = new AdRequest();
-#if UNITY_IOS
-            if(useNewGuid) AddPramsCollapsible();
-#else
-            AddPramsCollapsible();
-#endif
-            Debug.Log("onelog: ShowCollapsibleBannerAd - Load CollapsibleBanner.");
+            request.Extras.Add("collapsible", bannerAdsPosition == BannerAdsPosition.Bottom ? "bottom" : "top");
             this.collapsibleBannerView.LoadAd(request);
-            return;
-
-            void AddPramsCollapsible()
-            {
-                request.Extras.Add("collapsible_request_id", this.collapsibleBannerGuid);
-                request.Extras.Add("collapsible", bannerAdsPosition == BannerAdsPosition.Bottom ? "bottom" : "top");
-            }
+            Debug.Log("onelog: ShowCollapsibleBannerAd - Load New CollapsibleBanner.");
         }
-
-        private static string GetNewGuid() => Guid.NewGuid().ToString();
 
         public void HideCollapsibleBannerAd()
         {
-            this.isAvailableShowCollapsibleBanner = false;
             this.collapsibleBannerView?.Hide();
             Debug.Log("onelog: HideCollapsibleBannerAd");
         }
@@ -375,10 +364,6 @@ namespace ServiceImplementation.AdsServices.AdMob
         {
             var adInfo = new AdInfo(this.AdPlatform, this.config.CollapsibleBannerAdId.Id, AdFormatConstants.CollapsibleBanner);
             this.signalBus.Fire(new CollapsibleBannerAdLoadedSignal(placement, adInfo));
-            if (this.isAvailableShowCollapsibleBanner)
-            {
-                this.collapsibleBannerView?.Show();
-            }
 
             Debug.Log("onelog: OnCollapsibleBannerLoaded");
         }
