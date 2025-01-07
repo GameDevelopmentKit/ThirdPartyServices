@@ -57,7 +57,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public virtual async void Initialize()
         {
             await UniTask.SwitchToMainThread();
-#if THEONE_ADS_DEBUG
+#if MIRAI_ADS_DEBUG
             MaxSdk.SetCreativeDebuggerEnabled(true);
 #endif
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
@@ -70,7 +70,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InitRewardedAds();
             this.InitAOAAds();
 
-#if THEONE_ADS_DEBUG
+#if MIRAI_ADS_DEBUG
             MaxSdk.ShowMediationDebugger();
 #endif
             this.isInit = true;

@@ -81,11 +81,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IronSourceBannerEvents.onAdScreenDismissedEvent += this.BannerOnAdScreenDismissedEvent;
             IronSourceBannerEvents.onAdLeftApplicationEvent += this.BannerOnAdLeftApplicationEvent;
 
-            #if THEONE_ADS_DEBUG
+            #if MIRAI_ADS_DEBUG
             IronSource.Agent.setMetaData("is_test_suite", "enable");
             #endif
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
-            #if THEONE_ADS_DEBUG
+            #if MIRAI_ADS_DEBUG
             IronSource.Agent.setAdaptersDebug(true);
             IronSource.Agent.validateIntegration();
             #endif
@@ -126,7 +126,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void OnSdkInitializationCompleted()
         {
-            #if THEONE_ADS_DEBUG
+            #if MIRAI_ADS_DEBUG
             this.logService.Log($"onelog: IronSource Sdk initialized!");
             IronSource.Agent.launchTestSuite();
             #endif
