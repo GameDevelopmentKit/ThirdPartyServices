@@ -50,7 +50,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void Initialize()
         {
-            this.logService.Log("oneLog: IronSourceWrapper Initialize");
+            this.logService.Log("mirailog: IronSourceWrapper Initialize");
             IronSourceEvents.onImpressionDataReadyEvent        += this.ImpressionDataReadyEvent;
             IronSourceEvents.onSdkInitializationCompletedEvent += this.OnSdkInitializationCompleted;
 
@@ -127,7 +127,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void OnSdkInitializationCompleted()
         {
             #if MIRAI_ADS_DEBUG
-            this.logService.Log($"onelog: IronSource Sdk initialized!");
+            this.logService.Log($"mirailog: IronSource Sdk initialized!");
             IronSource.Agent.launchTestSuite();
             #endif
         }
@@ -147,7 +147,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void RewardedVideoOnAdUnavailable()
         {
-            this.logService.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdUnavailable");
+            this.logService.Log($"mirailog: IronSourceWrapper RewardedVideoOnAdUnavailable");
             this.rewardedStopwatch.Stop();
             this.signalBus.Fire(new RewardedAdLoadFailedSignal("", "", this.rewardedStopwatch.ElapsedMilliseconds));
         }
@@ -174,7 +174,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.onRewardFailed?.Invoke();
             this.onRewardFailed = null;
-            this.logService.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdShowFailedEvent. Message: {obj.getDescription()}");
+            this.logService.Log($"mirailog: IronSourceWrapper RewardedVideoOnAdShowFailedEvent. Message: {obj.getDescription()}");
             var adInfo = new AdInfo(this.AdPlatform, info.adUnit, AdFormatConstants.Rewarded, info.adNetwork, value:info.revenue ?? 0, currency:"USD");
             this.signalBus.Fire(new RewardedAdShowFailedSignal(this.rewardedPlacement, obj.getDescription(),adInfo));
         }
@@ -204,7 +204,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void InterstitialOnAdShowFailedEvent(IronSourceError arg1, IronSourceAdInfo arg2)
         {
-            this.logService.Log($"oneLog: IronSourceWrapper InterstitialOnAdShowFailedEvent, Message: {arg1.getDescription()}");
+            this.logService.Log($"mirailog: IronSourceWrapper InterstitialOnAdShowFailedEvent, Message: {arg1.getDescription()}");
             this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(this.interstitialPlacement));
         }
         private void InterstitialOnAdShowSucceededEvent(IronSourceAdInfo obj)                     { }
@@ -213,7 +213,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void InterstitialOnAdLoadFailed(IronSourceError obj)
         {
             this.stopwatchInterstitial.Stop();
-            this.logService.Log($"oneLog: IronSourceWrapper InterstitialOnAdLoadFailed, Message: {obj.getDescription()}");
+            this.logService.Log($"mirailog: IronSourceWrapper InterstitialOnAdLoadFailed, Message: {obj.getDescription()}");
             this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription(), this.stopwatchInterstitial.ElapsedMilliseconds));
         }
 
@@ -243,7 +243,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private async void BannerOnAdLoadFailedEvent(IronSourceError obj)
         {
-            this.logService.Log($"oneLog: IronSourceWrapper BannerOnAdLoadFailedEvent, Message: {obj.getDescription()}");
+            this.logService.Log($"mirailog: IronSourceWrapper BannerOnAdLoadFailedEvent, Message: {obj.getDescription()}");
             this.signalBus.Fire(new BannerAdLoadFailedSignal("", $"{obj.getDescription()}"));
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             this.ShowBannerAd();
@@ -412,10 +412,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             };
 
             IronSourceAdQuality.Initialize(this.thirdPartiesConfig.AdSettings.IronSource.AppId, adQualityConfig);
-            this.logService.Log("onelog: IronSourceAdQuality debug initialize");
+            this.logService.Log("mirailog: IronSourceAdQuality debug initialize");
 #elif IRONSOURCE_AD_QUALITY
             IronSourceAdQuality.Initialize(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
-            this.logService.Log("onelog: IronSourceAdQuality initialize");
+            this.logService.Log("mirailog: IronSourceAdQuality initialize");
 #endif
         }
     }

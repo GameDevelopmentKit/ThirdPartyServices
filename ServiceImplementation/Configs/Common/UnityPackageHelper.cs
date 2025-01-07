@@ -56,7 +56,7 @@
             if (webRequest.isNetworkError || webRequest.isHttpError)
                 #endif
             {
-                Debug.LogError("onelog: Failed to download package: " + webRequest.error);
+                Debug.LogError("mirailog: Failed to download package: " + webRequest.error);
             }
             else
             {
@@ -84,7 +84,7 @@
 
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError("onelog: Failed to download zip file: " + webRequest.error);
+                Debug.LogError("mirailog: Failed to download zip file: " + webRequest.error);
             }
             else
             {

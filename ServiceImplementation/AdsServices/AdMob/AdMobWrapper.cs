@@ -203,7 +203,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void AOAHandleAdFullScreenContentClosed()
         {
-            this.logService.Log("oneLog: Closed app open ad");
+            this.logService.Log("mirailog: Closed app open ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal("", adRevenueEvent));
             this.IsShowingAOAAd = false;
@@ -211,13 +211,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void AOAHandleAdFullScreenContentFailed(AdError args)
         {
-            this.logService.Log($"oneLog: Failed to present the ad (reason: {args.GetMessage()})");
+            this.logService.Log($"mirailog: Failed to present the ad (reason: {args.GetMessage()})");
             this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal("", args.GetMessage()));
         }
 
         private void AOAHandleAdFullScreenContentOpened()
         {
-            this.logService.Log("oneLog: Displayed app open ad");
+            this.logService.Log("mirailog: Displayed app open ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal("", adRevenueEvent));
             this.IsShowingAOAAd = true;
@@ -347,7 +347,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void BannerViewOnAdLoadFailed(LoadAdError obj)
         {
-            Debug.LogError($"oneLog: AdmobWrapper Failed to load ad: {obj.GetMessage()}");
+            Debug.LogError($"mirailog: AdmobWrapper Failed to load ad: {obj.GetMessage()}");
             this.signalBus.Fire(new MRecAdLoadFailedSignal(""));
         }
 

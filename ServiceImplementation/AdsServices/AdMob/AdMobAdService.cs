@@ -310,7 +310,7 @@ namespace ServiceImplementation.AdsServices.AdMob
         {
             if (string.IsNullOrEmpty(this.config.CollapsibleBannerAdId.Id))
             {
-                Debug.Log("onelog: ShowCollapsibleBannerAd - CollapsibleBannerAdId is null or empty. Please check the AdMob settings.");
+                Debug.Log("mirailog: ShowCollapsibleBannerAd - CollapsibleBannerAdId is null or empty. Please check the AdMob settings.");
                 return;
             }
 
@@ -340,7 +340,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 #else
             AddPramsCollapsible();
 #endif
-            Debug.Log("onelog: ShowCollapsibleBannerAd - Load CollapsibleBanner.");
+            Debug.Log("mirailog: ShowCollapsibleBannerAd - Load CollapsibleBanner.");
             this.collapsibleBannerView.LoadAd(request);
             return;
 
@@ -357,7 +357,7 @@ namespace ServiceImplementation.AdsServices.AdMob
         {
             this.isAvailableShowCollapsibleBanner = false;
             this.collapsibleBannerView?.Hide();
-            Debug.Log("onelog: HideCollapsibleBannerAd");
+            Debug.Log("mirailog: HideCollapsibleBannerAd");
         }
 
         public void DestroyCollapsibleBannerAd()
@@ -368,7 +368,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                 this.collapsibleBannerView = null;
             }
 
-            Debug.Log("onelog: DestroyCollapsibleBannerAd");
+            Debug.Log("mirailog: DestroyCollapsibleBannerAd");
         }
 
         private void OnCollapsibleBannerLoaded(string placement)
@@ -380,18 +380,18 @@ namespace ServiceImplementation.AdsServices.AdMob
                 this.collapsibleBannerView?.Show();
             }
 
-            Debug.Log("onelog: OnCollapsibleBannerLoaded");
+            Debug.Log("mirailog: OnCollapsibleBannerLoaded");
         }
 
         private void OnCollapsibleBannerLoadFailed(string placement, AdError adError)
         {
-            Debug.Log($"onelog: OnCollapsibleBannerLoadFailed {placement} - {adError.GetMessage()}");
+            Debug.Log($"mirailog: OnCollapsibleBannerLoadFailed {placement} - {adError.GetMessage()}");
             this.signalBus.Fire(new CollapsibleBannerAdLoadFailedSignal(placement, adError.GetMessage()));
         }
 
         private void OnCollapsibleBannerPresented(string placement)
         {
-            Debug.Log("onelog: OnCollapsibleBannerPresented");
+            Debug.Log("mirailog: OnCollapsibleBannerPresented");
             this.signalBus.Fire(new CollapsibleBannerAdPresentedSignal(placement));
         }
 

@@ -31,12 +31,12 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public void Initialize()
         {
-            this.logger.Log($"onelog: FirebaseRemoteConfig InitFirebase");
+            this.logger.Log($"mirailog: FirebaseRemoteConfig InitFirebase");
             FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
             {
                 var dependencyStatus = task.Result;
 
-                this.logger.Log($"onelog: FirebaseRemoteConfig CheckAndFixDependenciesAsync {dependencyStatus}");
+                this.logger.Log($"mirailog: FirebaseRemoteConfig CheckAndFixDependenciesAsync {dependencyStatus}");
                 if (dependencyStatus == DependencyStatus.Available)
                     this.FetchDataAsync();
                 else
@@ -56,20 +56,20 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         private void FetchComplete(Task fetchTask)
         {
             if (fetchTask.IsCanceled)
-                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch canceled.");
+                this.logger.Log($"mirailog: FirebaseRemoteConfig Fetch canceled.");
             else if (fetchTask.IsFaulted)
-                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch encountered an error.");
-            else if (fetchTask.IsCompleted) this.logger.Log($"onelog: FirebaseRemoteConfig Fetch completed successfully!");
+                this.logger.Log($"mirailog: FirebaseRemoteConfig Fetch encountered an error.");
+            else if (fetchTask.IsCompleted) this.logger.Log($"mirailog: FirebaseRemoteConfig Fetch completed successfully!");
 
             var info = FirebaseRemoteConfig.DefaultInstance.Info;
-            this.logger.Log($"onelog: FirebaseRemoteConfig FetchComplete {info.LastFetchStatus}");
+            this.logger.Log($"mirailog: FirebaseRemoteConfig FetchComplete {info.LastFetchStatus}");
 
             switch (info.LastFetchStatus)
             {
                 case LastFetchStatus.Success:
                     FirebaseRemoteConfig.DefaultInstance.ActivateAsync().ContinueWithOnMainThread(task =>
                     {
-                        this.logger.Log($"onelog: FirebaseRemoteConfig Remote data loaded and ready (last fetch time {info.FetchTime}).");
+                        this.logger.Log($"mirailog: FirebaseRemoteConfig Remote data loaded and ready (last fetch time {info.FetchTime}).");
                         this.IsConfigFetchedSucceed = true;
                         this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal(this));
                     });
@@ -79,11 +79,11 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                     switch (info.LastFetchFailureReason)
                     {
                         case FetchFailureReason.Error:
-                            this.logger.Log($"onelog: FirebaseRemoteConfig Fetch failed for unknown reason");
+                            this.logger.Log($"mirailog: FirebaseRemoteConfig Fetch failed for unknown reason");
 
                             break;
                         case FetchFailureReason.Throttled:
-                            this.logger.Log($"onelog: FirebaseRemoteConfig Fetch throttled until " + info.ThrottledEndTime);
+                            this.logger.Log($"mirailog: FirebaseRemoteConfig Fetch throttled until " + info.ThrottledEndTime);
 
                             break;
                         case FetchFailureReason.Invalid: break;
@@ -92,7 +92,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
                     break;
                 case LastFetchStatus.Pending:
-                    this.logger.Log($"onelog: FirebaseRemoteConfig Latest Fetch call still pending.");
+                    this.logger.Log($"mirailog: FirebaseRemoteConfig Latest Fetch call still pending.");
 
                     break;
                 default: throw new ArgumentOutOfRangeException();
