@@ -38,6 +38,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private bool         isInit;
         private event Action RewardedAdCompletedOneTimeAction;
         private event Action RewardedAdFailed;
+        private List<string> MrectLoadedId = new();
 
         #endregion
 
@@ -144,7 +145,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsMRECReady(string placement, AdScreenPosition position)
         {
-            return this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out _);
+            return this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var  mrec) && this.MrectLoadedId.Contains(mrec.Id);
         }
 
         public void HideMREC(string placement, AdScreenPosition position)
@@ -630,8 +631,24 @@ namespace ServiceImplementation.AdsServices.AppLovin
         // MREC
         //.............
 
+        private void CheckToAddMRecToList(string adUnitId)
+        {
+            if (!this.MrectLoadedId.Contains(adUnitId))
+            {
+                this.MrectLoadedId.Add(adUnitId);
+            }
+        }
+        private void CheckToRemoveMRecFromList(string adUnitId)
+        {
+            if (this.MrectLoadedId.Contains(adUnitId))
+            {
+                this.MrectLoadedId.Remove(adUnitId);
+            }
+        }
+        
         private void OnMRecAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo maxSdkAdInfo)
         {
+            this.CheckToAddMRecToList(adUnitId);
             this.StartMRECAutoRefresh(adUnitId);
             var adInfo = new AdInfo(this.AdPlatform, maxSdkAdInfo.AdUnitIdentifier, AdFormatConstants.MREC, maxSdkAdInfo.NetworkName, maxSdkAdInfo.NetworkPlacement, maxSdkAdInfo.Revenue);
             this.signalBus.Fire(new MRecAdLoadedSignal(adUnitId, adInfo));
@@ -639,6 +656,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnMRecAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo error)
         {
+            this.CheckToRemoveMRecFromList(adUnitId);
             this.StopMRECAutoRefresh(adUnitId);
             this.LoadMREC(adUnitId);
             this.signalBus.Fire(new MRecAdLoadFailedSignal(adUnitId));
