@@ -1,4 +1,4 @@
-namespace Editor
+namespace ThirdPartyServices.Editor
 {
     using ServiceImplementation.Configs;
     using UnityEditor.Build;
