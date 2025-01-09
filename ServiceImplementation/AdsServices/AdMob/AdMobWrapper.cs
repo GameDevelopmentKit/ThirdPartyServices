@@ -62,6 +62,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.VerifySetting();
             this.Init();
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
+            this.IntervalLoadNativeAds();
+#endif
         }
 
         private const string AdPlatForm = AdRevenueConstants.ARSourceAdMob;
@@ -344,14 +347,25 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
-       #region Native Ads
+        #region Native Ads
 
-        #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
         private Dictionary<string, NativeAd>        nativeAdsIdToNativeAd   { get; } = new();
         private HashSet<string>                     loadingNativeAdsIds     { get; } = new();
         private Dictionary<NativeAdsView, NativeAd> nativeAdsViewToNativeAd { get; } = new();
 
         private const string PrefixNativeAdsText = "loading...";
+
+        private void IntervalLoadNativeAds()
+        {
+            if (!this.adServicesConfig.EnableNativeAd || !this.adServicesConfig.EnableAds)
+            {
+                return;
+            }
+
+            this.LoadAllNativeAds();
+            UniTask.Delay(TimeSpan.FromSeconds(5)).ContinueWith(this.IntervalLoadNativeAds);
+        }
 
         private void LoadNativeAds(string adsId)
         {
@@ -361,30 +375,24 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.loadingNativeAdsIds.Add(adsId);
 
             adLoader.OnNativeAdLoaded += (_, arg) =>
-                                         {
-                                             this.nativeAdsIdToNativeAd.Add(adsId, arg.nativeAd);
-                                             this.loadingNativeAdsIds.Remove(adsId);
-                                         };
+            {
+                this.nativeAdsIdToNativeAd.Add(adsId, arg.nativeAd);
+                this.loadingNativeAdsIds.Remove(adsId);
+            };
 
-            adLoader.OnAdFailedToLoad += (_, _) =>
-                                         {
-                                             this.loadingNativeAdsIds.Remove(adsId);
-                                         };
+            adLoader.OnAdFailedToLoad += (_, _) => { this.loadingNativeAdsIds.Remove(adsId); };
 
             adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
             adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
             adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
-            #if ADMOB_BELLOW_9_0_0
+#if ADMOB_BELLOW_9_0_0
             adLoader.LoadAd(new AdRequest.Builder().Build());
-            #else
+#else
             adLoader.LoadAd(new AdRequest());
-            #endif
+#endif
         }
 
-        private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e)
-        {
-            this.logService.Log("native ad clicked");
-        }
+        private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e) { this.logService.Log("native ad clicked"); }
 
         private NativeAd GetAvailableNativeAd()
         {
@@ -392,6 +400,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.nativeAdsIdToNativeAd.Remove(nativeAdPair.Key);
 
             return nativeAdPair.Value;
+        }
+
+        public object GetNativeAd()
+        {
+            if (this.nativeAdsIdToNativeAd.Count == 0) return null;
+
+            return this.GetAvailableNativeAd();
         }
 
         public void DrawNativeAds(NativeAdsView nativeAdsView)
@@ -468,10 +483,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
-        {
-            this.logService.Log($"Native ad failed to load: {e.LoadAdError.GetMessage()}");
-        }
+        private void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e) { this.logService.Log($"Native ad failed to load: {e.LoadAdError.GetMessage()}"); }
 
         private void HandleNativeAdLoaded(object sender, NativeAdEventArgs e)
         {
@@ -493,9 +505,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        #endif
+#endif
 
-#endregion
+        #endregion
+
         private void AdMobHandlePaidEvent(AdValue args, string adUnitId, string adFormat)
         {
             var adsRevenueEvent = new AdsRevenueEvent

@@ -34,7 +34,7 @@ namespace Core.AdsServices.Native
 
         private void Awake()
         {
-            this.colliders              = this.GetComponentsInChildren<Collider>();
+            this.colliders              = this.GetComponentsInChildren<Collider>(true);
             this.screenManager          = this.GetCurrentContainer().Resolve<IScreenManager>();
             this.changeScreenDisposable = this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
         }
