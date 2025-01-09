@@ -124,6 +124,8 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<AdRequestSignal>();
             
             this.Container.DeclareSignal<AppStateChangeSignal>();
+            this.Container.DeclareSignal<AttDisplayedSignal>();
+            this.Container.DeclareSignal<AttClosedSignal>();
 
             #endregion
         }
