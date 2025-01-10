@@ -142,6 +142,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
+            this.CreateAllMRec();
             var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.OnMRecAdDisplayed(adsId);
             var mrecPosition = position.CanvasToUnityCoordinateSystem().ToApplovinPosition() + offset.FlipY();
@@ -149,15 +150,30 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.ShowMRec(adsId);
         }
 
-        public bool IsMRECReady(string placement, AdScreenPosition position)
+        public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
-            return this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out _);
+            var isMrecReady = this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var adsId);
+            Debug.Log($"oneLog: ApplovinAdsWrapper isMRECReady: {isMrecReady}, placement: {placement}, adsId: {adsId?.Id}");
+            return isMrecReady;
         }
 
-        public void HideMREC(string placement, AdScreenPosition position)
+        public void HideMREC(string placement)
         {
             var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.InternalHideMREC(adsId);
+        }
+
+        public void DestroyMREC(string placement)
+        {
+            var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            this.InternalDestroyMREC(adsId);
+        }
+
+        public void InternalDestroyMREC(string adUnitId)
+        {
+            this.idMRecCreating.Remove(adUnitId);
+            this.OnMRecAdDismissed(adUnitId);
+            MaxSdk.DestroyMRec(adUnitId);
         }
 
         public void InternalHideMREC(string adUnitId)
@@ -169,7 +185,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public void StopMRECAutoRefresh(string adUnitId) { MaxSdk.StopMRecAutoRefresh(adUnitId); }
 
         public void StartMRECAutoRefresh(string adUnitId) { MaxSdk.StartMRecAutoRefresh(adUnitId); }
-
 
         public void LoadMREC(string adUnitId) { MaxSdk.LoadMRec(adUnitId); }
 
