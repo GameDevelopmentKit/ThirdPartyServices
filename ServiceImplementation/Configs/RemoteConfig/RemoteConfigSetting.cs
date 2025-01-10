@@ -102,8 +102,11 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             
             #region MREC
 
-            this.TryAddAddsConfig(RemoteConfigKey.EnableMrecRefreshInterval, "false"); 
-            this.TryAddAddsConfig(RemoteConfigKey.MrecRefreshInterval, "10"); 
+            this.TryAddAddsConfig(RemoteConfigKey.EnableMrecRefreshInterval, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.MrecRefreshInterval, "10");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableCollapsibleMrec, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleMrecInterval, "30");
+            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleMrecDisplayTime, "5"); 
 
             #endregion
 
