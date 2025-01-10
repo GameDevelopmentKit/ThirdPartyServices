@@ -268,7 +268,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
             else
             {
-                this.UpdatePlacementMrec(placement, position, offset);
+                this.UpdatePlacementMrec(adId.Id, position, offset);
             }
             Debug.Log("oneLog: AdmobWrapper IsMRECReady check banner view is null");
             return this.idToMrecViewHandler[adId.Id].bannerView != null;
@@ -328,9 +328,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
         }
 
-        private void UpdatePlacementMrec(string placement, AdScreenPosition adPosition, AdScreenPosition offset)
+        private void UpdatePlacementMrec(string adId, AdScreenPosition adPosition, AdScreenPosition offset)
         {
-            var bannerViewHandler = this.idToMrecViewHandler[placement];
+            var bannerViewHandler = this.idToMrecViewHandler[adId];
             var mrecPosition      = adPosition.CanvasToUnityCoordinateSystem().ToAdmobPosition() + offset.FlipY();
             bannerViewHandler.UpdatePosition((int)mrecPosition.x, (int)mrecPosition.y);
         }
