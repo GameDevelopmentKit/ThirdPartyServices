@@ -47,7 +47,7 @@ namespace ServiceImplementation.Configs.Ads
         public bool EnableNativeAd               { get; private set; }
         public bool EnableCollapsibleBanner      { get; private set; }
         public int  IntervalLoadAds              { get; private set; }
-        public bool EnableAds                    { get; private set; }
+        public bool EnableAds                    { get; private set; } = false;
 
         #endregion
 
