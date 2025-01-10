@@ -266,6 +266,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             {
                 this.LoadMREC(placement, position, offset);
             }
+            else
+            {
+                this.UpdatePlacementMrec(placement, position, offset);
+            }
             Debug.Log("oneLog: AdmobWrapper IsMRECReady check banner view is null");
             return this.idToMrecViewHandler[adId.Id].bannerView != null;
         }
@@ -322,6 +326,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             {
                 mrecBannerHandler.CreateBannerIfNeed();
             }
+        }
+
+        private void UpdatePlacementMrec(string placement, AdScreenPosition adPosition, AdScreenPosition offset)
+        {
+            var bannerViewHandler = this.idToMrecViewHandler[placement];
+            var mrecPosition      = adPosition.CanvasToUnityCoordinateSystem().ToAdmobPosition() + offset.FlipY();
+            bannerViewHandler.UpdatePosition((int)mrecPosition.x, (int)mrecPosition.y);
         }
 
         private void MrecBannerViewDismissed()
@@ -531,8 +542,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     {
         private readonly string                  adId;
         private readonly AdSize                  adSize;
-        private readonly int                     x;
-        private readonly int                     y;
+        private          int                     x;
+        private          int                     y;
         private readonly DateTime                lastTimeCreateBanner  = DateTime.Now;
         private readonly TimeSpan                minTimeRecreateBanner = TimeSpan.FromHours(1);
         private          int                     retryTime;
@@ -599,6 +610,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.isHidden = false;
             this.bannerView.SetPosition(this.x, this.y);
             this.bannerView.Show();
+        }
+
+        public void UpdatePosition(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
         }
     }
     #endif
