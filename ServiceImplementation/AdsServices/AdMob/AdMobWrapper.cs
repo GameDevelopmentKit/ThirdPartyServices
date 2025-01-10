@@ -397,7 +397,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private NativeAd GetAvailableNativeAd()
         {
             var nativeAdPair = this.nativeAdsIdToNativeAd.First();
-            this.nativeAdsIdToNativeAd.Remove(nativeAdPair.Key);
 
             return nativeAdPair.Value;
         }
@@ -409,6 +408,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             return this.GetAvailableNativeAd();
         }
 
+        public void RemoveNativeAd(object nativeAd)
+        {
+            var element = this.nativeAdsViewToNativeAd.FirstOrDefault(x => x.Value == nativeAd);
+
+            if (element.Value == null) return;
+            this.nativeAdsViewToNativeAd.Remove(element.Key);
+        }
+
         public void DrawNativeAds(NativeAdsView nativeAdsView)
         {
             if (!this.adServicesConfig.EnableNativeAd) return;
@@ -417,7 +424,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (this.nativeAdsIdToNativeAd.Count == 0 || this.nativeAdsViewToNativeAd.ContainsKey(nativeAdsView)) return;
             var nativeAd = this.nativeAdsViewToNativeAd.GetOrAdd(nativeAdsView, this.GetAvailableNativeAd);
-
+            this.nativeAdsIdToNativeAd.Remove(this.nativeAdsIdToNativeAd.First().Key);
             this.logService.Log($"Start set native ad: {nativeAdsView.name}");
 
             this.logService.Log($"native star rating : {nativeAd.GetStarRating()}");

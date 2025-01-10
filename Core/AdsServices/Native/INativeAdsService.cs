@@ -4,5 +4,6 @@ namespace Core.AdsServices.Native
     {
         void   DrawNativeAds(NativeAdsView nativeAdsView);
         object GetNativeAd();
+        void   RemoveNativeAd(object nativeAd);
     }
 }
