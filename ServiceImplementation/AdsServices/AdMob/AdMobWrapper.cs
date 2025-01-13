@@ -350,7 +350,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region Native Ads
 
 #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
-        private Dictionary<string, NativeAd>        nativeAdsIdToNativeAd   { get; } = new();
+        private Dictionary<string, List<NativeAd>>  nativeAdsIdToNativeAd   { get; } = new();
         private HashSet<string>                     loadingNativeAdsIds     { get; } = new();
         private Dictionary<NativeAdsView, NativeAd> nativeAdsViewToNativeAd { get; } = new();
 
@@ -369,18 +369,31 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void LoadNativeAds(string adsId)
         {
-            if (this.loadingNativeAdsIds.Contains(adsId) || this.nativeAdsIdToNativeAd.ContainsKey(adsId)) return;
+            this.logService.Log($"Start load native ad: {adsId}");
+
+            if (this.loadingNativeAdsIds.Contains(adsId)) return;
 
             var adLoader = new AdLoader.Builder(adsId).ForNativeAd().Build();
-            this.loadingNativeAdsIds.Add(adsId);
 
             adLoader.OnNativeAdLoaded += (_, arg) =>
             {
-                this.nativeAdsIdToNativeAd.Add(adsId, arg.nativeAd);
-                this.loadingNativeAdsIds.Remove(adsId);
+                var listAds = this.nativeAdsIdToNativeAd[adsId];
+
+                if (listAds.Count == this.adServicesConfig.NativeAdCount)
+                {
+                    this.loadingNativeAdsIds.Remove(adsId);
+                }
+
+                listAds.Add(arg.nativeAd);
+                this.nativeAdsIdToNativeAd[adsId] = listAds;
+                this.logService.Log($"Native ad Count: {listAds.Count}");
             };
 
-            adLoader.OnAdFailedToLoad += (_, _) => { this.loadingNativeAdsIds.Remove(adsId); };
+            adLoader.OnAdFailedToLoad += (_, _) =>
+            {
+                this.logService.Log($"Native ad failed to load: {adsId}");
+                this.loadingNativeAdsIds.Remove(adsId);
+            };
 
             adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
             adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
@@ -394,26 +407,34 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e) { this.logService.Log("native ad clicked"); }
 
-        private NativeAd GetAvailableNativeAd()
+        private List<NativeAd> GetAvailableNativeAd()
         {
             var nativeAdPair = this.nativeAdsIdToNativeAd.First();
 
             return nativeAdPair.Value;
         }
 
-        public object GetNativeAd()
+        public List<NativeAd> GetNativeAds()
         {
-            if (this.nativeAdsIdToNativeAd.Count == 0) return null;
-
-            return this.GetAvailableNativeAd();
+            return this.nativeAdsIdToNativeAd.Count == 0 ? new List<NativeAd>() : this.GetAvailableNativeAd();
         }
 
-        public void RemoveNativeAd(object nativeAd)
+        public void RemoveNativeAd(NativeAd nativeAd)
         {
             var element = this.nativeAdsViewToNativeAd.FirstOrDefault(x => x.Value == nativeAd);
 
-            if (element.Value == null) return;
-            this.nativeAdsViewToNativeAd.Remove(element.Key);
+            if (element.Value != null)
+            {
+                this.nativeAdsViewToNativeAd.Remove(element.Key);
+            }
+
+            var findItem = this.nativeAdsIdToNativeAd.FirstOrDefault(x => x.Value.Contains(nativeAd));
+
+            if (findItem.Key == null) return;
+            this.loadingNativeAdsIds.Remove(findItem.Key);
+            this.logService.Log($"Remove native ad: {findItem.Key}");
+            findItem.Value.Remove(element.Value);
+            this.nativeAdsIdToNativeAd[findItem.Key] = findItem.Value;
         }
 
         public void DrawNativeAds(NativeAdsView nativeAdsView)
@@ -423,8 +444,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.LoadAllNativeAds();
 
             if (this.nativeAdsIdToNativeAd.Count == 0 || this.nativeAdsViewToNativeAd.ContainsKey(nativeAdsView)) return;
-            var nativeAd = this.nativeAdsViewToNativeAd.GetOrAdd(nativeAdsView, this.GetAvailableNativeAd);
+            var nativeList = this.GetAvailableNativeAd();
+            var nativeAd   = nativeList.First();
+
             this.nativeAdsIdToNativeAd.Remove(this.nativeAdsIdToNativeAd.First().Key);
+            this.nativeAdsViewToNativeAd.TryAdd(nativeAdsView, nativeAd);
             this.logService.Log($"Start set native ad: {nativeAdsView.name}");
 
             this.logService.Log($"native star rating : {nativeAd.GetStarRating()}");
@@ -508,7 +532,22 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             foreach (var adId in this.ADMobSettings.NativeAdIds.Select(nativeAdId => nativeAdId.Id))
             {
-                this.LoadNativeAds(adId);
+                if (!this.nativeAdsIdToNativeAd.ContainsKey(adId))
+                {
+                    this.nativeAdsIdToNativeAd.Add(adId, new List<NativeAd>());
+                }
+
+                var totalNativeAds = this.adServicesConfig.NativeAdCount - this.nativeAdsIdToNativeAd[adId].Count;
+                this.logService.Log($"Total need load native ads: {totalNativeAds}");
+
+                if (this.loadingNativeAdsIds.Contains(adId)) break;
+
+                for (var i = 0; i < totalNativeAds; i++)
+                {
+                    this.LoadNativeAds(adId);
+                }
+
+                this.loadingNativeAdsIds.Add(adId);
             }
         }
 

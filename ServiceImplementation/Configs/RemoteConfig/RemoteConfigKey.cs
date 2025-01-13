@@ -55,5 +55,7 @@
         public const string CollapsibleBannerExpandOnRefreshEnabled  = "collapsible_banner_expand_on_refresh_enabled";
 
         #endregion
+
+        public const string NativeAdCount = "native_ad_count";
     }
 }

@@ -4,13 +4,13 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using System.Linq;
     using Sirenix.OdinInspector;
     using UnityEngine;
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     using System;
     using ServiceImplementation.Configs.Editor;
     using System.IO;
     using Newtonsoft.Json;
     using UnityEditor;
-    #endif
+#endif
 
     [CreateAssetMenu(fileName = nameof(RemoteConfigSetting), menuName = "ScriptableObjects/SpawnRemoteConfigSetting", order = 1)]
     public class RemoteConfigSetting : ScriptableObject
@@ -21,24 +21,32 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public static string ResourcePath = $"GameConfigs/{nameof(RemoteConfigSetting)}";
 
-        [OnValueChanged("OnRemoteConfigProviderTypeChanged")] [LabelText("Remote Config Provider Type")] [LabelWidth(200)] [GUIColor(1, 1, 0)] public RemoteConfigProviderType RemoteConfigProviderType = RemoteConfigProviderType.FireBase;
-        [SerializeField] [BoxGroup("Firebase reload")] private int firebaseReloadInterval   = 5;
-        public int FirebaseReloadInterval => this.firebaseReloadInterval;
-        public List<RemoteConfig> AdsRemoteConfigs  => this.mAdsRemoteConfigs;
-        public List<RemoteConfig> MiscRemoteConfigs => this.mMiscRemoteConfigs;
-        public List<RemoteConfig> GameRemoteConfigs => this.mGameRemoteConfigs;
+        [OnValueChanged("OnRemoteConfigProviderTypeChanged")] [LabelText("Remote Config Provider Type")] [LabelWidth(200)] [GUIColor(1, 1, 0)]
+        public RemoteConfigProviderType RemoteConfigProviderType = RemoteConfigProviderType.FireBase;
 
-        [TableList] [LabelText("Ads Remote Configs")] [SerializeField] private List<RemoteConfig> mAdsRemoteConfigs = new();
+        [SerializeField] [BoxGroup("Firebase reload")]
+        private int firebaseReloadInterval = 5;
 
-        [TableList] [LabelText("Misc Remote Configs")] [SerializeField] private List<RemoteConfig> mMiscRemoteConfigs = new();
+        public int                FirebaseReloadInterval => this.firebaseReloadInterval;
+        public List<RemoteConfig> AdsRemoteConfigs       => this.mAdsRemoteConfigs;
+        public List<RemoteConfig> MiscRemoteConfigs      => this.mMiscRemoteConfigs;
+        public List<RemoteConfig> GameRemoteConfigs      => this.mGameRemoteConfigs;
 
-        [TableList] [LabelText("Game Remote Configs")] [SerializeField] private List<RemoteConfig> mGameRemoteConfigs = new();
+        [TableList] [LabelText("Ads Remote Configs")] [SerializeField]
+        private List<RemoteConfig> mAdsRemoteConfigs = new();
+
+        [TableList] [LabelText("Misc Remote Configs")] [SerializeField]
+        private List<RemoteConfig> mMiscRemoteConfigs = new();
+
+        [TableList] [LabelText("Game Remote Configs")] [SerializeField]
+        private List<RemoteConfig> mGameRemoteConfigs = new();
 
         private bool TryAddAddsConfig(string key, string value)
         {
             if (this.mAdsRemoteConfigs.Any(x => x.key.Equals(key))) return false;
 
             this.mAdsRemoteConfigs.Add(new(key, key, value));
+
             return true;
         }
 
@@ -100,6 +108,12 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             #endregion
 
+            #region Native
+
+            this.TryAddAddsConfig(RemoteConfigKey.NativeAdCount, "3");
+
+            #endregion
+
             #endregion
         }
 
@@ -114,7 +128,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             return result;
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         [OnInspectorInit]
         public void OnRemoteConfigProviderTypeChanged()
         {
@@ -173,6 +187,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             {
                 this.defaultValue.Add("value", defaultValue);
                 this.description = description;
+
                 if (int.TryParse(defaultValue, out _))
                     this.valueType = "NUMBER";
                 else if (bool.TryParse(defaultValue, out _))
@@ -181,6 +196,6 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                     this.valueType = "STRING";
             }
         }
-        #endif
+#endif
     }
 }

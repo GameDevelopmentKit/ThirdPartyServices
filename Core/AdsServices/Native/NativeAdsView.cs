@@ -34,7 +34,6 @@ namespace Core.AdsServices.Native
         private IScreenPresenter visibleScreen;
         private IScreenManager   screenManager;
         private ILogService      logService;
-        private static List<GameObject> registedObj = new();
 #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
 
         private void Awake()
@@ -66,7 +65,6 @@ namespace Core.AdsServices.Native
         {
             this.ShowAds(false);
             this.changeScreenDisposable?.Dispose();
-            registedObj.Clear();
         }
 
         private void OnChangeScreen(IScreenPresenter screenPresenter)
@@ -111,16 +109,14 @@ namespace Core.AdsServices.Native
         /// for 2d
         /// </summary>
         /// <param name="nativeAd"></param>
-        public void ShowNativeAds(NativeAd nativeAd)
+        public void ShowNativeAds(NativeAd nativeAd, List<GameObject> registedObj)
         {
             this.logService.Log($"Start set native ad: {this.name}");
-
             this.logService.Log($"native star rating : {nativeAd.GetStarRating()}");
             this.logService.Log($"native store: {nativeAd.GetStore()}");
             this.logService.Log($"native Price: {nativeAd.GetPrice()}");
             this.logService.Log($"native advertiser text: {nativeAd.GetAdvertiserText()}");
             this.logService.Log($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
-
             this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
             this.logService.Log($"native call to action text: {nativeAd.GetCallToActionText()}");
             this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
@@ -132,32 +128,10 @@ namespace Core.AdsServices.Native
 
             this.callToActionText.text = nativeAd.GetCallToActionText();
 
-            if (!registedObj.Contains(this.callToActionObj))
-            {
-                registedObj.Add(this.callToActionObj);
-
-                if (!nativeAd.RegisterCallToActionGameObject(this.callToActionObj))
-                {
-                    this.logService.Log($"Failed to register call to action for native ad: {this.name}");
-                }
-            }
-
             if (nativeAd.GetIconTexture() != null)
             {
                 this.iconImage.gameObject.SetActive(true);
                 this.iconImage.texture = nativeAd.GetIconTexture();
-
-                if (!registedObj.Contains(this.iconImage.gameObject))
-                {
-                    // Register GameObject that will display icon asset of native ad.
-                    if (!nativeAd.RegisterIconImageGameObject(this.iconImage.gameObject))
-                    {
-                        // Handle failure to register ad asset.
-                        this.logService.Log($"Failed to register icon image for native ad: {this.name}");
-                    }
-                    
-                    registedObj.Add(this.iconImage.gameObject);
-                }
             }
 
             this.adChoicesImage.gameObject.SetActive(false);
@@ -166,21 +140,25 @@ namespace Core.AdsServices.Native
             {
                 this.adChoicesImage.gameObject.SetActive(true);
                 this.adChoicesImage.texture = nativeAd.GetAdChoicesLogoTexture();
-
-                if (!registedObj.Contains(this.adChoicesImage.gameObject))
-                {
-                    if (!nativeAd.RegisterAdChoicesLogoGameObject(this.adChoicesImage.gameObject))
-                    {
-                        // Handle failure to register ad asset.
-                        this.logService.Log($"Failed to register ad choices image for native ad: {this.name}");
-                    }
-                    
-                    registedObj.Add(this.adChoicesImage.gameObject);
-                }
             }
 
             this.SetColliderStatus(true);
             this.GetCurrentContainer().Resolve<INativeAdsService>().RemoveNativeAd(nativeAd);
+
+            if (!registedObj.Contains(this.iconImage.gameObject))
+            {
+                nativeAd.RegisterIconImageGameObject(this.iconImage.gameObject);
+            }
+
+            if (!registedObj.Contains(this.callToActionObj))
+            {
+                nativeAd.RegisterCallToActionGameObject(this.callToActionObj);
+            }
+
+            if (!registedObj.Contains(this.adChoicesImage.gameObject))
+            {
+                nativeAd.RegisterAdChoicesLogoGameObject(this.adChoicesImage.gameObject);
+            }
         }
 
         /// <summary>
