@@ -14,6 +14,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Api;
+    using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
@@ -398,6 +399,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
             adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
             adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
+            adLoader.OnNativeAdClosed  += this.HandleNativeAdClosed;
+
 #if ADMOB_BELLOW_9_0_0
             adLoader.LoadAd(new AdRequest.Builder().Build());
 #else
@@ -405,7 +408,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 #endif
         }
 
-        private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e) { this.logService.Log("native ad clicked"); }
+        private void HandleNativeAdClosed(object sender, EventArgs e)
+        {
+            this.signalBus.Fire(new NativeAdCloseSignal());
+            this.logService.Log("native ad closed");
+        }
+
+        private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e)
+        {
+            this.signalBus.Fire(new NativeAdClickSignal());
+            this.logService.Log("native ad clicked");
+        }
 
         private List<NativeAd> GetAvailableNativeAd()
         {
@@ -414,10 +427,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             return nativeAdPair.Value;
         }
 
-        public List<NativeAd> GetNativeAds()
-        {
-            return this.nativeAdsIdToNativeAd.Count == 0 ? new List<NativeAd>() : this.GetAvailableNativeAd();
-        }
+        public List<NativeAd> GetNativeAds() { return this.nativeAdsIdToNativeAd.Count == 0 ? new List<NativeAd>() : this.GetAvailableNativeAd(); }
 
         public void RemoveNativeAd(NativeAd nativeAd)
         {
