@@ -140,7 +140,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             }
         }
 
-        public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
+        public virtual void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             this.CreateAllMRec();
             var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
