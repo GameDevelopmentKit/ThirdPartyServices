@@ -152,6 +152,21 @@ namespace ServiceImplementation.Configs.Ads
         ///     The interval refresh mrec ad
         /// </summary>
         public int MrecRefreshInterval { get; private set; }        
+        
+        /// <summary>
+        ///     Enable collapsible mrec ad
+        /// </summary>
+        public bool EnableCollapsibleMrec { get; private set; }    
+        
+        /// <summary>
+        ///     The interval collapsible mrec ad
+        /// </summary>
+        public int CollapsibleMrecInterval { get; private set; }    
+        
+        /// <summary>
+        ///     The duration collapsible mrec ad is displayed before automatically closing if the user doesn't close it
+        /// </summary>
+        public int CollapsibleMrecDisplayTime { get; private set; }    
 
         #endregion
 
@@ -215,8 +230,11 @@ namespace ServiceImplementation.Configs.Ads
             
             #region MREC
 
-            this.EnableMrecRefreshInterval = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableMrecRefreshInterval);
-            this.MrecRefreshInterval       = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.MrecRefreshInterval);
+            this.EnableMrecRefreshInterval  = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableMrecRefreshInterval);
+            this.MrecRefreshInterval        = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.MrecRefreshInterval);
+            this.EnableCollapsibleMrec      = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleMrec);
+            this.CollapsibleMrecInterval    = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleMrecInterval);
+            this.CollapsibleMrecDisplayTime = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleMrecDisplayTime);
 
             #endregion
         }
