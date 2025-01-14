@@ -34,6 +34,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         public void Initialize()
         {
             this.logger.Log($"onelog: FirebaseRemoteConfig InitFirebase");
+            FirebaseRemoteConfig.GetInstance(FirebaseApp.DefaultInstance); // This fix a magic bug, don't remove it
             FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
             {
                 var dependencyStatus = task.Result;
