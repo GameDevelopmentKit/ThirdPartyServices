@@ -10,7 +10,6 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
-    using UnityEngine;
     using UnityEngine.Scripting;
 
     /// <summary>
@@ -18,18 +17,18 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     /// </summary>
     public class FirebaseRemoteConfigMobile : IRemoteConfig, IInitializable
     {
-        private readonly ILogService logger;
-        private readonly SignalBus   signalBus;
+        private readonly ILogService         logger;
+        private readonly SignalBus           signalBus;
         private readonly RemoteConfigSetting remoteConfigSetting;
 
         [Preserve]
         public FirebaseRemoteConfigMobile(ILogService logger, SignalBus signalBus, RemoteConfigSetting remoteConfigSetting)
         {
-            this.logger    = logger;
-            this.signalBus = signalBus;
+            this.logger              = logger;
+            this.signalBus           = signalBus;
             this.remoteConfigSetting = remoteConfigSetting;
         }
-  
+
         public bool IsConfigFetchedSucceed { get; private set; }
 
         public void Initialize()
@@ -55,13 +54,13 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             return fetchTask.ContinueWithOnMainThread(this.FetchComplete);
         }
-        
+
         private async Task ReloadDataAsync()
         {
             await Task.Delay(TimeSpan.FromSeconds(this.remoteConfigSetting.FirebaseReloadInterval));
             await this.FetchDataAsync();
         }
-        
+
         private void FetchComplete(Task fetchTask)
         {
             if (fetchTask.IsCanceled)
@@ -120,7 +119,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public bool GetRemoteConfigBoolValue(string key, bool defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
+            if (!this.HasKey(key)) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
 
@@ -129,7 +128,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public long GetRemoteConfigLongValue(string key, long defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
+            if (!this.HasKey(key)) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
 
@@ -138,7 +137,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public double GetRemoteConfigDoubleValue(string key, double defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
+            if (!this.HasKey(key)) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
 
@@ -147,7 +146,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public int GetRemoteConfigIntValue(string key, int defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
+            if (!this.HasKey(key)) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
 
@@ -156,7 +155,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public float GetRemoteConfigFloatValue(string key, float defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
+            if (!this.HasKey(key)) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
 
@@ -165,7 +164,9 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private bool HasKey(string key)
         {
-            return FirebaseRemoteConfig.DefaultInstance.Keys != null && FirebaseRemoteConfig.DefaultInstance.Keys.Contains(key);
+            return this.IsConfigFetchedSucceed
+                && FirebaseRemoteConfig.DefaultInstance.Keys != null
+                && FirebaseRemoteConfig.DefaultInstance.Keys.Contains(key);
         }
 
         #endregion
