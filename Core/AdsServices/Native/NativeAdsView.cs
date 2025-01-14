@@ -61,6 +61,8 @@ namespace Core.AdsServices.Native
             }
         }
 
+        private void OnDisable() { this.SetColliderStatus(false); }
+
         private void OnDestroy()
         {
             this.ShowAds(false);

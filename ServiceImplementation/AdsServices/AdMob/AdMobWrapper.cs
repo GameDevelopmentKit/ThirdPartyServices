@@ -400,7 +400,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
             adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
             adLoader.OnNativeAdClosed  += this.HandleNativeAdClosed;
-
 #if ADMOB_BELLOW_9_0_0
             adLoader.LoadAd(new AdRequest.Builder().Build());
 #else
@@ -427,23 +426,23 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             return nativeAdPair.Value;
         }
 
-        public List<NativeAd> GetNativeAds() { return this.nativeAdsIdToNativeAd.Count == 0 ? new List<NativeAd>() : this.GetAvailableNativeAd(); }
+        public List<NativeAd> GetNativeAds()
+        {
+#if CREATIVE &&!FORCE_ADS
+            return new List<NativeAd>();
+
+#endif
+            return this.nativeAdsIdToNativeAd.Count == 0 ? new List<NativeAd>() : this.GetAvailableNativeAd();
+        }
 
         public void RemoveNativeAd(NativeAd nativeAd)
         {
-            var element = this.nativeAdsViewToNativeAd.FirstOrDefault(x => x.Value == nativeAd);
-
-            if (element.Value != null)
-            {
-                this.nativeAdsViewToNativeAd.Remove(element.Key);
-            }
-
             var findItem = this.nativeAdsIdToNativeAd.FirstOrDefault(x => x.Value.Contains(nativeAd));
 
             if (findItem.Key == null) return;
             this.loadingNativeAdsIds.Remove(findItem.Key);
-            this.logService.Log($"Remove native ad: {findItem.Key}");
-            findItem.Value.Remove(element.Value);
+            findItem.Value.Remove(nativeAd);
+            this.logService.Log($"Remove native ad: {findItem.Value.Count}");
             this.nativeAdsIdToNativeAd[findItem.Key] = findItem.Value;
         }
 
