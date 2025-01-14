@@ -54,10 +54,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #region MREC
 
-        protected override void InternalShowMREC(AdViewPosition position)
+        public override void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             var amazonId = this.amazonSetting.AmazonMRecAdId.Id;
-            var id = this.AppLovinSetting.MRECAdIds[position].Id;
+            var id = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             if (this.isFirstMRecRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstMRecRequest = false;
@@ -66,20 +66,20 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 this.mRecAdsRequest.onSuccess += response =>
                     {
                         MaxSdk.SetMRecLocalExtraParameter(id, AmazonResponseMessage, response.GetResponse());
-                        base.InternalShowMREC(position);
+                        base.ShowMREC(placement, position, offset);
                     }
                     ;
                 this.mRecAdsRequest.onFailedWithError += error =>
                 {
                     MaxSdk.SetMRecLocalExtraParameter(id, AmazonErrorMessage, error.GetAdError());
-                    base.InternalShowMREC(position);
+                    base.ShowMREC(placement, position, offset);
                 };
 
                 this.mRecAdsRequest.LoadAd();
             }
             else
             {
-                base.InternalShowMREC(position);
+                base.ShowMREC(placement, position, offset);
             }
         }
 
@@ -119,7 +119,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         protected override void InternalLoadInterstitialAd(AdPlacement adPlacement)
         {
-            if (!this.IsInterstitialPlacementReady(adPlacement.Name, out var id)) return;
+            if (!this.TryGetInterstitialPlacementId(adPlacement.Name, out var id)) return;
 
             var amazonId = this.amazonSetting.AmazonInterstitialAdId.Id;
             if (this.isFirstInterstitialRequest && !string.IsNullOrEmpty(amazonId))
@@ -149,7 +149,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         protected override void InternalLoadRewarded(AdPlacement placement)
         {
-            if (!this.IsRewardedPlacementReady(placement.Name, out var id)) return;
+            if (!this.TryGetRewardPlacementId(placement.Name, out var id)) return;
 
             var amazonId = this.amazonSetting.AmazonRewardedAdId.Id;
             if (this.isFirstRewardedVideoRequest && !string.IsNullOrEmpty(amazonId))
