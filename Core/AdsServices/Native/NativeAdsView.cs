@@ -1,3 +1,4 @@
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
 namespace Core.AdsServices.Native
 {
     using System;
@@ -38,10 +39,10 @@ namespace Core.AdsServices.Native
 
         private void Awake()
         {
-            this.colliders              = this.GetComponentsInChildren<Collider>(true);
-            this.screenManager          = this.GetCurrentContainer().Resolve<IScreenManager>();
+            this.colliders = this.GetComponentsInChildren<Collider>(true);
+            this.screenManager = this.GetCurrentContainer().Resolve<IScreenManager>();
             this.changeScreenDisposable = this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
-            this.logService             = this.GetCurrentContainer().Resolve<ILogService>();
+            this.logService = this.GetCurrentContainer().Resolve<ILogService>();
         }
 
         private void Update()
@@ -172,7 +173,7 @@ namespace Core.AdsServices.Native
             this.nativeAdsService = nativeAdsService;
             this.iconImage.gameObject.SetActive(false);
             this.adChoicesImage.gameObject.SetActive(false);
-            this.isInit   = true;
+            this.isInit = true;
             this.isEnable = true;
             this.IntervalCall();
             this.ShowAds(true);
@@ -190,3 +191,4 @@ namespace Core.AdsServices.Native
 #endif
     }
 }
+#endif
