@@ -3,9 +3,9 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
     using GameFoundation.Signals;
-    using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs;
     #if UNITY_IOS
+    using ServiceImplementation.AdsServices.Signal;
     using Unity.Advertisement.IosSupport;
     #endif
     using UnityEngine.Scripting;
@@ -29,30 +29,39 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         public async void Initialize()
         {
             await UniTask.Delay(DelayRequestTrackingMillisecond);
+            #if UNITY_IOS
             if (this.thirdPartiesConfig.AdSettings.customAtt) return;
+            #endif
             this.RequestTracking().Forget();
         }
 
         public async UniTask RequestTracking()
         {
+            #if UNITY_IOS
             this.signalBus.Fire(new AttDisplayedSignal());
+            #endif
+
             await this.RequestUmpConsent();
+
+            #if UNITY_IOS
             if (!this.thirdPartiesConfig.AdSettings.RequestUmpInsteadATT)
             {
                 this.RequestAtt();
             }
             await UniTask.WaitUntil(AttHelper.IsRequestTrackingComplete);
+
             this.signalBus.Fire(new AttClosedSignal());
+            #endif
         }
 
+        #if UNITY_IOS
         private void RequestAtt()
         {
             if (AttHelper.IsRequestTrackingComplete() || !this.consentInformation.CanRequestAds()) return;
 
-            #if UNITY_IOS
             ATTrackingStatusBinding.RequestAuthorizationTracking();
-            #endif
         }
+        #endif
 
         private async UniTask RequestUmpConsent()
         {
