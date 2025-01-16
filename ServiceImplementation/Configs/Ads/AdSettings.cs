@@ -52,7 +52,7 @@
 
         [FoldoutGroup("Misc/Consent")] [Tooltip("Custom App Tracking Transparent for iOS")] [LabelText("Custom Att Scene")] public bool customAtt;
 
-        [FoldoutGroup("Misc/Consent")] [Sirenix.OdinInspector.FilePath(Extensions = "unity")] [ShowIf(nameof(customAtt))] public string attScenePath = "Assets/Scenes/ATTScene.unity";
+        [FoldoutGroup("Misc/Consent/CustomATT")] [Sirenix.OdinInspector.FilePath(Extensions = "unity")] [ShowIf(nameof(customAtt))] public string attScenePath = "Assets/Scenes/ATTScene.unity";
 
         public bool RequestUmpInsteadATT => this.requestUmpInsteadATT;
 
@@ -190,7 +190,7 @@
             return false;
         }
 
-        [FoldoutGroup("Misc/ATT (iOS only)/Custom")]
+        [FoldoutGroup("Misc/Consent/CustomATT")]
         [Button]
         [ShowIf(nameof(customAtt))]
         private void SetupCustomAtt()
