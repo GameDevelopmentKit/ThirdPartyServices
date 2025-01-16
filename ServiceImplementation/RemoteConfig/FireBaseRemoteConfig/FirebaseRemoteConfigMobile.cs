@@ -58,10 +58,8 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private async Task ReloadDataAsync()
         {
-            #if !UNITY_EDITOR
             await Task.Delay(TimeSpan.FromSeconds(this.remoteConfigSetting.FirebaseReloadInterval));
             await this.FetchDataAsync();
-            #endif
         }
 
         private void FetchComplete(Task fetchTask)
