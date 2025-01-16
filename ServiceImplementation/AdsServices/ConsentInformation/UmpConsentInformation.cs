@@ -1,12 +1,11 @@
 #if ADMOB
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
-    using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
     using UnityEngine.Scripting;
 
-    public class UmpConsentInformation : IConsentInformation, IInitializable
+    public class UmpConsentInformation : IConsentInformation
     {
         #region Inject
 
@@ -21,11 +20,6 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         #endregion
 
         private bool isRequesting;
-
-        public void Initialize()
-        {
-            this.RequestConsent();
-        }
 
         public bool CanRequestAds() => ConsentInformation.CanRequestAds();
 
