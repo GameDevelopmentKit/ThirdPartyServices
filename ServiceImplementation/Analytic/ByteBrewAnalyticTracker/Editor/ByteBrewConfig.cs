@@ -23,7 +23,7 @@ namespace Core.AnalyticServices
         private void OnChangeByteBrewEnabled()
         {
             #if UNITY_EDITOR
-            EditorUtils.ModifyPackage(this.isByteBrewEnabled, "com.bytebrew.unitysdk", "https://github.com/The1Studio/ByteBrewUnitySDK.git?path=UPMPackage#");
+            EditorUtils.ModifyPackage(this.isByteBrewEnabled, "com.bytebrew.unitysdk", "https://github.com/huongprowar/ByteBrewUnitySDK.git?path=UPMPackage#");
             EditorUtils.SetDefineSymbol(ByteBrewSymbol, this.isByteBrewEnabled);
             #endif
         }
@@ -76,11 +76,11 @@ namespace Core.AnalyticServices
             byteBrewSettings.androidEnabled = this.androidEnabled;
             byteBrewSettings.androidGameID = this.byteBrewAppIdAndroid;
             byteBrewSettings.androidSDKKey = this.byteBrewSDKKeyAndroid;
-            
+
             byteBrewSettings.iosEnabled = this.iosEnabled;
             byteBrewSettings.iosGameID = this.byteBrewAppIdIos;
             byteBrewSettings.iosSDKKey = this.byteBrewSDKKeyIos;
-            
+
 #if UNITY_EDITOR
             EditorUtility.SetDirty(byteBrewSettings);
             AssetDatabase.SaveAssets();
