@@ -9,6 +9,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using ByteBrewSDK;
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.Extension;
     using Newtonsoft.Json;
     using UnityEngine;
@@ -27,36 +28,30 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         protected override HashSet<string>            IncludeEvents   => this.analyticsEventCustomizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
 
-        [Preserve]
-        public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig)
+        [Preserve] public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig) { this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig; }
+
+        protected override TaskCompletionSource<bool> TrackerReady { get; } = new();
+
+        protected override Dictionary<Type, EventDelegate> CustomEventDelegates { get; } = new();
+
+        protected override async Task TrackerSetup()
         {
-            this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
-        }
-
-        protected override TaskCompletionSource<bool>      TrackerReady                                            { get; } = new();
-
-        protected override Dictionary<Type, EventDelegate> CustomEventDelegates                                    { get; } = new();
-
-        protected override Task TrackerSetup()
-        {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
+            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) await Task.CompletedTask;
 
             Debug.Log($"ByteBrew: Create ByteBrew GameObject");
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
             Debug.Log($"ByteBrew: Initialize ByteBrew");
             ByteBrew.InitializeByteBrew();
+            Debug.Log($"ByteBrew: Await Initialize ");
+            await UniTask.WaitUntil(() => ByteBrew.IsInitilized);
             Debug.Log($"ByteBrew: Initialize Finished");
 
             this.TrackerReady.SetResult(true);
-
-            return this.TrackerReady.Task;
+            await this.TrackerReady.Task;
         }
 
-        protected override void SetUserId(string userId)
-        {
-            ByteBrew.SetCustomUserDataAttribute("user_id", userId);
-        }
+        protected override void SetUserId(string userId) { ByteBrew.SetCustomUserDataAttribute("user_id", userId); }
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
