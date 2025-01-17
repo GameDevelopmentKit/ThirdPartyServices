@@ -1,14 +1,13 @@
-#if BYTEBREW && !UNITY_EDITOR
+#if BYTEBREW
 namespace ServiceImplementation.ByteBrewAnalyticTracker
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using ByteBrewSDK;
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
-    using GameFoundation.Scripts.Utilities.Extension;
+    using Cysharp.Threading.Tasks;
     using Newtonsoft.Json;
     using UnityEngine;
     using GameFoundation.Signals;
@@ -32,24 +31,23 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
         }
 
-        protected override TaskCompletionSource<bool>      TrackerReady                                            { get; } = new();
+        protected override UniTaskCompletionSource<bool>      TrackerReady                                            { get; } = new();
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates                                    { get; } = new();
 
-        protected override Task TrackerSetup()
+        protected override async UniTask TrackerSetup()
         {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
+            if (this.TrackerReady.Task.Status == UniTaskStatus.Succeeded) return;
 
             Debug.Log($"ByteBrew: Create ByteBrew GameObject");
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
             Debug.Log($"ByteBrew: Initialize ByteBrew");
+            await UniTask.SwitchToMainThread();
             ByteBrew.InitializeByteBrew();
             Debug.Log($"ByteBrew: Initialize Finished");
 
-            this.TrackerReady.SetResult(true);
-
-            return this.TrackerReady.Task;
+            this.TrackerReady.TrySetResult(true);
         }
 
         protected override void SetUserId(string userId)

@@ -2,10 +2,10 @@ namespace Core.AnalyticServices.Data
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
     using GameFoundation.Signals;
     using UnityEngine;
@@ -25,7 +25,7 @@ namespace Core.AnalyticServices.Data
         /// <summary>
         /// signal to the base tracker that the "On" events are ready to be invoked
         /// </summary>
-        protected abstract TaskCompletionSource<bool> TrackerReady { get; }
+        protected abstract UniTaskCompletionSource<bool> TrackerReady { get; }
 
         /// <summary>
         /// events are ignored by special require from tracker
@@ -60,7 +60,7 @@ namespace Core.AnalyticServices.Data
         /// <summary>
         /// Must control init of the wrapped SDK in derived trackers
         /// </summary>
-        protected abstract Task TrackerSetup();
+        protected abstract UniTask TrackerSetup();
 
         /// <summary>
         ///
@@ -87,7 +87,7 @@ namespace Core.AnalyticServices.Data
         private async void EventTracked(EventTrackedSignal trackedData)
         {
             // if the tracker has failed setup we should not forward it any events
-            if (this.TrackerReady.Task.Status == TaskStatus.Canceled || this.TrackerReady.Task.Status == TaskStatus.Faulted) return;
+            if (this.TrackerReady.Task.Status == UniTaskStatus.Canceled || this.TrackerReady.Task.Status == UniTaskStatus.Faulted) return;
             await this.TrackerReady.Task;
 
             if (trackedData.ChangedProps != null) this.OnChangedProps(trackedData.ChangedProps);
