@@ -51,7 +51,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
             this.TrackerReady.SetResult(true);
 
-            return this.TrackerReady.Task;
+            // return this.TrackerReady.Task;
         }
 
         protected override void SetUserId(string userId)
