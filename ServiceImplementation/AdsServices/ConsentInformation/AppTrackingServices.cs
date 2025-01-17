@@ -7,7 +7,6 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     #if UNITY_IOS
     using ServiceImplementation.AdsServices.Signal;
     using Unity.Advertisement.IosSupport;
-    using UnityEngine;
     #endif
     using UnityEngine.Scripting;
 
@@ -47,12 +46,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             #if UNITY_IOS
             if (this.thirdPartiesConfig.AdSettings.RequestUmpInsteadATT)
             {
-                await UniTask.WaitUntil(() =>
-                {
-                    Debug.Log($"onelog att: IsRequestTrackingComplete: {AttHelper.IsRequestTrackingComplete()} CanRequestAds: {this.consentInformation.CanRequestAds()}");
-                    var result = AttHelper.IsRequestTrackingComplete() || !this.consentInformation.CanRequestAds();
-                    return result;
-                });
+                await UniTask.WaitUntil(() => AttHelper.IsRequestTrackingComplete() || !this.consentInformation.CanRequestAds());
             }
             else
             {
