@@ -45,9 +45,15 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             {
                 Debug.Log("ByteBrew Settings have not been created");
             }
-            if (string.IsNullOrEmpty(settings.androidSDKKey) || string.IsNullOrEmpty(settings.androidGameID))
+            Debug.Log($"ByteBrew GameID: {settings.androidGameID}\n"
+                      + $"ByteBrew SDKKey: {settings.androidSDKKey}\n");
+            if (string.IsNullOrEmpty(settings.androidSDKKey))
             {
-                Debug.LogError("ByteBrew Error: Settings are not setup corretcly, your Android SDK Key or GameID is empty.");
+                Debug.LogError("ByteBrew Error: Settings are not setup corretcly, your Android SDK Key is empty.");
+            }
+            if (string.IsNullOrEmpty(settings.androidGameID))
+            {
+                Debug.LogError("ByteBrew Error: Settings are not setup corretcly, your Android  GameID is empty.");
             }
 
             if (!string.IsNullOrEmpty(settings.androidSDKKey) && !string.IsNullOrEmpty(settings.androidGameID))
