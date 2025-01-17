@@ -44,6 +44,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
             Debug.Log($"ByteBrew: Initialize ByteBrew");
+            Debug.Log($"Current Thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
             ByteBrew.InitializeByteBrew();
             Debug.Log($"ByteBrew: Initialize Finished");
 
