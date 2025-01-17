@@ -44,8 +44,23 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
             Debug.Log($"ByteBrew: Initialize ByteBrew");
-            Debug.Log($"Current Thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
-            Task.Delay(1000);
+            Debug.Log($"Byte Brew - Current Thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
+            Task.Run(async () =>
+                {
+                    await Task.Delay(1000);
+                    try
+                    {
+                        Debug.Log($"ByteBrew: Initialize ByteBrew");
+                        ByteBrew.InitializeByteBrew();
+                        Debug.Log($"ByteBrew: Initialize Finished");
+                        this.TrackerReady.SetResult(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"ByteBrewTrackerSetup failed: {ex}");
+                        this.TrackerReady.SetException(ex);
+                    }
+                });
             ByteBrew.InitializeByteBrew();
             Debug.Log($"ByteBrew: Initialize Finished");
 
