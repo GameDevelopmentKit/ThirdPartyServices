@@ -48,11 +48,13 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             {
                 this.RequestAtt();
             }
-            await UniTask.WaitUntil(() => AttHelper.IsRequestTrackingComplete() || this.consentInformation.CanRequestAds());
+            await UniTask.WaitUntil(this.IsRequestTrackingComplete);
 
             this.signalBus.Fire(new AttClosedSignal());
             #endif
         }
+
+        public bool IsRequestTrackingComplete() => AttHelper.IsRequestTrackingComplete() || (this.thirdPartiesConfig.AdSettings.RequestUmpInsteadATT && this.consentInformation.CanRequestAds());
 
         #if UNITY_IOS
         private void RequestAtt()
