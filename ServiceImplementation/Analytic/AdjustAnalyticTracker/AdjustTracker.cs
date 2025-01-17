@@ -4,11 +4,11 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using AdjustSdk;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using GameFoundation.Signals;
@@ -31,10 +31,10 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             }
         }
 
-        protected override HashSet<Type>              IgnoreEvents    => this.analyticsEventCustomizationConfig.IgnoreEvents;
-        protected override HashSet<string>            IncludeEvents   => this.analyticsEventCustomizationConfig.IncludeEvents;
-        protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
-        protected override TaskCompletionSource<bool> TrackerReady    { get; } = new();
+        protected override HashSet<Type>                 IgnoreEvents    => this.analyticsEventCustomizationConfig.IgnoreEvents;
+        protected override HashSet<string>               IncludeEvents   => this.analyticsEventCustomizationConfig.IncludeEvents;
+        protected override Dictionary<string, string>    CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
+        protected override UniTaskCompletionSource<bool> TrackerReady    { get; } = new();
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
         {
@@ -65,9 +65,9 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             Adjust.TrackEvent(adjustEvent);
         }
 
-        protected override Task TrackerSetup()
+        protected override UniTask TrackerSetup()
         {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
+            if (this.TrackerReady.Task.Status == UniTaskStatus.Succeeded) return UniTask.CompletedTask;
 
             Debug.Log("setting up adjust tracker");
 
@@ -92,7 +92,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             var adjustConfig = new AdjustConfig(appToken, environment);
             adjustConfig.IsSendingInBackgroundEnabled = true;
             Adjust.InitSdk(adjustConfig);
-            this.TrackerReady.SetResult(true);
+            this.TrackerReady.TrySetResult(true);
 
             return this.TrackerReady.Task;
         }

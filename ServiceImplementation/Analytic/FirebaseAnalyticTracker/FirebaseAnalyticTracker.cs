@@ -3,9 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Signals;
     using Newtonsoft.Json;
     using UnityEngine;
@@ -14,7 +14,7 @@
     public class FirebaseAnalyticTracker : BaseTracker
     {
         private readonly   AnalyticsEventCustomizationConfig customizationConfig;
-        protected override TaskCompletionSource<bool>        TrackerReady         { get; } = new();
+        protected override UniTaskCompletionSource<bool>        TrackerReady         { get; } = new();
         protected override Dictionary<Type, EventDelegate>   CustomEventDelegates { get; }
 
         [Preserve]
@@ -27,11 +27,11 @@
         protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
 
-        protected override Task TrackerSetup()
+        protected override UniTask TrackerSetup()
         {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
+            if (this.TrackerReady.Task.Status == UniTaskStatus.Succeeded) return UniTask.CompletedTask;
 
-            this.TrackerReady.SetResult(true);
+            this.TrackerReady.TrySetResult(true);
 
             return this.TrackerReady.Task;
         }

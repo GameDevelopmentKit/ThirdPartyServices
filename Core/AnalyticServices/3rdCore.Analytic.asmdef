@@ -1,26 +1,35 @@
 {
-  "name": "3rdCore.Analytic",
-  "rootNamespace": "",
-  "references": [
-    "GameFoundation.DI",
-    "GameFoundation.Signals",
-    "VContainer",
-    "GameFoundation.Utilities",
-    "GameFoundation.Models",
-    "ByteBrewSDK",
-    "3rd.Configs.Editor",
-    "ByteBrewSDK.Editor"
-  ],
-  "versionDefines": [
-    {
-      "name": "com.svermeulen.extenject",
-      "expression": "",
-      "define": "GDK_ZENJECT"
-    },
-    {
-      "name": "jp.hadashikick.vcontainer",
-      "expression": "",
-      "define": "GDK_VCONTAINER"
-    }
-  ]
+    "name": "3rdCore.Analytic",
+    "rootNamespace": "",
+    "references": [
+        "GameFoundation.DI",
+        "GameFoundation.Signals",
+        "VContainer",
+        "GameFoundation.Utilities",
+        "GameFoundation.Models",
+        "ByteBrewSDK",
+        "3rd.Configs.Editor",
+        "ByteBrewSDK.Editor",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.svermeulen.extenject",
+            "expression": "",
+            "define": "GDK_ZENJECT"
+        },
+        {
+            "name": "jp.hadashikick.vcontainer",
+            "expression": "",
+            "define": "GDK_VCONTAINER"
+        }
+    ],
+    "noEngineReferences": false
 }

@@ -5,11 +5,11 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using System.Threading.Tasks;
     using AppsFlyerSDK;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
@@ -23,7 +23,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     {
         private readonly   ILogService                       logger;
         private readonly   AnalyticsEventCustomizationConfig customizationConfig;
-        protected override TaskCompletionSource<bool>        TrackerReady { get; } = new();
+        protected override UniTaskCompletionSource<bool>     TrackerReady { get; } = new();
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
         {
@@ -47,9 +47,9 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
 
-        protected override Task TrackerSetup()
+        protected override UniTask TrackerSetup()
         {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
+            if (this.TrackerReady.Task.Status == UniTaskStatus.Succeeded) return UniTask.CompletedTask;
 
             Debug.Log($"setting up appsflyer tracker");
 
@@ -96,7 +96,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             //Start SDK
             AppsFlyer.startSDK();
 
-            this.TrackerReady.SetResult(true);
+            this.TrackerReady.TrySetResult(true);
 
             return this.TrackerReady.Task;
         }
