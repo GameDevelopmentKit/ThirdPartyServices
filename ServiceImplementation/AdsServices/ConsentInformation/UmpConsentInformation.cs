@@ -54,6 +54,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             #endif
 
             #if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
+            this.logService.Error($"onelog: LoadAndShowConsentFormIfRequired");
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
             {
                 this.isRequesting = false;
