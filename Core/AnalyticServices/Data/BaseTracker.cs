@@ -6,6 +6,7 @@ namespace Core.AnalyticServices.Data
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
     using GameFoundation.Signals;
     using UnityEngine;
@@ -79,9 +80,16 @@ namespace Core.AnalyticServices.Data
 
         public void Initialize()
         {
-            this.TrackerSetup();
             this.signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);
             this.signalBus.Subscribe<SetUserIdSignal>(signal => this.SetUserId(signal.UserId));
+            this.TrackerSetupInMainThread().Forget();
+        }
+
+        private async UniTask TrackerSetupInMainThread()
+        {
+            Debug.Log($"Switch to main thread");
+            await UniTask.SwitchToMainThread();
+            await this.TrackerSetup();
         }
 
         private async void EventTracked(EventTrackedSignal trackedData)

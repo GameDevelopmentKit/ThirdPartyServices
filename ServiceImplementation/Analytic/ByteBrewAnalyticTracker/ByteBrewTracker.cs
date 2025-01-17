@@ -26,15 +26,11 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         protected override HashSet<string>            IncludeEvents   => this.analyticsEventCustomizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
 
-        [Preserve]
-        public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig)
-        {
-            this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
-        }
+        [Preserve] public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig) { this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig; }
 
-        protected override TaskCompletionSource<bool>      TrackerReady                                            { get; } = new();
+        protected override TaskCompletionSource<bool> TrackerReady { get; } = new();
 
-        protected override Dictionary<Type, EventDelegate> CustomEventDelegates                                    { get; } = new();
+        protected override Dictionary<Type, EventDelegate> CustomEventDelegates { get; } = new();
 
         protected override Task TrackerSetup()
         {
@@ -44,6 +40,20 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
             Debug.Log($"ByteBrew: Initialize ByteBrew");
+            ByteBrewSettings settings = Resources.Load<ByteBrewSettings>("ByteBrewSettings");
+            if (settings == null)
+            {
+                Debug.Log("ByteBrew Settings have not been created");
+            }
+            if (string.IsNullOrEmpty(settings.androidSDKKey) || string.IsNullOrEmpty(settings.androidGameID))
+            {
+                Debug.LogError("ByteBrew Error: Settings are not setup corretcly, your Android SDK Key or GameID is empty.");
+            }
+
+            if (!string.IsNullOrEmpty(settings.androidSDKKey) && !string.IsNullOrEmpty(settings.androidGameID))
+            {
+                Debug.LogError("ByteBrew Error: Settings are not setup corretcly, your Android SDK Key or GameID is empty.");
+            }
             ByteBrew.InitializeByteBrew();
             Debug.Log($"ByteBrew: Initialize Finished");
 
@@ -52,10 +62,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             return this.TrackerReady.Task;
         }
 
-        protected override void SetUserId(string userId)
-        {
-            ByteBrew.SetCustomUserDataAttribute("user_id", userId);
-        }
+        protected override void SetUserId(string userId) { ByteBrew.SetCustomUserDataAttribute("user_id", userId); }
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
@@ -95,4 +102,5 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         }
     }
 }
+
 #endif
