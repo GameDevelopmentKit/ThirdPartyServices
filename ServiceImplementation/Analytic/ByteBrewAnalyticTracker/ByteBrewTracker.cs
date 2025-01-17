@@ -36,7 +36,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates                                    { get; } = new();
 
-        protected override Task TrackerSetup()
+        protected override async Task TrackerSetup()
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
@@ -45,6 +45,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             byteBrewGameObject.AddComponent<ByteBrew>();
             Debug.Log($"ByteBrew: Initialize ByteBrew");
             Debug.Log($"Current Thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
+            await Task.Delay(1000);
             ByteBrew.InitializeByteBrew();
             Debug.Log($"ByteBrew: Initialize Finished");
 
