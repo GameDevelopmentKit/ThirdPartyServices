@@ -82,6 +82,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             #if THEONE_ADS_DEBUG
             IronSource.Agent.setMetaData("is_test_suite", "enable");
             #endif
+            LevelPlay.SetPauseGame(true);
             IronSource.Agent.init(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
 
             LevelPlay.OnInitSuccess += this.OnLevelPlayInitSuccess;
@@ -324,19 +325,33 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             mrecAd.ShowAd();
         }
 
-        public bool IsMRECReady(string placement, AdScreenPosition position)
+        public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             return this.mrecPlacements.Contains(placement);
         }
 
-        public void HideMREC(string placement, AdScreenPosition position)
+        public void HideMREC(string placement)
         {
             if (!this.isLevelPlayInitialized) return;
             if (!this.idToMRECAd.TryGetValue(placement, out var mrecAd)) return;
             mrecAd.HideAd();
         }
 
-        public void HideAllMREC() { }
+        public void HideAllMREC()
+        {
+            foreach (var (_, mrecAd) in this.idToMRECAd)
+            {
+                mrecAd.HideAd();
+            }
+        }
+        
+        public void DestroyMREC(string placement)
+        {
+            if (!this.isLevelPlayInitialized) return;
+            if (!this.idToMRECAd.TryGetValue(placement, out var mrecAd)) return;
+            mrecAd.DestroyAd();
+            this.idToMRECAd.Remove(placement);
+        }
 
         private void OnMrecLoaded(LevelPlayAdInfo info)
         {
@@ -437,7 +452,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.logService.Log("oneLog: IronSourceWrapper ShowBannerAd: show new banner");
             }
         }
-        
+
         private void ResetLevelPlayInitializedCts()
         {
             this.levelPlayInitializedCts?.Cancel();

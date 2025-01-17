@@ -145,6 +145,35 @@ namespace ServiceImplementation.Configs.Ads
 
         #endregion
 
+        #region MREC
+        
+        /// <summary>
+        ///     Enable interval refresh mrec ad
+        /// </summary>
+        public bool EnableMrecRefreshInterval { get; private set; }
+
+        /// <summary>
+        ///     The interval refresh mrec ad
+        /// </summary>
+        public int MrecRefreshInterval { get; private set; }        
+        
+        /// <summary>
+        ///     Enable collapsible mrec ad
+        /// </summary>
+        public bool EnableCollapsibleMrec { get; private set; }    
+        
+        /// <summary>
+        ///     The interval collapsible mrec ad
+        /// </summary>
+        public int CollapsibleMrecInterval { get; private set; }    
+        
+        /// <summary>
+        ///     The duration collapsible mrec ad is displayed before automatically closing if the user doesn't close it
+        /// </summary>
+        public int CollapsibleMrecDisplayTime { get; private set; }    
+
+        #endregion
+
         private void FetchRemoteConfig()
         {
             #region General
@@ -205,6 +234,16 @@ namespace ServiceImplementation.Configs.Ads
             this.EnableCollapsibleBannerFallback          = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBannerFallback);
             this.CollapsibleBannerAutoRefreshEnabled      = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerAutoRefreshEnabled);
             this.CollapsibleBannerExpandOnRefreshEnabled  = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled);
+
+            #endregion
+            
+            #region MREC
+
+            this.EnableMrecRefreshInterval  = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableMrecRefreshInterval);
+            this.MrecRefreshInterval        = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.MrecRefreshInterval);
+            this.EnableCollapsibleMrec      = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleMrec);
+            this.CollapsibleMrecInterval    = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleMrecInterval);
+            this.CollapsibleMrecDisplayTime = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleMrecDisplayTime);
 
             #endregion
         }

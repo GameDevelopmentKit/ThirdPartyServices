@@ -91,7 +91,7 @@
         public List<AdId> NativeAdIds
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => this.mNativeAdIds.Select(x => new AdId("ca-app-pub-3940256099942544/3986624511", "ca-app-pub-3940256099942544/2247696110")).ToList();
+            get => this.mNativeAdIds.Select(x => !string.IsNullOrEmpty(x.Id) ? new ("ca-app-pub-3940256099942544/3986624511", "ca-app-pub-3940256099942544/2247696110") : x).ToList();
             #else
             get => this.mNativeAdIds;
             #endif
@@ -101,7 +101,20 @@
         /// <summary>
         /// Gets or sets the default MREC ad identifier.
         /// </summary>
-        public Dictionary<AdPlacement, AdId> MRECAdIds { get => this.mRECAdIds; set => this.mRECAdIds = value as Dictionary_AdPlacement_AdId; }
+        public Dictionary<AdPlacement, AdId> MRECAdIds
+        {
+            #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => this.ConvertIdsToTestId(this.mRECAdIds, new("ca-app-pub-3940256099942544/2934735716", "ca-app-pub-3940256099942544/6300978111"));
+            #else
+            get => this.mRECAdIds;
+            #endif
+            set => this.mRECAdIds = value as Dictionary_AdPlacement_AdId;
+        }
+
+        private Dictionary<AdPlacement, AdId> ConvertIdsToTestId(Dictionary<AdPlacement, AdId> ids, AdId testId)
+            => ids.Select(x => new KeyValuePair<AdPlacement, AdId>(x.Key, !string.IsNullOrEmpty(x.Value.Id) ? testId : x.Value))
+                .ToDictionary(x => x.Key, x => x.Value);
+
         /// <summary>
         /// Enables or disables test mode.
         /// </summary>
@@ -111,19 +124,43 @@
         /// Gets or sets the list of custom banner identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public override Dictionary<AdPlacement, AdId> CustomBannerAdIds { get => this.mCustomBannerAdIds; set => this.mCustomBannerAdIds = value as Dictionary_AdPlacement_AdId; }
+        public override Dictionary<AdPlacement, AdId> CustomBannerAdIds
+        {
+            #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => this.ConvertIdsToTestId(this.mCustomBannerAdIds, new("ca-app-pub-3940256099942544/2934735716", "ca-app-pub-3940256099942544/6300978111"));
+            #else
+            get => this.mCustomBannerAdIds;
+            #endif
+            set => this.mCustomBannerAdIds = value as Dictionary_AdPlacement_AdId;
+        }
 
         /// <summary>
         /// Gets or sets the list of custom interstitial ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get => this.mCustomInterstitialAdIds; set => this.mCustomInterstitialAdIds = value as Dictionary_AdPlacement_AdId; }
+        public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds
+        {
+            #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => this.ConvertIdsToTestId(this.mCustomInterstitialAdIds, new("ca-app-pub-3940256099942544/4411468910","ca-app-pub-3940256099942544/1033173712"));
+            #else
+            get => this.mCustomInterstitialAdIds;
+            #endif
+            set => this.mCustomInterstitialAdIds = value as Dictionary_AdPlacement_AdId;
+        }
 
         /// <summary>
         /// Gets or sets the list of custom rewarded ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds { get => this.mCustomRewardedAdIds; set => this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId; }
+        public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds
+        {
+            #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => this.ConvertIdsToTestId(this.mCustomRewardedAdIds, new("ca-app-pub-3940256099942544/1712485313","ca-app-pub-3940256099942544/5224354917"));
+            #else
+            get => this.mCustomRewardedAdIds;
+            #endif
+            set => this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId;
+        }
 
         /// <summary>
         /// Gets or sets the list of custom rewarded interstitial ad identifiers.

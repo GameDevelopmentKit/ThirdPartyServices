@@ -100,6 +100,16 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.TryAddAddsConfig(RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled, "false");
 
             #endregion
+            
+            #region MREC
+
+            this.TryAddAddsConfig(RemoteConfigKey.EnableMrecRefreshInterval, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.MrecRefreshInterval, "10");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableCollapsibleMrec, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleMrecInterval, "30");
+            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleMrecDisplayTime, "5"); 
+
+            #endregion
 
             #endregion
         }
