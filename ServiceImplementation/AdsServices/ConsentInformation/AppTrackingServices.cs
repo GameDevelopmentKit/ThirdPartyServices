@@ -44,15 +44,11 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             await this.RequestUmpConsent();
 
             #if UNITY_IOS
-            if (this.thirdPartiesConfig.AdSettings.RequestUmpInsteadATT)
-            {
-                await UniTask.WaitUntil(() => AttHelper.IsRequestTrackingComplete() || !this.consentInformation.CanRequestAds());
-            }
-            else
+            if (!this.thirdPartiesConfig.AdSettings.RequestUmpInsteadATT)
             {
                 this.RequestAtt();
-                await UniTask.WaitUntil(AttHelper.IsRequestTrackingComplete);
             }
+            await UniTask.WaitUntil(() => AttHelper.IsRequestTrackingComplete() || this.consentInformation.CanRequestAds());
 
             this.signalBus.Fire(new AttClosedSignal());
             #endif
@@ -61,7 +57,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         #if UNITY_IOS
         private void RequestAtt()
         {
-            if (AttHelper.IsRequestTrackingComplete() || !this.consentInformation.CanRequestAds()) return;
+            if (AttHelper.IsRequestTrackingComplete()) return;
 
             ATTrackingStatusBinding.RequestAuthorizationTracking();
         }
