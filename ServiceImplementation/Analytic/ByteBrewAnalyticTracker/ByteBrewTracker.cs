@@ -47,10 +47,21 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             Debug.Log($"Byte Brew - Current Thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
             Task.Run(async () =>
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(2000); // More time to wait UnityPlayer.currentActivity
                     try
                     {
                         Debug.Log($"ByteBrew: Initialize ByteBrew");
+                        try
+                        {
+                            // Check if we can access the current activity
+                            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+                            AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+                            Debug.Log($"Current Activity: {currentActivity}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.LogError($"Failed to access currentActivity: {ex}");
+                        }
                         ByteBrew.InitializeByteBrew();
                         Debug.Log($"ByteBrew: Initialize Finished");
                         this.TrackerReady.SetResult(true);
