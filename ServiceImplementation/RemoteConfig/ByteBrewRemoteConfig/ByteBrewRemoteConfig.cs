@@ -9,7 +9,6 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
     using GameFoundation.Signals;
     using ServiceImplementation.FireBaseRemoteConfig;
     using ServiceImplementation.RemoteConfig;
-    using UnityEngine;
     using UnityEngine.Scripting;
 
     public class ByteBrewRemoteConfig : IInGameRemoteConfig, IInitializable
@@ -23,36 +22,12 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
 
         public bool IsConfigFetchedSucceed { get; private set; }
 
-        public string GetRemoteConfigStringValue(string key, string defaultValue = "")
-        {
-            Debug.Log($"onelog: GetRemoteConfigStringValue {key} = {defaultValue}");
-            return ByteBrew.GetRemoteConfigForKey(key, defaultValue);
-        }
-        public bool   GetRemoteConfigBoolValue(string   key, bool   defaultValue)
-        {
-            Debug.Log($"onelog: GetRemoteConfigBoolValue {key} = {defaultValue}");
-            return bool.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString()));
-        }
-        public long   GetRemoteConfigLongValue(string   key, long   defaultValue)
-        {
-            Debug.Log($"onelog: GetRemoteConfigLongValue {key} = {defaultValue}");
-            return long.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString()));
-        }
-        public double GetRemoteConfigDoubleValue(string key, double defaultValue)
-        {
-            Debug.Log($"onelog: GetRemoteConfigDoubleValue {key} = {defaultValue}");
-            return double.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString(CultureInfo.InvariantCulture)));
-        }
-        public int    GetRemoteConfigIntValue(string    key, int    defaultValue)
-        {
-            Debug.Log($"onelog: GetRemoteConfigIntValue {key} = {defaultValue}");
-            return int.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString()));
-        }
-        public float  GetRemoteConfigFloatValue(string  key, float  defaultValue)
-        {
-            Debug.Log($"onelog: GetRemoteConfigFloatValue {key} = {defaultValue}");
-            return float.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString(CultureInfo.InvariantCulture)));
-        }
+        public string GetRemoteConfigStringValue(string key, string defaultValue = "") { return ByteBrew.GetRemoteConfigForKey(key, defaultValue); }
+        public bool   GetRemoteConfigBoolValue(string   key, bool   defaultValue)      { return bool.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString())); }
+        public long   GetRemoteConfigLongValue(string   key, long   defaultValue)      { return long.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString())); }
+        public double GetRemoteConfigDoubleValue(string key, double defaultValue)      { return double.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString(CultureInfo.InvariantCulture))); }
+        public int    GetRemoteConfigIntValue(string    key, int    defaultValue)      { return int.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString())); }
+        public float  GetRemoteConfigFloatValue(string  key, float  defaultValue)      { return float.Parse(ByteBrew.GetRemoteConfigForKey(key, defaultValue.ToString(CultureInfo.InvariantCulture))); }
 
         void IInitializable.Initialize() =>
             UniTask.Void(async state =>
