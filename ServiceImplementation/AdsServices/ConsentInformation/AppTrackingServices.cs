@@ -44,7 +44,6 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             this.signalBus.Fire(new AttDisplayedSignal());
             ATTrackingStatusBinding.RequestAuthorizationTracking();
             await UniTask.WaitUntil(this.IsTrackingComplete);
-
             this.signalBus.Fire(new AttClosedSignal());
             #endif
         }
