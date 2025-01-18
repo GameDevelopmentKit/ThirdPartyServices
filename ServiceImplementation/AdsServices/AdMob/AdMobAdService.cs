@@ -303,14 +303,9 @@ namespace ServiceImplementation.AdsServices.AdMob
         #region Collapsible Banner
 
         private BannerView collapsibleBannerView;
+        private string     collapsibleBannerGuid = GetNewGuid();
 
-        [Obsolete("Use ShowCollapsibleBannerAd(BannerAdsPosition bannerAdsPosition) instead.")]
         public void ShowCollapsibleBannerAd(bool useNewGuid, BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom)
-        {
-            this.ShowCollapsibleBannerAd(bannerAdsPosition);
-        }
-
-        public void ShowCollapsibleBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom)
         {
             if (string.IsNullOrEmpty(this.config.CollapsibleBannerAdId.Id))
             {
@@ -320,6 +315,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             var adSize   = this.config.IsAdaptiveBannerEnabled ? AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth) : AdSize.Banner;
             var position = bannerAdsPosition.ToAdMobAdPosition();
+            this.collapsibleBannerGuid = useNewGuid ? GetNewGuid() : this.collapsibleBannerGuid;
 
             if (this.collapsibleBannerView is not null)
             {
@@ -338,10 +334,13 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.collapsibleBannerView.OnAdPaid                    += this.TrackAdRevenue(AdFormatConstants.CollapsibleBanner, AdFormatConstants.CollapsibleBanner, this.config.CollapsibleBannerAdId.Id);
 
             var request = new AdRequest();
+            request.Extras.Add("collapsible_request_id", this.collapsibleBannerGuid);
             request.Extras.Add("collapsible", bannerAdsPosition == BannerAdsPosition.Bottom ? "bottom" : "top");
             this.collapsibleBannerView.LoadAd(request);
             Debug.Log("onelog: ShowCollapsibleBannerAd - Load New CollapsibleBanner.");
         }
+
+        private static string GetNewGuid() => Guid.NewGuid().ToString();
 
         public void HideCollapsibleBannerAd()
         {
