@@ -45,15 +45,6 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 return;
             }
 
-            #if UNITY_IOS
-            if (AttHelper.IsRequestTrackingComplete())
-            {
-                this.isRequesting = false;
-                return;
-            }
-            #endif
-
-            #if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
             this.logService.Error($"onelog: LoadAndShowConsentFormIfRequired");
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
             {
@@ -62,14 +53,13 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 if (formError != null)
                 {
                     // Consent gathering failed.
-                    this.logService.Error($"onelog: ConsentForm.LoadAndShowConsentFormIfRequired Error {formError.Message}");
+                    this.logService.Error($"onelog: LoadAndShowConsentFormIfRequired Error {formError.Message}");
                     return;
                 }
 
                 // Consent has been gathered.
-                this.logService.Log($"onelog: ConsentForm.LoadAndShowConsentFormIfRequired Success");
+                this.logService.Log($"onelog: LoadAndShowConsentFormIfRequired Success, Status: {ConsentInformation.ConsentStatus}");
             });
-            #endif
         }
     }
 }

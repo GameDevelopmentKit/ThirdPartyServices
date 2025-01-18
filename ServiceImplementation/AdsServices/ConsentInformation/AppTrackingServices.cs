@@ -4,11 +4,11 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     using GameFoundation.DI;
     using GameFoundation.Signals;
     using ServiceImplementation.Configs;
+    using UnityEngine.Scripting;
     #if UNITY_IOS
     using ServiceImplementation.AdsServices.Signal;
     using Unity.Advertisement.IosSupport;
     #endif
-    using UnityEngine.Scripting;
 
     public class AppTrackingServices : IInitializable
     {
@@ -32,44 +32,23 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             #if UNITY_IOS
             if (this.thirdPartiesConfig.AdSettings.customAtt) return;
             #endif
-            this.RequestTracking().Forget();
+            this.RequestConsentAndTracking().Forget();
         }
 
-        public async UniTask RequestTracking()
+        public async UniTask RequestConsentAndTracking()
         {
+            this.consentInformation.RequestConsent();
+            await UniTask.WaitUntil(() => !this.consentInformation.IsRequestingConsent());
+
             #if UNITY_IOS
             this.signalBus.Fire(new AttDisplayedSignal());
-            #endif
-
-            await this.RequestUmpConsent();
-
-            #if UNITY_IOS
-            if (!this.thirdPartiesConfig.AdSettings.RequestUmpInsteadATT)
-            {
-                this.RequestAtt();
-            }
-            await UniTask.WaitUntil(this.IsRequestTrackingComplete);
+            ATTrackingStatusBinding.RequestAuthorizationTracking();
+            await UniTask.WaitUntil(this.IsTrackingComplete);
 
             this.signalBus.Fire(new AttClosedSignal());
             #endif
         }
 
-        public bool IsRequestTrackingComplete() => AttHelper.IsRequestTrackingComplete() || (this.thirdPartiesConfig.AdSettings.RequestUmpInsteadATT && this.consentInformation.CanRequestAds());
-
-        #if UNITY_IOS
-        private void RequestAtt()
-        {
-            if (AttHelper.IsRequestTrackingComplete()) return;
-
-            ATTrackingStatusBinding.RequestAuthorizationTracking();
-        }
-        #endif
-
-        private async UniTask RequestUmpConsent()
-        {
-            // Setup GDPR and IDFA will auto request ATT
-            this.consentInformation.RequestConsent();
-            await UniTask.WaitUntil(() => !this.consentInformation.IsRequestingConsent());
-        }
+        public bool IsTrackingComplete() => AttHelper.IsRequestTrackingComplete();
     }
 }

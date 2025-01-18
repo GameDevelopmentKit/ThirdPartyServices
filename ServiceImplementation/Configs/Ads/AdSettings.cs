@@ -48,13 +48,9 @@
 
         #region ATT (iOS only)
 
-        [FoldoutGroup("Misc/Consent")] [Tooltip("Request UMP and ATT. Must enable GDPR and IDFA Explainer in Admob Dashboard")] [SerializeField] private bool requestUmpInsteadATT = true;
-
         [FoldoutGroup("Misc/Consent")] [Tooltip("Custom App Tracking Transparent for iOS")] [LabelText("Custom Att Scene")] public bool customAtt;
 
-        [FoldoutGroup("Misc/Consent/CustomATT")] [Sirenix.OdinInspector.FilePath(Extensions = "unity")] [ShowIf(nameof(customAtt))] public string attScenePath = "Assets/Scenes/ATTScene.unity";
-
-        public bool RequestUmpInsteadATT => this.requestUmpInsteadATT;
+        [FoldoutGroup("Misc/Consent")] [Sirenix.OdinInspector.FilePath(Extensions = "unity")] [ShowIf(nameof(customAtt))] public string attScenePath = "Assets/Scenes/ATTScene.unity";
 
         #endregion
 
@@ -190,7 +186,7 @@
             return false;
         }
 
-        [FoldoutGroup("Misc/Consent/CustomATT")]
+        [FoldoutGroup("Misc/Consent")]
         [Button]
         [ShowIf(nameof(customAtt))]
         private void SetupCustomAtt()
