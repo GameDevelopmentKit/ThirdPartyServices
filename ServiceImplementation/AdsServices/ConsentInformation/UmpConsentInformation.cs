@@ -45,7 +45,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 return;
             }
 
-            this.logService.Error($"onelog: LoadAndShowConsentFormIfRequired");
+            this.logService.Log($"onelog: LoadAndShowConsentFormIfRequired");
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
             {
                 this.isRequesting = false;
