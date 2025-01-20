@@ -1,105 +1,58 @@
 namespace Core.AdsServices.Native
 {
     using System;
-    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.DI;
     using R3;
     using UnityEngine;
-    using UnityEngine.UI;
 
     public class NativeAdsView : MonoBehaviour
     {
-        [SerializeField] private GameObject nonAdsHolder;
-        [SerializeField] private GameObject adsHolder;
+        [SerializeField] protected GameObject nonAdsHolder;
+        [SerializeField] protected GameObject adsHolder;
 
-        public RawImage iconImage;
-        public RawImage adChoicesImage;
-        public Text     headlineText;
-        public Text     advertiserText;
-        public Text     callToActionText;
+        protected IDisposable       changeScreenDisposable;
+        protected IScreenPresenter  visibleScreen;
+        protected IScreenManager    screenManager;
+        protected INativeAdsService nativeAdsService;
 
-        private INativeAdsService nativeAdsService;
-        private Collider[]        colliders;
-        private bool              isEnable;
-        private bool              isInit;
+        protected virtual bool ShowOnStart { get; set; } = true;
 
-        private IDisposable      changeScreenDisposable;
-        private IScreenPresenter visibleScreen;
-        private IScreenManager   screenManager;
-
-        private Collider[] Colliders
+        private void Awake()
         {
-            get
-            {
-                this.colliders ??= this.GetComponentsInChildren<Collider>();
+            this.screenManager          = this.GetCurrentContainer().Resolve<IScreenManager>();
+            this.nativeAdsService       = this.GetCurrentContainer().Resolve<INativeAdsService>();
+            this.changeScreenDisposable = this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
 
-                return this.colliders;
+            if (this.ShowOnStart)
+            {
+                this.ShowAds(true);
             }
         }
 
-        #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
-    private void Awake()
-    {
-        this.screenManager = this.GetCurrentContainer().Resolve<IScreenManager>();
-        this.changeScreenDisposable = this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
-    }
-
-    private void OnDestroy()
-    {
-        this.ShowAds(false);
-        this.changeScreenDisposable?.Dispose();
-    }
-
-    private void OnChangeScreen(IScreenPresenter screenPresenter)
-    {
-        if (this.visibleScreen == null) return;
-        this.ShowAds(this.visibleScreen == screenPresenter);
-    }
-
-    public void ShowAds(bool isShow)
-    {
-        this.nonAdsHolder.SetActive(!isShow);
-        this.adsHolder.SetActive(isShow);
-        if (this.isInit && !this.isEnable && isShow)
+        private void OnDestroy()
         {
-            this.isEnable = true;
-            this.IntervalCall();
+            this.ShowAds(false);
+            this.changeScreenDisposable?.Dispose();
         }
 
-        this.isEnable = isShow;
-        foreach (var col in this.Colliders)
+        private void OnChangeScreen(IScreenPresenter screenPresenter)
         {
-            col.enabled = isShow;
+            if (this.visibleScreen == null) return;
+            this.ShowAds(this.visibleScreen == screenPresenter);
         }
-    }
 
-    public void BindVisibleScreen(IScreenPresenter screenPresenter)
-    {
-        this.visibleScreen = screenPresenter;
-    }
+        public virtual void ShowAds(bool isShow)
+        {
+            var enable = isShow && !this.nativeAdsService.IsRemoveAds();
+            this.nonAdsHolder.SetActive(!enable);
+            this.adsHolder.SetActive(enable);
+        }
 
-    public void Init(INativeAdsService nativeAdsService)
-    {
-        this.nativeAdsService = nativeAdsService;
-        this.iconImage.gameObject.SetActive(false);
-        this.adChoicesImage.gameObject.SetActive(false);
-        this.isInit = true;
-        this.isEnable = true;
-        this.IntervalCall();
-        this.ShowAds(true);
-    }
-
-    private async void IntervalCall()
-    {
-        if (!this.isEnable) return;
-        if (this == null) return;
-        await UniTask.SwitchToMainThread();
-        this.nativeAdsService?.DrawNativeAds(this);
-        await UniTask.Delay(TimeSpan.FromSeconds(1));
-        this.IntervalCall();
-    }
-        #endif
+        public void BindVisibleScreen(IScreenPresenter screenPresenter)
+        {
+            this.visibleScreen = screenPresenter;
+        }
     }
 }

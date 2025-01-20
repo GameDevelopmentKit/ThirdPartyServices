@@ -16,6 +16,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.Configs.Ads;
     using VContainer;
     using VContainer.Unity;
+    using ServiceImplementation.AdsServices.Gads;
     #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
     using global::PubScale.SdkOne;
     using ServiceImplementation.AdsServices.PubScale;
@@ -82,6 +83,7 @@ namespace ServiceImplementation.AdsServices
             builder.Register<DummyConsentInformation>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
 
+            builder.Register<GadsmeWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             #region Ads signal
 
             builder.DeclareSignal<BannerAdPresentedSignal>();

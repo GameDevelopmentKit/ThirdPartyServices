@@ -1,6 +1,7 @@
 ﻿namespace ServiceImplementation.AdsServices.Gads
 {
     using Core.AnalyticServices;
+    using Cysharp.Threading.Tasks;
     using Gadsme;
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
@@ -35,7 +36,7 @@
 
         #endregion
 
-        public void Initialize()
+        public async void Initialize()
         {
             // Placement events
             GadsmeEvents.PlacementLoadedEvent   += this.OnPlacementLoaded;
