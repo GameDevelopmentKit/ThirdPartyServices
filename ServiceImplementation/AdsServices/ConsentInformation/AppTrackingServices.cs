@@ -3,40 +3,51 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
     using GameFoundation.Signals;
-    using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs;
     using UnityEngine.Scripting;
+    #if UNITY_IOS
+    using ServiceImplementation.AdsServices.Signal;
+    using Unity.Advertisement.IosSupport;
+    #endif
 
     public class AppTrackingServices : IInitializable
     {
-        protected virtual int DelayRequestTrackingMillisecond { get; set; } = 100;
+        private const int DelayRequestTrackingMillisecond = 100;
 
-        private readonly ThirdPartiesConfig thirdPartiesConfig;
-        private readonly SignalBus          signalBus;
+        private readonly ThirdPartiesConfig  thirdPartiesConfig;
+        private readonly SignalBus           signalBus;
+        private readonly IConsentInformation consentInformation;
 
         [Preserve]
-        public AppTrackingServices(ThirdPartiesConfig thirdPartiesConfig, SignalBus signalBus)
+        public AppTrackingServices(ThirdPartiesConfig thirdPartiesConfig, SignalBus signalBus, IConsentInformation consentInformation)
         {
             this.thirdPartiesConfig = thirdPartiesConfig;
             this.signalBus          = signalBus;
+            this.consentInformation = consentInformation;
         }
 
         public async void Initialize()
         {
-            await UniTask.Delay(this.DelayRequestTrackingMillisecond);
-            if (this.thirdPartiesConfig.AdSettings.AutoRequestATT) await this.RequestTracking();
+            await UniTask.Delay(DelayRequestTrackingMillisecond);
+            #if UNITY_IOS
+            if (this.thirdPartiesConfig.AdSettings.customAtt) return;
+            #endif
+            this.RequestConsentAndTracking().Forget();
         }
 
-        public async UniTask RequestTracking()
+        public async UniTask RequestConsentAndTracking()
         {
-            if (AttHelper.IsRequestTrackingComplete()) return;
+            this.consentInformation.RequestConsent();
+            await UniTask.WaitUntil(() => !this.consentInformation.IsRequestingConsent());
 
             #if UNITY_IOS
             this.signalBus.Fire(new AttDisplayedSignal());
-            Unity.Advertisement.IosSupport.ATTrackingStatusBinding.RequestAuthorizationTracking();
-            await UniTask.WaitUntil(AttHelper.IsRequestTrackingComplete);
+            ATTrackingStatusBinding.RequestAuthorizationTracking();
+            await UniTask.WaitUntil(this.IsTrackingComplete);
             this.signalBus.Fire(new AttClosedSignal());
             #endif
         }
+
+        public bool IsTrackingComplete() => AttHelper.IsRequestTrackingComplete();
     }
 }
