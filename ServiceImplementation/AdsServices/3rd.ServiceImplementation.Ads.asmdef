@@ -1,64 +1,66 @@
 {
-  "name": "3rd.ServiceImplementation.Ads",
-  "rootNamespace": "",
-  "references": [
-    "3rdCore.Ads",
-    "EasyMobile.Scripts",
-    "3rdCore.Analytic",
-    "GameFoundation.DI",
-    "GameFoundation.Utilities",
-    "Zenject",
-    "VContainer",
-    "GameFoundation.Signals",
-    "MaxSdk.Scripts",
-    "UniTask",
-    "IronSource.Scripts",
-    "AdjustSDK",
-    "Unity.TextMeshPro",
-    "FBInstant",
-    "3rd.Configs",
-    "Amazon.Scripts",
-    "Unity.Advertisement.IosSupport",
-    "Unity.LevelPlay",
-    "YandexMobileAds.Scripts",
-    "GameFoundation.UIModule"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": true,
-  "precompiledReferences": [
-    "GoogleMobileAds.Unity.dll",
-    "GoogleMobileAds.Ump.dll",
-    "GoogleMobileAds.Ump.Unity.dll",
-    "GoogleMobileAds.dll",
-    "GoogleMobileAds.Common.dll",
-    "GoogleMobileAds.Core.dll",
-    "Zenject-usage.dll",
-    "GoogleMobileAdsNative.Android.dll",
-    "GoogleMobileAdsNative.Common.dll",
-    "GoogleMobileAdsNative.dll",
-    "Newtonsoft.Json.dll",
-    "PubScale.SdkOne.dll"
-  ],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [
-    {
-      "name": "com.theone.ironsource-adquality",
-      "expression": "",
-      "define": "IRONSOURCE_AD_QUALITY"
-    },
-    {
-      "name": "com.svermeulen.extenject",
-      "expression": "",
-      "define": "GDK_ZENJECT"
-    },
-    {
-      "name": "jp.hadashikick.vcontainer",
-      "expression": "",
-      "define": "GDK_VCONTAINER"
-    }
-  ],
-  "noEngineReferences": false
+    "name": "3rd.ServiceImplementation.Ads",
+    "rootNamespace": "",
+    "references": [
+        "3rdCore.Ads",
+        "EasyMobile.Scripts",
+        "3rdCore.Analytic",
+        "GameFoundation.DI",
+        "GameFoundation.Utilities",
+        "Zenject",
+        "VContainer",
+        "GameFoundation.Signals",
+        "MaxSdk.Scripts",
+        "UniTask",
+        "IronSource.Scripts",
+        "AdjustSDK",
+        "Unity.TextMeshPro",
+        "FBInstant",
+        "3rd.Configs",
+        "Amazon.Scripts",
+        "Unity.Advertisement.IosSupport",
+        "Unity.LevelPlay",
+        "YandexMobileAds.Scripts",
+        "GameFoundation.UIModule",
+        "GadsmeSDK"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "GoogleMobileAds.Unity.dll",
+        "GoogleMobileAds.Ump.dll",
+        "GoogleMobileAds.Ump.Unity.dll",
+        "GoogleMobileAds.dll",
+        "GoogleMobileAds.Common.dll",
+        "GoogleMobileAds.Core.dll",
+        "Zenject-usage.dll",
+        "GoogleMobileAdsNative.Android.dll",
+        "GoogleMobileAdsNative.Common.dll",
+        "GoogleMobileAdsNative.dll",
+        "Newtonsoft.Json.dll",
+        "PubScale.SdkOne.dll",
+        "Gadsme.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.theone.ironsource-adquality",
+            "expression": "",
+            "define": "IRONSOURCE_AD_QUALITY"
+        },
+        {
+            "name": "com.svermeulen.extenject",
+            "expression": "",
+            "define": "GDK_ZENJECT"
+        },
+        {
+            "name": "jp.hadashikick.vcontainer",
+            "expression": "",
+            "define": "GDK_VCONTAINER"
+        }
+    ],
+    "noEngineReferences": false
 }
