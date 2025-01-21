@@ -79,6 +79,7 @@ namespace Core.AnalyticServices.Data
 
         public void Initialize()
         {
+            Debug.Log($"dmplog: Initializing");
             this.TrackerSetup();
             this.signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);
             this.signalBus.Subscribe<SetUserIdSignal>(signal => this.SetUserId(signal.UserId));

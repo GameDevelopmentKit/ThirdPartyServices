@@ -29,6 +29,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             {
                 this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
             }
+            Debug.Log($"dmplog: AdjustTracker constructor");
         }
 
         protected override HashSet<Type>              IgnoreEvents    => this.analyticsEventCustomizationConfig.IgnoreEvents;
@@ -67,6 +68,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
         protected override Task TrackerSetup()
         {
+            Debug.Log($"dmplog: AdjustTracker TrackerSetup");
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
             Debug.Log("setting up adjust tracker");
@@ -94,6 +96,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             Adjust.InitSdk(adjustConfig);
             this.TrackerReady.SetResult(true);
 
+            Debug.Log($"dmplog: AdjustTracker TrackerSetup finish");
             return this.TrackerReady.Task;
         }
 
