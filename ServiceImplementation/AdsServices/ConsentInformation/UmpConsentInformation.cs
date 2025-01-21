@@ -1,12 +1,11 @@
 #if ADMOB
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
-    using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
     using UnityEngine.Scripting;
 
-    public class UmpConsentInformation : IConsentInformation, IInitializable
+    public class UmpConsentInformation : IConsentInformation
     {
         #region Inject
 
@@ -21,11 +20,6 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         #endregion
 
         private bool isRequesting;
-
-        public void Initialize()
-        {
-            this.RequestConsent();
-        }
 
         public bool CanRequestAds() => ConsentInformation.CanRequestAds();
 
@@ -51,15 +45,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 return;
             }
 
-            #if UNITY_IOS
-            if (AttHelper.IsRequestTrackingComplete())
-            {
-                this.isRequesting = false;
-                return;
-            }
-            #endif
-
-            #if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
+            this.logService.Log($"onelog: LoadAndShowConsentFormIfRequired");
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
             {
                 this.isRequesting = false;
@@ -67,14 +53,13 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 if (formError != null)
                 {
                     // Consent gathering failed.
-                    this.logService.Error($"onelog: ConsentForm.LoadAndShowConsentFormIfRequired Error {formError.Message}");
+                    this.logService.Error($"onelog: LoadAndShowConsentFormIfRequired Error {formError.Message}");
                     return;
                 }
 
                 // Consent has been gathered.
-                this.logService.Log($"onelog: ConsentForm.LoadAndShowConsentFormIfRequired Success");
+                this.logService.Log($"onelog: LoadAndShowConsentFormIfRequired Success, Status: {ConsentInformation.ConsentStatus}");
             });
-            #endif
         }
     }
 }

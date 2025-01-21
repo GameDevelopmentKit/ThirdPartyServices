@@ -48,13 +48,9 @@
 
         #region ATT (iOS only)
 
-        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Auto Request App Tracking Transparent for iOS")] [ShowIf("@!customAtt")] [SerializeField] private bool autoRequestATT = true;
+        [FoldoutGroup("Misc/Consent")] [Tooltip("Custom App Tracking Transparent for iOS")] [LabelText("Custom Att Scene")] public bool customAtt;
 
-        public bool AutoRequestATT => this.autoRequestATT && !this.customAtt;
-
-        [FoldoutGroup("Misc/ATT (iOS only)")] [Tooltip("Custom App Tracking Transparent for iOS")] [LabelText("Custom Att Scene")] public bool customAtt;
-
-        [FoldoutGroup("Misc/ATT (iOS only)/Custom")] [Sirenix.OdinInspector.FilePath(Extensions = "unity")] [ShowIf(nameof(customAtt))] public string attScenePath = "Assets/Scenes/ATTScene.unity";
+        [FoldoutGroup("Misc/Consent")] [Sirenix.OdinInspector.FilePath(Extensions = "unity")] [ShowIf(nameof(customAtt))] public string attScenePath = "Assets/Scenes/ATTScene.unity";
 
         #endregion
 
@@ -190,7 +186,7 @@
             return false;
         }
 
-        [FoldoutGroup("Misc/ATT (iOS only)/Custom")]
+        [FoldoutGroup("Misc/Consent")]
         [Button]
         [ShowIf(nameof(customAtt))]
         private void SetupCustomAtt()

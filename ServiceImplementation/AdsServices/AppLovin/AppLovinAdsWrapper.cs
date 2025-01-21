@@ -66,6 +66,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
 #endif
             
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
+#if COLUMBUS
+            ColumbusSdk.SetGDPRConsent(false);
+#endif
             MaxSdk.InitializeSdk();
 
             await UniTask.WaitUntil(MaxSdk.IsInitialized);

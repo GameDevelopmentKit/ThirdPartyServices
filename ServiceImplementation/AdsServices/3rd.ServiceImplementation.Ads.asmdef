@@ -21,7 +21,8 @@
     "Unity.Advertisement.IosSupport",
     "Unity.LevelPlay",
     "YandexMobileAds.Scripts",
-    "GameFoundation.UIModule"
+    "GameFoundation.UIModule",
+    "ColumbusSdk"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
