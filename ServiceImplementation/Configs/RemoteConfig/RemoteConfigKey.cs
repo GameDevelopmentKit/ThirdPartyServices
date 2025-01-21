@@ -25,6 +25,12 @@
         public const string UseAoaAdmob               = "use_aoa_admob";
         public const string AoaAdResumeStartLevel     = "aoa_resume_start_level";
         public const string AoaAdResumeStartSession   = "aoa_resume_start_session";
+        
+        #if BRAVESTARS
+        public const string UseAoaResume              = "use_aoa_resume";
+        public const string AoaFirstOpen              = "show_open_ads_first_open";
+        public const string AoaStartGame              = "show_open_ads_start_game";
+        #endif
 
         #endregion
 

@@ -6,7 +6,7 @@ namespace ServiceImplementation.Configs.Ads
     using ServiceImplementation.FireBaseRemoteConfig;
     using UnityEngine.Scripting;
 
-    public class AdServicesConfig : IInitializable, IDisposable
+    public partial class AdServicesConfig : IInitializable, IDisposable
     {
         #region Constructor
 
@@ -172,6 +172,7 @@ namespace ServiceImplementation.Configs.Ads
 
         private void FetchRemoteConfig()
         {
+            this.FetchRemoteConfigPartial();
             #region General
 
             this.EnableAds                    = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableAds);
@@ -238,5 +239,7 @@ namespace ServiceImplementation.Configs.Ads
 
             #endregion
         }
+        
+        partial void FetchRemoteConfigPartial();
     }
 }
