@@ -6,7 +6,7 @@ namespace ServiceImplementation.Configs.Ads
     using ServiceImplementation.FireBaseRemoteConfig;
     using UnityEngine.Scripting;
 
-    public class AdServicesConfig : IInitializable, IDisposable
+    public partial class AdServicesConfig : IInitializable, IDisposable
     {
         #region Constructor
 
@@ -57,9 +57,6 @@ namespace ServiceImplementation.Configs.Ads
         public int   MinPauseSecondToShowAoaAd { get; private set; }
         public int   AOAStartSession           { get; private set; }
         public bool  UseAoaAdmob               { get; private set; }
-        public bool  UseAoaResume              { get; private set; }
-        public bool  AoaFirstOpen              { get; private set; } // Aoa open game first time
-        public bool  AoaStartGame              { get; private set; } // Aoa open game
         
         // level >= AOAResumeAdStartLevel || session >= AOAResumeAdStartSession => show AOA ad
         public int   AOAResumeAdStartLevel     { get; private set; } // necessary and sufficient conditions - The level to start showing AOA ad when resume app
@@ -175,6 +172,7 @@ namespace ServiceImplementation.Configs.Ads
 
         private void FetchRemoteConfig()
         {
+            this.FetchRemoteConfigPartial();
             #region General
 
             this.EnableAds                    = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableAds);
@@ -200,9 +198,6 @@ namespace ServiceImplementation.Configs.Ads
             this.UseAoaAdmob               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.UseAoaAdmob);
             this.AOAResumeAdStartLevel     = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaAdResumeStartLevel);
             this.AOAResumeAdStartSession   = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaAdResumeStartSession);
-            this.UseAoaResume              = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.UseAoaResume);
-            this.AoaFirstOpen              = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaFirstOpen);
-            this.AoaStartGame              = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.AoaStartGame);
 
             #endregion
 
@@ -244,5 +239,7 @@ namespace ServiceImplementation.Configs.Ads
 
             #endregion
         }
+        
+        partial void FetchRemoteConfigPartial();
     }
 }

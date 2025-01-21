@@ -69,9 +69,12 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.TryAddAddsConfig(RemoteConfigKey.AoaAdResumeStartLevel, "2");
             this.TryAddAddsConfig(RemoteConfigKey.AoaAdResumeStartSession, "2");
             this.TryAddAddsConfig(RemoteConfigKey.UseAoaAdmob, "true");
+            
+            #if BRAVESTARS
             this.TryAddAddsConfig(RemoteConfigKey.UseAoaResume, "true");
             this.TryAddAddsConfig(RemoteConfigKey.AoaFirstOpen, "true");
             this.TryAddAddsConfig(RemoteConfigKey.AoaStartGame, "true");
+            #endif
 
             #endregion
 
