@@ -9,6 +9,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
+    using Core.AnalyticServices.Signal;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using GameFoundation.Signals;
@@ -91,10 +92,50 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
             var adjustConfig = new AdjustConfig(appToken, environment);
             adjustConfig.IsSendingInBackgroundEnabled = true;
+            adjustConfig.AttributionChangedDelegate = this.OnAttributionChanged;
             Adjust.InitSdk(adjustConfig);
             this.TrackerReady.SetResult(true);
 
             return this.TrackerReady.Task;
+        }
+        
+        // Handle attribution callback
+        private void OnAttributionChanged(AdjustAttribution attributionData)
+        {
+            if (attributionData != null)
+            {
+                this.logger.Log("Attribution Data Received:");
+                // Log key attribution data
+                this.logger.Log($"Network: {attributionData.Network}");
+                this.logger.Log($"Campaign: {attributionData.Campaign}");
+                this.logger.Log($"Ad Group: {attributionData.Adgroup}");
+                this.logger.Log($"Creative: {attributionData.Creative}");
+                this.logger.Log($"Click Label: {attributionData.ClickLabel}");
+                this.logger.Log($"Tracker Token: {attributionData.TrackerToken}");
+                this.logger.Log($"Tracker Name: {attributionData.TrackerName}");
+                
+                // Log all key-value pairs to a dictionary
+                var dataDictionary = new Dictionary<string, object>
+                {
+                    { "Network", attributionData.Network },
+                    { "Campaign", attributionData.Campaign },
+                    { "AdGroup", attributionData.Adgroup },
+                    { "Creative", attributionData.Creative },
+                    { "ClickLabel", attributionData.ClickLabel },
+                    { "TrackerToken", attributionData.TrackerToken },
+                    { "TrackerName", attributionData.TrackerName }
+                };
+                
+                this.signalBus.Fire(new EventTrackedSignal()
+                {
+                    TrackedEvent = new AttributionChanged(),
+                    ChangedProps = dataDictionary
+                });
+            }
+            else
+            {
+                this.logger.Warning("Attribution data is null.");
+            }
         }
 
         protected override void SetUserId(string userId) { }
