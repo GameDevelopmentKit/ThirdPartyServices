@@ -17,7 +17,7 @@ namespace Core.AnalyticServices.Data
     {
         #region inject
 
-        private readonly   SignalBus      signalBus;
+        protected readonly   SignalBus    signalBus;
         protected readonly AnalyticConfig analyticConfig;
 
         #endregion
