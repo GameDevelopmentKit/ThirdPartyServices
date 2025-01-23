@@ -84,7 +84,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             //IAP Revenue connector
 #if THEONE_IAP
-            AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
+            AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(this.signalBus), Store.GOOGLE);
 #if THEONE_MMP_DEBUG && !PRODUCTION
             AppsFlyerPurchaseConnector.setIsSandbox(true);
 #endif
