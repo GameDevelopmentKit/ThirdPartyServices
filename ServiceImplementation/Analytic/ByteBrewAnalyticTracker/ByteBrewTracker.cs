@@ -8,7 +8,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using ByteBrewSDK;
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
-    using GameFoundation.Scripts.Utilities.Extension;
+    using Core.AnalyticServices.Signal;
     using Newtonsoft.Json;
     using UnityEngine;
     using GameFoundation.Signals;
@@ -48,8 +48,15 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             Debug.Log($"ByteBrew: Initialize Finished");
 
             this.TrackerReady.SetResult(true);
+            this.signalBus.Subscribe<AdRevenueSignal>(this.OnAdRevenueSignal);
 
             return this.TrackerReady.Task;
+        }
+        
+        private void OnAdRevenueSignal(AdRevenueSignal obj)
+        {
+            ByteBrew_Helper.NewTrackedAdEvent(obj.AdsRevenueEvent.Placement, obj.AdsRevenueEvent.AdNetwork,
+                obj.AdsRevenueEvent.AdUnit, obj.AdsRevenueEvent.Placement, obj.AdsRevenueEvent.Revenue);
         }
 
         protected override void SetUserId(string userId)
