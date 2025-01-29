@@ -6,7 +6,8 @@
     "GameFoundation.Signals",
     "ByteBrewSDK",
     "GameFoundation.Utilities",
-    "UniTask"
+    "UniTask",
+    "3rd.IAP"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

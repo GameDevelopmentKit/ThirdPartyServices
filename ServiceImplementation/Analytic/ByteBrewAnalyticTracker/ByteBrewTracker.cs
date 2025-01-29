@@ -12,6 +12,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using Newtonsoft.Json;
     using UnityEngine;
     using GameFoundation.Signals;
+    using ServiceImplementation.IAPServices.Signals;
     using UnityEngine.Scripting;
 
     public class ByteBrewTracker : BaseTracker
@@ -49,10 +50,24 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
             this.TrackerReady.SetResult(true);
             this.signalBus.Subscribe<AdRevenueSignal>(this.OnAdRevenueSignal);
+            this.signalBus.Subscribe<OnIAPPurchaseSuccessSignal>(this.OnIAPPurchaseSuccess);
 
             return this.TrackerReady.Task;
         }
-        
+        private void OnIAPPurchaseSuccess(OnIAPPurchaseSuccessSignal obj)
+        {
+            var store = "Unknow";
+            #if UNITY_ANDROID
+            store = "Google";
+            #elif UNITY_IOS
+            store = "Apple";
+            #endif
+            for (var i = 0; i < obj.Quantity; i++)
+            {
+                ByteBrew.TrackInAppPurchaseEvent(store, obj.Product.CurrencyCode, (float)obj.Product.Price, obj.Product.Id, "None");
+            }
+        }
+
         private void OnAdRevenueSignal(AdRevenueSignal obj)
         {
             ByteBrew_Helper.NewTrackedAdEvent(obj.AdsRevenueEvent.Placement, obj.AdsRevenueEvent.AdNetwork,
