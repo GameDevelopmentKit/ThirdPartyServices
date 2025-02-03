@@ -2,6 +2,7 @@
 namespace ServiceImplementation.FirebaseAnalyticTracker
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using Firebase.Analytics;
     using Newtonsoft.Json;
     using UnityEngine;
@@ -29,11 +30,11 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
             {
                 parameterArray[index] = paramValue switch
                 {
-                    long longValue => new Parameter(paramName, longValue),
-                    int intValue => new Parameter(paramName, intValue),
+                    long longValue => new Parameter(paramName, longValue.ToString()),
+                    int intValue => new Parameter(paramName, intValue.ToString()),
                     string stringValue => new Parameter(paramName, stringValue),
-                    double doubleValue => new Parameter(paramName, doubleValue),
-                    float floatValue => new Parameter(paramName, floatValue),
+                    double doubleValue => new Parameter(paramName, doubleValue.ToString(CultureInfo.InvariantCulture)),
+                    float floatValue => new Parameter(paramName, floatValue.ToString(CultureInfo.InvariantCulture)),
                     _ => new Parameter(paramName, JsonConvert.SerializeObject(paramValue))
                 };
                 ++index;
