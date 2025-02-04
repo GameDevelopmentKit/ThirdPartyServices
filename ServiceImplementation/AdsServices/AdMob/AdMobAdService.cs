@@ -4,6 +4,7 @@ namespace ServiceImplementation.AdsServices.AdMob
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Globalization;
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Helpers;
@@ -31,8 +32,8 @@ namespace ServiceImplementation.AdsServices.AdMob
         [Preserve]
         public AdMobAdService(ThirdPartiesConfig config, SignalBus signalBus, IAnalyticServices analyticService)
         {
-            this.config = config.AdSettings.AdMob;
-            this.signalBus = signalBus;
+            this.config          = config.AdSettings.AdMob;
+            this.signalBus       = signalBus;
             this.analyticService = analyticService;
         }
 
@@ -40,7 +41,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         string IAdServices.AdPlatform => AdRevenueConstants.ARSourceAdMob;
 
-        public string AdPlatform                                                     => AdRevenueConstants.ARSourceAdMob;
+        public string AdPlatform => AdRevenueConstants.ARSourceAdMob;
 
         public AdNetworkSettings AdNetworkSettings => this.config;
 
@@ -64,17 +65,17 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private BannerView bannerView;
 
-
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
-            var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultBannerAdId.Id, AdFormatConstants.Banner);
-            var size = new AdSize(width, height);
+            var adInfo   = new AdInfo(this.AdPlatform, this.config.DefaultBannerAdId.Id, AdFormatConstants.Banner);
+            var size     = new AdSize(width, height);
             var position = bannerAdsPosition.ToAdMobAdPosition();
 
             if (this.bannerView is not null)
             {
                 this.bannerView.SetPosition(position);
                 this.bannerView.Show();
+
                 return;
             }
 
@@ -82,32 +83,21 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             #region Events
 
-            this.bannerView.OnBannerAdLoaded += OnBannerAdLoaded;
-            this.bannerView.OnBannerAdLoadFailed += (error) => this.signalBus.Fire(new BannerAdLoadFailedSignal(AdFormatConstants.Banner, error.GetMessage()));
+            this.bannerView.OnBannerAdLoaded            += OnBannerAdLoaded;
+            this.bannerView.OnBannerAdLoadFailed        += (error) => this.signalBus.Fire(new BannerAdLoadFailedSignal(AdFormatConstants.Banner, error.GetMessage()));
             this.bannerView.OnAdFullScreenContentOpened += OnAdFullScreenContentOpened;
             this.bannerView.OnAdFullScreenContentClosed += OnAddFullScreenContentClosed;
-            this.bannerView.OnAdClicked += OnAdClicked;
-            this.bannerView.OnAdPaid += this.TrackAdRevenue(AdFormatConstants.Banner, AdFormatConstants.Banner, this.config.DefaultBannerAdId.Id);
+            this.bannerView.OnAdClicked                 += OnAdClicked;
+            this.bannerView.OnAdPaid                    += this.TrackAdRevenue(AdFormatConstants.Banner, AdFormatConstants.Banner, this.config.DefaultBannerAdId.Id);
 
-            void OnBannerAdLoaded()
-            {
-                this.signalBus.Fire(new BannerAdLoadedSignal(AdFormatConstants.Banner, adInfo));
-            }
+            void OnBannerAdLoaded() { this.signalBus.Fire(new BannerAdLoadedSignal(AdFormatConstants.Banner, adInfo)); }
 
-            void OnAdFullScreenContentOpened()
-            {
-                this.signalBus.Fire(new BannerAdPresentedSignal(AdFormatConstants.Banner));
-            }
+            void OnAdFullScreenContentOpened() { this.signalBus.Fire(new BannerAdPresentedSignal(AdFormatConstants.Banner)); }
 
-            void OnAddFullScreenContentClosed()
-            {
-                this.signalBus.Fire(new BannerAdDismissedSignal(AdFormatConstants.Banner));
-            }
+            void OnAddFullScreenContentClosed() { this.signalBus.Fire(new BannerAdDismissedSignal(AdFormatConstants.Banner)); }
 
-            void OnAdClicked()
-            {
-                this.signalBus.Fire(new BannerAdClickedSignal(AdFormatConstants.Banner, adInfo));
-            }
+            void OnAdClicked() { this.signalBus.Fire(new BannerAdClickedSignal(AdFormatConstants.Banner, adInfo)); }
+
             #endregion
 
             this.bannerView.LoadAd(new AdRequest());
@@ -138,7 +128,6 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         public bool IsInterstitialAdReady(string _) { return this.interstitialAd?.CanShowAd() ?? false; }
 
-
         public void LoadInterstitialAd(string place)
         {
             if (this.IsInterstitialAdReady(place)) return;
@@ -150,6 +139,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                 if (error is not null)
                 {
                     this.signalBus.Fire(new InterstitialAdLoadFailedSignal(place, error.GetMessage(), stopwatch.ElapsedMilliseconds));
+
                     return;
                 }
 
@@ -170,22 +160,15 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.interstitialAd.OnAdFullScreenContentOpened += OnAdFullScreenContentOpened;
             this.interstitialAd.OnAdFullScreenContentClosed += OnAddFullScreenContentClosed;
             this.interstitialAd.OnAdFullScreenContentFailed += _ => this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(place));
-            this.interstitialAd.OnAdClicked += OnAdClicked;
-            this.interstitialAd.OnAdPaid += this.TrackAdRevenue(AdFormatConstants.Interstitial, place, this.config.DefaultInterstitialAdId.Id);
+            this.interstitialAd.OnAdClicked                 += OnAdClicked;
+            this.interstitialAd.OnAdPaid                    += this.TrackAdRevenue(AdFormatConstants.Interstitial, place, this.config.DefaultInterstitialAdId.Id);
 
-            void OnAdFullScreenContentOpened()
-            {
-                this.signalBus.Fire(new InterstitialAdDisplayedSignal(place, adInfo));
-            }
-            void OnAddFullScreenContentClosed()
-            {
-                this.signalBus.Fire(new InterstitialAdClosedSignal(place, adInfo));
-            }
+            void OnAdFullScreenContentOpened() { this.signalBus.Fire(new InterstitialAdDisplayedSignal(place, adInfo)); }
 
-            void OnAdClicked()
-            {
-                this.signalBus.Fire(new InterstitialAdClickedSignal(place, adInfo));
-            }
+            void OnAddFullScreenContentClosed() { this.signalBus.Fire(new InterstitialAdClosedSignal(place, adInfo)); }
+
+            void OnAdClicked() { this.signalBus.Fire(new InterstitialAdClickedSignal(place, adInfo)); }
+
             #endregion
 
             this.interstitialAd.Show();
@@ -197,7 +180,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private RewardedAd rewardedAd;
 
-        public bool IsRewardedAdReady(string       place)                    { return this.rewardedAd?.CanShowAd() ?? false; }
+        public bool IsRewardedAdReady(string place) { return this.rewardedAd?.CanShowAd() ?? false; }
 
         public bool TryGetRewardPlacementId(string placement, out string id)
         {
@@ -219,6 +202,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                 if (error is not null)
                 {
                     this.signalBus.Fire(new RewardedAdLoadFailedSignal(place, error.GetMessage(), stopwatch.ElapsedMilliseconds));
+
                     return;
                 }
 
@@ -238,9 +222,9 @@ namespace ServiceImplementation.AdsServices.AdMob
 
             this.rewardedAd.OnAdFullScreenContentOpened += OnAdFullScreenContentOpened;
             this.rewardedAd.OnAdFullScreenContentFailed += _ => OnAdFullScreenContentFailed();
-            this.rewardedAd.OnAdClicked += OnAdClicked;
-            this.rewardedAd.OnAdPaid += (_) => this.signalBus.Fire(new RewardedAdEligibleSignal(place));
-            this.rewardedAd.OnAdPaid += this.TrackAdRevenue(AdFormatConstants.Rewarded, place, this.config.DefaultRewardedAdId.Id);
+            this.rewardedAd.OnAdClicked                 += OnAdClicked;
+            this.rewardedAd.OnAdPaid                    += (_) => this.signalBus.Fire(new RewardedAdEligibleSignal(place));
+            this.rewardedAd.OnAdPaid                    += this.TrackAdRevenue(AdFormatConstants.Rewarded, place, this.config.DefaultRewardedAdId.Id);
 
             #endregion
 
@@ -251,16 +235,13 @@ namespace ServiceImplementation.AdsServices.AdMob
                 onCompleted?.Invoke();
             });
             this.signalBus.Fire(new RewardedAdCalledSignal(place, adInfo));
+
             return;
 
-            void OnAdClicked()
-            {
-                this.signalBus.Fire(new RewardedAdClickedSignal(place, adInfo));
-            }
-            void OnAdFullScreenContentOpened()
-            {
-                this.signalBus.Fire(new RewardedAdDisplayedSignal(place, adInfo));
-            }
+            void OnAdClicked() { this.signalBus.Fire(new RewardedAdClickedSignal(place, adInfo)); }
+
+            void OnAdFullScreenContentOpened() { this.signalBus.Fire(new RewardedAdDisplayedSignal(place, adInfo)); }
+
             void OnAdFullScreenContentFailed()
             {
                 this.signalBus.Fire(new RewardedSkippedSignal(place, adInfo));
@@ -285,19 +266,36 @@ namespace ServiceImplementation.AdsServices.AdMob
             {
                 var adsRevenueEvent = new AdsRevenueEvent
                 {
-                     AdsRevenueSourceId = this.AdPlatform,
-                     AdFormat = format,
-                     AdNetwork = "AdMob",
-                     AdUnit = adUnit,
-                     NetworkPlacement = placement,
-                     Revenue = adValue.Value / 1e6,
-                     Currency = adValue.CurrencyCode,
+                    AdsRevenueSourceId = this.AdPlatform,
+                    AdFormat           = format,
+                    AdNetwork          = "AdMob",
+                    AdUnit             = adUnit,
+                    NetworkPlacement   = placement,
+                    Revenue            = adValue.Value / 1e6,
+                    Currency           = adValue.CurrencyCode,
+                    CountryCode        = this.TryGetCountryCode(),
                 };
 
                 this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
 
                 this.analyticService.Track(adsRevenueEvent);
             };
+        }
+        
+        private string TryGetCountryCode()
+        {
+            try
+            {
+                return RegionInfo.CurrentRegion.TwoLetterISORegionName;
+            }
+#pragma warning disable 0168
+            catch (Exception ignored)
+#pragma warning restore 0168
+            {
+                // Ignored
+            }
+
+            return "US";
         }
 
         #region Collapsible Banner
@@ -311,6 +309,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             if (string.IsNullOrEmpty(this.config.CollapsibleBannerAdId.Id))
             {
                 Debug.Log("mirailog: ShowCollapsibleBannerAd - CollapsibleBannerAdId is null or empty. Please check the AdMob settings.");
+
                 return;
             }
 
@@ -342,6 +341,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 #endif
             Debug.Log("mirailog: ShowCollapsibleBannerAd - Load CollapsibleBanner.");
             this.collapsibleBannerView.LoadAd(request);
+
             return;
 
             void AddPramsCollapsible()
@@ -395,10 +395,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.signalBus.Fire(new CollapsibleBannerAdPresentedSignal(placement));
         }
 
-        private void OnCollapsibleBannerDismissed(string placement)
-        {
-            this.signalBus.Fire(new CollapsibleBannerAdDismissedSignal(placement));
-        }
+        private void OnCollapsibleBannerDismissed(string placement) { this.signalBus.Fire(new CollapsibleBannerAdDismissedSignal(placement)); }
 
         private void OnCollapsibleBannerClicked(string placement)
         {

@@ -1,6 +1,8 @@
 #if APPLOVIN
 namespace ServiceImplementation.AdsServices.AdRevenueTracker
 {
+    using System;
+    using System.Globalization;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -18,22 +20,23 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
         public ApplovinAdRevenueTracker(IAnalyticServices analyticServices, SignalBus signalBus)
         {
             this.analyticServices = analyticServices;
-            this.signalBus = signalBus;
+            this.signalBus        = signalBus;
         }
 
         public void Initialize()
         {
-            MaxSdkCallbacks.Banner.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            MaxSdkCallbacks.Interstitial.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            MaxSdkCallbacks.AppOpen.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
-            MaxSdkCallbacks.MRec.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
+            MaxSdkCallbacks.Banner.OnAdRevenuePaidEvent               += this.OnOnAdRevenuePaidEvent;
+            MaxSdkCallbacks.Interstitial.OnAdRevenuePaidEvent         += this.OnOnAdRevenuePaidEvent;
+            MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent             += this.OnOnAdRevenuePaidEvent;
+            MaxSdkCallbacks.AppOpen.OnAdRevenuePaidEvent              += this.OnOnAdRevenuePaidEvent;
+            MaxSdkCallbacks.MRec.OnAdRevenuePaidEvent                 += this.OnOnAdRevenuePaidEvent;
             MaxSdkCallbacks.RewardedInterstitial.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
         }
 
         private void OnOnAdRevenuePaidEvent(string adUnitIdentify, MaxSdkBase.AdInfo adInfo)
         {
             var adsRevenueEvent = this.CreateAdsRevenueEvent(adInfo);
+
             if (adsRevenueEvent == null) return;
 
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
@@ -44,17 +47,35 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
         private AdsRevenueEvent CreateAdsRevenueEvent(MaxSdkBase.AdInfo adInfo)
         {
             if (adInfo == null) return null;
+
             return new()
             {
                 AdsRevenueSourceId = AdRevenueConstants.ARSourceAppLovinMAX,
-                AdUnit = adInfo.AdUnitIdentifier,
-                Revenue = adInfo.Revenue,
-                Currency = "USD",
-                NetworkPlacement = adInfo.NetworkPlacement,
-                Placement = adInfo.Placement,
-                AdNetwork = adInfo.NetworkName,
-                AdFormat = adInfo.AdFormat,
+                AdUnit             = adInfo.AdUnitIdentifier,
+                Revenue            = adInfo.Revenue,
+                Currency           = "USD",
+                NetworkPlacement   = adInfo.NetworkPlacement,
+                Placement          = adInfo.Placement,
+                AdNetwork          = adInfo.NetworkName,
+                AdFormat           = adInfo.AdFormat,
+                CountryCode        = this.TryGetCountryCode(),
             };
+        }
+
+        private string TryGetCountryCode()
+        {
+            try
+            {
+                return RegionInfo.CurrentRegion.TwoLetterISORegionName;
+            }
+#pragma warning disable 0168
+            catch (Exception ignored)
+#pragma warning restore 0168
+            {
+                // Ignored
+            }
+
+            return "US";
         }
     }
 }

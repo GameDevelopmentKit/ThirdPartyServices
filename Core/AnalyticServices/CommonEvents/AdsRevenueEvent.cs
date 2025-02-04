@@ -14,6 +14,7 @@ namespace Core.AnalyticServices.CommonEvents
         public string Placement;
         public string Currency;
         public double Revenue;
+        public string CountryCode;
     }
 
     public class AdRevenueConstants
