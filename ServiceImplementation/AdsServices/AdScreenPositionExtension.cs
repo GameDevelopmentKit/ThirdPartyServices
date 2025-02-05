@@ -47,7 +47,27 @@
 
         public static float PixelToDp(float pixel)
         {
-            return pixel * 150f / Screen.dpi;
+            float dpi = Screen.dpi;
+            if (dpi <= 0)
+            {
+                dpi = 326f;
+            }
+
+            float effectiveIosDpi;
+            if (dpi > 400f)
+            {
+                effectiveIosDpi = dpi / 3f;
+            }
+            else if (dpi > 200f)
+            {
+                effectiveIosDpi = dpi / 2f;
+            }
+            else
+            {
+                effectiveIosDpi = dpi;
+            }
+
+            return pixel * 160f / effectiveIosDpi;
         }
     }
 }
