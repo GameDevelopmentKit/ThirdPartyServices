@@ -2,7 +2,7 @@ namespace Core.AdsServices.Native
 {
     public interface INativeAdsService
     {
-        void DrawNativeAds(AdmobNativeAdsView admobNativeAdsView);
+        void DrawNativeAds(NativeAdsView admobNativeAdsView);
 
         void RemoveAds();
 
