@@ -15,14 +15,14 @@
 
         public static AdScreenPosition FlipY(this AdScreenPosition adScreenPosition)
         {
-            return new AdScreenPosition(PixelToDp(adScreenPosition.x), - PixelToDp(adScreenPosition.y));
+            return new AdScreenPosition(PixelToDp(adScreenPosition.x), -PixelToDp(adScreenPosition.y));
         }
 
         #if APPLOVIN
         public static AdScreenPosition ToApplovinPosition(this AdScreenPosition adScreenPosition)
         {
             // calculate in canvas coordinate system
-            var density    = MaxSdkUtils.GetScreenDensity();
+            var density = MaxSdkUtils.GetScreenDensity();
             var connerPosX = adScreenPosition.x - MREC_WIDTH  * density * (adScreenPosition.x / Screen.safeArea.width);
             var connerPosY = adScreenPosition.y - MREC_HEIGHT * density * (adScreenPosition.y / Screen.safeArea.height);
 
@@ -33,41 +33,47 @@
         #if ADMOB
         public static AdScreenPosition ToAdmobPosition(this AdScreenPosition adScreenPosition)
         {
-            // calculate in canvas coordinate system
+            // Calculate in canvas coordinate system
             var dpW = PixelToDp(Screen.width);
             var dpH = PixelToDp(Screen.height);
 
-            var connerPosX = dpW * (adScreenPosition.x / Screen.width) - MREC_WIDTH * (Screen.dpi / 160f) * (adScreenPosition.x / Screen.width) * dpW / Screen.width;
+            float x = adScreenPosition.x;
+            float y = adScreenPosition.y;
 
-            var connerPosY = dpH * (adScreenPosition.y / Screen.height) - MREC_HEIGHT * (Screen.dpi / 160f) * (adScreenPosition.y / Screen.height) * dpH / Screen.height;
+            // Adjust for iOS coordinate system (top-left to bottom-left)
+            #if UNITY_IOS
+            y = Screen.height - y;
+            #endif
+
+            // Calculate adjusted position considering device scaling
+            float scaleFactor = 1f;
+            #if UNITY_IOS
+            scaleFactor = GetIOSScaleFactor();
+            #endif
+
+            var connerPosX = dpW * (x / Screen.width) - MREC_WIDTH * (x / Screen.width) * scaleFactor;
+            var connerPosY = dpH * (y / Screen.height) - MREC_HEIGHT * (y / Screen.height) * scaleFactor;
 
             return new AdScreenPosition(connerPosX, connerPosY);
         }
-        #endif
 
         public static float PixelToDp(float pixel)
         {
-            float dpi = Screen.dpi;
-            if (dpi <= 0)
-            {
-                dpi = 326f;
-            }
-
-            float effectiveIosDpi;
-            if (dpi > 400f)
-            {
-                effectiveIosDpi = dpi / 3f;
-            }
-            else if (dpi > 200f)
-            {
-                effectiveIosDpi = dpi / 2f;
-            }
-            else
-            {
-                effectiveIosDpi = dpi;
-            }
-
-            return pixel * 160f / effectiveIosDpi;
+            #if UNITY_IOS
+            // Adjust for iOS physical DPI calculation
+            float scaleFactor = GetIOSScaleFactor();
+            return pixel * 160f / (Screen.dpi * scaleFactor);
+            #else
+            return pixel * 160f / Screen.dpi;
+            #endif
         }
+
+        private static float GetIOSScaleFactor()
+        {
+            // This should be replaced with actual scale factor detection
+            // For iPad Gen 9, scale factor is 2.0f. This is a simplified approach.
+            return Screen.width >= 2000 ? 2.0f : 1.0f; // Heuristic for iPad detection
+        }
+        #endif
     }
 }
