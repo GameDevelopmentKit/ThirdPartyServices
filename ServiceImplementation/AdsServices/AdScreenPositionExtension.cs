@@ -5,6 +5,11 @@
 
     public static class AdScreenPositionExtension
     {
+        #if UNITY_IOS && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern float _GetScreenScale();
+        #endif
+
         private const int MREC_WIDTH  = 300;
         private const int MREC_HEIGHT = 250;
 
@@ -47,18 +52,16 @@
 
         public static float PixelToDp(float pixel)
         {
-            #if UNITY_IOS
-            var scaleFactor = GetIOSScaleFactor();
-            return pixel * 160f / (Screen.dpi * scaleFactor);
-            #else
-            return pixel * 160f / Screen.dpi;
-            #endif
+            return pixel * 160f / (Screen.dpi * GetScaleFactor());
         }
 
-        private static float GetIOSScaleFactor()
+        private static float GetScaleFactor()
         {
-            // For iPad Gen 9, scale factor is 2.0f. This is a simplified approach.
-            return Screen.width >= 2000 ? 2.0f : 1.0f;
+            #if UNITY_IOS && !UNITY_EDITOR
+            return _GetScreenScale();
+            #else
+            return 1.0f;
+            #endif
         }
     }
 }
