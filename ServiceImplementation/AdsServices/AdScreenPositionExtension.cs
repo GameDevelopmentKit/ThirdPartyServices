@@ -2,6 +2,9 @@
 {
     using Core.AdsServices;
     using UnityEngine;
+#if UNITY_IOS && !UNITY_EDITOR
+    using System.Runtime.InteropServices;
+#endif
 
     public static class AdScreenPositionExtension
     {
