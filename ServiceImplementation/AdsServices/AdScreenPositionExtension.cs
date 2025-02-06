@@ -55,7 +55,9 @@
 
         public static float PixelToDp(float pixel)
         {
-            return pixel * 160f / (Screen.dpi * GetScaleFactor());
+            var scaleFactor = GetScaleFactor();
+            Debug.Log($"dmplog: pixel: {pixel}, dpi: {Screen.dpi}, scaleFactor: {scaleFactor}");
+            return pixel * 160f / (Screen.dpi * scaleFactor/2f);
         }
 
         private static float GetScaleFactor()
