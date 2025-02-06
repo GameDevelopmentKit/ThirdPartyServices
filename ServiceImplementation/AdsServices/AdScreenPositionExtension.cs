@@ -2,17 +2,9 @@
 {
     using Core.AdsServices;
     using UnityEngine;
-#if UNITY_IOS && !UNITY_EDITOR
-    using System.Runtime.InteropServices;
-#endif
 
     public static class AdScreenPositionExtension
     {
-        #if UNITY_IOS && !UNITY_EDITOR
-        [DllImport("__Internal")]
-        private static extern float _GetScreenScale();
-        #endif
-
         private const int MREC_WIDTH  = 300;
         private const int MREC_HEIGHT = 250;
 
@@ -23,14 +15,14 @@
 
         public static AdScreenPosition FlipY(this AdScreenPosition adScreenPosition)
         {
-            return new AdScreenPosition(PixelToDp(adScreenPosition.x), - PixelToDp(adScreenPosition.y));
+            return new AdScreenPosition(PixelToDp(adScreenPosition.x), -PixelToDp(adScreenPosition.y));
         }
 
         #if APPLOVIN
         public static AdScreenPosition ToApplovinPosition(this AdScreenPosition adScreenPosition)
         {
             // calculate in canvas coordinate system
-            var density    = MaxSdkUtils.GetScreenDensity();
+            var density = MaxSdkUtils.GetScreenDensity();
             var connerPosX = adScreenPosition.x - MREC_WIDTH  * density * (adScreenPosition.x / Screen.safeArea.width);
             var connerPosY = adScreenPosition.y - MREC_HEIGHT * density * (adScreenPosition.y / Screen.safeArea.height);
 
@@ -56,16 +48,15 @@
         public static float PixelToDp(float pixel)
         {
             var scaleFactor = GetScaleFactor();
-            Debug.Log($"dmplog: pixel: {pixel}, dpi: {Screen.dpi}, scaleFactor: {scaleFactor}");
-            return pixel * 160f / (Screen.dpi * scaleFactor/2f);
+            return pixel * 160f / (Screen.dpi * scaleFactor);
         }
 
         private static float GetScaleFactor()
         {
-            #if UNITY_IOS && !UNITY_EDITOR
-            return _GetScreenScale();
+            #if UNITY_IOS
+            return Screen.width > 1500 ? Screen.width / 1155f : 1; // after testing, 1155 is the best divider value for ipad
             #else
-            return 1.0f;
+            return 1f;
             #endif
         }
     }
