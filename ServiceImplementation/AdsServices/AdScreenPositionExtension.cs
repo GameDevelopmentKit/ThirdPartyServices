@@ -7,12 +7,12 @@
     {
         private const int MREC_WIDTH  = 300;
         private const int MREC_HEIGHT = 250;
-        
+
         public static AdScreenPosition CanvasToUnityCoordinateSystem(this AdScreenPosition adScreenPosition)
         {
             return new AdScreenPosition(adScreenPosition.x, Mathf.Abs(adScreenPosition.y - Screen.safeArea.height));
         }
-        
+
         public static AdScreenPosition FlipY(this AdScreenPosition adScreenPosition)
         {
             return new AdScreenPosition(PixelToDp(adScreenPosition.x), - PixelToDp(adScreenPosition.y));
@@ -44,7 +44,21 @@
             return new AdScreenPosition(connerPosX, connerPosY);
         }
         #endif
-        
-        public static float PixelToDp(float pixel) { return pixel * 160f / Screen.dpi; }
+
+        public static float PixelToDp(float pixel)
+        {
+            #if UNITY_IOS
+            var scaleFactor = GetIOSScaleFactor();
+            return pixel * 160f / (Screen.dpi * scaleFactor);
+            #else
+            return pixel * 160f / Screen.dpi;
+            #endif
+        }
+
+        private static float GetIOSScaleFactor()
+        {
+            // For iPad Gen 9, scale factor is 2.0f. This is a simplified approach.
+            return Screen.width >= 2000 ? 2.0f : 1.0f;
+        }
     }
 }
