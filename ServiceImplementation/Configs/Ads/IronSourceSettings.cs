@@ -23,13 +23,13 @@
                 #endif
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the default MREC ad identifier.
         /// </summary>
         public Dictionary<AdPlacement, AdId> MRECAdIds { get => this.mRECAdIds; set => this.mRECAdIds = value as Dictionary_AdPlacement_AdId; }
 
-        public string BannerId => this.bannerId;
+        public AdId BannerId => this.bannerId;
 
         public bool IsAdaptiveBanner => this.isAdaptiveBanner;
 
@@ -38,11 +38,11 @@
         [SerializeField] private bool isAdaptiveBanner = true;
 
         [SerializeField] [OnValueChanged("OnEnableAdQuality")] private bool enableAdQuality = true;
-        
-        [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Id")] private string bannerId;
+
+        [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Id")] private AdId bannerId;
 
         [SerializeField] [LabelText("MREC")] [BoxGroup("Custom Id")] private Dictionary_AdPlacement_AdId mRECAdIds;
-        
+
         #if UNITY_EDITOR
         private void OnEnableAdQuality()
         {

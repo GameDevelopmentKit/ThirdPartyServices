@@ -344,7 +344,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 mrecAd.HideAd();
             }
         }
-        
+
         public void DestroyMREC(string placement)
         {
             if (!this.isLevelPlayInitialized) return;
@@ -439,7 +439,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                    BannerAdsPosition.Top => LevelPlayBannerPosition.TopCenter,
                                    _                     => LevelPlayBannerPosition.BottomCenter
                                };
-                this.bannerAd = new(this.ironSourceSettings.BannerId, this.BannerSize(), position);
+                this.bannerAd = new(this.ironSourceSettings.BannerId.Id, this.BannerSize(), position);
 
                 this.bannerAd.OnAdLoaded     += this.OnBannerLoaded;
                 this.bannerAd.OnAdLoadFailed += this.OnBannerLoadFailed;
