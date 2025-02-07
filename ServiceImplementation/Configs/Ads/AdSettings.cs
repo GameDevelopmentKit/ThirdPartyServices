@@ -32,7 +32,6 @@
 
         #region Misc
 
-        public bool   EnableInterCappingTimeFocus  => this.enableInterCappingTimeFocus;
         public bool   EnableBreakAds               => this.enableBreakAds;
         public bool   IsBreakAdsRewardCurrency     => this.isBreakAdsRewardCurrency;
         public string BreakAdsRewardCurrency       => this.breakAdsRewardCurrency;
@@ -59,8 +58,6 @@
         public BannerAdsPosition BannerPosition => this.mBannerPosition;
 
         [SerializeField] [FoldoutGroup("Misc")] [LabelText("Banner Position", SdfIconType.BookmarkFill)] private BannerAdsPosition mBannerPosition = BannerAdsPosition.Bottom;
-
-        [SerializeField] [FoldoutGroup("Misc")] [LabelText("Enable Inter Capping Time Focus", SdfIconType.Download)] private bool enableInterCappingTimeFocus;
 
         [SerializeField] [FoldoutGroup("Misc/Break Ads")] [LabelText("Break Ads Screen", SdfIconType.CupStraw)] private bool enableBreakAds;
 
