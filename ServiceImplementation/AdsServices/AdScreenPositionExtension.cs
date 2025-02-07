@@ -47,8 +47,7 @@
 
         public static float PixelToDp(float pixel)
         {
-            var scaleFactor = GetScaleFactor();
-            return pixel * 160f / (Screen.dpi * scaleFactor);
+            return pixel * 160f / (Screen.dpi * GetScaleFactor());
         }
 
         private static float GetScaleFactor()
