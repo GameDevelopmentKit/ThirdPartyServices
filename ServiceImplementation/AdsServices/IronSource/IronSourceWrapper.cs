@@ -434,6 +434,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                     return;
                 }
 
+                this.DestroyBannerAd(); // unlisten old banner
+
                 var position = bannerAdsPosition switch
                                {
                                    BannerAdsPosition.Top => LevelPlayBannerPosition.TopCenter,
