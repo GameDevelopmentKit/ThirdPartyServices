@@ -1,8 +1,6 @@
 {
   "name": "3rd.RemoteConfig.DI",
   "references": [
-    "ByteBrew",
-    "3rd.RemoteConfig.ByteBrew",
     "3rd.RemoteConfig.FireBase",
     "GameFoundation.Signals",
     "GameFoundation.Utilities",

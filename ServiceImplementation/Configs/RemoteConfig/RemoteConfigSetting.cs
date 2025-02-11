@@ -16,8 +16,6 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     public class RemoteConfigSetting : ScriptableObject
     {
         private const string FireBaseRemoteConfigSymbol = "FIREBASE_REMOTE_CONFIG";
-        private const string ByteBrewRemoteConfigSymbol = "BYTEBREW_REMOTE_CONFIG";
-        private const string ByteBrewSymbol             = "BYTEBREW";
 
         public static string ResourcePath = $"GameConfigs/{nameof(RemoteConfigSetting)}";
 
@@ -62,7 +60,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             #region AOA
 
-            this.TryAddAddsConfig(RemoteConfigKey.AOALoadingThreshold, "5");
+            this.TryAddAddsConfig(RemoteConfigKey.AOALoadingThreshold, "2");
             this.TryAddAddsConfig(RemoteConfigKey.MinPauseSecondToShowAoaAD, "0");
             this.TryAddAddsConfig(RemoteConfigKey.AoaStartSession, "2");
             this.TryAddAddsConfig(RemoteConfigKey.UseAoaAdmob, "true");
@@ -115,8 +113,6 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         public void OnRemoteConfigProviderTypeChanged()
         {
             EditorUtils.SetDefineSymbol(FireBaseRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.FireBase);
-            EditorUtils.SetDefineSymbol(ByteBrewRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew);
-            if (this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew) EditorUtils.SetDefineSymbol(ByteBrewSymbol, true);
         }
 
         [Button]

@@ -2,9 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
-    #endif
+#endif
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -15,11 +15,11 @@
         {
             get
             {
-                #if UNITY_ANDROID
+#if UNITY_ANDROID
                 return this.mAppId.AndroidId;
-                #else
+#else
                 return this.mAppId.IosId;
-                #endif
+#endif
             }
         }
 
@@ -29,14 +29,15 @@
 
         [SerializeField] private bool isAdaptiveBanner = true;
 
-        [SerializeField] [OnValueChanged("OnEnableAdQuality")] private bool enableAdQuality = true;
+        [SerializeField] [OnValueChanged("OnEnableAdQuality")]
+        private bool enableAdQuality = true;
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         private void OnEnableAdQuality()
         {
-            EditorUtils.ModifyPackage(this.enableAdQuality, "com.theone.ironsource-adquality", "git@github.com:The1Studio/UnityAdQualitySDK.git");
+            //EditorUtils.ModifyPackage(this.enableAdQuality, "com.theone.ironsource-adquality", "git@github.com:The1Studio/UnityAdQualitySDK.git");
         }
-        #endif
+#endif
 
         public enum IronSourceBannerType
         {

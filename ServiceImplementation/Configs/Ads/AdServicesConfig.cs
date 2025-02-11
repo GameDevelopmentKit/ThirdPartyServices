@@ -31,23 +31,20 @@ namespace ServiceImplementation.Configs.Ads
             this.FetchRemoteConfig(); // Init default value
         }
 
-        public void Dispose()
-        {
-            this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.FetchRemoteConfig);
-        }
+        public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.FetchRemoteConfig); }
 
         #region General
 
-        public bool EnableBannerAd               { get; private set; }
-        public bool EnableInterstitialAd         { get; private set; }
-        public bool EnableMRECAd                 { get; private set; }
-        public bool EnableAOAAd                  { get; private set; }
-        public bool EnableRewardedAd             { get; private set; }
-        public bool EnableRewardedInterstitialAd { get; private set; }
-        public bool EnableNativeAd               { get; private set; }
-        public bool EnableCollapsibleBanner      { get; private set; }
-        public int  IntervalLoadAds              { get; private set; }
-        public bool EnableAds                    { get; private set; } = false;
+        public bool EnableBannerAd                      { get; private set; }
+        public bool EnableInterstitialAd                { get; private set; }
+        public bool EnableMRECAd                        { get; private set; }
+        public bool EnableAOAAd                         { get; private set; }
+        public bool EnableRewardedAd                    { get; private set; }
+        public bool EnableRewardedInterstitialAd        { get; private set; }
+        public bool EnableNativeAd                      { get; private set; }
+        public bool EnableCollapsibleBanner             { get; private set; }
+        public int  IntervalLoadAds                     { get; private set; }
+        public bool EnableAds                           { get; private set; } = false;
 
         #endregion
 
@@ -144,9 +141,9 @@ namespace ServiceImplementation.Configs.Ads
             this.EnableRewardedAd             = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableRewardedAD) && this.EnableAds;
             this.EnableRewardedInterstitialAd = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableRewardedInterstitialAD) && this.EnableAds;
             this.EnableNativeAd               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableNativeAD) && this.EnableAds;
-            #if THEONE_COLLAPSIBLE_BANNER
+#if MIRAI_COLLAPSIBLE_BANNER
             this.EnableCollapsibleBanner = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBanner) && this.EnableAds;
-            #endif
+#endif
             this.IntervalLoadAds = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.IntervalLoadAds);
 
             #endregion
@@ -179,11 +176,12 @@ namespace ServiceImplementation.Configs.Ads
 
             #region Collapsible
 
-            this.CollapsibleBannerADInterval              = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerADInterval);
-            this.CollapsibleBannerExpandOnRefreshInterval = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerExpandOnRefreshInterval);
-            this.EnableCollapsibleBannerFallback          = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBannerFallback);
-            this.CollapsibleBannerAutoRefreshEnabled      = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerAutoRefreshEnabled);
-            this.CollapsibleBannerExpandOnRefreshEnabled  = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled);
+            this.CollapsibleBannerADInterval = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerADInterval);
+            this.CollapsibleBannerExpandOnRefreshInterval =
+                RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerExpandOnRefreshInterval);
+            this.EnableCollapsibleBannerFallback         = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBannerFallback);
+            this.CollapsibleBannerAutoRefreshEnabled     = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerAutoRefreshEnabled);
+            this.CollapsibleBannerExpandOnRefreshEnabled = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled);
 
             #endregion
         }

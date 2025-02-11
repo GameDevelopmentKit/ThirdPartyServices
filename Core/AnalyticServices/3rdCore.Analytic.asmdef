@@ -7,9 +7,7 @@
     "VContainer",
     "GameFoundation.Utilities",
     "GameFoundation.Models",
-    "ByteBrewSDK",
-    "3rd.Configs.Editor",
-    "ByteBrewSDK.Editor"
+    "3rd.Configs.Editor"
   ],
   "versionDefines": [
     {
