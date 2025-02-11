@@ -476,13 +476,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void DestroyBannerAd()
         {
+            this.isLoadedBanner = false;
+            if(this.bannerAd == null) return;
             this.bannerAd.OnAdLoaded     -= this.OnBannerLoaded;
             this.bannerAd.OnAdLoadFailed -= this.OnBannerLoadFailed;
             this.bannerAd.OnAdClicked    -= this.OnBannerClicked;
             this.bannerAd.OnAdDisplayed  -= this.BannerOnAdScreenPresentedEvent;
             this.bannerAd.OnAdCollapsed  -= this.BannerOnAdScreenDismissedEvent;
             this.bannerAd.DestroyAd();
-            this.isLoadedBanner = false;
         }
 
         public bool IsInterstitialAdReady(string place)
