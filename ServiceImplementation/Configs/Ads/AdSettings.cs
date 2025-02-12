@@ -33,6 +33,8 @@
         #region Misc
 
         public bool   EnableBreakAds               => this.enableBreakAds;
+        public float  TimeDelayShowInterBreakAds   => this.timeDelayShowInterBreakAds;
+        public float  TimeDelayCloseBreakAdsPopup  => this.timeDelayCloseBreakAdsPopup;
         public bool   IsBreakAdsRewardCurrency     => this.isBreakAdsRewardCurrency;
         public string BreakAdsRewardCurrency       => this.breakAdsRewardCurrency;
         public int    BreakAdsRewardCurrencyAmount => this.breakAdsRewardCurrencyAmount;
@@ -60,6 +62,10 @@
         [SerializeField] [FoldoutGroup("Misc")] [LabelText("Banner Position", SdfIconType.BookmarkFill)] private BannerAdsPosition mBannerPosition = BannerAdsPosition.Bottom;
 
         [SerializeField] [FoldoutGroup("Misc/Break Ads")] [LabelText("Break Ads Screen", SdfIconType.CupStraw)] private bool enableBreakAds;
+        
+        [SerializeField] [FoldoutGroup("Misc/Break Ads")] [ShowIf(nameof(enableBreakAds))] [LabelText("Delay Show Interstitial")] private float timeDelayShowInterBreakAds  = 0.5f;
+
+        [SerializeField] [FoldoutGroup("Misc/Break Ads")] [ShowIf(nameof(enableBreakAds))] [LabelText("Delay Close Popup")] private float timeDelayCloseBreakAdsPopup = 2f;
 
         [SerializeField] [FoldoutGroup("Misc/Break Ads")] [ShowIf(nameof(enableBreakAds))] [LabelText("Is Reward Currency")] private bool isBreakAdsRewardCurrency;
 
