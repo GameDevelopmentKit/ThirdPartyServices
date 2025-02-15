@@ -15,26 +15,19 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using UnityEngine;
     using GameFoundation.Signals;
     using UnityEngine.Scripting;
-#if THEONE_IAP
+    #if THEONE_IAP
     using AppsFlyerConnector;
-#endif
+    #endif
 
     public class AppsflyerTracker : BaseTracker
     {
-        private readonly   ILogService                       logger;
-        private readonly   AnalyticsEventCustomizationConfig customizationConfig;
-        protected override TaskCompletionSource<bool>        TrackerReady { get; } = new();
-
-        protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
-        {
-            { typeof(IapTransactionDidSucceed), this.TrackIAP },
-            { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
-        };
+        private readonly AnalyticsEventCustomizationConfig customizationConfig;
+        private readonly ILogService                       logger;
 
         [Preserve]
         public AppsflyerTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
-            this.logger = logger;
+            this.logger              = logger;
             this.customizationConfig = customizationConfig;
 
             if (customizationConfig.CustomEventKeys.Count == 0)
@@ -42,6 +35,14 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
             }
         }
+        protected override TaskCompletionSource<bool> TrackerReady { get; } = new();
+
+        protected override Dictionary<Type, EventDelegate> CustomEventDelegates =>
+            new()
+            {
+                { typeof(IapTransactionDidSucceed), this.TrackIAP },
+                { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
+            };
 
         protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
         protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
@@ -53,7 +54,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             Debug.Log($"setting up appsflyer tracker");
 
-            var apiId = this.analyticConfig.AppsflyerAppId;
+            var apiId  = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
 
             if (string.IsNullOrEmpty(apiId))
@@ -66,32 +67,33 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 throw new Exception("Appsflyer can't be initialized, Appsflyer DevKey not found");
             }
 
-#if UNITY_IOS || UNITY_STANDALONE_OSX
+            #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(apiId))
             {
                 Debug.LogError("Appsflyer can't be initialized, Appsflyer ApiKey not found");
                 this.TrackerReady.SetResult(false);
                 return this.TrackerReady.Task;
             }
-#endif
-            AppsFlyer.initSDK(devKey, apiId);
-#if UNITY_IOS && !UNITY_EDITOR
+            #endif
+            var appsflyerMono = AppsflyerMono.Create(this.signalBus);
+            AppsFlyer.initSDK(devKey, apiId, appsflyerMono);
+            #if UNITY_IOS && !UNITY_EDITOR
             AppsFlyer.waitForATTUserAuthorizationWithTimeoutInterval(60);
-#endif
-#if THEONE_MMP_DEBUG && !PRODUCTION
+            #endif
+            #if THEONE_MMP_DEBUG && !PRODUCTION
             AppsFlyer.setIsDebug(true);
-#endif
+            #endif
 
             //IAP Revenue connector
-#if THEONE_IAP
-            AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(this.signalBus), Store.GOOGLE);
-#if THEONE_MMP_DEBUG && !PRODUCTION
+            #if THEONE_IAP
+            AppsFlyerPurchaseConnector.init(appsflyerMono, Store.GOOGLE);
+            #if THEONE_MMP_DEBUG && !PRODUCTION
             AppsFlyerPurchaseConnector.setIsSandbox(true);
-#endif
+            #endif
             AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();
-#endif
+            #endif
 
             //Start SDK
             AppsFlyer.startSDK();
@@ -101,10 +103,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             return this.TrackerReady.Task;
         }
 
-        protected override void SetUserId(string userId)
-        {
-            AppsFlyer.setCustomerUserId(userId);
-        }
+        protected override void SetUserId(string userId) { AppsFlyer.setCustomerUserId(userId); }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
         {
