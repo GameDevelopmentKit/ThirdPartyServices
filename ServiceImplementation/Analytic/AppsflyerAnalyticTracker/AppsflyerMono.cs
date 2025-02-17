@@ -129,7 +129,11 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 
                 this.SignalBus.Fire(new EventTrackedSignal()
                 {
-                    TrackedEvent = new AttributionChanged(),
+                    TrackedEvent = new CustomEvent()
+                    {
+                        EventName = "AttributionChanged",
+                        EventProperties = dataDic
+                    },
                     ChangedProps = dataDic
                 });
             }

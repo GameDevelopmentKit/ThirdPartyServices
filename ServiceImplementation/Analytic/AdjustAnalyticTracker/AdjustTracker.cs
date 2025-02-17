@@ -128,7 +128,11 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                 
                 this.signalBus.Fire(new EventTrackedSignal()
                 {
-                    TrackedEvent = new AttributionChanged(),
+                    TrackedEvent = new CustomEvent()
+                    {
+                        EventName       = "AttributionChanged",
+                        EventProperties = dataDictionary
+                    },
                     ChangedProps = dataDictionary
                 });
             }
