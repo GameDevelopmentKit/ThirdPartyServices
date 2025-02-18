@@ -65,10 +65,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.SetDoNotSell(false);
 #endif
             
-            MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
 #if COLUMBUS
             ColumbusSdk.SetGDPRConsent(false);
 #endif
+            MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
             MaxSdk.InitializeSdk();
 
             await UniTask.WaitUntil(MaxSdk.IsInitialized);
