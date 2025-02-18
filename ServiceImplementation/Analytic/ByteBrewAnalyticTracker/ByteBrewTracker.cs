@@ -54,6 +54,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
             return this.TrackerReady.Task;
         }
+        
         private void OnIAPPurchaseSuccess(OnIAPPurchaseSuccessSignal obj)
         {
             var store = "Unknow";
@@ -83,9 +84,9 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         {
             if (data == null)
             {
-                ByteBrew.NewCustomEvent(name);
-                Debug.Log($"ByteBrew: OnEvent - {name}");
-
+                // Don't fire event if data is null to avoid noise events
+                // ByteBrew.NewCustomEvent(name);
+                // Debug.Log($"ByteBrew: OnEvent - {name}");
                 return;
             }
 
