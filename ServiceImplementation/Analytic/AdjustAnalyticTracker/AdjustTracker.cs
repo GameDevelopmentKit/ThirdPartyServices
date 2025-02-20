@@ -93,12 +93,13 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             var adjustConfig = new AdjustConfig(appToken, environment);
             adjustConfig.IsSendingInBackgroundEnabled = true;
             adjustConfig.AttributionChangedDelegate = this.OnAttributionChanged;
+            Debug.Log($"setting up adjust tracker with appToken: {appToken}");
             Adjust.InitSdk(adjustConfig);
             this.TrackerReady.SetResult(true);
 
             return this.TrackerReady.Task;
         }
-        
+
         // Handle attribution callback
         private void OnAttributionChanged(AdjustAttribution attributionData)
         {
@@ -113,7 +114,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                 this.logger.Log($"Click Label: {attributionData.ClickLabel}");
                 this.logger.Log($"Tracker Token: {attributionData.TrackerToken}");
                 this.logger.Log($"Tracker Name: {attributionData.TrackerName}");
-                
+
                 // Log all key-value pairs to a dictionary
                 var dataDictionary = new Dictionary<string, object>
                 {
@@ -125,7 +126,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                     { "TrackerToken", attributionData.TrackerToken },
                     { "TrackerName", attributionData.TrackerName }
                 };
-                
+
                 this.signalBus.Fire(new EventTrackedSignal()
                 {
                     TrackedEvent = new CustomEvent()
