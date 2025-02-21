@@ -85,9 +85,9 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(appToken))
             {
-                this.logger.LogError("onelog: Adjust can't be initialized, Adjust AppToken not found");
+                this.logger.Error("onelog: Adjust can't be initialized, Adjust AppToken not found");
                 this.TrackerReady.SetResult(false);
-                return this.TrackerReady.Task;
+                return UniTask.CompletedTask;
             }
 #endif
 
