@@ -11,7 +11,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     public class AppsflyerMono : MonoBehaviour, IAppsFlyerConversionData
 
     {
-        public SignalBus SignalBus;
+        private SignalBus signalBus;
 
         public void didReceivePurchaseRevenueValidationInfo(string validationInfo) { AppsFlyer.AFLog("didReceivePurchaseRevenueValidationInfo", validationInfo); }
 
@@ -20,7 +20,9 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             var IAPGameObject = new GameObject();
             DontDestroyOnLoad(IAPGameObject);
             IAPGameObject.name = "AppsflyerMono";
-            return IAPGameObject.AddComponent<AppsflyerMono>();
+            var appsflyerMono = IAPGameObject.AddComponent<AppsflyerMono>();
+            appsflyerMono.signalBus = signalBus;
+            return appsflyerMono;
         }
 
         // Handle successful conversion data
@@ -62,7 +64,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         // Analyze the conversion data dictionary
         private void HandleAttributionData(Dictionary<string, object> data)
         {
-            this.SignalBus.Fire(new EventTrackedSignal()
+            this.signalBus.Fire(new EventTrackedSignal()
             {
                 TrackedEvent = new CustomEvent()
                 {
