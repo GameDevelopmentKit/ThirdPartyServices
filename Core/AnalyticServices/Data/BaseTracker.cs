@@ -61,7 +61,7 @@ namespace Core.AnalyticServices.Data
         /// <summary>
         /// Must control init of the wrapped SDK in derived trackers
         /// </summary>
-        protected abstract UniTask TrackerSetup();
+        protected abstract void TrackerSetup();
 
         /// <summary>
         ///

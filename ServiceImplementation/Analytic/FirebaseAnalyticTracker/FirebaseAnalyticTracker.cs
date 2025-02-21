@@ -28,13 +28,11 @@
         protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
 
-        protected override UniTask TrackerSetup()
+        protected override void TrackerSetup()
         {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return UniTask.CompletedTask;
+            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return;
 
             this.TrackerReady.SetResult(true);
-
-            return UniTask.CompletedTask;
         }
 
         protected override void SetUserId(string userId)

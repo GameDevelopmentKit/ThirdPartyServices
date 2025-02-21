@@ -67,9 +67,9 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             Adjust.TrackEvent(adjustEvent);
         }
 
-        protected override UniTask TrackerSetup()
+        protected override void TrackerSetup()
         {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return UniTask.CompletedTask;
+            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return;
 
             this.logger.Log("onelog: setting up adjust tracker");
 
@@ -97,8 +97,6 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             this.logger.Log($"onelog: Init Adjust SDK: {appToken}");
             Adjust.InitSdk(adjustConfig);
             this.TrackerReady.SetResult(true);
-
-            return UniTask.CompletedTask;
         }
         
         // Handle attribution callback

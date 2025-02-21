@@ -38,9 +38,9 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates                                    { get; } = new();
 
-        protected override UniTask TrackerSetup()
+        protected override void TrackerSetup()
         {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return UniTask.CompletedTask;
+            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return;
 
             Debug.Log($"ByteBrew: Create ByteBrew GameObject");
             var byteBrewGameObject = new GameObject("ByteBrew");
@@ -52,8 +52,6 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             this.TrackerReady.SetResult(true);
             this.signalBus.Subscribe<AdRevenueSignal>(this.OnAdRevenueSignal);
             this.signalBus.Subscribe<OnIAPPurchaseSuccessSignal>(this.OnIAPPurchaseSuccess);
-
-            return UniTask.CompletedTask;
         }
         
         private void OnIAPPurchaseSuccess(OnIAPPurchaseSuccessSignal obj)
