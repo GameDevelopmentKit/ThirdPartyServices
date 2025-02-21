@@ -71,7 +71,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return UniTask.CompletedTask;
 
-            this.logger.Log("setting up adjust tracker");
+            this.logger.Log("onelog: setting up adjust tracker");
 
             var appToken = this.analyticConfig.AdjustAppToken;
 
@@ -140,7 +140,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             }
             else
             {
-                this.logger.Warning("Attribution data is null.");
+                this.logger.Warning("onelog: Attribution data is null.");
             }
         }
 
