@@ -6,6 +6,7 @@ namespace Core.AnalyticServices.Data
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
     using GameFoundation.Signals;
     using UnityEngine;
@@ -60,7 +61,7 @@ namespace Core.AnalyticServices.Data
         /// <summary>
         /// Must control init of the wrapped SDK in derived trackers
         /// </summary>
-        protected abstract Task TrackerSetup();
+        protected abstract UniTask TrackerSetup();
 
         /// <summary>
         ///

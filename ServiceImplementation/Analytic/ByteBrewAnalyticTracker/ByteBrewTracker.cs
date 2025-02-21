@@ -9,6 +9,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
     using Core.AnalyticServices.Signal;
+    using Cysharp.Threading.Tasks;
     using Newtonsoft.Json;
     using UnityEngine;
     using GameFoundation.Signals;
@@ -37,9 +38,9 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates                                    { get; } = new();
 
-        protected override Task TrackerSetup()
+        protected override UniTask TrackerSetup()
         {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
+            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return UniTask.CompletedTask;
 
             Debug.Log($"ByteBrew: Create ByteBrew GameObject");
             var byteBrewGameObject = new GameObject("ByteBrew");
@@ -52,7 +53,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             this.signalBus.Subscribe<AdRevenueSignal>(this.OnAdRevenueSignal);
             this.signalBus.Subscribe<OnIAPPurchaseSuccessSignal>(this.OnIAPPurchaseSuccess);
 
-            return this.TrackerReady.Task;
+            return UniTask.CompletedTask;
         }
         
         private void OnIAPPurchaseSuccess(OnIAPPurchaseSuccessSignal obj)

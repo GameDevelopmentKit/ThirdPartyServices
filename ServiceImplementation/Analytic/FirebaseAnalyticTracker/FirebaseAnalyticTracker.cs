@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Signals;
     using Newtonsoft.Json;
     using UnityEngine;
@@ -27,13 +28,13 @@
         protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
 
-        protected override Task TrackerSetup()
+        protected override UniTask TrackerSetup()
         {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
+            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return UniTask.CompletedTask;
 
             this.TrackerReady.SetResult(true);
 
-            return this.TrackerReady.Task;
+            return UniTask.CompletedTask;
         }
 
         protected override void SetUserId(string userId)

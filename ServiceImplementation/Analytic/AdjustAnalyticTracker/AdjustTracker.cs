@@ -10,6 +10,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
     using Core.AnalyticServices.Signal;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using GameFoundation.Signals;
@@ -61,16 +62,16 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                 eventDataString = string.Join(", ", data.Select(x => $"{x.Key}: {x.Value}"));
             }
 
-            Debug.Log($"Adjust: On Event {name} with data: {eventDataString}");
+            this.logger.Log($"onelog: Adjust: On Event {name} with data: {eventDataString}");
 
             Adjust.TrackEvent(adjustEvent);
         }
 
-        protected override Task TrackerSetup()
+        protected override UniTask TrackerSetup()
         {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
+            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return UniTask.CompletedTask;
 
-            Debug.Log("setting up adjust tracker");
+            this.logger.Log("setting up adjust tracker");
 
             var appToken = this.analyticConfig.AdjustAppToken;
 
@@ -84,7 +85,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(appToken))
             {
-                Debug.LogError("Adjust can't be initialized, Adjust AppToken not found");
+                this.logger.LogError("onelog: Adjust can't be initialized, Adjust AppToken not found");
                 this.TrackerReady.SetResult(false);
                 return this.TrackerReady.Task;
             }
@@ -93,10 +94,11 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             var adjustConfig = new AdjustConfig(appToken, environment);
             adjustConfig.IsSendingInBackgroundEnabled = true;
             adjustConfig.AttributionChangedDelegate = this.OnAttributionChanged;
+            this.logger.Log($"onelog: Init Adjust SDK: {appToken}");
             Adjust.InitSdk(adjustConfig);
             this.TrackerReady.SetResult(true);
 
-            return this.TrackerReady.Task;
+            return UniTask.CompletedTask;
         }
         
         // Handle attribution callback
@@ -148,7 +150,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (trackedevent is not IapTransactionDidSucceed iapTransaction)
             {
-                Debug.LogError("trackedEvent in TrackIAP is not of correct type");
+                this.logger.Error("onelog: trackedEvent in TrackIAP is not of correct type");
 
                 return;
             }
@@ -163,7 +165,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
-                Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
+                this.logger.Error("onelog: trackedEvent in AdsRevenue is not of correct type");
 
                 return;
             }
@@ -174,7 +176,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             adjustRevenue.AdRevenueUnit = adsRevenueEvent.AdUnit;
             adjustRevenue.AdRevenuePlacement = adsRevenueEvent.Placement;
             Adjust.TrackAdRevenue(adjustRevenue);
-            Debug.Log($"Adjust: On Event Ad Revenue");
+            this.logger.Log($"onelog: Adjust: On Event Ad Revenue");
         }
     }
 }
