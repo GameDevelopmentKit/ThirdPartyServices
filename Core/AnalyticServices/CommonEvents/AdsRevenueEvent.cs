@@ -25,16 +25,16 @@ namespace Core.AnalyticServices.CommonEvents
         public const string AdjustDataResidencyTR  = "data-residency-tr";
         public const string AdjustDataResidencyUS  = "data-residency-us";
 
-        public const string ARSourceAppLovinMAX      = "applovin_max_sdk";
+        public const string ARSourceAppLovinMAX      = "max";
         public const string ARSourceMopub            = "mopub";
-        public const string ARSourceAdMob            = "admob_sdk";
-        public const string ARSourceYandex           = "yandex_sdk";
-        public const string ARSourceIronSource       = "ironsource_sdk";
-        public const string ARSourceAdmost           = "admost_sdk";
-        public const string ARSourceUnity            = "unity_sdk";
-        public const string ARSourceHeliumChartboost = "helium_chartboost_sdk";
-        public const string ARSourcePublisher        = "publisher_sdk";
-        public const string ARSourceImmersiveAds     = "immersive_ads_sdk";
+        public const string ARSourceAdMob            = "admob";
+        public const string ARSourceYandex           = "yandex";
+        public const string ARSourceIronSource       = "levelplay";
+        public const string ARSourceAdmost           = "admost";
+        public const string ARSourceUnity            = "unity";
+        public const string ARSourceHeliumChartboost = "helium_chartboost";
+        public const string ARSourcePublisher        = "publisher";
+        public const string ARSourceImmersiveAds     = "immersive_ads";
     }
 
     #endregion
