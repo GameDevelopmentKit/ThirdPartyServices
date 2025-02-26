@@ -88,7 +88,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             {
                 this.logger.Error("onelog: Adjust can't be initialized, Adjust AppToken not found");
                 this.TrackerReady.SetResult(false);
-                return UniTask.CompletedTask;
+                return;
             }
 #endif
 
