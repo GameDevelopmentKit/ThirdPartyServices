@@ -69,6 +69,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
         protected override void TrackerSetup()
         {
+            this.logger.Log($"onelog: setting up adjust tracker check {this.TrackerReady.Task.Status.ToString()}");
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return;
 
             this.logger.Log("onelog: setting up adjust tracker");
