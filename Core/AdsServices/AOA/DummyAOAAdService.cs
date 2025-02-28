@@ -12,14 +12,10 @@ namespace Core.AdsServices
 
         public DummyAOAAdServiceIml(ILogService logService) { this.logService = logService; }
 
-        public bool IsAOAReady()
-        {
-            return true;
-        }
-        
-        public void ShowAOAAds(string placement)
-        {
-            this.logService.Log("Dummy show app open ad");
-        }
+        public bool IsAOAReady() { return true; }
+
+        public void ShowAOAAds(string placement) { this.logService.Log("Dummy show app open ad"); }
+
+        public int Order => 0;
     }
 }

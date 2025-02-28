@@ -130,6 +130,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.LoadAppOpenAd();
         }
 
+        public int Order => 0;
+
         private LoadedAppOpenAd aoaAdLoadedInstance = new();
         private string          aoaAdPlacement;
 
