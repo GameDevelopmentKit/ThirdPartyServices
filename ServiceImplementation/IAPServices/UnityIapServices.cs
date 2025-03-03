@@ -9,6 +9,7 @@ namespace ServiceImplementation.IAPServices
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
     using Newtonsoft.Json;
+    using ServiceImplementation.IAPServices.Receipt;
     using ServiceImplementation.IAPServices.Signals;
     using Unity.Services.Core;
     using Unity.Services.Core.Environments;
@@ -90,10 +91,10 @@ namespace ServiceImplementation.IAPServices
         {
             return productType switch
             {
-                ProductType.Consumable    => UnityEngine.Purchasing.ProductType.Consumable,
-                ProductType.Subscription  => UnityEngine.Purchasing.ProductType.Subscription,
+                ProductType.Consumable => UnityEngine.Purchasing.ProductType.Consumable,
+                ProductType.Subscription => UnityEngine.Purchasing.ProductType.Subscription,
                 ProductType.NonConsumable => UnityEngine.Purchasing.ProductType.NonConsumable,
-                _                         => UnityEngine.Purchasing.ProductType.Consumable,
+                _ => UnityEngine.Purchasing.ProductType.Consumable,
             };
         }
 
@@ -133,7 +134,7 @@ namespace ServiceImplementation.IAPServices
                     this.logger.Log($"onelog: IAP Purchasing product asychronously: '{product.definition.id}'");
 
                     this.onPurchaseComplete = onComplete;
-                    this.onPurchaseFailed = onFailed;
+                    this.onPurchaseFailed   = onFailed;
                     this.mStoreController.InitiatePurchase(product);
                 }
                 else
@@ -154,7 +155,7 @@ namespace ServiceImplementation.IAPServices
         // Apple currently requires explicit purchase restoration for IAP, conditionally displaying a password prompt.
         public void RestorePurchases(Action onComplete = null, Action onFailed = null)
         {
-            #if FAKE_RESTORE_PURCHASE
+#if FAKE_RESTORE_PURCHASE
             foreach (var iapPack in this.iapPacks)
             {
                 this.signalBus.Fire(new UnityIAPOnRestorePurchaseCompleteSignal(iapPack.Value.Id));
@@ -164,7 +165,7 @@ namespace ServiceImplementation.IAPServices
 
             return;
 
-            #endif
+#endif
 
             // If Purchasing has not yet been set up ...
             if (!this.IsInitialized)
@@ -228,11 +229,11 @@ namespace ServiceImplementation.IAPServices
 
             if (!pd.hasReceipt) return false;
             // presume validity if not validate receipt.
-            #if !UNITY_EDITOR
+#if !UNITY_EDITOR
             var isValid = this.ValidateReceipt(pd.receipt, out var purchaseReceipts);
 
             return isValid;
-            #endif
+#endif
             return true;
         }
 
@@ -264,7 +265,7 @@ namespace ServiceImplementation.IAPServices
 
             var isValidReceipt = true; // presume validity for platforms with no receipt validation.
             // Unity IAP's receipt validation is only available for Apple app stores and Google Play store.
-            #if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS
+#if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS
 
             byte[] googlePlayTangleData = null;
             byte[] appleTangleData      = null;
@@ -277,9 +278,9 @@ namespace ServiceImplementation.IAPServices
             // googlePlayTangleData = GooglePlayTangle.Data();
             // #endif
 
-            #if (UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS) && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS) && !UNITY_EDITOR
             appleTangleData = AppleTangle.Data();
-            #endif
+#endif
 
             // Prepare the validator with the secrets we prepared in the Editor obfuscation window.
             var validator = new CrossPlatformValidator(googlePlayTangleData, appleTangleData, Application.identifier);
@@ -318,7 +319,7 @@ namespace ServiceImplementation.IAPServices
             {
                 isValidReceipt = false;
             }
-            #endif
+#endif
 
             return isValidReceipt;
         }
@@ -337,9 +338,10 @@ namespace ServiceImplementation.IAPServices
 
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
-            var productId = args.purchasedProduct.definition.id;
-            var receipt   = args.purchasedProduct.receipt;
-            var quantity  = this.GetPurchaseQuantityFromReceipt(receipt);
+            var productId   = args.purchasedProduct.definition.id;
+            var receiptData = ReceiptHelper.ParseReceipt(args.purchasedProduct.receipt);
+            
+            var quantity  = receiptData.Quantity;
 
             this.logger.Log($"onelog: IAP ProcessPurchase {productId} quantity: {quantity}");
 
@@ -358,24 +360,18 @@ namespace ServiceImplementation.IAPServices
             return PurchaseProcessingResult.Complete;
         }
 
-        private int GetPurchaseQuantityFromReceipt(string receipt)
+        private bool IsPurchaseInSandbox(string receipt)
         {
-            #if UNITY_IOS
-            return 1;
-            #endif
-
             try
             {
-                var googlePlayReceipt       = JsonConvert.DeserializeObject<GooglePlayReceipt>(receipt);
-                var playReceiptPlayload     = JsonConvert.DeserializeObject<GooglePlayReceiptPlayload>(googlePlayReceipt.Payload);
-                var playReceiptPlayloadJson = JsonConvert.DeserializeObject<GooglePlayReceiptPayloadJson>(playReceiptPlayload.json);
+                IIAPReceipt receiptData = JsonConvert.DeserializeObject<IOSReceipt>(receipt);
 
-                return playReceiptPlayloadJson.quantity;
+                return receiptData.IsSandbox;
             }
             catch (Exception e)
             {
                 this.logger.Log($"onelog: IAP Fail GetPurchaseQuantityFromReceipt {e.Message}");
-                return 1; // Default to 1 if quantity is not available or parsing fails
+                return true; // can't determine if sandbox or not, default to true
             }
         }
 
