@@ -8,7 +8,6 @@ namespace ServiceImplementation.IAPServices
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
-    using Newtonsoft.Json;
     using ServiceImplementation.IAPServices.Receipt;
     using ServiceImplementation.IAPServices.Signals;
     using Unity.Services.Core;
@@ -360,43 +359,6 @@ namespace ServiceImplementation.IAPServices
 
             return PurchaseProcessingResult.Complete;
         }
-
-        private bool IsPurchaseInSandbox(string receipt)
-        {
-            try
-            {
-                IIAPReceipt receiptData = JsonConvert.DeserializeObject<IOSReceipt>(receipt);
-
-                return receiptData.IsSandbox;
-            }
-            catch (Exception e)
-            {
-                this.logger.Log($"onelog: IAP Fail GetPurchaseQuantityFromReceipt {e.Message}");
-                return true; // can't determine if sandbox or not, default to true
-            }
-        }
-
-        #region Google Play Receipt Quantity
-
-        [Preserve]
-        public record GooglePlayReceipt
-        {
-            [Preserve] public string Payload { get; set; }
-        }
-
-        [Preserve]
-        public class GooglePlayReceiptPlayload
-        {
-            [Preserve] public string json { get; set; }
-        }
-
-        [Preserve]
-        public class GooglePlayReceiptPayloadJson
-        {
-            [Preserve] public int quantity { get; set; }
-        }
-
-        #endregion
 
         public void OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
         {
