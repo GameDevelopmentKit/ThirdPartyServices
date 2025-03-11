@@ -339,6 +339,7 @@ namespace ServiceImplementation.IAPServices
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
             var productId   = args.purchasedProduct.definition.id;
+            this.logger.LogWithColor(args.purchasedProduct.receipt, Color.green);
             var receiptData = ReceiptHelper.ParseReceipt(args.purchasedProduct.receipt);
             
             var quantity  = receiptData.Quantity;
