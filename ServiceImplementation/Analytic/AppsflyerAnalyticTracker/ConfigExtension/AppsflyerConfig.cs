@@ -11,7 +11,8 @@ namespace Core.AnalyticServices
     /// </summary>
     public partial class AnalyticConfig
     {
-        private const string AppsflyerSymbol = "APPSFLYER";
+        public const  string AppsflyerPackageGitURL = "https://github.com/The1Studio/appsflyer.git?path=Assets/AppsFlyer#appsflyer_sdk-purchase_sdk";
+        private const string AppsflyerSymbol        = "APPSFLYER";
 
         [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")] [SerializeField] private bool isAppsflyerEnabled;
 
@@ -20,7 +21,7 @@ namespace Core.AnalyticServices
             #if UNITY_EDITOR
             EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
             //need to use this method because of the purchase connector, if we can import the purchase connector through UPM then we can change it
-            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "com.theone.appsflyer-unity-plugin", "https://github.com/The1Studio/appsflyer.git?path=Assets/AppsFlyer#appsflyer_sdk-purchase_sdk");
+            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "com.theone.appsflyer-unity-plugin", AppsflyerPackageGitURL);
             #endif
         }
 

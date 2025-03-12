@@ -15,7 +15,8 @@ namespace Core.AnalyticServices
     /// </summary>
     public partial class AnalyticConfig
     {
-        private const string ByteBrewSymbol = "BYTEBREW";
+        public const  string ByteBrewPackageGitURL = "https://github.com/ByteBrewIO/ByteBrewUnitySDK.git?path=UPMPackage#";
+        private const string ByteBrewSymbol        = "BYTEBREW";
 
         [BoxGroup("ByteBrew")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeByteBrewEnabled")] [SerializeField] private bool isByteBrewEnabled = true;
 
@@ -23,7 +24,7 @@ namespace Core.AnalyticServices
         private void OnChangeByteBrewEnabled()
         {
             #if UNITY_EDITOR
-            EditorUtils.ModifyPackage(this.isByteBrewEnabled, "com.bytebrew.unitysdk", "https://github.com/ByteBrewIO/ByteBrewUnitySDK.git?path=UPMPackage#");
+            EditorUtils.ModifyPackage(this.isByteBrewEnabled, "com.bytebrew.unitysdk", ByteBrewPackageGitURL);
             EditorUtils.SetDefineSymbol(ByteBrewSymbol, this.isByteBrewEnabled);
             #endif
         }
