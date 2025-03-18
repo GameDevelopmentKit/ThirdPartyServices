@@ -311,6 +311,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.idToMrecViewHandler.ForEach(x => this.HideMREC(x.Key));
         }
 
+        public void ShowMREC(string placement)
+        {
+            
+        }
+
         public void DestroyMREC(string placement)
         {
             var adsId          = this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;

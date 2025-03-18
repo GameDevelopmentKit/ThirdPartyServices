@@ -152,6 +152,29 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.UpdateMRecPosition(adsId, mrecPosition.x, mrecPosition.y);
             MaxSdk.ShowMRec(adsId);
         }
+        
+        public void ShowMREC(string placement)
+        {
+            if (!this.IsBannerPlacementReady(AdPlacement.Default.Name, out var id)) return;
+            Debug.Log($"oneLog: ApplovinAdsWrapper ShowMREC above banner");
+            
+            var bannerLayout = MaxSdk.GetBannerLayout(id);
+            if (bannerLayout == Rect.zero)
+            {
+                Debug.Log($"oneLog: layout is zero");
+                return;
+            }
+            var mrecWidth  = 300f;
+            var mrecHeight = 250f;
+    
+            var mrecX = bannerLayout.x + (bannerLayout.width - mrecWidth) / 2f;
+            var mrecY = bannerLayout.y - mrecHeight;
+    
+            var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            this.OnMRecAdDisplayed(adsId);
+            MaxSdk.UpdateMRecPosition(adsId, mrecX, mrecY);
+            MaxSdk.ShowMRec(adsId);
+        }
 
         public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {

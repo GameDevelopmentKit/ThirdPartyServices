@@ -7,5 +7,7 @@ namespace Core.AdsServices
         void HideMREC(string    placement);
         void DestroyMREC(string placement);
         void HideAllMREC();
+
+        void ShowMREC(string placement);
     }
 }
