@@ -168,7 +168,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var mrecHeight = 250f;
     
             var mrecX = bannerLayout.x + (bannerLayout.width - mrecWidth) / 2f;
-            var mrecY = bannerLayout.y - mrecHeight;
+            var mrecY = bannerLayout.y - mrecHeight - 20f;
     
             var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.OnMRecAdDisplayed(adsId);
