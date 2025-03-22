@@ -157,15 +157,15 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             if (!this.IsBannerPlacementReady(AdPlacement.Default.Name, out var id)) return;
             Debug.Log($"oneLog: ApplovinAdsWrapper ShowMREC above banner");
-            
-            var bannerLayout = MaxSdk.GetBannerLayout(id);
+            var dpi         = Screen.dpi == 0 ? 160 : Screen.dpi;
+            var bannerLayout  = MaxSdk.GetBannerLayout(id);
             if (bannerLayout == Rect.zero)
             {
                 Debug.Log($"oneLog: layout is zero");
                 return;
             }
-            var mrecWidth  = 300f;
-            var mrecHeight = 250f;
+            var mrecWidth  = 300f * dpi / 160f;
+            var mrecHeight = 250f * dpi / 160f;
     
             var mrecX = bannerLayout.x + (bannerLayout.width - mrecWidth) / 2f;
             var mrecY = bannerLayout.y - mrecHeight - 20f;
