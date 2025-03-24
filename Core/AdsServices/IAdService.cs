@@ -16,6 +16,7 @@ namespace Core.AdsServices
         void HideBannedAd();
 
         void DestroyBannerAd();
+        bool IsBannerAdReady();
 
         #endregion
 

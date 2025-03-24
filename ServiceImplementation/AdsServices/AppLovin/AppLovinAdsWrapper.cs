@@ -59,12 +59,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
 #if THEONE_ADS_DEBUG
             MaxSdk.SetCreativeDebuggerEnabled(true);
 #endif
-            
+
 #if BRAVESTARS
             MaxSdk.SetHasUserConsent(true);
             MaxSdk.SetDoNotSell(false);
 #endif
-            
+
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
 #if COLUMBUS
             ColumbusSdk.SetGDPRConsent(false);
@@ -232,6 +232,28 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public void HideBannedAd() { this.InternalHideBanner(AdPlacement.Default); }
 
         public void DestroyBannerAd() { this.InternalDestroyBanner(AdPlacement.Default); }
+
+        public bool IsBannerAdReady()
+        {
+            if (!this.isInit)
+            {
+                this.logService.Log("AppLovin SDK is not initialized.");
+                return false;
+            }
+
+            if (!this.IsBannerPlacementReady(AdPlacement.Default.Name, out var id))
+            {
+                this.logService.Log("Banner ad placement is not ready.");
+                return false;
+            }
+            if (this.IsRemoveAds())
+            {
+                this.logService.Log("Remove ads is enabled.");
+                return false;
+            }
+
+            return true;
+        }
 
         private bool IsBannerPlacementReady(string place, out string id)
         {
