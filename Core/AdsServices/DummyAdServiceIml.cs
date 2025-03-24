@@ -56,6 +56,10 @@ namespace Core.AdsServices
         {
             this.logService.Log($"Dummy destroy banner ad");
         }
+        public bool IsBannerAdReady()
+        {
+            return true;
+        }
 
         public bool IsInterstitialAdReady(string place)
         {

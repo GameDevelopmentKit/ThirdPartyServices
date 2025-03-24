@@ -120,6 +120,25 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.bannerView?.Destroy();
             this.bannerView = null;
         }
+        public bool IsBannerAdReady()
+        {
+            if (!this.isInitialized)
+            {
+                Debug.Log("AdMob SDK is not initialized.");
+                return false;
+            }
+            if (this.bannerView == null)
+            {
+                Debug.Log("Banner ad is not loaded.");
+                return false;
+            }
+            if (this.IsRemoveAds())
+            {
+                Debug.Log("Ads are removed.");
+                return false;
+            }
+            return true;
+        }
 
         #endregion
 
