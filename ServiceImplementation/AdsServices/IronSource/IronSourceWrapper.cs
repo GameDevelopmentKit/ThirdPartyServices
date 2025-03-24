@@ -486,6 +486,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.bannerAd.DestroyAd();
         }
 
+        public bool IsBannerAdReady()
+        {
+            return this.isLoadedBanner;
+        }
+
         public bool IsInterstitialAdReady(string place)
         {
             return IronSource.Agent.isInterstitialReady();

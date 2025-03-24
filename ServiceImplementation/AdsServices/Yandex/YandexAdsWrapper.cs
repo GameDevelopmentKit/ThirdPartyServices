@@ -149,6 +149,11 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         public void DestroyBannerAd() => this.banner?.Destroy();
 
+        public bool IsBannerAdReady()
+        {
+            return this.IsBannerAdLoaded;
+        }
+
         #endregion
 
         #endregion
