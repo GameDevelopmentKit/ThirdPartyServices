@@ -7,7 +7,8 @@
         "3rd.RemoteConfig",
         "3rd.Configs.Editor",
         "MaxSdk.Scripts.IntegrationManager.Editor",
-        "UniTask"
+        "UniTask",
+        "Amazon.Scripts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
