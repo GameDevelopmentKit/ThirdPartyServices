@@ -164,6 +164,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (this.adServices.Any(adService => adService.IsRemoveAds())) return;
 
             var adUnitId = this.ADMobSettings.AOAAdId.Id;
+            if(string.IsNullOrEmpty(adUnitId))return;
 
             if (this.aoaAdLoadedInstance is { IsAoaAdAvailable: true })
             {

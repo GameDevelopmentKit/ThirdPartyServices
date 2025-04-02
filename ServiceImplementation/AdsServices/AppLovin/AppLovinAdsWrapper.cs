@@ -59,11 +59,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
 #if ADS_DEBUG
             MaxSdk.SetCreativeDebuggerEnabled(true);
 #endif
-            this.InitAOAAds();
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
             MaxSdk.InitializeSdk();
 
             await UniTask.WaitUntil(MaxSdk.IsInitialized);
+            this.InitAOAAds();
             this.InitBannerAds();
             this.InitMRECAds();
             this.InitInterstitialAds();
@@ -352,7 +352,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return;
 
-            this.logService.Log($"applovin: InitAOAAds");
+            this.logService.Log($"applovin: InitAOAAds {this.AppLovinSetting.DefaultAOAAdId.Id}");
             MaxSdkCallbacks.AppOpen.OnAdHiddenEvent        += this.OnAppOpenDismissedEvent;
             MaxSdkCallbacks.AppOpen.OnAdLoadedEvent        += this.OnAppOpenLoadedEvent;
             MaxSdkCallbacks.AppOpen.OnAdLoadFailedEvent    += this.OnAppOpenLoadFailedEvent;
@@ -397,7 +397,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenLoadFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2)
         {
-            this.logService.Log($"OnAppOpenLoadFailedEvent: {arg2.Message}");
+            this.logService.Log($"OnAppOpenLoadFailedEvent: {this.AppLovinSetting.DefaultAOAAdId.Id}, {arg2.Message}");
             this.signalBus.Fire(new AppOpenLoadFailedSignal(arg1));
         }
 
