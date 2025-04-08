@@ -1,18 +1,22 @@
 namespace Core.AdsServices
 {
     using System;
+    using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.LogService;
+    using GameFoundation.Signals;
     using UnityEngine;
     using UnityEngine.Scripting;
 
     public class DummyAdServiceIml : IAdServices
     {
         private readonly ILogService logService;
+        private readonly SignalBus   signalBus;
 
         [Preserve]
-        public DummyAdServiceIml(ILogService logService)
+        public DummyAdServiceIml(ILogService logService, SignalBus signalBus)
         {
             this.logService = logService;
+            this.signalBus  = signalBus;
         }
 
         public void GrantDataPrivacyConsent()
@@ -64,6 +68,7 @@ namespace Core.AdsServices
 
         public void ShowInterstitialAd(string place)
         {
+            this.signalBus.Fire<InterstitialAdClosedSignal>(new(place, null));
             this.logService.Log($"Dummy show Interstitial ad at {place}");
         }
 
@@ -80,6 +85,7 @@ namespace Core.AdsServices
         public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
             onCompleted?.Invoke();
+            this.signalBus.Fire<RewardedAdClosedSignal>(new(place, null));
             this.logService.Log($"Dummy show Reward ad at {place} then do {onCompleted}");
         }
 
