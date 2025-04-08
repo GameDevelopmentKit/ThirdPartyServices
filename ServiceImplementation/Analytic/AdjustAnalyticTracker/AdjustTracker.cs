@@ -17,8 +17,6 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
     public class AdjustTracker : BaseTracker
     {
-        private readonly HashSet<string> eventTokens;
-        
         private readonly ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
@@ -41,6 +39,23 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
         protected override TaskCompletionSource<bool> TrackerReady    { get; } = new();
 
+        private readonly HashSet<string> eventTokens;
+        
+        // flow by source: https://dev.adjust.com/en/sdk/unity/integrations/admob
+        private readonly Dictionary<string, string> adRevenueSourceMapping = new()
+        {
+            { AdRevenueConstants.ARSourceAppLovinMAX, "applovin_max_sdk" },
+            { AdRevenueConstants.ARSourceMopub, "mopub" },
+            { AdRevenueConstants.ARSourceAdMob, "admob_sdk" },
+            { AdRevenueConstants.ARSourceYandex, "yandex_sdk" },
+            { AdRevenueConstants.ARSourceIronSource, "ironsource_sdk" },
+            { AdRevenueConstants.ARSourceAdmost, "admost_sdk" },
+            { AdRevenueConstants.ARSourceUnity, "unity_sdk" },
+            { AdRevenueConstants.ARSourceHeliumChartboost, "helium_chartboost_sdk" },
+            { AdRevenueConstants.ARSourcePublisher, "publisher_sdk" },
+            { AdRevenueConstants.ARSourceImmersiveAds, "immersive_ads_sdk" },
+        };
+        
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
         {
             { typeof(IapTransactionDidSucceed), this.TrackIAP },
@@ -178,7 +193,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                 return;
             }
 
-            var adjustRevenue = new AdjustAdRevenue(adsRevenueEvent.AdsRevenueSourceId);
+            var adjustRevenue = new AdjustAdRevenue(this.adRevenueSourceMapping[adsRevenueEvent.AdsRevenueSourceId]);
             adjustRevenue.SetRevenue(adsRevenueEvent.Revenue, adsRevenueEvent.Currency);
             adjustRevenue.AdRevenueNetwork = adsRevenueEvent.AdNetwork;
             adjustRevenue.AdRevenueUnit = adsRevenueEvent.AdUnit;
