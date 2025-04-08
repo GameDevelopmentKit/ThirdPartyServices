@@ -17,6 +17,8 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
     public class AdjustTracker : BaseTracker
     {
+        private readonly HashSet<string> eventTokens;
+        
         private readonly ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
@@ -30,6 +32,8 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             {
                 this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
             }
+            
+            this.eventTokens = this.analyticsEventCustomizationConfig.CustomEventKeys.Values.ToHashSet();
         }
 
         protected override HashSet<Type>              IgnoreEvents    => this.analyticsEventCustomizationConfig.IgnoreEvents;
@@ -45,9 +49,12 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps) { }
 
-        protected override void OnEvent(string name, Dictionary<string, object> data)
+        protected override void OnEvent(string eventToken, Dictionary<string, object> data)
         {
-            var adjustEvent = new AdjustEvent(name);
+            // Dont fire event that haven't defined token yet
+            if (!this.eventTokens.Contains(eventToken)) return;
+            
+            var adjustEvent = new AdjustEvent(eventToken);
 
             var eventDataString = "";
 
@@ -61,7 +68,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                 eventDataString = string.Join(", ", data.Select(x => $"{x.Key}: {x.Value}"));
             }
 
-            Debug.Log($"Adjust: On Event {name} with data: {eventDataString}");
+            this.logger.Log($"Adjust: OnEvent {eventToken} with data: {eventDataString}");
 
             Adjust.TrackEvent(adjustEvent);
         }
@@ -70,7 +77,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            Debug.Log("setting up adjust tracker");
+            this.logger.Log("setting up adjust tracker");
 
             var appToken = this.analyticConfig.AdjustAppToken;
 
@@ -84,7 +91,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(appToken))
             {
-                Debug.LogError("Adjust can't be initialized, Adjust AppToken not found");
+                this.logger.Error("Adjust can't be initialized, Adjust AppToken not found");
                 this.TrackerReady.SetResult(false);
                 return this.TrackerReady.Task;
             }
@@ -151,7 +158,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (trackedevent is not IapTransactionDidSucceed iapTransaction)
             {
-                Debug.LogError("trackedEvent in TrackIAP is not of correct type");
+                this.logger.Error("trackedEvent in TrackIAP is not of correct type");
 
                 return;
             }
@@ -166,7 +173,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
-                Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
+                this.logger.Error("trackedEvent in AdsRevenue is not of correct type");
 
                 return;
             }
@@ -177,7 +184,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             adjustRevenue.AdRevenueUnit = adsRevenueEvent.AdUnit;
             adjustRevenue.AdRevenuePlacement = adsRevenueEvent.Placement;
             Adjust.TrackAdRevenue(adjustRevenue);
-            Debug.Log($"Adjust: On Event Ad Revenue");
+            this.logger.Log($"Adjust: OnEvent Ad Revenue : {adsRevenueEvent.AdUnit} - {adsRevenueEvent.AdFormat} - {adsRevenueEvent.AdNetwork} - {adsRevenueEvent.Placement} - {adsRevenueEvent.Currency} - {adsRevenueEvent.Revenue}");
         }
     }
 }
