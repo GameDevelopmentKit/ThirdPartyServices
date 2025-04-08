@@ -93,6 +93,9 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             var adjustConfig = new AdjustConfig(appToken, environment);
             adjustConfig.IsSendingInBackgroundEnabled = true;
             adjustConfig.AttributionChangedDelegate = this.OnAttributionChanged;
+            #if THEONE_MMP_DEBUG && !PRODUCTION
+            adjustConfig.LogLevel = AdjustLogLevel.Verbose;
+            #endif
             Adjust.InitSdk(adjustConfig);
             this.TrackerReady.SetResult(true);
 
