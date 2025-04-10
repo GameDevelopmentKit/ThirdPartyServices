@@ -8,10 +8,21 @@
         public static bool TryGetPlacementId(string place, AdId defaultId, Dictionary<AdPlacement, AdId> customIds, out string id)
         {
             var placement = AdPlacement.PlacementWithName(place);
-            id = placement == AdPlacement.Default
-                ? defaultId?.Id
-                : FindIdForPlacement(customIds, placement);
-            
+
+            if (placement == null)
+            {
+                id = defaultId.Id;
+
+                return true;
+            }
+
+            id = FindIdForPlacement(customIds, placement);
+
+            if (string.IsNullOrEmpty(id))
+            {
+                id = defaultId.Id;
+            }
+
             return !string.IsNullOrEmpty(id);
         }
 
@@ -21,7 +32,7 @@
             {
                 return idObj.Id;
             }
-    
+
             return string.Empty;
         }
     }

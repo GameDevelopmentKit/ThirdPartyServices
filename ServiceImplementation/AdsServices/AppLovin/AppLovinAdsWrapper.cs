@@ -3,6 +3,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Core.AdsServices;
     using Core.AdsServices.Helpers;
     using Core.AdsServices.Signals;
@@ -137,7 +138,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public virtual void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
-            var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            var adsId = this.AppLovinSetting.MRECAdIds.First().Value.Id;
+
+            if (this.AppLovinSetting.MRECAdIds.ContainsKey(AdPlacement.PlacementWithName(placement)))
+            {
+                adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            }
+
             this.OnMRecAdDisplayed(adsId);
             var mrecPosition = position.CanvasToUnityCoordinateSystem().ToApplovinPosition() + offset.FlipY();
             MaxSdk.UpdateMRecPosition(adsId, mrecPosition.x, mrecPosition.y);
@@ -510,11 +517,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool TryGetRewardPlacementId(string place, out string id)
         {
-            return AdPlacementHelper.TryGetPlacementId(
-                place,
-                this.AppLovinSetting.DefaultRewardedAdId,
-                this.AppLovinSetting.CustomRewardedAdIds,
-                out id);
+            return AdPlacementHelper.TryGetPlacementId(place, this.AppLovinSetting.DefaultRewardedAdId, this.AppLovinSetting.CustomRewardedAdIds, out id);
         }
 
         public bool IsRewardedAdReady(string place)
