@@ -138,6 +138,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public virtual void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
+            if (this.AppLovinSetting.MRECAdIds.Count == 0)
+            {
+                return;
+            }
+
             var adsId = this.AppLovinSetting.MRECAdIds.First().Value.Id;
 
             if (this.AppLovinSetting.MRECAdIds.ContainsKey(AdPlacement.PlacementWithName(placement)))
@@ -153,7 +158,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsMRECReady(string placement, AdScreenPosition position)
         {
-            return this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var mrec) && this.MrectLoadedId.Contains(mrec.Id);
+            var adsId = this.AppLovinSetting.MRECAdIds.First().Value.Id;
+
+            if (this.AppLovinSetting.MRECAdIds.ContainsKey(AdPlacement.PlacementWithName(placement)))
+            {
+                adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            }
+
+            return this.MrectLoadedId.Contains(adsId);
         }
 
         public void HideMREC(string placement, AdScreenPosition position)

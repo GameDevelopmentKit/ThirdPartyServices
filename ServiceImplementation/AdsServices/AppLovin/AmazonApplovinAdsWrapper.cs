@@ -1,6 +1,7 @@
 #if APPLOVIN && APS_ENABLE
 namespace ServiceImplementation.AdsServices.AppLovin
 {
+    using System.Linq;
     using AmazonAds;
     using Core.AdsServices;
     using GameFoundation.Scripts.Utilities.LogService;
@@ -16,9 +17,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
         // Amazon Cache
         private AmazonApplovinSetting amazonSetting;
 
-        private bool isFirstInterstitialRequest = true;
+        private bool isFirstInterstitialRequest  = true;
         private bool isFirstRewardedVideoRequest = true;
-        private bool isFirstMRecRequest = true;
+        private bool isFirstMRecRequest          = true;
 
         private APSBannerAdRequest       bannerAdRequest;
         private APSBannerAdRequest       mRecAdsRequest;
@@ -28,7 +29,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         #endregion
 
         private const string AmazonResponseMessage = "amazon_ad_response";
-        private const string AmazonErrorMessage = "amazon_ad_error";
+        private const string AmazonErrorMessage    = "amazon_ad_error";
 
         [Preserve]
         public AmazonApplovinAdsWrapper(ILogService logService, ISignalBus signalBus, AdServicesConfig adServicesConfig,
@@ -57,18 +58,27 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public override void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             var amazonId = this.amazonSetting.AmazonMRecAdId.Id;
-            var id = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+
+            var id = this.AppLovinSetting.MRECAdIds.First().Value.Id;
+
+            if (this.AppLovinSetting.MRECAdIds.ContainsKey(AdPlacement.PlacementWithName(placement)))
+            {
+                id = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            }
+
             if (this.isFirstMRecRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstMRecRequest = false;
 
                 this.mRecAdsRequest = new APSBannerAdRequest(300, 250, amazonId);
+
                 this.mRecAdsRequest.onSuccess += response =>
                     {
                         MaxSdk.SetMRecLocalExtraParameter(id, AmazonResponseMessage, response.GetResponse());
                         base.ShowMREC(placement, position, offset);
                     }
                     ;
+
                 this.mRecAdsRequest.onFailedWithError += error =>
                 {
                     MaxSdk.SetMRecLocalExtraParameter(id, AmazonErrorMessage, error.GetAdError());
@@ -90,6 +100,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         protected override void InternalCreateBanner(string id, BannerAdsPosition position, BannerSize bannerSize)
         {
             var amazonId = this.amazonSetting.AmazonBannerAdId.Id;
+
             if (!string.IsNullOrEmpty(amazonId))
             {
                 this.bannerAdRequest = new APSBannerAdRequest(bannerSize.width, bannerSize.height, amazonId);
@@ -105,6 +116,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
                     MaxSdk.SetBannerLocalExtraParameter(id, AmazonResponseMessage, response.GetResponse());
                     this.CreateAdBanner(id, position, bannerSize);
                 };
+
                 this.bannerAdRequest.LoadAd();
             }
             else
@@ -122,16 +134,18 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (!this.TryGetInterstitialPlacementId(adPlacement.Name, out var id)) return;
 
             var amazonId = this.amazonSetting.AmazonInterstitialAdId.Id;
+
             if (this.isFirstInterstitialRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstInterstitialRequest = false;
-                this.interstitialAdRequest = new APSInterstitialAdRequest(amazonId);
+                this.interstitialAdRequest      = new APSInterstitialAdRequest(amazonId);
 
                 this.interstitialAdRequest.onSuccess += response =>
                 {
                     MaxSdk.SetInterstitialLocalExtraParameter(id, AmazonResponseMessage, response.GetResponse());
                     MaxSdk.LoadInterstitial(id);
                 };
+
                 this.interstitialAdRequest.onFailedWithError += error =>
                 {
                     MaxSdk.SetInterstitialLocalExtraParameter(id, AmazonErrorMessage, error.GetAdError());
@@ -152,10 +166,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (!this.TryGetRewardPlacementId(placement.Name, out var id)) return;
 
             var amazonId = this.amazonSetting.AmazonRewardedAdId.Id;
+
             if (this.isFirstRewardedVideoRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstRewardedVideoRequest = false;
-                this.rewardedVideoAdRequest = new APSVideoAdRequest(320, 480, amazonId);
+                this.rewardedVideoAdRequest      = new APSVideoAdRequest(320, 480, amazonId);
 
                 this.rewardedVideoAdRequest.onSuccess += response =>
                 {
