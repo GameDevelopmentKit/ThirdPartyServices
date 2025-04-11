@@ -5,7 +5,7 @@
 
     public static class AdPlacementHelper
     {
-        public static bool TryGetPlacementId(string place, AdId defaultId, Dictionary<AdPlacement, AdId> customIds, out string id)
+        public static bool TryGetPlacementId(string place, CrossPlatformValue defaultId, Dictionary<AdPlacement, CrossPlatformValue> customIds, out string id)
         {
             var placement = AdPlacement.PlacementWithName(place);
             id = placement == AdPlacement.Default
@@ -15,7 +15,7 @@
             return !string.IsNullOrEmpty(id);
         }
 
-        public static string FindIdForPlacement(Dictionary<AdPlacement, AdId> dict, AdPlacement placement)
+        public static string FindIdForPlacement(Dictionary<AdPlacement, CrossPlatformValue> dict, AdPlacement placement)
         {
             if (dict != null && dict.TryGetValue(placement, out var idObj) && idObj != null && !string.IsNullOrEmpty(idObj.Id)) return idObj.Id;
 

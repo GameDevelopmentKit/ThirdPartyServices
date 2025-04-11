@@ -21,7 +21,7 @@
         /// <summary>
         /// Gets or sets the default banner identifier.
         /// </summary>
-        public AdId DefaultBannerAdId
+        public CrossPlatformValue DefaultBannerAdId
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => !string.IsNullOrEmpty(this.mDefaultBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/2934735716","ca-app-pub-3940256099942544/6300978111") : this.mDefaultBannerAdId;
@@ -31,7 +31,7 @@
             set => this.mDefaultBannerAdId = value;
         }
 
-        public AdId CollapsibleBannerAdId
+        public CrossPlatformValue CollapsibleBannerAdId
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => !string.IsNullOrEmpty(this.mCollapsibleBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/8388050270","ca-app-pub-3940256099942544/2014213617") : this.mCollapsibleBannerAdId;
@@ -44,7 +44,7 @@
         /// <summary>
         /// Gets or sets the default interstitial ad identifier.
         /// </summary>
-        public AdId DefaultInterstitialAdId
+        public CrossPlatformValue DefaultInterstitialAdId
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => !string.IsNullOrEmpty(this.mDefaultInterstitialAdId.Id) ? new AdId("ca-app-pub-3940256099942544/4411468910","ca-app-pub-3940256099942544/1033173712") : this.mDefaultInterstitialAdId;
@@ -57,7 +57,7 @@
         /// <summary>
         /// Gets or sets the default rewarded ad identifier.
         /// </summary>
-        public AdId DefaultRewardedAdId
+        public CrossPlatformValue DefaultRewardedAdId
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => !string.IsNullOrEmpty(this.mDefaultRewardedAdId.Id) ? new AdId("ca-app-pub-3940256099942544/1712485313","ca-app-pub-3940256099942544/5224354917") : this.mDefaultRewardedAdId;
@@ -70,12 +70,12 @@
         /// <summary>
         /// Gets or sets the default rewarded interstitial ad identifier.
         /// </summary>
-        public AdId DefaultRewardedInterstitialAdId { get => this.mDefaultRewardedInterstitialAdId; set => this.mDefaultRewardedInterstitialAdId = value; }
+        public CrossPlatformValue DefaultRewardedInterstitialAdId { get => this.mDefaultRewardedInterstitialAdId; set => this.mDefaultRewardedInterstitialAdId = value; }
 
         /// <summary>
         /// Gets or sets the default AOA ad identifier.
         /// </summary>
-        public AdId AOAAdId
+        public CrossPlatformValue AOAAdId
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => !string.IsNullOrEmpty(this.mAoaAdId.Id) ? new AdId("ca-app-pub-3940256099942544/5575463023","ca-app-pub-3940256099942544/9257395921") : this.mAoaAdId;
@@ -88,7 +88,7 @@
         /// <summary>
         /// Gets or sets the default native ad identifier.
         /// </summary>
-        public List<AdId> NativeAdIds
+        public List<CrossPlatformValue> NativeAdIds
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => this.mNativeAdIds.Select(x => !string.IsNullOrEmpty(x.Id) ? new ("ca-app-pub-3940256099942544/3986624511", "ca-app-pub-3940256099942544/2247696110") : x).ToList();
@@ -101,7 +101,7 @@
         /// <summary>
         /// Gets or sets the default MREC ad identifier.
         /// </summary>
-        public Dictionary<AdPlacement, AdId> MRECAdIds
+        public Dictionary<AdPlacement, CrossPlatformValue> MRECAdIds
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => this.ConvertIdsToTestId(this.mRECAdIds, new("ca-app-pub-3940256099942544/2934735716", "ca-app-pub-3940256099942544/6300978111"));
@@ -111,8 +111,8 @@
             set => this.mRECAdIds = value as Dictionary_AdPlacement_AdId;
         }
 
-        private Dictionary<AdPlacement, AdId> ConvertIdsToTestId(Dictionary<AdPlacement, AdId> ids, AdId testId)
-            => ids.Select(x => new KeyValuePair<AdPlacement, AdId>(x.Key, !string.IsNullOrEmpty(x.Value.Id) ? testId : x.Value))
+        private Dictionary<AdPlacement, CrossPlatformValue> ConvertIdsToTestId(Dictionary<AdPlacement, CrossPlatformValue> ids, CrossPlatformValue testId)
+            => ids.Select(x => new KeyValuePair<AdPlacement, CrossPlatformValue>(x.Key, !string.IsNullOrEmpty(x.Value.Id) ? testId : x.Value))
                 .ToDictionary(x => x.Key, x => x.Value);
 
         /// <summary>
@@ -124,7 +124,7 @@
         /// Gets or sets the list of custom banner identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public override Dictionary<AdPlacement, AdId> CustomBannerAdIds
+        public override Dictionary<AdPlacement, CrossPlatformValue> CustomBannerAdIds
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => this.ConvertIdsToTestId(this.mCustomBannerAdIds, new("ca-app-pub-3940256099942544/2934735716", "ca-app-pub-3940256099942544/6300978111"));
@@ -138,7 +138,7 @@
         /// Gets or sets the list of custom interstitial ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds
+        public override Dictionary<AdPlacement, CrossPlatformValue> CustomInterstitialAdIds
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => this.ConvertIdsToTestId(this.mCustomInterstitialAdIds, new("ca-app-pub-3940256099942544/4411468910","ca-app-pub-3940256099942544/1033173712"));
@@ -152,7 +152,7 @@
         /// Gets or sets the list of custom rewarded ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds
+        public override Dictionary<AdPlacement, CrossPlatformValue> CustomRewardedAdIds
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
             get => this.ConvertIdsToTestId(this.mCustomRewardedAdIds, new("ca-app-pub-3940256099942544/1712485313","ca-app-pub-3940256099942544/5224354917"));
@@ -166,7 +166,7 @@
         /// Gets or sets the list of custom rewarded interstitial ad identifiers.
         /// Each identifier is associated with an ad placement.
         /// </summary>
-        public Dictionary<AdPlacement, AdId> CustomRewardedInterstitialAdIds { get => this.mCustomRewardedInterstitialAdIds; set => this.mCustomRewardedInterstitialAdIds = value as Dictionary_AdPlacement_AdId; }
+        public Dictionary<AdPlacement, CrossPlatformValue> CustomRewardedInterstitialAdIds { get => this.mCustomRewardedInterstitialAdIds; set => this.mCustomRewardedInterstitialAdIds = value as Dictionary_AdPlacement_AdId; }
 
         [OnInspectorInit]
         private void LoadAdmobSetting()
@@ -260,19 +260,19 @@
 
         [SerializeField] [LabelText("Enable Test Mode")] private bool mEnableTestMode;
 
-        [SerializeField] [LabelText("Banner")] [BoxGroup("Default Id")] private AdId mDefaultBannerAdId;
+        [SerializeField] [LabelText("Banner")] [BoxGroup("Default Id")] private CrossPlatformValue mDefaultBannerAdId;
 
-        [SerializeField] [LabelText("Collapsible Banner")] [BoxGroup("Default Id")] private AdId mCollapsibleBannerAdId;
+        [SerializeField] [LabelText("Collapsible Banner")] [BoxGroup("Default Id")] private CrossPlatformValue mCollapsibleBannerAdId;
 
-        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Default Id")] private AdId mDefaultInterstitialAdId;
+        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Default Id")] private CrossPlatformValue mDefaultInterstitialAdId;
 
-        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Default Id")] private AdId mDefaultRewardedAdId;
+        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Default Id")] private CrossPlatformValue mDefaultRewardedAdId;
 
-        [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Default Id")] private AdId mDefaultRewardedInterstitialAdId;
+        [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Default Id")] private CrossPlatformValue mDefaultRewardedInterstitialAdId;
 
-        [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")] private AdId mAoaAdId;
+        [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")] private CrossPlatformValue mAoaAdId;
 
-        [SerializeField] [LabelText("Native")] [BoxGroup("Default Id")] private List<AdId> mNativeAdIds;
+        [SerializeField] [LabelText("Native")] [BoxGroup("Default Id")] private List<CrossPlatformValue> mNativeAdIds;
 
         [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
 

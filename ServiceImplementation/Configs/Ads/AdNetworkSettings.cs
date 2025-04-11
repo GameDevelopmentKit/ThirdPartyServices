@@ -4,10 +4,10 @@ namespace ServiceImplementation.Configs.Ads
 
     public abstract class AdNetworkSettings
     {
-        public abstract Dictionary<AdPlacement, AdId> CustomBannerAdIds { get; set; }
+        public abstract Dictionary<AdPlacement, CrossPlatformValue> CustomBannerAdIds { get; set; }
 
-        public abstract Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get; set; }
+        public abstract Dictionary<AdPlacement, CrossPlatformValue> CustomInterstitialAdIds { get; set; }
 
-        public abstract Dictionary<AdPlacement, AdId> CustomRewardedAdIds { get; set; }
+        public abstract Dictionary<AdPlacement, CrossPlatformValue> CustomRewardedAdIds { get; set; }
     }
 }

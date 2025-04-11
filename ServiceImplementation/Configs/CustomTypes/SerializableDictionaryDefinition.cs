@@ -9,12 +9,12 @@
     }
 
     [Serializable]
-    public class StringAdIdSerializableDictionary : SerializableDictionary<string, AdId>
+    public class StringAdIdSerializableDictionary : SerializableDictionary<string, CrossPlatformValue>
     {
     }
 
     [Serializable]
-    public class Dictionary_AdPlacement_AdId : SerializableDictionary<AdPlacement, AdId>
+    public class Dictionary_AdPlacement_AdId : SerializableDictionary<AdPlacement, CrossPlatformValue>
     {
     }
 }

@@ -7,7 +7,7 @@
     /// Generic cross-platform identifier for ad resources.
     /// </summary>
     [Serializable]
-    public class AdId : CrossPlatformId
+    public class CrossPlatformValue : CrossPlatformId
     {
         /// <summary>
         /// Gets the ad ID for iOS platform.
@@ -21,7 +21,7 @@
         /// <value>The android identifier.</value>
         public override string AndroidId => Util.AutoTrimId(this.mAndroidId);
 
-        public AdId(string iOSId, string androidId)
+        public CrossPlatformValue(string iOSId, string androidId)
             : base(iOSId, androidId)
         {
         }

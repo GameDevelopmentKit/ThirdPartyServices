@@ -8,11 +8,11 @@
     [Serializable]
     public class YandexSettings : AdNetworkSettings
     {
-        public override Dictionary<AdPlacement, AdId> CustomBannerAdIds       { get; set; }
-        public override Dictionary<AdPlacement, AdId> CustomInterstitialAdIds { get; set; }
-        public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds     { get; set; }
+        public override Dictionary<AdPlacement, CrossPlatformValue> CustomBannerAdIds       { get; set; }
+        public override Dictionary<AdPlacement, CrossPlatformValue> CustomInterstitialAdIds { get; set; }
+        public override Dictionary<AdPlacement, CrossPlatformValue> CustomRewardedAdIds     { get; set; }
 
-        public AdId BannerAdId
+        public CrossPlatformValue BannerAdId
         {
             #if THEONE_ADS_DEBUG
             get => new ("demo-banner-yandex","demo-banner-yandex");
@@ -22,7 +22,7 @@
             set => this.mBannerAdId = value;
         }
 
-        public AdId InterstitialAdId
+        public CrossPlatformValue InterstitialAdId
         {
             #if THEONE_ADS_DEBUG
             get => new ("demo-interstitial-yandex","demo-interstitial-yandex");
@@ -32,7 +32,7 @@
             set => this.mInterstitialAdId = value;
         }
 
-        public AdId RewardedAdId
+        public CrossPlatformValue RewardedAdId
         {
             #if THEONE_ADS_DEBUG
             get => new ("demo-rewarded-yandex","demo-rewarded-yandex");
@@ -42,7 +42,7 @@
             set => this.mRewardedAdId = value;
         }
 
-        public AdId AoaAdId
+        public CrossPlatformValue AoaAdId
         {
             #if THEONE_ADS_DEBUG
             get => new ("demo-appopenad-yandex","demo-appopenad-yandex");
@@ -52,13 +52,13 @@
             set => this.mAoaAdId = value;
         }
 
-        [SerializeField] [LabelText("Banner")] [BoxGroup("Ads Id")] private AdId mBannerAdId;
+        [SerializeField] [LabelText("Banner")] [BoxGroup("Ads Id")] private CrossPlatformValue mBannerAdId;
 
-        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Ads Id")] private AdId mInterstitialAdId;
+        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Ads Id")] private CrossPlatformValue mInterstitialAdId;
 
-        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Ads Id")] private AdId mRewardedAdId;
+        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Ads Id")] private CrossPlatformValue mRewardedAdId;
 
-        [SerializeField] [LabelText("AOA")] [BoxGroup("Ads Id")] private AdId mAoaAdId;
+        [SerializeField] [LabelText("AOA")] [BoxGroup("Ads Id")] private CrossPlatformValue mAoaAdId;
 
         [SerializeField] [PropertyOrder(-1)] private YandexDashboard dashboard;
 
