@@ -67,7 +67,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
-            var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultBannerAdId.Id, AdFormatConstants.Banner);
+            var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultBannerAdId.DefaultValue, AdFormatConstants.Banner);
             var size = new AdSize(width, height);
             var position = bannerAdsPosition.ToAdMobAdPosition();
 
@@ -78,7 +78,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                 return;
             }
 
-            this.bannerView = new BannerView(this.config.DefaultBannerAdId.Id, size, position);
+            this.bannerView = new BannerView(this.config.DefaultBannerAdId.DefaultValue, size, position);
 
             #region Events
 
@@ -87,7 +87,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.bannerView.OnAdFullScreenContentOpened += OnAdFullScreenContentOpened;
             this.bannerView.OnAdFullScreenContentClosed += OnAddFullScreenContentClosed;
             this.bannerView.OnAdClicked += OnAdClicked;
-            this.bannerView.OnAdPaid += this.TrackAdRevenue(AdFormatConstants.Banner, AdFormatConstants.Banner, this.config.DefaultBannerAdId.Id);
+            this.bannerView.OnAdPaid += this.TrackAdRevenue(AdFormatConstants.Banner, AdFormatConstants.Banner, this.config.DefaultBannerAdId.DefaultValue);
 
             void OnBannerAdLoaded()
             {
@@ -144,7 +144,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             if (this.IsInterstitialAdReady(place)) return;
 
             var stopwatch = Stopwatch.StartNew();
-            InterstitialAd.Load(this.config.DefaultInterstitialAdId.Id, new AdRequest(), (ad, error) =>
+            InterstitialAd.Load(this.config.DefaultInterstitialAdId.DefaultValue, new AdRequest(), (ad, error) =>
             {
                 stopwatch.Stop();
                 if (error is not null)
@@ -153,7 +153,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     return;
                 }
 
-                var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultInterstitialAdId.Id, AdFormatConstants.Interstitial);
+                var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultInterstitialAdId.DefaultValue, AdFormatConstants.Interstitial);
                 this.signalBus.Fire(new InterstitialAdLoadedSignal(place, stopwatch.ElapsedMilliseconds, adInfo));
                 this.interstitialAd?.Destroy();
                 this.interstitialAd = ad;
@@ -163,7 +163,7 @@ namespace ServiceImplementation.AdsServices.AdMob
         public void ShowInterstitialAd(string place)
         {
             if (!this.IsInterstitialAdReady(place)) return;
-            var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultInterstitialAdId.Id, AdFormatConstants.Interstitial);
+            var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultInterstitialAdId.DefaultValue, AdFormatConstants.Interstitial);
 
             #region Events
 
@@ -171,7 +171,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.interstitialAd.OnAdFullScreenContentClosed += OnAddFullScreenContentClosed;
             this.interstitialAd.OnAdFullScreenContentFailed += _ => this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(place));
             this.interstitialAd.OnAdClicked += OnAdClicked;
-            this.interstitialAd.OnAdPaid += this.TrackAdRevenue(AdFormatConstants.Interstitial, place, this.config.DefaultInterstitialAdId.Id);
+            this.interstitialAd.OnAdPaid += this.TrackAdRevenue(AdFormatConstants.Interstitial, place, this.config.DefaultInterstitialAdId.DefaultValue);
 
             void OnAdFullScreenContentOpened()
             {
@@ -213,7 +213,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             if (this.IsRewardedAdReady(place)) return;
 
             var stopwatch = Stopwatch.StartNew();
-            RewardedAd.Load(this.config.DefaultRewardedAdId.Id, new AdRequest(), (ad, error) =>
+            RewardedAd.Load(this.config.DefaultRewardedAdId.DefaultValue, new AdRequest(), (ad, error) =>
             {
                 stopwatch.Stop();
                 if (error is not null)
@@ -222,7 +222,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                     return;
                 }
 
-                var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultRewardedAdId.Id, AdFormatConstants.Rewarded);
+                var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultRewardedAdId.DefaultValue, AdFormatConstants.Rewarded);
                 this.signalBus.Fire(new RewardedAdLoadedSignal(place, stopwatch.ElapsedMilliseconds, adInfo));
                 this.rewardedAd?.Destroy();
                 this.rewardedAd = ad;
@@ -232,7 +232,7 @@ namespace ServiceImplementation.AdsServices.AdMob
         public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
             if (!this.IsRewardedAdReady(place)) return;
-            var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultRewardedAdId.Id, AdFormatConstants.Rewarded);
+            var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultRewardedAdId.DefaultValue, AdFormatConstants.Rewarded);
 
             #region Events
 
@@ -240,7 +240,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.rewardedAd.OnAdFullScreenContentFailed += _ => OnAdFullScreenContentFailed();
             this.rewardedAd.OnAdClicked += OnAdClicked;
             this.rewardedAd.OnAdPaid += (_) => this.signalBus.Fire(new RewardedAdEligibleSignal(place));
-            this.rewardedAd.OnAdPaid += this.TrackAdRevenue(AdFormatConstants.Rewarded, place, this.config.DefaultRewardedAdId.Id);
+            this.rewardedAd.OnAdPaid += this.TrackAdRevenue(AdFormatConstants.Rewarded, place, this.config.DefaultRewardedAdId.DefaultValue);
 
             #endregion
 
@@ -307,7 +307,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         public void ShowCollapsibleBannerAd(bool useNewGuid, BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom)
         {
-            if (string.IsNullOrEmpty(this.config.CollapsibleBannerAdId.Id))
+            if (string.IsNullOrEmpty(this.config.CollapsibleBannerAdId.DefaultValue))
             {
                 Debug.Log("onelog: ShowCollapsibleBannerAd - CollapsibleBannerAdId is null or empty. Please check the AdMob settings.");
                 return;
@@ -325,13 +325,13 @@ namespace ServiceImplementation.AdsServices.AdMob
                 return;
             }
 
-            this.collapsibleBannerView                             =  new(this.config.CollapsibleBannerAdId.Id, adSize, position);
+            this.collapsibleBannerView                             =  new(this.config.CollapsibleBannerAdId.DefaultValue, adSize, position);
             this.collapsibleBannerView.OnBannerAdLoaded            += () => this.OnCollapsibleBannerLoaded(AdFormatConstants.CollapsibleBanner);
             this.collapsibleBannerView.OnBannerAdLoadFailed        += error => this.OnCollapsibleBannerLoadFailed(AdFormatConstants.CollapsibleBanner, error);
             this.collapsibleBannerView.OnAdFullScreenContentOpened += () => this.OnCollapsibleBannerPresented(AdFormatConstants.CollapsibleBanner);
             this.collapsibleBannerView.OnAdFullScreenContentClosed += () => this.OnCollapsibleBannerDismissed(AdFormatConstants.CollapsibleBanner);
             this.collapsibleBannerView.OnAdClicked                 += () => this.OnCollapsibleBannerClicked(AdFormatConstants.CollapsibleBanner);
-            this.collapsibleBannerView.OnAdPaid                    += this.TrackAdRevenue(AdFormatConstants.CollapsibleBanner, AdFormatConstants.CollapsibleBanner, this.config.CollapsibleBannerAdId.Id);
+            this.collapsibleBannerView.OnAdPaid                    += this.TrackAdRevenue(AdFormatConstants.CollapsibleBanner, AdFormatConstants.CollapsibleBanner, this.config.CollapsibleBannerAdId.DefaultValue);
 
             var request = new AdRequest();
             request.Extras.Add("collapsible_request_id", this.collapsibleBannerGuid);
@@ -361,7 +361,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private void OnCollapsibleBannerLoaded(string placement)
         {
-            var adInfo = new AdInfo(this.AdPlatform, this.config.CollapsibleBannerAdId.Id, AdFormatConstants.CollapsibleBanner);
+            var adInfo = new AdInfo(this.AdPlatform, this.config.CollapsibleBannerAdId.DefaultValue, AdFormatConstants.CollapsibleBanner);
             this.signalBus.Fire(new CollapsibleBannerAdLoadedSignal(placement, adInfo));
 
             Debug.Log("onelog: OnCollapsibleBannerLoaded");
@@ -386,7 +386,7 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private void OnCollapsibleBannerClicked(string placement)
         {
-            var adInfo = new AdInfo(this.AdPlatform, this.config.CollapsibleBannerAdId.Id, AdFormatConstants.CollapsibleBanner);
+            var adInfo = new AdInfo(this.AdPlatform, this.config.CollapsibleBannerAdId.DefaultValue, AdFormatConstants.CollapsibleBanner);
             this.signalBus.Fire(new CollapsibleBannerAdClickedSignal(placement, adInfo));
         }
 

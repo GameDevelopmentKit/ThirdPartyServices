@@ -134,19 +134,19 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             foreach (var (placement, adUnitId) in this.AppLovinSetting.MRECAdIds)
             {
-                var adsId = adUnitId.Id;
+                var adsId = adUnitId.DefaultValue;
                 if (this.idMRecCreating.Contains(adsId)) continue;
                 this.idMRecCreating.Add(adsId);
 
                 this.logService.Log($"Check max init {MaxSdk.IsInitialized()}");
-                MaxSdk.CreateMRec(adUnitId.Id, MaxSdkBase.AdViewPosition.BottomCenter);
+                MaxSdk.CreateMRec(adUnitId.DefaultValue, MaxSdkBase.AdViewPosition.BottomCenter);
             }
         }
 
         public virtual void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             this.CreateAllMRec();
-            var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].DefaultValue;
             this.OnMRecAdDisplayed(adsId);
             var mrecPosition = position.CanvasToUnityCoordinateSystem().ToApplovinPosition() + offset.FlipY();
             MaxSdk.UpdateMRecPosition(adsId, mrecPosition.x, mrecPosition.y);
@@ -156,19 +156,19 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             var isMrecReady = this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var adsId);
-            Debug.Log($"oneLog: ApplovinAdsWrapper isMRECReady: {isMrecReady}, placement: {placement}, adsId: {adsId?.Id}");
+            Debug.Log($"oneLog: ApplovinAdsWrapper isMRECReady: {isMrecReady}, placement: {placement}, adsId: {adsId?.DefaultValue}");
             return isMrecReady;
         }
 
         public void HideMREC(string placement)
         {
-            var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].DefaultValue;
             this.InternalHideMREC(adsId);
         }
 
         public void DestroyMREC(string placement)
         {
-            var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].DefaultValue;
             this.InternalDestroyMREC(adsId);
         }
 
@@ -237,7 +237,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             var placement = AdPlacement.PlacementWithName(place);
             id = placement == AdPlacement.Default
-                     ? this.AppLovinSetting.DefaultBannerAdId.Id
+                     ? this.AppLovinSetting.DefaultBannerAdId.DefaultValue
                      : AdPlacementHelper.FindIdForPlacement(this.AppLovinSetting.CustomBannerAdIds, placement);
 
             return !string.IsNullOrEmpty(id);
@@ -366,7 +366,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitAOAAds()
         {
-            if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return;
+            if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.DefaultValue)) return;
 
             this.logService.Log($"onelog: applovin: InitAOAAds");
             MaxSdkCallbacks.AppOpen.OnAdHiddenEvent += this.OnAppOpenDismissedEvent;
@@ -380,7 +380,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void DisposeAOAAds()
         {
-            if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return;
+            if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.DefaultValue)) return;
 
             MaxSdkCallbacks.AppOpen.OnAdHiddenEvent -= this.OnAppOpenDismissedEvent;
             MaxSdkCallbacks.AppOpen.OnAdLoadedEvent -= this.OnAppOpenLoadedEvent;
@@ -426,14 +426,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsAOAReady()
         {
-            if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return false;
-            return MaxSdk.IsAppOpenAdReady(this.AppLovinSetting.DefaultAOAAdId.Id) && !this.IsShowingAOAAd;
+            if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.DefaultValue)) return false;
+            return MaxSdk.IsAppOpenAdReady(this.AppLovinSetting.DefaultAOAAdId.DefaultValue) && !this.IsShowingAOAAd;
         }
 
         public void ShowAOAAds(string placement)
         {
             this.aoaAdPlacement = placement;
-            MaxSdk.ShowAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.Id);
+            MaxSdk.ShowAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.DefaultValue);
             this.InternalLoadAppOpenAd();
         }
 
@@ -700,7 +700,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsShowingAOAAd { get; set; } = false;
 
-        private void InternalLoadAppOpenAd() { MaxSdk.LoadAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.Id); }
+        private void InternalLoadAppOpenAd() { MaxSdk.LoadAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.DefaultValue); }
 
         #endregion
     }

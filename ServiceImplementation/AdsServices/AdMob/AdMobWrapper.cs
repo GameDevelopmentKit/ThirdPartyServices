@@ -73,11 +73,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void VerifySetting()
         {
             //Interstitial
-            if (string.IsNullOrEmpty(this.ADMobSettings.DefaultInterstitialAdId.Id) && this.ADMobSettings.CustomInterstitialAdIds.Values.Contains(this.ADMobSettings.DefaultInterstitialAdId)) throw new RuntimeWrappedException("The default interstitial id is duplicated with custom interstitial Id");
+            if (string.IsNullOrEmpty(this.ADMobSettings.DefaultInterstitialAdId.DefaultValue) && this.ADMobSettings.CustomInterstitialAdIds.Values.Contains(this.ADMobSettings.DefaultInterstitialAdId)) throw new RuntimeWrappedException("The default interstitial id is duplicated with custom interstitial Id");
             if (this.ADMobSettings.CustomInterstitialAdIds.GroupBy(x => x.Value).Any(group => group.Count() > 1)) throw new RuntimeWrappedException("There is duplicated interstitial admob ads service");
 
             //Rewarded ads
-            if (string.IsNullOrEmpty(this.ADMobSettings.DefaultRewardedAdId.Id) && this.ADMobSettings.CustomRewardedAdIds.Values.Contains(this.ADMobSettings.DefaultInterstitialAdId)) throw new RuntimeWrappedException("The default interstitial id is duplicated with custom interstitial Id");
+            if (string.IsNullOrEmpty(this.ADMobSettings.DefaultRewardedAdId.DefaultValue) && this.ADMobSettings.CustomRewardedAdIds.Values.Contains(this.ADMobSettings.DefaultInterstitialAdId)) throw new RuntimeWrappedException("The default interstitial id is duplicated with custom interstitial Id");
             if (this.ADMobSettings.CustomRewardedAdIds.GroupBy(x => x.Value).Any(group => group.Count() > 1)) throw new RuntimeWrappedException("There is duplicated Rewarded video admob ads service");
         }
 
@@ -109,7 +109,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private string GetInterstitialAdsIdByPlace(string place)
         {
-            return this.ADMobSettings.CustomInterstitialAdIds.GetValueOrDefault(AdPlacement.PlacementWithName(place), this.ADMobSettings.DefaultInterstitialAdId).Id;
+            return this.ADMobSettings.CustomInterstitialAdIds.GetValueOrDefault(AdPlacement.PlacementWithName(place), this.ADMobSettings.DefaultInterstitialAdId).DefaultValue;
         }
 
 #region AOA
@@ -161,7 +161,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             if (this.adServices.Any(adService => adService.IsRemoveAds())) return;
 
-            var adUnitId = this.ADMobSettings.AOAAdId.Id;
+            var adUnitId = this.ADMobSettings.AOAAdId.DefaultValue;
 
             if (this.aoaAdLoadedInstance is { IsAoaAdAvailable: true })
             {
@@ -208,14 +208,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void AOAHandleAdClicked()
         {
             this.logService.Log("oneLog: Clicked app open ad");
-            var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
+            var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.DefaultValue, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenClickedSignal(this.aoaAdPlacement, adRevenueEvent));
         }
 
         private void AOAHandleAdFullScreenContentClosed()
         {
             this.logService.Log("oneLog: Closed app open ad");
-            var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
+            var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.DefaultValue, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adRevenueEvent));
             this.IsShowingAOAAd = false;
         }
@@ -229,7 +229,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void AOAHandleAdFullScreenContentOpened()
         {
             this.logService.Log("oneLog: Displayed app open ad");
-            var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
+            var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.DefaultValue, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(this.aoaAdPlacement, adRevenueEvent));
             this.IsShowingAOAAd = true;
         }
@@ -239,7 +239,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log("Recorded ad impression");
         }
 
-        private void AOAHandleAdPaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
+        private void AOAHandleAdPaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, this.ADMobSettings.AOAAdId.DefaultValue, AdFormatConstants.AppOpen);
 
 #endregion
 
@@ -251,7 +251,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.LoadAllMRec();
             var adId              = this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)];
-            var mrecBannerHandler = this.idToMrecViewHandler[adId.Id];
+            var mrecBannerHandler = this.idToMrecViewHandler[adId.DefaultValue];
             mrecBannerHandler.ShowBanner();
             this.MrecBannerViewDisplay();
         }
@@ -261,17 +261,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             Debug.Log("oneLog: AdmobWrapper IsMRECReady start");
             var adPlacement = AdPlacement.PlacementWithName(placement);
             if (!this.ADMobSettings.MRECAdIds.TryGetValue(adPlacement, out var adId)) return false;
-            var isMrecHandlerCreate = this.idToMrecViewHandler.ContainsKey(adId.Id);
+            var isMrecHandlerCreate = this.idToMrecViewHandler.ContainsKey(adId.DefaultValue);
             if (!isMrecHandlerCreate)
             {
                 this.LoadMREC(placement, position, offset);
             }
             else
             {
-                this.UpdatePlacementMrec(adId.Id, position, offset);
+                this.UpdatePlacementMrec(adId.DefaultValue, position, offset);
             }
             Debug.Log("oneLog: AdmobWrapper IsMRECReady check banner view is null");
-            return this.idToMrecViewHandler[adId.Id].bannerView != null;
+            return this.idToMrecViewHandler[adId.DefaultValue].bannerView != null;
         }
 
         public void LoadMREC(string placement, AdScreenPosition adPosition, AdScreenPosition offset)
@@ -282,12 +282,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
 
             Debug.Log("oneLog: AdmobWrapper LoadMREC start");
-            if (this.idToMrecViewHandler.TryGetValue(adId.Id, out var bannerViewHandler)) return;
+            if (this.idToMrecViewHandler.TryGetValue(adId.DefaultValue, out var bannerViewHandler)) return;
             Debug.Log("oneLog: AdmobWrapper LoadMREC creat new banner");
 
             var mrecPosition = adPosition.CanvasToUnityCoordinateSystem().ToAdmobPosition() + offset.FlipY();
-            bannerViewHandler = new BannerViewHandler(adId.Id, AdSize.MediumRectangle, (int)mrecPosition.x, (int)mrecPosition.y);
-            this.idToMrecViewHandler.Add(adId.Id, bannerViewHandler);
+            bannerViewHandler = new BannerViewHandler(adId.DefaultValue, AdSize.MediumRectangle, (int)mrecPosition.x, (int)mrecPosition.y);
+            this.idToMrecViewHandler.Add(adId.DefaultValue, bannerViewHandler);
 
             bannerViewHandler.bannerView.OnBannerAdLoaded     += this.BannerViewOnAdLoaded;
             bannerViewHandler.bannerView.OnBannerAdLoadFailed += this.BannerViewOnAdLoadFailed;
@@ -299,7 +299,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void HideMREC(string placement)
         {
-            var mrecBannerView = this.idToMrecViewHandler[this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id];
+            var mrecBannerView = this.idToMrecViewHandler[this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].DefaultValue];
 
             if (mrecBannerView.bannerView == null) return;
             mrecBannerView.HideBanner();
@@ -313,7 +313,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void DestroyMREC(string placement)
         {
-            var adsId          = this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            var adsId          = this.ADMobSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].DefaultValue;
             var mrecBannerView = this.idToMrecViewHandler[adsId];
             mrecBannerView.DestroyBanner();
             this.idToMrecViewHandler.Remove(adsId);
@@ -342,13 +342,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void MrecBannerViewDisplay()
         {
-            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdFormatConstants.MREC))
+            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.DefaultValue, AdFormatConstants.MREC))
                .ForEach(adInfo => this.signalBus.Fire(new MRecAdDisplayedSignal("", adInfo)));
         }
 
         private void BannerViewOnAdClicked()
         {
-            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdFormatConstants.MREC))
+            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.DefaultValue, AdFormatConstants.MREC))
                .ForEach(adInfo => this.signalBus.Fire(new MRecAdClickedSignal("", adInfo)));
         }
 
@@ -360,11 +360,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void BannerViewOnAdLoaded()
         {
-            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.Id, AdFormatConstants.MREC))
+            this.ADMobSettings.MRECAdIds.Select(mrecAdId => new AdInfo(AdMobWrapper.AdPlatForm, mrecAdId.Value.DefaultValue, AdFormatConstants.MREC))
                .ForEach(adInfo => this.signalBus.Fire(new MRecAdLoadedSignal("", adInfo)));
         }
 
-        private void MRECAdHandlePaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, this.ADMobSettings.MRECAdIds.First().Value.Id, AdFormatConstants.MREC);
+        private void MRECAdHandlePaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, this.ADMobSettings.MRECAdIds.First().Value.DefaultValue, AdFormatConstants.MREC);
 
 #endregion
 

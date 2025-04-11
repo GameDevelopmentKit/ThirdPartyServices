@@ -112,7 +112,7 @@
         }
 
         private Dictionary<AdPlacement, CrossPlatformValue> ConvertIdsToTestId(Dictionary<AdPlacement, CrossPlatformValue> ids, CrossPlatformValue testId)
-            => ids.Select(x => new KeyValuePair<AdPlacement, CrossPlatformValue>(x.Key, !string.IsNullOrEmpty(x.Value.Id) ? testId : x.Value))
+            => ids.Select(x => new KeyValuePair<AdPlacement, CrossPlatformValue>(x.Key, !string.IsNullOrEmpty(x.Value.DefaultValue) ? testId : x.Value))
                 .ToDictionary(x => x.Key, x => x.Value);
 
         /// <summary>

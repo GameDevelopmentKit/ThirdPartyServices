@@ -159,8 +159,8 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             void AddConfig(RemoteConfig config)
             {
-                if (!setup.parameters.ContainsKey(config.mapping.AndroidId)) setup.parameters.Add(config.mapping.AndroidId, new(config.defaultValue.AndroidId, ""));
-                if (!setup.parameters.ContainsKey(config.mapping.IosId)) setup.parameters.Add(config.mapping.IosId, new(config.defaultValue.IosId, ""));
+                if (!setup.parameters.ContainsKey(config.mapping.AndroidValue)) setup.parameters.Add(config.mapping.AndroidValue, new(config.defaultValue.AndroidValue, ""));
+                if (!setup.parameters.ContainsKey(config.mapping.IosValue)) setup.parameters.Add(config.mapping.IosValue, new(config.defaultValue.IosValue, ""));
             }
         }
 

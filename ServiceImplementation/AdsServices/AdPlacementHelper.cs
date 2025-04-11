@@ -9,7 +9,7 @@
         {
             var placement = AdPlacement.PlacementWithName(place);
             id = placement == AdPlacement.Default
-                ? defaultId?.Id
+                ? defaultId?.DefaultValue
                 : FindIdForPlacement(customIds, placement);
 
             return !string.IsNullOrEmpty(id);
@@ -17,7 +17,7 @@
 
         public static string FindIdForPlacement(Dictionary<AdPlacement, CrossPlatformValue> dict, AdPlacement placement)
         {
-            if (dict != null && dict.TryGetValue(placement, out var idObj) && idObj != null && !string.IsNullOrEmpty(idObj.Id)) return idObj.Id;
+            if (dict != null && dict.TryGetValue(placement, out var idObj) && idObj != null && !string.IsNullOrEmpty(idObj.DefaultValue)) return idObj.DefaultValue;
 
             return string.Empty;
         }

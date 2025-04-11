@@ -19,7 +19,7 @@
                 #if UNITY_ANDROID
                 return this.mAppId.AndroidId;
                 #else
-                return this.mAppId.IosId;
+                return this.mAppId.IosValue;
                 #endif
             }
         }

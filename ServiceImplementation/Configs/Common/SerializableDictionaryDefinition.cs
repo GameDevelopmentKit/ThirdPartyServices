@@ -11,12 +11,12 @@
     }
 
     [Serializable]
-    public class StringAdIdSerializableDictionary : SerializableDictionary<string, CrossPlatformValue>
+    public class StringAdIdSerializableDictionary : SerializableDictionary<string, Ads.CrossPlatformValue>
     {
     }
 
     [Serializable]
-    public class Dictionary_AdPlacement_AdId : SerializableDictionary<AdPlacement, CrossPlatformValue>
+    public class Dictionary_AdPlacement_AdId : SerializableDictionary<AdPlacement, Ads.CrossPlatformValue>
     {
     }
 

@@ -8,7 +8,7 @@
     /// Generic cross-platform identifier for ad resources.
     /// </summary>
     [Serializable]
-    public class CrossPlatformId
+    public class CrossPlatformValue
     {
         [SerializeField] [LabelText("IOS Id", SdfIconType.Apple)] protected string mIosId;
 
@@ -19,14 +19,14 @@
         /// Returns <c>string.Empty</c> if no ID was defined for this platform.
         /// </summary>
         /// <value>The identifier.</value>
-        public virtual string Id
+        public virtual string DefaultValue
         {
             get
             {
-                #if UNITY_ANDROID
-                return this.AndroidId;
+                #if UNITY_ANDROID || UNITY_WEBGL
+                return this.AndroidValue;
                 #elif UNITY_IOS
-                return IosId;
+                return IosValue;
                 #else
                 return string.Empty;
                 #endif
@@ -37,15 +37,15 @@
         /// Gets the ad ID for iOS platform.
         /// </summary>
         /// <value>The ios identifier.</value>
-        public virtual string IosId => this.mIosId;
+        public virtual string IosValue => this.mIosId;
 
         /// <summary>
         /// Gets the ad ID for Android platform.
         /// </summary>
         /// <value>The android identifier.</value>
-        public virtual string AndroidId => this.mAndroidId;
+        public virtual string AndroidValue => this.mAndroidId;
 
-        public CrossPlatformId(string iOSId, string androidId)
+        public CrossPlatformValue(string iOSId, string androidId)
         {
             this.mIosId     = iOSId;
             this.mAndroidId = androidId;
@@ -53,31 +53,31 @@
 
         public override string ToString()
         {
-            return this.Id;
+            return this.DefaultValue;
         }
 
         public override bool Equals(object obj)
         {
-            var item = obj as CrossPlatformId;
+            var item = obj as CrossPlatformValue;
 
             if (item == null) return false;
 
-            return this.Id.Equals(item.Id);
+            return this.DefaultValue.Equals(item.DefaultValue);
         }
 
         public override int GetHashCode()
         {
-            return this.Id.GetHashCode();
+            return this.DefaultValue.GetHashCode();
         }
 
-        public static bool operator ==(CrossPlatformId a, CrossPlatformId b)
+        public static bool operator ==(CrossPlatformValue a, CrossPlatformValue b)
         {
             if (ReferenceEquals(a, null)) return ReferenceEquals(b, null);
 
             return a.Equals(b);
         }
 
-        public static bool operator !=(CrossPlatformId a, CrossPlatformId b)
+        public static bool operator !=(CrossPlatformValue a, CrossPlatformValue b)
         {
             return !(a == b);
         }
