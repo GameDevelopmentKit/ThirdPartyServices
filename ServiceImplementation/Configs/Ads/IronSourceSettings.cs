@@ -17,7 +17,7 @@
             get
             {
                 #if UNITY_ANDROID
-                return this.mAppId.AndroidId;
+                return this.mAppId.AndroidValue;
                 #else
                 return this.mAppId.IosValue;
                 #endif
