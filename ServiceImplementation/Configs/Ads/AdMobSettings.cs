@@ -24,7 +24,7 @@
         public CrossPlatformValue DefaultBannerAdId
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mDefaultBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/2934735716","ca-app-pub-3940256099942544/6300978111") : this.mDefaultBannerAdId;
+            get => !string.IsNullOrEmpty(this.mDefaultBannerAdId.AndroidValue) ? new ("ca-app-pub-3940256099942544/2934735716","ca-app-pub-3940256099942544/6300978111") : this.mDefaultBannerAdId;
             #else
             get => this.mDefaultBannerAdId;
             #endif
@@ -34,7 +34,7 @@
         public CrossPlatformValue CollapsibleBannerAdId
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mCollapsibleBannerAdId.Id) ? new AdId("ca-app-pub-3940256099942544/8388050270","ca-app-pub-3940256099942544/2014213617") : this.mCollapsibleBannerAdId;
+            get => !string.IsNullOrEmpty(this.mCollapsibleBannerAdId.AndroidValue) ? new ("ca-app-pub-3940256099942544/8388050270","ca-app-pub-3940256099942544/2014213617") : this.mCollapsibleBannerAdId;
             #else
             get => this.mCollapsibleBannerAdId;
             #endif
@@ -47,7 +47,7 @@
         public CrossPlatformValue DefaultInterstitialAdId
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mDefaultInterstitialAdId.Id) ? new AdId("ca-app-pub-3940256099942544/4411468910","ca-app-pub-3940256099942544/1033173712") : this.mDefaultInterstitialAdId;
+            get => !string.IsNullOrEmpty(this.mDefaultInterstitialAdId.AndroidValue) ? new ("ca-app-pub-3940256099942544/4411468910","ca-app-pub-3940256099942544/1033173712") : this.mDefaultInterstitialAdId;
             #else
             get => this.mDefaultInterstitialAdId;
             #endif
@@ -60,7 +60,7 @@
         public CrossPlatformValue DefaultRewardedAdId
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mDefaultRewardedAdId.Id) ? new AdId("ca-app-pub-3940256099942544/1712485313","ca-app-pub-3940256099942544/5224354917") : this.mDefaultRewardedAdId;
+            get => !string.IsNullOrEmpty(this.mDefaultRewardedAdId.AndroidValue) ? new ("ca-app-pub-3940256099942544/1712485313","ca-app-pub-3940256099942544/5224354917") : this.mDefaultRewardedAdId;
             #else
             get => this.mDefaultRewardedAdId;
             #endif
@@ -78,7 +78,7 @@
         public CrossPlatformValue AOAAdId
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.mAoaAdId.Id) ? new AdId("ca-app-pub-3940256099942544/5575463023","ca-app-pub-3940256099942544/9257395921") : this.mAoaAdId;
+            get => !string.IsNullOrEmpty(this.mAoaAdId.AndroidValue) ? new ("ca-app-pub-3940256099942544/5575463023","ca-app-pub-3940256099942544/9257395921") : this.mAoaAdId;
             #else
             get => this.mAoaAdId;
             #endif
@@ -91,7 +91,7 @@
         public List<CrossPlatformValue> NativeAdIds
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => this.mNativeAdIds.Select(x => !string.IsNullOrEmpty(x.Id) ? new ("ca-app-pub-3940256099942544/3986624511", "ca-app-pub-3940256099942544/2247696110") : x).ToList();
+            get => this.mNativeAdIds.Select(x => !string.IsNullOrEmpty(x.AndroidValue) ? new ("ca-app-pub-3940256099942544/3986624511", "ca-app-pub-3940256099942544/2247696110") : x).ToList();
             #else
             get => this.mNativeAdIds;
             #endif
