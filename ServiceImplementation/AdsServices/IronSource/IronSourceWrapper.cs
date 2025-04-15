@@ -309,7 +309,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (!this.idToMRECAd.TryGetValue(placement, out var mrecAd))
             {
                 var mrecPosition = position == AdScreenPosition.BottomCenter ? LevelPlayBannerPosition.BottomCenter : LevelPlayBannerPosition.TopCenter;
-                var adsId        = this.ironSourceSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+                var adsId        = this.ironSourceSettings.MRECAdIds[AdPlacement.PlacementWithName(placement)].DefaultValue;
                 mrecAd = new(adsId, LevelPlayAdSize.MEDIUM_RECTANGLE, mrecPosition, placement);
                 this.idToMRECAd.Add(placement, mrecAd);
 
@@ -402,11 +402,22 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 Currency           = "USD",
                 Placement          = impressionData.placement,
                 AdNetwork          = impressionData.adNetwork,
-                AdFormat           = impressionData.adFormat,
+                AdFormat           = this.ConvertAdFormat(impressionData),
             };
 
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
             this.analyticServices.Track(adsRevenueEvent);
+        }
+
+        private string ConvertAdFormat(IronSourceImpressionData impressionData)
+        {
+            return impressionData.adFormat switch
+            {
+                "interstitial"   => AdFormatConstants.Interstitial,
+                "rewarded_video" => AdFormatConstants.Rewarded,
+                "banner"         => AdFormatConstants.Banner,
+                _                => impressionData.adFormat,
+            };
         }
 
         #region AdService
@@ -441,7 +452,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                                    BannerAdsPosition.Top => LevelPlayBannerPosition.TopCenter,
                                    _                     => LevelPlayBannerPosition.BottomCenter
                                };
-                this.bannerAd = new(this.ironSourceSettings.BannerId.Id, this.BannerSize(), position);
+                this.bannerAd = new(this.ironSourceSettings.BannerId.DefaultValue, this.BannerSize(), position);
 
                 this.bannerAd.OnAdLoaded     += this.OnBannerLoaded;
                 this.bannerAd.OnAdLoadFailed += this.OnBannerLoadFailed;
