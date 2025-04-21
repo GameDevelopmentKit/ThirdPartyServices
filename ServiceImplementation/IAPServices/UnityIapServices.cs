@@ -12,10 +12,11 @@ namespace ServiceImplementation.IAPServices
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
+    using UnityEngine.Purchasing.Extension;
     using UnityEngine.Purchasing.Security;
     using Zenject;
 
-    public class UnityIapServices : IIapServices, IStoreListener
+    public class UnityIapServices : IIapServices, IDetailedStoreListener
     {
         private Action<string>     onPurchaseComplete, onPurchaseFailed;
         private IStoreController   mStoreController;
@@ -24,13 +25,13 @@ namespace ServiceImplementation.IAPServices
         #region inject
 
         private readonly ILogService                  logger;
-        private readonly SignalBus                    signalBus;
+        private readonly ISignalBus                    signalBus;
         private readonly IAdServices                  adServices;
         private          Dictionary<string, IAPModel> iapPacks;
 
         #endregion
 
-        public UnityIapServices(ILogService log, SignalBus signalBus)
+        public UnityIapServices(ILogService log, ISignalBus signalBus)
         {
             this.logger    = log;
             this.signalBus = signalBus;
@@ -69,6 +70,7 @@ namespace ServiceImplementation.IAPServices
 
             var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
             this.AddAllProduct(builder);
+
             UnityPurchasing.Initialize(this, builder);
         }
 
@@ -85,10 +87,10 @@ namespace ServiceImplementation.IAPServices
         {
             return productType switch
             {
-                ProductType.Consumable    => UnityEngine.Purchasing.ProductType.Consumable,
-                ProductType.Subscription  => UnityEngine.Purchasing.ProductType.Subscription,
+                ProductType.Consumable => UnityEngine.Purchasing.ProductType.Consumable,
+                ProductType.Subscription => UnityEngine.Purchasing.ProductType.Subscription,
                 ProductType.NonConsumable => UnityEngine.Purchasing.ProductType.NonConsumable,
-                _                         => UnityEngine.Purchasing.ProductType.Consumable
+                _ => UnityEngine.Purchasing.ProductType.Consumable
             };
         }
 
@@ -147,7 +149,7 @@ namespace ServiceImplementation.IAPServices
         // Apple currently requires explicit purchase restoration for IAP, conditionally displaying a password prompt.
         public void RestorePurchases(Action onComplete = null)
         {
-            #if FAKE_RESTORE_PURCHASE
+#if FAKE_RESTORE_PURCHASE
             foreach (var iapPack in this.iapPacks)
             {
                 this.signalBus.Fire(new UnityIAPOnRestorePurchaseCompleteSignal(iapPack.Value.Id));
@@ -157,7 +159,7 @@ namespace ServiceImplementation.IAPServices
 
             return;
 
-            #endif
+#endif
 
             // If Purchasing has not yet been set up ...
             if (!this.IsInitialized)
@@ -218,11 +220,11 @@ namespace ServiceImplementation.IAPServices
 
             if (!pd.hasReceipt) return false;
             // presume validity if not validate receipt.
-            #if !UNITY_EDITOR
+#if !UNITY_EDITOR
             var isValid = this.ValidateReceipt(pd.receipt, out var purchaseReceipts);
 
             return isValid;
-            #endif
+#endif
             return true;
         }
 
@@ -254,7 +256,7 @@ namespace ServiceImplementation.IAPServices
 
             var isValidReceipt = true; // presume validity for platforms with no receipt validation.
             // Unity IAP's receipt validation is only available for Apple app stores and Google Play store.
-            #if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS
+#if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS
 
             byte[] googlePlayTangleData = null;
             byte[] appleTangleData      = null;
@@ -267,9 +269,9 @@ namespace ServiceImplementation.IAPServices
             // googlePlayTangleData = GooglePlayTangle.Data();
             // #endif
 
-            #if (UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS) && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS) && !UNITY_EDITOR
             appleTangleData = AppleTangle.Data();
-            #endif
+#endif
 
             // Prepare the validator with the secrets we prepared in the Editor obfuscation window.
             var validator = new CrossPlatformValidator(googlePlayTangleData, appleTangleData, Application.identifier);
@@ -308,7 +310,7 @@ namespace ServiceImplementation.IAPServices
             {
                 isValidReceipt = false;
             }
-            #endif
+#endif
 
             return isValidReceipt;
         }
@@ -331,19 +333,32 @@ namespace ServiceImplementation.IAPServices
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
             var productId = args.purchasedProduct.definition.id;
+
             if (this.onPurchaseComplete == null)
             {
                 this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(productId));
             }
             else
             {
-                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal(this.GetProductData(productId)));
+                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal()
+                {
+                    PurchasedProduct = args.purchasedProduct
+                });
             }
 
             this.onPurchaseComplete?.Invoke(productId);
             this.onPurchaseComplete = null;
 
             return PurchaseProcessingResult.Complete;
+        }
+
+        public void OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
+        {
+            var productId = product.definition.id;
+            this.onPurchaseFailed?.Invoke(productId);
+            this.onPurchaseFailed = null;
+            this.signalBus.Fire(new OnIAPPurchaseFailedSignal(productId, failureDescription.reason.ToString()));
+            this.logger.Log($"OnPurchaseFailed: FAIL. Product: '{productId}', PurchaseFailureReason: {failureDescription.reason}, Message: {failureDescription.message}");
         }
 
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)

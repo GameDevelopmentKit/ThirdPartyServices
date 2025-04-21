@@ -30,11 +30,11 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
             {
                 parameterArray[index] = paramValue switch
                 {
-                    long longValue => new Parameter(paramName, longValue.ToString()),
-                    int intValue => new Parameter(paramName, intValue.ToString()),
+                    long longValue => new Parameter(paramName, longValue),
+                    int intValue => new Parameter(paramName, intValue),
                     string stringValue => new Parameter(paramName, stringValue),
-                    double doubleValue => new Parameter(paramName, doubleValue.ToString(CultureInfo.InvariantCulture)),
-                    float floatValue => new Parameter(paramName, floatValue.ToString(CultureInfo.InvariantCulture)),
+                    double doubleValue => new Parameter(paramName, doubleValue),
+                    float floatValue => new Parameter(paramName, floatValue),
                     _ => new Parameter(paramName, JsonConvert.SerializeObject(paramValue))
                 };
                 ++index;

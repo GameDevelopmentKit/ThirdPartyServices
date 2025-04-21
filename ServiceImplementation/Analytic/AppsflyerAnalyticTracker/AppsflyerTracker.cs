@@ -85,9 +85,11 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 #if IAP
             AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
 #if MMP_DEBUG && !PRODUCTION
-            AppsFlyerPurchaseConnector.setIsSandbox(true); 
+            AppsFlyerPurchaseConnector.setIsSandbox(true);
 #endif
-            AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
+            AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions,
+                AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
+
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();
 #endif
@@ -100,10 +102,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             return this.TrackerReady.Task;
         }
 
-        protected override void SetUserId(string userId)
-        {
-            AppsFlyer.setCustomerUserId(userId);
-        }
+        protected override void SetUserId(string userId) { AppsFlyer.setCustomerUserId(userId); }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
         {
@@ -146,29 +145,32 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
                 Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
+
                 return;
             }
 
             var parameters = new Dictionary<string, string>
             {
+                { AFInAppEvents.REVENUE, adsRevenueEvent.Revenue.ToString(CultureInfo.InvariantCulture) },
                 { AdRevenueScheme.AD_UNIT, adsRevenueEvent.AdUnit },
                 { AdRevenueScheme.AD_TYPE, adsRevenueEvent.AdFormat },
                 { AdRevenueScheme.PLACEMENT, adsRevenueEvent.Placement },
                 { "af_quantity", "1" }
             };
-            
+
             var mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
             {
                 AdRevenueConstants.ARSourceAppLovinMAX => MediationNetwork.ApplovinMax,
-                AdRevenueConstants.ARSourceIronSource  => MediationNetwork.IronSource,
-                AdRevenueConstants.ARSourceAdMob       => MediationNetwork.GoogleAdMob,
-                AdRevenueConstants.ARSourceUnity       => MediationNetwork.Unity,
-                AdRevenueConstants.ARSourceYandex      => MediationNetwork.Yandex,
-                _                                      => MediationNetwork.Custom
+                AdRevenueConstants.ARSourceIronSource => MediationNetwork.IronSource,
+                AdRevenueConstants.ARSourceAdMob => MediationNetwork.GoogleAdMob,
+                AdRevenueConstants.ARSourceUnity => MediationNetwork.Unity,
+                AdRevenueConstants.ARSourceYandex => MediationNetwork.Yandex,
+                _ => MediationNetwork.Custom
             };
 
             var logRevenue = new AFAdRevenueData(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Currency, adsRevenueEvent.Revenue);
             AppsFlyer.logAdRevenue(logRevenue, parameters);
+            Debug.Log($"AppsFlyer logAdRevenue: {logRevenue.ToJson()} {parameters.ToJson()}");
         }
     }
 }

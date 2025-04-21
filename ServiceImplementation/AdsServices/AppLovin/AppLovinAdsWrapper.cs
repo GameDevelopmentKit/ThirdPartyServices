@@ -3,6 +3,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Core.AdsServices;
     using Core.AdsServices.Helpers;
     using Core.AdsServices.Signals;
@@ -59,11 +60,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
 #if ADS_DEBUG
             MaxSdk.SetCreativeDebuggerEnabled(true);
 #endif
-            this.InitAOAAds();
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
             MaxSdk.InitializeSdk();
 
             await UniTask.WaitUntil(MaxSdk.IsInitialized);
+            this.InitAOAAds();
             this.InitBannerAds();
             this.InitMRECAds();
             this.InitInterstitialAds();
@@ -137,7 +138,18 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public virtual void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
-            var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            if (this.AppLovinSetting.MRECAdIds.Count == 0)
+            {
+                return;
+            }
+
+            var adsId = this.AppLovinSetting.MRECAdIds.First().Value.Id;
+
+            if (this.AppLovinSetting.MRECAdIds.ContainsKey(AdPlacement.PlacementWithName(placement)))
+            {
+                adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            }
+
             this.OnMRecAdDisplayed(adsId);
             var mrecPosition = position.CanvasToUnityCoordinateSystem().ToApplovinPosition() + offset.FlipY();
             MaxSdk.UpdateMRecPosition(adsId, mrecPosition.x, mrecPosition.y);
@@ -146,7 +158,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsMRECReady(string placement, AdScreenPosition position)
         {
-            return this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var mrec) && this.MrectLoadedId.Contains(mrec.Id);
+            var adsId = this.AppLovinSetting.MRECAdIds.First().Value.Id;
+
+            if (this.AppLovinSetting.MRECAdIds.ContainsKey(AdPlacement.PlacementWithName(placement)))
+            {
+                adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            }
+
+            return this.MrectLoadedId.Contains(adsId);
         }
 
         public void HideMREC(string placement, AdScreenPosition position)
@@ -352,7 +371,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return;
 
-            this.logService.Log($"applovin: InitAOAAds");
+            this.logService.Log($"applovin: InitAOAAds {this.AppLovinSetting.DefaultAOAAdId.Id}");
             MaxSdkCallbacks.AppOpen.OnAdHiddenEvent        += this.OnAppOpenDismissedEvent;
             MaxSdkCallbacks.AppOpen.OnAdLoadedEvent        += this.OnAppOpenLoadedEvent;
             MaxSdkCallbacks.AppOpen.OnAdLoadFailedEvent    += this.OnAppOpenLoadFailedEvent;
@@ -397,7 +416,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenLoadFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2)
         {
-            this.logService.Log($"OnAppOpenLoadFailedEvent: {arg2.Message}");
+            this.logService.Log($"OnAppOpenLoadFailedEvent: {this.AppLovinSetting.DefaultAOAAdId.Id}, {arg2.Message}");
             this.signalBus.Fire(new AppOpenLoadFailedSignal(arg1));
         }
 
@@ -510,11 +529,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool TryGetRewardPlacementId(string place, out string id)
         {
-            return AdPlacementHelper.TryGetPlacementId(
-                place,
-                this.AppLovinSetting.DefaultRewardedAdId,
-                this.AppLovinSetting.CustomRewardedAdIds,
-                out id);
+            return AdPlacementHelper.TryGetPlacementId(place, this.AppLovinSetting.DefaultRewardedAdId, this.AppLovinSetting.CustomRewardedAdIds, out id);
         }
 
         public bool IsRewardedAdReady(string place)

@@ -165,6 +165,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             var adUnitId = this.ADMobSettings.AOAAdId.Id;
 
+            if (string.IsNullOrEmpty(adUnitId)) return;
+
             if (this.aoaAdLoadedInstance is { IsAoaAdAvailable: true })
             {
                 this.logService.Log($"AOA ads was already loaded");
@@ -262,15 +264,26 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             var adPlacement = AdPlacement.PlacementWithName(placement);
 
-            if (!this.ADMobSettings.MRECAdIds.TryGetValue(adPlacement, out var adId)) return false;
-            var isMrecHandlerCreate = this.idToMrecViewHandler.ContainsKey(adId.Id);
+            if (this.ADMobSettings.MRECAdIds.Count == 0)
+            {
+                return false;
+            }
+
+            var adsId = this.ADMobSettings.MRECAdIds.First().Value.Id;
+
+            if (this.ADMobSettings.MRECAdIds.TryGetValue(adPlacement, out var adId))
+            {
+                adsId = adId.Id;
+            }
+
+            var isMrecHandlerCreate = this.idToMrecViewHandler.ContainsKey(adsId);
 
             if (!isMrecHandlerCreate)
             {
                 this.LoadMREC(placement, position);
             }
 
-            return this.idToMrecViewHandler[adId.Id].bannerView != null;
+            return this.idToMrecViewHandler[adsId].bannerView != null;
         }
 
         public void LoadMREC(string placement, AdScreenPosition adPosition)
@@ -398,10 +411,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.loadingNativeAdsIds.Remove(adsId);
             };
 
-            adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
-            adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
+            adLoader.OnNativeAdLoaded += this.HandleNativeAdLoaded;
+            adLoader.OnAdFailedToLoad += this.HandleAdFailedToLoad;
             adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
-            adLoader.OnNativeAdClosed  += this.HandleNativeAdClosed;
+            adLoader.OnNativeAdClosed += this.HandleNativeAdClosed;
 #if ADMOB_BELLOW_9_0_0
             adLoader.LoadAd(new AdRequest.Builder().Build());
 #else
@@ -456,7 +469,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (this.nativeAdsIdToNativeAd.Count == 0 || this.nativeAdsViewToNativeAd.ContainsKey(nativeAdsView)) return;
             var nativeList = this.GetAvailableNativeAd();
-            var nativeAd   = nativeList.First();
+            var nativeAd = nativeList.First();
 
             this.nativeAdsIdToNativeAd.Remove(this.nativeAdsIdToNativeAd.First().Key);
             this.nativeAdsViewToNativeAd.TryAdd(nativeAdsView, nativeAd);
