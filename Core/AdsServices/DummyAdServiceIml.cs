@@ -11,7 +11,7 @@ namespace Core.AdsServices
         private readonly ILogService logService;
         private readonly ISignalBus  signalBus;
 
-        public DummyAdServiceIml(ILogService logService,ISignalBus signalBus)
+        public DummyAdServiceIml(ILogService logService, ISignalBus signalBus)
         {
             this.logService = logService;
             this.signalBus  = signalBus;
@@ -34,18 +34,20 @@ namespace Core.AdsServices
         public void DestroyBannerAd()                   { this.logService.Log($"Dummy destroy banner ad"); }
         public bool IsInterstitialAdReady(string place) { return true; }
 
-        public void ShowInterstitialAd(string place,Action finishIfFailed = null)
+        public void ShowInterstitialAd(string place, Action finishIfFailed = null)
         {
             this.logService.Log($"Dummy show Interstitial ad at {place}");
-            this.signalBus.Fire(new InterstitialAdClosedSignal(place,null));
+            this.signalBus.Fire(new InterstitialAdClosedSignal(place, null));
         }
-        public bool IsRewardedAdReady(string place)     { return true; }
-        public void ShowRewardedAd(string place)        { this.logService.Log($"Dummy show Reward ad at {place}"); }
+
+        public bool IsRewardedAdReady(string place) { return true; }
+        public void ShowRewardedAd(string place)    { this.logService.Log($"Dummy show Reward ad at {place}"); }
 
         public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
             onCompleted?.Invoke();
             this.logService.Log($"Dummy show Reward ad at {place} then do {onCompleted}");
+            this.signalBus.Fire(new RewardedAdClosedSignal(place, null));
         }
 
         public bool IsRewardedInterstitialAdReady()                              { return true; }
