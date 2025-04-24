@@ -9,7 +9,7 @@
 
         public string GetRemoteConfigStringValue(string key, string defaultValue)
         {
-            return "";
+            return defaultValue;
         }
 
         public bool GetRemoteConfigBoolValue(string key, bool defaultValue)
