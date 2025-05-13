@@ -71,5 +71,11 @@
         public const string CollapsibleMrecDisplayTime = "collapsible_mrec_display_time";
 
         #endregion
+
+        #if GADSME
+        
+        public const string EnableGadsme = "enable_gadsme";
+        
+        #endif
     }
 }

@@ -4,6 +4,7 @@ namespace ServiceImplementation.AdsServices
 {
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
+    using Core.AdsServices.Native;
     using Core.AdsServices.Signals;
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.Extension;
@@ -16,6 +17,9 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.Configs.Ads;
     using VContainer;
     using VContainer.Unity;
+    #if GADSME
+    using ServiceImplementation.AdsServices.Gads;
+    #endif
     #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
     using global::PubScale.SdkOne;
     using ServiceImplementation.AdsServices.PubScale;
@@ -82,6 +86,10 @@ namespace ServiceImplementation.AdsServices
             builder.Register<DummyConsentInformation>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
 
+            #if GADSME
+            builder.Register<GadsmeWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
+            #endif
+            
             #region Ads signal
 
             builder.DeclareSignal<BannerAdPresentedSignal>();

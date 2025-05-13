@@ -116,6 +116,12 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             #endregion
 
+            #if GADSME
+            
+            this.TryAddAddsConfig(RemoteConfigKey.EnableGadsme, "false");
+            
+            #endif
+
             #endregion
         }
 

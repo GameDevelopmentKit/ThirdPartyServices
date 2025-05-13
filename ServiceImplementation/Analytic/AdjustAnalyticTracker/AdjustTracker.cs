@@ -54,6 +54,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             { AdRevenueConstants.ARSourceHeliumChartboost, "helium_chartboost_sdk" },
             { AdRevenueConstants.ARSourcePublisher, "publisher_sdk" },
             { AdRevenueConstants.ARSourceImmersiveAds, "immersive_ads_sdk" },
+            { AdRevenueConstants.ARSourceGadsmeAds, "gadsme_ads" },
         };
         
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()

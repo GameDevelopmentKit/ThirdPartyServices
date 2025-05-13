@@ -22,7 +22,8 @@
     "Unity.LevelPlay",
     "YandexMobileAds.Scripts",
     "GameFoundation.UIModule",
-    "ColumbusSdk"
+    "ColumbusSdk",
+    "GadsmeSDK"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
@@ -40,7 +41,9 @@
     "GoogleMobileAdsNative.Common.dll",
     "GoogleMobileAdsNative.dll",
     "Newtonsoft.Json.dll",
-    "PubScale.SdkOne.dll"
+    "PubScale.SdkOne.dll",
+    "Gadsme.dll",
+    "Gadsme.Editor.dll"
   ],
   "autoReferenced": true,
   "defineConstraints": [],

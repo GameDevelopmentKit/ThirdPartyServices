@@ -167,6 +167,8 @@ namespace ServiceImplementation.Configs.Ads
         ///     The duration collapsible mrec ad is displayed before automatically closing if the user doesn't close it
         /// </summary>
         public int CollapsibleMrecDisplayTime { get; private set; }    
+        
+        public bool EnableGadsme { get; private set; }   
 
         #endregion
 
@@ -238,6 +240,12 @@ namespace ServiceImplementation.Configs.Ads
             this.CollapsibleMrecDisplayTime = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleMrecDisplayTime);
 
             #endregion
+
+            #if GADSME
+            
+            this.EnableGadsme = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig,this.remoteConfigSetting,RemoteConfigKey.EnableGadsme);
+            
+            #endif
         }
         
         partial void FetchRemoteConfigPartial();

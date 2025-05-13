@@ -20,10 +20,13 @@ namespace Core.AdsServices.Native
         public Text     advertiserText;
         public Text     callToActionText;
 
-        private INativeAdsService nativeAdsService;
-        private Collider[]        colliders;
-        private bool              isEnable;
-        private bool              isInit;
+        #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
+        private IAdMobNativeAdsService nativeAdsService;
+        #endif
+
+        private Collider[]             colliders;
+        private bool                   isEnable;
+        private bool                   isInit;
 
         private IDisposable      changeScreenDisposable;
         private IScreenPresenter visibleScreen;
@@ -82,7 +85,7 @@ namespace Core.AdsServices.Native
 
     public void Init(INativeAdsService nativeAdsService)
     {
-        this.nativeAdsService = nativeAdsService;
+        this.nativeAdsService = (IAdMobNativeAdsService)nativeAdsService;
         this.iconImage.gameObject.SetActive(false);
         this.adChoicesImage.gameObject.SetActive(false);
         this.isInit = true;

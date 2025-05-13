@@ -27,7 +27,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
     public class AdMobWrapper : IAOAAdService, IMRECAdService, IInitializable
 #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
-    , INativeAdsService
+    , IAdMobNativeAdsService
 #endif
     {
 #region inject
@@ -536,6 +536,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.analyticService.Track(adsRevenueEvent);
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
         }
+        #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
+        public void RemoveAds() { PlayerPrefs.SetInt("ADMOB_REMOVE_ADS", 1); }
+
+        public bool IsRemoveAds() { return PlayerPrefs.HasKey("ADMOB_REMOVE_ADS"); }
+        #endif
+
     }
 
     public class BannerViewHandler
