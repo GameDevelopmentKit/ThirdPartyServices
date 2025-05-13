@@ -1,4 +1,5 @@
-﻿namespace TheOne.Simulation.Job.Security.Scripts.AdsServices
+﻿#if GADSME
+namespace TheOne.Simulation.Job.Security.Scripts.AdsServices
 {
     using System.Collections.Generic;
     using Gadsme;
@@ -41,3 +42,4 @@
         }
     }
 }
+#endif
