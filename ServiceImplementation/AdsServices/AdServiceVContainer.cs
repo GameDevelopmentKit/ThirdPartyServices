@@ -30,6 +30,7 @@ namespace ServiceImplementation.AdsServices
     #endif
     #if ADMOB
     using ServiceImplementation.AdsServices.AdMob;
+    using ServiceImplementation.AdsServices.AdMob.NativeOverlay;
     #endif
     #if YANDEX
     using ServiceImplementation.AdsServices.Yandex;
@@ -89,7 +90,11 @@ namespace ServiceImplementation.AdsServices
             #if GADSME
             builder.Register<GadsmeWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
-            
+
+            #if ADMOB
+            builder.Register<NativeOverlayWrapper>(Lifetime.Singleton);
+            #endif
+
             #region Ads signal
 
             builder.DeclareSignal<BannerAdPresentedSignal>();
@@ -143,6 +148,10 @@ namespace ServiceImplementation.AdsServices
             builder.DeclareSignal<AppOpenEligibleSignal>();
             builder.DeclareSignal<AppOpenCalledSignal>();
             builder.DeclareSignal<AppOpenClickedSignal>();
+
+            builder.DeclareSignal<NativeOverlayClickedSignal>();
+            builder.DeclareSignal<NativeOverlayFullScreenContentClosedSignal>();
+            builder.DeclareSignal<NativeOverlayFullScreenContentOpenedSignal>();
 
             builder.DeclareSignal<AppStateChangeSignal>();
 

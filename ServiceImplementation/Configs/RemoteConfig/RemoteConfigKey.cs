@@ -25,7 +25,7 @@
         public const string UseAoaAdmob               = "use_aoa_admob";
         public const string AoaAdResumeStartLevel     = "aoa_resume_start_level";
         public const string AoaAdResumeStartSession   = "aoa_resume_start_session";
-        
+
         #if BRAVESTARS
         public const string UseAoaResume              = "use_aoa_resume";
         public const string AoaFirstOpen              = "show_open_ads_first_open";
@@ -72,10 +72,19 @@
 
         #endregion
 
+        #region Native Overlay
+
+        public const string NativeOverlayInterEnable          = "native_overlay_inter_enable";
+        public const string NativeOverlayInterCappingTime     = "native_overlay_inter_capping_time";
+        public const string NativeOverlayInterCountdown       = "native_overlay_inter_countdown";
+        public const string NativeOverlayInterShowAdsComplete = "native_overlay_inter_show_ads_complete";
+
+        #endregion
+
         #if GADSME
-        
+
         public const string EnableGadsme = "enable_gadsme";
-        
+
         #endif
     }
 }

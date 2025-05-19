@@ -69,7 +69,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.TryAddAddsConfig(RemoteConfigKey.AoaAdResumeStartLevel, "2");
             this.TryAddAddsConfig(RemoteConfigKey.AoaAdResumeStartSession, "2");
             this.TryAddAddsConfig(RemoteConfigKey.UseAoaAdmob, "true");
-            
+
             #if BRAVESTARS
             this.TryAddAddsConfig(RemoteConfigKey.UseAoaResume, "true");
             this.TryAddAddsConfig(RemoteConfigKey.AoaFirstOpen, "true");
@@ -105,21 +105,30 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.TryAddAddsConfig(RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled, "false");
 
             #endregion
-            
+
             #region MREC
 
             this.TryAddAddsConfig(RemoteConfigKey.EnableMrecRefreshInterval, "false");
             this.TryAddAddsConfig(RemoteConfigKey.MrecRefreshInterval, "10");
             this.TryAddAddsConfig(RemoteConfigKey.EnableCollapsibleMrec, "false");
             this.TryAddAddsConfig(RemoteConfigKey.CollapsibleMrecInterval, "30");
-            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleMrecDisplayTime, "5"); 
+            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleMrecDisplayTime, "5");
+
+            #endregion
+
+            #region NativeOverlay
+
+            this.TryAddAddsConfig(RemoteConfigKey.NativeOverlayInterEnable, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.NativeOverlayInterCappingTime, "10");
+            this.TryAddAddsConfig(RemoteConfigKey.NativeOverlayInterCountdown, "3");
+            this.TryAddAddsConfig(RemoteConfigKey.NativeOverlayInterShowAdsComplete, "false");
 
             #endregion
 
             #if GADSME
-            
+
             this.TryAddAddsConfig(RemoteConfigKey.EnableGadsme, "false");
-            
+
             #endif
 
             #endregion

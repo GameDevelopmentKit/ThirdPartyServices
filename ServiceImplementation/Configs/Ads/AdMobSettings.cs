@@ -116,6 +116,21 @@
                 .ToDictionary(x => x.Key, x => x.Value);
 
         /// <summary>
+        /// Gets or sets the default Native Overlay ad identifier.
+        /// </summary>
+        public CrossPlatformValue NativeOverlayAdIds
+        {
+            #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
+            get => !string.IsNullOrEmpty(this.nativeOverlayAdIds.AndroidValue) ? new ("ca-app-pub-3940256099942544/3986624511","ca-app-pub-3940256099942544/2247696110") : this.nativeOverlayAdIds;
+            #else
+            get => this.nativeOverlayAdIds;
+            #endif
+            set => this.nativeOverlayAdIds = value;
+        }
+
+        public NativeOverlayStyleConfig NativeOverlayStyleConfig => this.nativeOverlayStyleConfig;
+
+        /// <summary>
         /// Enables or disables test mode.
         /// </summary>
         public bool EnableTestMode { get => this.mEnableTestMode; set => this.mEnableTestMode = value; }
@@ -183,15 +198,14 @@
             AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
             #endif
 
-            this.mOptimizeInitialization = (bool)settingType.GetField("optimizeInitialization", bindingFlags).GetValue(googleMobileAdsSettings);
+            this.mOptimizeInitialization = !(bool)settingType.GetField("disableOptimizeInitialization", bindingFlags).GetValue(googleMobileAdsSettings);
 
-            this.mOptimizeAdLoading = (bool)settingType.GetField("optimizeAdLoading", bindingFlags).GetValue(googleMobileAdsSettings);
+            this.mOptimizeAdLoading = !(bool)settingType.GetField("disableOptimizeAdLoading", bindingFlags).GetValue(googleMobileAdsSettings);
 
             #if ADMOB_BELLOW_9_0_0
             this.mDelayAppMeasurementInit = (bool)settingType.GetField("delayAppMeasurementInit", bindingFlags).GetValue(googleMobileAdsSettings);
             #endif
             this.enableKotlinXCoroutinesPackagingOption = (bool)settingType.GetField("enableKotlinXCoroutinesPackagingOption", bindingFlags).GetValue(googleMobileAdsSettings);
-            this.mValidateGradleDependencies            = (bool)settingType.GetField("validateGradleDependencies", bindingFlags).GetValue(googleMobileAdsSettings);
             this.mUserTrackingUsageDescription          = settingType.GetField("userTrackingUsageDescription", bindingFlags).GetValue(googleMobileAdsSettings) as string;
         }
 
@@ -214,7 +228,6 @@
             #if ADMOB_BELLOW_9_0_0
             settingType.GetField("delayAppMeasurementInit", bindingFlags).SetValue(googleMobileAdsSettings, this.mDelayAppMeasurementInit);
             #endif
-            settingType.GetField("validateGradleDependencies", bindingFlags).SetValue(googleMobileAdsSettings, this.mValidateGradleDependencies);
             settingType.GetField("enableKotlinXCoroutinesPackagingOption", bindingFlags).SetValue(googleMobileAdsSettings, this.enableKotlinXCoroutinesPackagingOption);
             settingType.GetField("userTrackingUsageDescription", bindingFlags).SetValue(googleMobileAdsSettings, this.mUserTrackingUsageDescription);
 
@@ -257,6 +270,10 @@
         [OnValueChanged("SaveAdmobSetting")] [SerializeField] [BoxGroup("Admob Settings")] [LabelText("Remove property tag from GMA Android SDK")] private bool mValidateGradleDependencies;
 
         [OnValueChanged("SaveAdmobSetting")] [Header("UMP-specific settings")] [SerializeField] [BoxGroup("Admob Settings")] private string mUserTrackingUsageDescription;
+
+        [SerializeField] [FoldoutGroup("Native Overlay")] private CrossPlatformValue nativeOverlayAdIds;
+
+        [SerializeField] [FoldoutGroup("Native Overlay")] private NativeOverlayStyleConfig nativeOverlayStyleConfig;
 
         [SerializeField] [LabelText("Enable Test Mode")] private bool mEnableTestMode;
 

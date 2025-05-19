@@ -7,6 +7,7 @@
         public const string Rewarded          = "REWARDED";
         public const string AppOpen           = "AOA";
         public const string Native            = "NATIVE";
+        public const string NativeOverlay     = "NATIVE_OVERLAY";
         public const string MREC              = "MREC";
         public const string CollapsibleBanner = "COLLAPSIBLE_BANNER";
     }

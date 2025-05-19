@@ -57,7 +57,7 @@ namespace ServiceImplementation.Configs.Ads
         public int   MinPauseSecondToShowAoaAd { get; private set; }
         public int   AOAStartSession           { get; private set; }
         public bool  UseAoaAdmob               { get; private set; }
-        
+
         // level >= AOAResumeAdStartLevel || session >= AOAResumeAdStartSession => show AOA ad
         public int   AOAResumeAdStartLevel     { get; private set; } // necessary and sufficient conditions - The level to start showing AOA ad when resume app
         public int   AOAResumeAdStartSession   { get; private set; } // necessary and sufficient conditions - The session to start showing AOA ad when resume app
@@ -142,7 +142,7 @@ namespace ServiceImplementation.Configs.Ads
         #endregion
 
         #region MREC
-        
+
         /// <summary>
         ///     Enable interval refresh mrec ad
         /// </summary>
@@ -151,24 +151,33 @@ namespace ServiceImplementation.Configs.Ads
         /// <summary>
         ///     The interval refresh mrec ad
         /// </summary>
-        public int MrecRefreshInterval { get; private set; }        
-        
+        public int MrecRefreshInterval { get; private set; }
+
         /// <summary>
         ///     Enable collapsible mrec ad
         /// </summary>
-        public bool EnableCollapsibleMrec { get; private set; }    
-        
+        public bool EnableCollapsibleMrec { get; private set; }
+
         /// <summary>
         ///     The interval collapsible mrec ad
         /// </summary>
-        public int CollapsibleMrecInterval { get; private set; }    
-        
+        public int CollapsibleMrecInterval { get; private set; }
+
         /// <summary>
         ///     The duration collapsible mrec ad is displayed before automatically closing if the user doesn't close it
         /// </summary>
-        public int CollapsibleMrecDisplayTime { get; private set; }    
-        
-        public bool EnableGadsme { get; private set; }   
+        public int CollapsibleMrecDisplayTime { get; private set; }
+
+        public bool EnableGadsme { get; private set; }
+
+        #region NativeOverlay
+
+        public bool NativeOverlayInterEnable          { get; private set; }
+        public int  NativeOverlayInterCappingTime     { get; private set; }
+        public int  NativeOverlayInterCountdown       { get; private set; }
+        public bool NativeOverlayInterShowAdsComplete { get; private set; }
+
+        #endregion
 
         #endregion
 
@@ -230,7 +239,7 @@ namespace ServiceImplementation.Configs.Ads
             this.CollapsibleBannerExpandOnRefreshEnabled  = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled);
 
             #endregion
-            
+
             #region MREC
 
             this.EnableMrecRefreshInterval  = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableMrecRefreshInterval);
@@ -241,13 +250,22 @@ namespace ServiceImplementation.Configs.Ads
 
             #endregion
 
+            #region NativeOverlay
+
+            this.NativeOverlayInterEnable          = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeOverlayInterEnable);
+            this.NativeOverlayInterCappingTime     = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeOverlayInterCappingTime);
+            this.NativeOverlayInterCountdown       = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeOverlayInterCountdown);
+            this.NativeOverlayInterShowAdsComplete = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeOverlayInterShowAdsComplete);
+
+            #endregion
+
             #if GADSME
-            
+
             this.EnableGadsme = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig,this.remoteConfigSetting,RemoteConfigKey.EnableGadsme);
-            
+
             #endif
         }
-        
+
         partial void FetchRemoteConfigPartial();
     }
 }
