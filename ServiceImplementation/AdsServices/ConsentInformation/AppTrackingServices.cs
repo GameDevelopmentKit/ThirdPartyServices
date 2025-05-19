@@ -4,10 +4,12 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     using GameFoundation.DI;
     using GameFoundation.Signals;
     using ServiceImplementation.Configs;
+    using UnityEngine;
     using UnityEngine.Scripting;
     #if UNITY_IOS
     using ServiceImplementation.AdsServices.Signal;
     using Unity.Advertisement.IosSupport;
+    using System.Linq;
     #endif
 
     public class AppTrackingServices : IInitializable
@@ -42,12 +44,30 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
             #if UNITY_IOS
             this.signalBus.Fire(new AttDisplayedSignal());
-            ATTrackingStatusBinding.RequestAuthorizationTracking();
+            if (!IsUmpRejected()) ATTrackingStatusBinding.RequestAuthorizationTracking();
             await UniTask.WaitUntil(this.IsTrackingComplete);
             this.signalBus.Fire(new AttClosedSignal());
             #endif
         }
 
-        public bool IsTrackingComplete() => AttHelper.IsRequestTrackingComplete();
+        public bool IsTrackingComplete() => IsUmpRejected() || AttHelper.IsRequestTrackingComplete();
+
+        private static bool IsUmpRejected()
+        {
+            #if UNITY_IOS && ADMOB
+            var gdprApplies     = CMPDataAccess.GetGDPRApplicability();
+            var purposeConsents = CMPDataAccess.GetPurposeConsents();
+            var vendorConsents  = CMPDataAccess.GetVendorConsents();
+
+            var userRejectedAll = purposeConsents.All(c => c == '0') || vendorConsents.All(c => c == '0');
+
+            if (gdprApplies == 1 && userRejectedAll)
+            {
+                Debug.Log("onelog: IsUmpRejected True");
+                return true;
+            }
+            #endif
+            return false;
+        }
     }
 }
