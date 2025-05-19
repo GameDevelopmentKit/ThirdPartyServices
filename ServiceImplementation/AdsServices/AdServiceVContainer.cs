@@ -9,6 +9,7 @@ namespace ServiceImplementation.AdsServices
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Signals;
+    using ServiceImplementation.AdsServices.AdMob.NativeOverlay;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
     using ServiceImplementation.AdsServices.EasyMobile;
@@ -91,9 +92,7 @@ namespace ServiceImplementation.AdsServices
             builder.Register<GadsmeWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
 
-            #if ADMOB
             builder.Register<NativeOverlayWrapper>(Lifetime.Singleton);
-            #endif
 
             #region Ads signal
 
