@@ -114,6 +114,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 #endif
 
             var adjustConfig = new AdjustConfig(appToken, environment);
+            adjustConfig.AttConsentWaitingInterval = 120;
             adjustConfig.IsCostDataInAttributionEnabled = true;
             adjustConfig.IsSendingInBackgroundEnabled   = true;
             adjustConfig.AttributionChangedDelegate     = this.OnAttributionChanged;
