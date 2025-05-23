@@ -198,9 +198,9 @@
             AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
             #endif
 
-            this.mOptimizeInitialization = !(bool)settingType.GetField("disableOptimizeInitialization", bindingFlags).GetValue(googleMobileAdsSettings);
+            this.disableOptimizeInitialization = (bool)settingType.GetField("disableOptimizeInitialization", bindingFlags).GetValue(googleMobileAdsSettings);
 
-            this.mOptimizeAdLoading = !(bool)settingType.GetField("disableOptimizeAdLoading", bindingFlags).GetValue(googleMobileAdsSettings);
+            this.disableOptimizeAdLoading = (bool)settingType.GetField("disableOptimizeAdLoading", bindingFlags).GetValue(googleMobileAdsSettings);
 
             #if ADMOB_BELLOW_9_0_0
             this.mDelayAppMeasurementInit = (bool)settingType.GetField("delayAppMeasurementInit", bindingFlags).GetValue(googleMobileAdsSettings);
@@ -223,8 +223,8 @@
             #if APPLOVIN && UNITY_EDITOR
             AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
             #endif
-            settingType.GetField("optimizeInitialization", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeInitialization);
-            settingType.GetField("optimizeAdLoading", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeAdLoading);
+            settingType.GetField("disableOptimizeInitialization", bindingFlags).SetValue(googleMobileAdsSettings, this.disableOptimizeInitialization);
+            settingType.GetField("disableOptimizeAdLoading", bindingFlags).SetValue(googleMobileAdsSettings, this.disableOptimizeAdLoading);
             #if ADMOB_BELLOW_9_0_0
             settingType.GetField("delayAppMeasurementInit", bindingFlags).SetValue(googleMobileAdsSettings, this.mDelayAppMeasurementInit);
             #endif
@@ -251,10 +251,10 @@
         [Header("Android optimization settings")]
         [BoxGroup("Admob Settings")]
         [SerializeField]
-        [LabelText("Optimize initialization")]
-        private bool mOptimizeInitialization;
+        [LabelText("Disable optimize initialization")]
+        private bool disableOptimizeInitialization;
 
-        [OnValueChanged("SaveAdmobSetting")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("Optimize ad loading")] private bool mOptimizeAdLoading;
+        [OnValueChanged("SaveAdmobSetting")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("Disable optimize ad loading")] private bool disableOptimizeAdLoading;
 
         #if ADMOB_BELLOW_9_0_0
         [OnValueChanged("SaveAdmobSetting")] [Header("Admob-specific settings")] [SerializeField] [BoxGroup("Admob Settings")]
