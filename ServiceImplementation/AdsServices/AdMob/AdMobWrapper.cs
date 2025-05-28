@@ -40,6 +40,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
+        public int  Order        => 0;
+        public bool IsShowingAOAAd { get; set; }
+
         [Preserve]
         public AdMobWrapper
         (
@@ -117,7 +120,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region AOA
 
-        public bool IsShowingAOAAd { get; set; } = false;
 
         public float LoadingTimeToShowAOA => this.adServicesConfig.AOALoadingThreshold;
 
@@ -129,8 +131,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.aoaAdLoadedInstance.Show();
             this.LoadAppOpenAd();
         }
-
-        public int Order => 0;
 
         private LoadedAppOpenAd aoaAdLoadedInstance = new();
         private string          aoaAdPlacement;

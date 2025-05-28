@@ -7,6 +7,7 @@ namespace Core.AdsServices
     {
         bool IsAOAReady();
         void ShowAOAAds(string placement);
-        int Order { get; }
+        int  Order        { get; }
+        bool IsShowingAOAAd { get; set; }
     }
 }

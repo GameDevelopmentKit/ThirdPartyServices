@@ -16,6 +16,7 @@ namespace Core.AdsServices
 
         public void ShowAOAAds(string placement) { this.logService.Log("Dummy show app open ad"); }
 
-        public int Order => 0;
+        public int  Order        => 0;
+        public bool IsShowingAOAAd { get; set; }
     }
 }

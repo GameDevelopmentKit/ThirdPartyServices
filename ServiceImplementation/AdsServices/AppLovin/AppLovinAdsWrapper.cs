@@ -40,6 +40,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private event Action RewardedAdCompletedOneTimeAction;
         private event Action RewardedAdFailed;
         private List<string> MrectLoadedId = new();
+        public  int          Order        => 1;
+        public  bool         IsShowingAOAAd { get; set; }
 
         #endregion
 
@@ -441,8 +443,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InternalLoadAppOpenAd();
         }
 
-        public int Order => 1;
-
         private void OnAppOpenDismissedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
             this.logService.Log($"OnAppOpenDismissedEvent: {arg2.AdUnitIdentifier}");
@@ -706,8 +706,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         #endregion
 
         #region IAOAServices
-
-        public bool IsShowingAOAAd { get; set; } = false;
 
         private void InternalLoadAppOpenAd() { MaxSdk.LoadAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.Id); }
 
