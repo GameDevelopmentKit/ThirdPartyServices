@@ -114,13 +114,13 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 #endif
 
             var adjustConfig = new AdjustConfig(appToken, environment);
-            adjustConfig.AttConsentWaitingInterval = 120;
+            adjustConfig.AttConsentWaitingInterval      = 120;
             adjustConfig.IsCostDataInAttributionEnabled = true;
             adjustConfig.IsSendingInBackgroundEnabled   = true;
             adjustConfig.AttributionChangedDelegate     = this.OnAttributionChanged;
-            #if THEONE_MMP_DEBUG && !PRODUCTION
+#if THEONE_MMP_DEBUG && !PRODUCTION
             adjustConfig.LogLevel = AdjustLogLevel.Verbose;
-            #endif
+#endif
             Adjust.InitSdk(adjustConfig);
             this.TrackerReady.SetResult(true);
 
@@ -153,16 +153,8 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                     { "TrackerToken", attributionData.TrackerToken },
                     { "TrackerName", attributionData.TrackerName }
                 };
-                
-                this.signalBus.Fire(new EventTrackedSignal()
-                {
-                    TrackedEvent = new CustomEvent()
-                    {
-                        EventName       = "AttributionChanged",
-                        EventProperties = dataDictionary
-                    },
-                    ChangedProps = dataDictionary
-                });
+
+                this.signalBus.Fire(new AttributionChangedSignal(dataDictionary));
             }
             else
             {
@@ -198,11 +190,12 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
             var adjustRevenue = new AdjustAdRevenue(this.adRevenueSourceMapping[adsRevenueEvent.AdsRevenueSourceId]);
             adjustRevenue.SetRevenue(adsRevenueEvent.Revenue, adsRevenueEvent.Currency);
-            adjustRevenue.AdRevenueNetwork = adsRevenueEvent.AdNetwork;
-            adjustRevenue.AdRevenueUnit = adsRevenueEvent.AdUnit;
+            adjustRevenue.AdRevenueNetwork   = adsRevenueEvent.AdNetwork;
+            adjustRevenue.AdRevenueUnit      = adsRevenueEvent.AdUnit;
             adjustRevenue.AdRevenuePlacement = adsRevenueEvent.Placement;
             Adjust.TrackAdRevenue(adjustRevenue);
-            this.logger.Log($"Adjust: OnEvent Ad Revenue : {adsRevenueEvent.AdUnit} - {adsRevenueEvent.AdFormat} - {adsRevenueEvent.AdNetwork} - {adsRevenueEvent.Placement} - {adsRevenueEvent.Currency} - {adsRevenueEvent.Revenue}");
+            this.logger.Log(
+                $"Adjust: OnEvent Ad Revenue : {adsRevenueEvent.AdUnit} - {adsRevenueEvent.AdFormat} - {adsRevenueEvent.AdNetwork} - {adsRevenueEvent.Placement} - {adsRevenueEvent.Currency} - {adsRevenueEvent.Revenue}");
         }
     }
 }

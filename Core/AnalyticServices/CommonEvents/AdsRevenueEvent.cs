@@ -36,6 +36,7 @@ namespace Core.AnalyticServices.CommonEvents
         public const string ARSourcePublisher        = "publisher";
         public const string ARSourceImmersiveAds     = "immersive_ads";
         public const string ARSourceGadsmeAds        = "gadsme_ads";
+        public const string ARSourceCrazyGamesAds    = "crazy_game_ads";
     }
 
     #endregion

@@ -62,18 +62,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         public void onAppOpenAttributionFailure(string error) { Debug.LogError("App Open Attribution Failure: " + error); }
 
         // Analyze the conversion data dictionary
-        private void HandleAttributionData(Dictionary<string, object> data)
-        {
-            this.signalBus.Fire(new EventTrackedSignal()
-            {
-                TrackedEvent = new CustomEvent()
-                {
-                    EventName       = "AttributionChanged",
-                    EventProperties = data
-                },
-                ChangedProps = data
-            });
-        }
+        private void HandleAttributionData(Dictionary<string, object> data) => this.signalBus.Fire(new AttributionChangedSignal(data));
     }
 }
 #endif
