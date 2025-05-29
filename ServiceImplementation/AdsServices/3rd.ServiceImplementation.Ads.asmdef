@@ -23,7 +23,8 @@
     "YandexMobileAds.Scripts",
     "GameFoundation.UIModule",
     "ColumbusSdk",
-    "GadsmeSDK"
+    "GadsmeSDK",
+    "CrazySDK.Scripts"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

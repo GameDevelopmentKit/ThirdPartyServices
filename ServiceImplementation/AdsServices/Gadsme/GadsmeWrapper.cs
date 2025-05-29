@@ -226,8 +226,6 @@ namespace ServiceImplementation.AdsServices.Gads
         /// Will select MainCamera, if not set, will pick the one with the highest depth
         /// </summary>
         public void ChangeMainCamera(Camera newCamera) { GadsmeSDK.SetMainCamera(newCamera); }
-        public void RemoveAds()   { PlayerPrefs.SetInt("GADSME_REMOVE_ADS", 1); }
-        public bool IsRemoveAds() { return PlayerPrefs.HasKey("GADSME_REMOVE_ADS"); }
     }
 }
 #endif

@@ -1,6 +1,6 @@
-namespace ServiceImplementation.AdsServices.EasyMobile
+#if ADMOB
+namespace ServiceImplementation.AdsServices.Admob
 {
-    #if ADMOB
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -159,8 +159,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void LoadAppOpenAd()
         {
-            if (this.adServices.Any(adService => adService.IsRemoveAds())) return;
-
             var adUnitId = this.ADMobSettings.AOAAdId.DefaultValue;
 
             if (this.aoaAdLoadedInstance is { IsAoaAdAvailable: true })
@@ -536,12 +534,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.analyticService.Track(adsRevenueEvent);
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
         }
-        #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
-        public void RemoveAds() { PlayerPrefs.SetInt("ADMOB_REMOVE_ADS", 1); }
-
-        public bool IsRemoveAds() { return PlayerPrefs.HasKey("ADMOB_REMOVE_ADS"); }
-        #endif
-
     }
 
     public class BannerViewHandler
@@ -624,5 +616,5 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.y = y;
         }
     }
-    #endif
 }
+#endif

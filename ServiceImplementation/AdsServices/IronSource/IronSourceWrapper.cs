@@ -524,19 +524,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.onRewardFailed   = onFailed;
         }
 
-        public void RemoveAds()
-        {
-            PlayerPrefs.SetInt("EM_REMOVE_ADS", -1);
-        }
-
         public bool IsAdsInitialized()
         {
             return true;
-        }
-
-        public bool IsRemoveAds()
-        {
-            return PlayerPrefs.HasKey("EM_REMOVE_ADS");
         }
 
         #endregion

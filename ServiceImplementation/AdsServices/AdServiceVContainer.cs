@@ -12,7 +12,9 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.AdMob.NativeOverlay;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
-    using ServiceImplementation.AdsServices.EasyMobile;
+    #if CRAZYGAMES
+    using ServiceImplementation.AdsServices.CrazyGames;
+    #endif
     using ServiceImplementation.AdsServices.PreloadService;
     using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs.Ads;
@@ -66,6 +68,9 @@ namespace ServiceImplementation.AdsServices
             #if ADMOB
             builder.Register<AdMobAdService>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<AdMobWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
+            #endif
+            #if CRAZYGAMES
+            builder.Register<CrazyGameAdsWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
             #if !APPLOVIN && (!IRONSOURCE || UNITY_EDITOR) && (!YANDEX || UNITY_EDITOR) && !ADMOB
             builder.Register<DummyAdServiceIml>(Lifetime.Singleton).AsImplementedInterfaces();

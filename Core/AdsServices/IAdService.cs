@@ -1,6 +1,7 @@
 namespace Core.AdsServices
 {
     using System;
+    using UnityEngine;
 
     // Do not set place empty by default to make sure we have enough data to analyze
     public interface IAdServices
@@ -32,14 +33,6 @@ namespace Core.AdsServices
         bool IsRewardedAdReady(string place);
 
         void ShowRewardedAd(string place, Action onCompleted, Action onFailed);
-
-        #endregion
-
-        #region RemoveAds
-
-        void RemoveAds();
-
-        bool IsRemoveAds();
 
         #endregion
     }

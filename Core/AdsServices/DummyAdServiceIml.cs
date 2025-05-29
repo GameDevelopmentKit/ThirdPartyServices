@@ -104,20 +104,9 @@ namespace Core.AdsServices
             this.logService.Log($"Dummy show Rewarded Interstitial ad at {place} then do {onCompleted}");
         }
 
-        public void RemoveAds()
-        {
-            PlayerPrefs.SetInt("EM_REMOVE_ADS", -1);
-            this.logService.Log($"Dummy remove Ads");
-        }
-
         public bool IsAdsInitialized()
         {
             return true;
-        }
-
-        public bool IsRemoveAds()
-        {
-            return PlayerPrefs.HasKey("EM_REMOVE_ADS");
         }
     }
 }

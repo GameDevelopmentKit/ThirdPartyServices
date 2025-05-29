@@ -225,7 +225,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
-            if (this.IsRemoveAds()) return;
             this.InternalShowBanner(AdPlacement.Default, bannerAdsPosition, new BannerSize(width, height));
         }
 
@@ -679,12 +678,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
         }
 
         #endregion
-
-        public void RemoveAds() { PlayerPrefs.SetInt("EM_REMOVE_ADS", -1); }
-
-        public bool IsAdsInitialized() { return this.isInit; }
-
-        public bool IsRemoveAds() { return PlayerPrefs.HasKey("EM_REMOVE_ADS"); }
 
         #region Load Ads
 
