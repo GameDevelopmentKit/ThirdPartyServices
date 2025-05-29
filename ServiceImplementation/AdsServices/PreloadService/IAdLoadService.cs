@@ -8,7 +8,6 @@ namespace Core.AdsServices
         AdNetworkSettings AdNetworkSettings { get; }
         bool              IsRewardedAdReady(string     place = "");
         bool              IsInterstitialAdReady(string place = "");
-        bool              IsRemoveAds();
         public void       LoadRewardAds(string                 place = "");
         bool              TryGetRewardPlacementId(string       placement, out string id);
         public void       LoadInterstitialAd(string            place = "");

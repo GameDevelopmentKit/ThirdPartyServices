@@ -9,6 +9,7 @@ namespace ServiceImplementation.AdsServices
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Signals;
+    using ServiceImplementation.AdsServices.Admob;
     using ServiceImplementation.AdsServices.AdMob.NativeOverlay;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
@@ -83,7 +84,7 @@ namespace ServiceImplementation.AdsServices
             #endif
             #endif
 
-            builder.Register<PreloadAdService>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<PreloadAdService>(Lifetime.Singleton).AsInterfacesAndSelf();
             typeof(IAdRevenueTracker).GetDerivedTypes().ForEach(type => builder.Register(type, Lifetime.Singleton).AsImplementedInterfaces());
 
             builder.Register<AppTrackingServices>(Lifetime.Singleton).AsInterfacesAndSelf();

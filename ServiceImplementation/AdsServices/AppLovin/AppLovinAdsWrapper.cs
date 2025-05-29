@@ -683,6 +683,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void LoadRewardAds(string           place)                    { this.InternalLoadRewarded(AdPlacement.PlacementWithName(place)); }
 
+        public bool IsAdsInitialized() { return this.isInit; }
+
         public void LoadInterstitialAd(string place) { this.InternalLoadInterstitialAd(AdPlacement.PlacementWithName(place)); }
 
         public AdNetworkSettings AdNetworkSettings => this.AppLovinSetting;
