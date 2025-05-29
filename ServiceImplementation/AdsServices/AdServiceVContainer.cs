@@ -9,7 +9,6 @@ namespace ServiceImplementation.AdsServices
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Signals;
-    using ServiceImplementation.AdsServices.Admob;
     using ServiceImplementation.AdsServices.AdMob.NativeOverlay;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
