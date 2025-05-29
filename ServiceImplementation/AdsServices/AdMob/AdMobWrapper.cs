@@ -17,6 +17,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
+    using ServiceImplementation.FireBaseRemoteConfig;
     using UnityEngine;
     using UnityEngine.Scripting;
     using Zenject;
@@ -37,10 +38,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private readonly IAnalyticServices          analyticService;
         private readonly ThirdPartiesConfig         thirdPartiesConfig;
         private readonly AdServicesConfig           adServicesConfig;
+        private readonly IRemoteConfig              remoteConfig;
 
         #endregion
 
-        public int  Order        => 0;
+        public int  Order          => 0;
         public bool IsShowingAOAAd { get; set; }
 
         [Preserve]
@@ -51,7 +53,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             IEnumerable<IAdServices> adServices,
             IAnalyticServices analyticService,
             ThirdPartiesConfig thirdPartiesConfig,
-            AdServicesConfig adServicesConfig
+            AdServicesConfig adServicesConfig, IRemoteConfig remoteConfig
         )
         {
             this.logService         = logService;
@@ -60,6 +62,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.analyticService    = analyticService;
             this.thirdPartiesConfig = thirdPartiesConfig;
             this.adServicesConfig   = adServicesConfig;
+            this.remoteConfig       = remoteConfig;
         }
 
         public void Initialize()
@@ -120,7 +123,6 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region AOA
 
-
         public float LoadingTimeToShowAOA => this.adServicesConfig.AOALoadingThreshold;
 
         public bool IsAOAReady() { return this.aoaAdLoadedInstance.IsAoaAdAvailable && !this.IsShowingAOAAd; }
@@ -164,6 +166,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             if (this.adServices.Any(adService => adService.IsRemoveAds())) return;
 
             var adUnitId = this.ADMobSettings.AOAAdId.Id;
+
+            var testAdsId = this.remoteConfig.GetRemoteConfigStringValue("open_ad_id", string.Empty);
+
+            if (!string.IsNullOrEmpty(testAdsId))
+            {
+                adUnitId = testAdsId;
+                this.logService.Log($"Using test AOA ad id: {adUnitId}");
+            }
 
             if (string.IsNullOrEmpty(adUnitId)) return;
 

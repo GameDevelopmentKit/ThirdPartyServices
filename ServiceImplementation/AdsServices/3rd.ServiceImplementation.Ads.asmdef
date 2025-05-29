@@ -19,7 +19,8 @@
     "Unity.Advertisement.IosSupport",
     "Unity.LevelPlay",
     "YandexMobileAds.Scripts",
-    "GameFoundation.UIModule"
+    "GameFoundation.UIModule",
+    "3rd.RemoteConfig"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
