@@ -1,5 +1,5 @@
 #if ADMOB
-namespace ServiceImplementation.AdsServices.AdMob
+namespace ServiceImplementation.AdsServices.Admob
 {
     using System;
     using System.Collections.Generic;

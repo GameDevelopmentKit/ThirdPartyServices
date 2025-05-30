@@ -1,4 +1,4 @@
-﻿namespace ServiceImplementation.AdsServices.AdMob.NativeOverlay
+﻿namespace ServiceImplementation.AdsServices.Admob.NativeOverlay
 {
     using System;
     using System.Threading;

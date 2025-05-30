@@ -1,4 +1,4 @@
-﻿namespace ServiceImplementation.AdsServices.AdMob
+﻿namespace ServiceImplementation.AdsServices.Admob
 {
     public enum AdViewPosition
     {
