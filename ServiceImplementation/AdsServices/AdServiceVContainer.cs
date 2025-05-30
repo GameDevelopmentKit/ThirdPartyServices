@@ -88,6 +88,7 @@ namespace ServiceImplementation.AdsServices
             builder.Register<AppTrackingServices>(Lifetime.Singleton).AsInterfacesAndSelf();
             #if ADMOB
             builder.Register<UmpConsentInformation>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<NativeOverlayWrapper>(Lifetime.Singleton);
             #else
             builder.Register<DummyConsentInformation>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
@@ -96,7 +97,6 @@ namespace ServiceImplementation.AdsServices
             builder.Register<GadsmeWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
 
-            builder.Register<NativeOverlayWrapper>(Lifetime.Singleton);
 
             #region Ads signal
 
