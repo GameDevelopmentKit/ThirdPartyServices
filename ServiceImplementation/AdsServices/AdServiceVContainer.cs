@@ -32,7 +32,7 @@ namespace ServiceImplementation.AdsServices
     #endif
     #if ADMOB
     using ServiceImplementation.AdsServices.Admob;
-    using ServiceImplementation.AdsServices.Admob.NativeOverlay;
+    using ServiceImplementation.AdsServices.NativeOverlay;
     #endif
     #if YANDEX
     using ServiceImplementation.AdsServices.Yandex;
@@ -88,9 +88,10 @@ namespace ServiceImplementation.AdsServices
             builder.Register<AppTrackingServices>(Lifetime.Singleton).AsInterfacesAndSelf();
             #if ADMOB
             builder.Register<UmpConsentInformation>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<NativeOverlayWrapper>(Lifetime.Singleton);
+            builder.Register<AdmobNativeOverlayService>(Lifetime.Singleton).AsImplementedInterfaces();
             #else
             builder.Register<DummyConsentInformation>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<DummyNativeOverlayService>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
 
             #if GADSME

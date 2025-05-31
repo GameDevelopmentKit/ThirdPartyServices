@@ -118,14 +118,14 @@
         /// <summary>
         /// Gets or sets the default Native Overlay ad identifier.
         /// </summary>
-        public CrossPlatformValue NativeOverlayAdIds
+        public Dictionary<AdPlacement, CrossPlatformValue> NativeOverlayAdIds
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => !string.IsNullOrEmpty(this.nativeOverlayAdIds.AndroidValue) ? new ("ca-app-pub-3940256099942544/3986624511","ca-app-pub-3940256099942544/2247696110") : this.nativeOverlayAdIds;
+            get => this.ConvertIdsToTestId(this.nativeOverlayAdIds, new ("ca-app-pub-3940256099942544/3986624511","ca-app-pub-3940256099942544/2247696110"));
             #else
             get => this.nativeOverlayAdIds;
             #endif
-            set => this.nativeOverlayAdIds = value;
+            set => this.nativeOverlayAdIds = value as Dictionary_AdPlacement_AdId;
         }
 
         public NativeOverlayStyleConfig NativeOverlayStyleConfig => this.nativeOverlayStyleConfig;
@@ -271,7 +271,7 @@
 
         [OnValueChanged("SaveAdmobSetting")] [Header("UMP-specific settings")] [SerializeField] [BoxGroup("Admob Settings")] private string mUserTrackingUsageDescription;
 
-        [SerializeField] [FoldoutGroup("Native Overlay")] private CrossPlatformValue nativeOverlayAdIds;
+        [SerializeField] [FoldoutGroup("Native Overlay")] private Dictionary_AdPlacement_AdId nativeOverlayAdIds;
 
         [SerializeField] [FoldoutGroup("Native Overlay")] private NativeOverlayStyleConfig nativeOverlayStyleConfig;
 
