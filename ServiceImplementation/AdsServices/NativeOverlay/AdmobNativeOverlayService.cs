@@ -97,7 +97,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
                     }
 
                     // The operation completed successfully.
-                    this.logger.Log("Native Overlay ad loaded with response : " + ad.GetResponseInfo());
+                    this.logger.Info("Native Overlay ad loaded with response : " + ad.GetResponseInfo());
                     this.adUnitIdToNativeOverlayAd[adUnitId].NativeOverlayAd = ad;
                     this.adUnitIdToNativeOverlayAd[adUnitId].IsLoaded        = true;
                     this.SubscribeEvent(adUnitId);
@@ -115,7 +115,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
             {
                 this.LoadAd(placement);
             }
-            this.logger.Log($"ShowAd placement {placement}, position {adViewPosition}");
+            this.logger.Info($"ShowAd placement {placement}, position {adViewPosition}");
             UniTask.WhenAll(UniTask.WaitUntil(() => this.adUnitIdToNativeOverlayAd[this.AdUnitId(placement)].IsLoaded))
                 .AttachExternalCancellation((this.showAdsCts = new()).Token)
                 .ContinueWith(() =>
@@ -129,7 +129,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
                     {
                         this.RenderAd(placement, this.GetAdPosition(adViewPosition));
                     }
-                    this.logger.Log("Showing Native Overlay ad.");
+                    this.logger.Info("Showing Native Overlay ad.");
                     value.NativeOverlayAd.Show();
                     value.Showing = true;
                 }).Forget();
@@ -142,7 +142,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
             if (ad.NativeOverlayAd == null) return;
             if (!ad.IsLoaded) return;
             if (!ad.Showing) return;
-            this.logger.Log("Hiding Native Overlay ad.");
+            this.logger.Info("Hiding Native Overlay ad.");
             this.adUnitIdToNativeOverlayAd[this.AdUnitId(placement)].NativeOverlayAd.Hide();
             ad.Showing = false;
         }

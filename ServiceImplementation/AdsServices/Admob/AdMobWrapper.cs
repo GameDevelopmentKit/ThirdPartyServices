@@ -14,13 +14,15 @@ namespace ServiceImplementation.AdsServices.Admob
     using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
     using GameFoundation.Scripts.Utilities.Extension;
-    using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
+    using TheOne.Extensions;
+    using TheOne.Logging;
     using UnityEngine;
     using UnityEngine.Scripting;
+    using ILogger = TheOne.Logging.ILogger;
     #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
     using Core.AdsServices.Native;
     #endif
@@ -32,7 +34,7 @@ namespace ServiceImplementation.AdsServices.Admob
     {
 #region inject
 
-        private readonly ILogService                logService;
+        private readonly ILogger                    logService;
         private readonly SignalBus                  signalBus;
         private readonly IReadOnlyList<IAdServices> adServices;
         private readonly IAnalyticServices          analyticService;
@@ -44,7 +46,7 @@ namespace ServiceImplementation.AdsServices.Admob
         [Preserve]
         public AdMobWrapper
         (
-            ILogService              logService,
+            ILoggerManager           loggerManager,
             SignalBus                signalBus,
             IEnumerable<IAdServices> adServices,
             IAnalyticServices        analyticService,
@@ -52,7 +54,7 @@ namespace ServiceImplementation.AdsServices.Admob
             AdServicesConfig         adServicesConfig
         )
         {
-            this.logService         = logService;
+            this.logService         = loggerManager.GetLogger(this);
             this.signalBus          = signalBus;
             this.adServices         = adServices.ToArray();
             this.analyticService    = analyticService;
@@ -87,10 +89,10 @@ namespace ServiceImplementation.AdsServices.Admob
             #if !GOOGLE_MOBILE_ADS_BELLOW_7_4_0
             MobileAds.RaiseAdEventsOnUnityMainThread = true;
             #endif
-            this.logService.Log("AOA start init");
+            this.logService.Info("AOA start init");
             MobileAds.Initialize(_ =>
                                  {
-                                     this.logService.Log("AOA finished init");
+                                     this.logService.Info("AOA finished init");
                                      this.LoadAppOpenAd();
                                      #if ADMOB_ADS_DEBUG
                                      MobileAds.OpenAdInspector(_ => {});
@@ -163,7 +165,7 @@ namespace ServiceImplementation.AdsServices.Admob
 
             if (this.aoaAdLoadedInstance is { IsAoaAdAvailable: true })
             {
-                this.logService.Log($"AOA ads was already loaded");
+                this.logService.Info($"AOA ads was already loaded");
 
                 return;
             }
@@ -177,7 +179,7 @@ namespace ServiceImplementation.AdsServices.Admob
                 if (error != null)
                 {
                     // Handle the error.
-                    this.logService.Log($"Failed to load the ad. (reason: {error.GetMessage()}), id: {adUnitId}");
+                    this.logService.Info($"Failed to load the ad. (reason: {error.GetMessage()}), id: {adUnitId}");
                     this.signalBus.Fire(new AppOpenLoadFailedSignal(""));
 
                     await UniTask.Delay(TimeSpan.FromSeconds(this.currentAOASleepLoadingTime));
@@ -205,14 +207,14 @@ namespace ServiceImplementation.AdsServices.Admob
 
         private void AOAHandleAdClicked()
         {
-            this.logService.Log("oneLog: Clicked app open ad");
+            this.logService.Info("Clicked app open ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.DefaultValue, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenClickedSignal(this.aoaAdPlacement, adRevenueEvent));
         }
 
         private void AOAHandleAdFullScreenContentClosed()
         {
-            this.logService.Log("oneLog: Closed app open ad");
+            this.logService.Info("Closed app open ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.DefaultValue, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adRevenueEvent));
             this.IsShowingAOAAd = false;
@@ -220,13 +222,13 @@ namespace ServiceImplementation.AdsServices.Admob
 
         private void AOAHandleAdFullScreenContentFailed(AdError args)
         {
-            this.logService.Log($"oneLog: Failed to present the ad (reason: {args.GetMessage()})");
+            this.logService.Info($"Failed to present the ad (reason: {args.GetMessage()})");
             this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(this.aoaAdPlacement, args.GetMessage()));
         }
 
         private void AOAHandleAdFullScreenContentOpened()
         {
-            this.logService.Log("oneLog: Displayed app open ad");
+            this.logService.Info("Displayed app open ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.DefaultValue, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(this.aoaAdPlacement, adRevenueEvent));
             this.IsShowingAOAAd = true;
@@ -234,7 +236,7 @@ namespace ServiceImplementation.AdsServices.Admob
 
         private void AOAHandleAdImpressionRecorded()
         {
-            this.logService.Log("Recorded ad impression");
+            this.logService.Info("Recorded ad impression");
         }
 
         private void AOAHandleAdPaid(AdValue obj) => this.AdMobHandlePaidEvent(obj, this.ADMobSettings.AOAAdId.DefaultValue, AdFormatConstants.AppOpen);
@@ -256,7 +258,7 @@ namespace ServiceImplementation.AdsServices.Admob
 
         public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
-            Debug.Log("oneLog: AdmobWrapper IsMRECReady start");
+            this.logService.Info("IsMRECReady start");
             var adPlacement = AdPlacement.PlacementWithName(placement);
             if (!this.ADMobSettings.MRECAdIds.TryGetValue(adPlacement, out var adId)) return false;
             var isMrecHandlerCreate = this.idToMrecViewHandler.ContainsKey(adId.DefaultValue);
@@ -268,7 +270,7 @@ namespace ServiceImplementation.AdsServices.Admob
             {
                 this.UpdatePlacementMrec(adId.DefaultValue, position, offset);
             }
-            Debug.Log("oneLog: AdmobWrapper IsMRECReady check banner view is null");
+            this.logService.Info("IsMRECReady check banner view is null");
             return this.idToMrecViewHandler[adId.DefaultValue].bannerView != null;
         }
 
@@ -279,9 +281,9 @@ namespace ServiceImplementation.AdsServices.Admob
                 return;
             }
 
-            Debug.Log("oneLog: AdmobWrapper LoadMREC start");
+            this.logService.Info("LoadMREC start");
             if (this.idToMrecViewHandler.TryGetValue(adId.DefaultValue, out var bannerViewHandler)) return;
-            Debug.Log("oneLog: AdmobWrapper LoadMREC creat new banner");
+            this.logService.Info("LoadMREC creat new banner");
 
             var mrecPosition = adPosition.CanvasToUnityCoordinateSystem().ToAdmobPosition() + offset.FlipY();
             bannerViewHandler = new BannerViewHandler(adId.DefaultValue, AdSize.MediumRectangle, (int)mrecPosition.x, (int)mrecPosition.y);
@@ -352,7 +354,7 @@ namespace ServiceImplementation.AdsServices.Admob
 
         private void BannerViewOnAdLoadFailed(LoadAdError obj)
         {
-            Debug.LogError($"oneLog: AdmobWrapper Failed to load ad: {obj.GetMessage()}");
+            this.logService.Error($"Failed to load ad: {obj.GetMessage()}");
             this.signalBus.Fire(new MRecAdLoadFailedSignal(""));
         }
 
@@ -405,7 +407,7 @@ namespace ServiceImplementation.AdsServices.Admob
 
         private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e)
         {
-            this.logService.Log("native ad clicked");
+            this.logService.Info("native ad clicked");
         }
 
         private NativeAd GetAvailableNativeAd()
@@ -425,17 +427,17 @@ namespace ServiceImplementation.AdsServices.Admob
             if (this.nativeAdsIdToNativeAd.Count == 0 || this.nativeAdsViewToNativeAd.ContainsKey(nativeAdsView)) return;
             var nativeAd = this.nativeAdsViewToNativeAd.GetOrAdd(nativeAdsView, this.GetAvailableNativeAd);
 
-            this.logService.Log($"Start set native ad: {nativeAdsView.name}");
+            this.logService.Info($"Start set native ad: {nativeAdsView.name}");
 
-            this.logService.Log($"native star rating : {nativeAd.GetStarRating()}");
-            this.logService.Log($"native store: {nativeAd.GetStore()}");
-            this.logService.Log($"native Price: {nativeAd.GetPrice()}");
-            this.logService.Log($"native advertiser text: {nativeAd.GetAdvertiserText()}");
-            this.logService.Log($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
+            this.logService.Info($"native star rating : {nativeAd.GetStarRating()}");
+            this.logService.Info($"native store: {nativeAd.GetStore()}");
+            this.logService.Info($"native Price: {nativeAd.GetPrice()}");
+            this.logService.Info($"native advertiser text: {nativeAd.GetAdvertiserText()}");
+            this.logService.Info($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
 
-            this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
-            this.logService.Log($"native call to action text: {nativeAd.GetCallToActionText()}");
-            this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
+            this.logService.Info($"native headline: {nativeAd.GetHeadlineText()}");
+            this.logService.Info($"native call to action text: {nativeAd.GetCallToActionText()}");
+            this.logService.Info($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
 
             // Get Texture2D for icon asset of native ad.
             nativeAdsView.headlineText.text = nativeAd.GetHeadlineText();
@@ -443,7 +445,7 @@ namespace ServiceImplementation.AdsServices.Admob
             if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
             {
                 // Handle failure to register ad asset.
-                this.logService.Log($"Failed to register Headline text for native ad: {nativeAdsView.name}");
+                this.logService.Info($"Failed to register Headline text for native ad: {nativeAdsView.name}");
             }
 
             nativeAdsView.advertiserText.text = nativeAd.GetAdvertiserText();
@@ -453,7 +455,7 @@ namespace ServiceImplementation.AdsServices.Admob
                 nativeAdsView.advertiserText.text = PrefixNativeAdsText;
 
                 // Handle failure to register ad asset.
-                this.logService.Log($"Failed to register advertiser text for native ad: {nativeAdsView.name}");
+                this.logService.Info($"Failed to register advertiser text for native ad: {nativeAdsView.name}");
             }
 
             nativeAdsView.callToActionText.text = nativeAd.GetCallToActionText();
@@ -461,7 +463,7 @@ namespace ServiceImplementation.AdsServices.Admob
             if (!nativeAd.RegisterCallToActionGameObject(nativeAdsView.callToActionText.gameObject))
             {
                 nativeAdsView.callToActionText.text = PrefixNativeAdsText;
-                this.logService.Log($"Failed to register call to action text for native ad: {nativeAdsView.name}");
+                this.logService.Info($"Failed to register call to action text for native ad: {nativeAdsView.name}");
             }
 
             if (nativeAd.GetIconTexture() != null)
@@ -473,7 +475,7 @@ namespace ServiceImplementation.AdsServices.Admob
                 if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.iconImage.gameObject))
                 {
                     // Handle failure to register ad asset.
-                    this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
+                    this.logService.Info($"Failed to register icon image for native ad: {nativeAdsView.name}");
                 }
             }
 
@@ -485,20 +487,20 @@ namespace ServiceImplementation.AdsServices.Admob
                 if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoicesImage.gameObject))
                 {
                     // Handle failure to register ad asset.
-                    this.logService.Log($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
+                    this.logService.Info($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
                 }
             }
         }
 
         private void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
         {
-            this.logService.Log($"Native ad failed to load: {e.LoadAdError.GetMessage()}");
+            this.logService.Info($"Native ad failed to load: {e.LoadAdError.GetMessage()}");
         }
 
         private void HandleNativeAdLoaded(object sender, NativeAdEventArgs e)
         {
             e.nativeAd.OnPaidEvent += this.AdMobNativePaidHandler;
-            this.logService.Log($"Native ad loaded successfully");
+            this.logService.Info($"Native ad loaded successfully");
         }
 
         private void AdMobNativePaidHandler(object sender, AdValueEventArgs e)

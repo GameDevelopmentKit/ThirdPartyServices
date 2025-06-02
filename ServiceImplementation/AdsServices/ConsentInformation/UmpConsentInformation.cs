@@ -1,20 +1,20 @@
 #if ADMOB
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
-    using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     public class UmpConsentInformation : IConsentInformation
     {
         #region Inject
 
-        private readonly ILogService logService;
+        private readonly ILogger logService;
 
         [Preserve]
-        public UmpConsentInformation(ILogService logService)
+        public UmpConsentInformation(ILoggerManager loggerManager)
         {
-            this.logService = logService;
+            this.logService = loggerManager.GetLogger(this);
         }
 
         #endregion
@@ -40,12 +40,12 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         {
             if (consentError != null)
             {
-                this.logService.Error($"onelog: OnConsentInfoUpdated Error {consentError.Message}");
+                this.logService.Error($"OnConsentInfoUpdated {consentError.Message}");
                 this.isRequesting = false;
                 return;
             }
 
-            this.logService.Log($"onelog: LoadAndShowConsentFormIfRequired");
+            this.logService.Info("Before LoadAndShowConsentFormIfRequired");
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
             {
                 this.isRequesting = false;
@@ -53,12 +53,12 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
                 if (formError != null)
                 {
                     // Consent gathering failed.
-                    this.logService.Error($"onelog: LoadAndShowConsentFormIfRequired Error {formError.Message}");
+                    this.logService.Error($"LoadAndShowConsentFormIfRequired Fail: {formError.Message}");
                     return;
                 }
 
                 // Consent has been gathered.
-                this.logService.Log($"onelog: LoadAndShowConsentFormIfRequired Success, Status: {ConsentInformation.ConsentStatus}");
+                this.logService.Info($"LoadAndShowConsentFormIfRequired Success, Status: {ConsentInformation.ConsentStatus}");
             });
         }
     }

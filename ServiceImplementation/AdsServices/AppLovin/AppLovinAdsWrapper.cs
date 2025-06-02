@@ -9,20 +9,21 @@ namespace ServiceImplementation.AdsServices.AppLovin
     using Core.AnalyticServices.CommonEvents;
     using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
     using GameFoundation.Signals;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
+    using ILogger = TheOne.Logging.ILogger;
 
     public class AppLovinAdsWrapper : IAdServices, IMRECAdService, IInitializable, IDisposable, IAdLoadService, IAOAAdService
     {
         #region Inject
 
-        private readonly ILogService logService;
-        private readonly SignalBus   signalBus;
+        private readonly ILogger   logService;
+        private readonly SignalBus signalBus;
 
         #endregion
 
@@ -43,11 +44,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
         #endregion
 
         [Preserve]
-        public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus,
+        public AppLovinAdsWrapper(ILoggerManager loggerManager, SignalBus signalBus,
             ThirdPartiesConfig thirdPartiesConfig)
         {
-            this.logService = logService;
-            this.signalBus = signalBus;
+            this.logService      = loggerManager.GetLogger(this);
+            this.signalBus       = signalBus;
             this.AppLovinSetting = thirdPartiesConfig.AdSettings.AppLovin;
         }
 
@@ -83,7 +84,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 #endif
             this.isInit = true;
 
-            this.logService.Log("onelog: AppLovinAdsWrapper has been initialized!");
+            this.logService.Info("ApplovinAdsWrapper has been initialized!");
         }
 
         public void Dispose()
@@ -138,7 +139,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 if (this.idMRecCreating.Contains(adsId)) continue;
                 this.idMRecCreating.Add(adsId);
 
-                this.logService.Log($"Check max init {MaxSdk.IsInitialized()}");
+                this.logService.Info($"Check max init {MaxSdk.IsInitialized()}");
                 MaxSdk.CreateMRec(adUnitId.DefaultValue, MaxSdkBase.AdViewPosition.BottomCenter);
             }
         }
@@ -156,7 +157,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public bool IsMRECReady(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             var isMrecReady = this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out var adsId);
-            Debug.Log($"oneLog: ApplovinAdsWrapper isMRECReady: {isMrecReady}, placement: {placement}, adsId: {adsId?.DefaultValue}");
+            this.logService.Info($"ApplovinAdsWrapper isMRECReady: {isMrecReady}, placement: {placement}, adsId: {adsId?.DefaultValue}");
             return isMrecReady;
         }
 
@@ -367,7 +368,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.DefaultValue)) return;
 
-            this.logService.Log($"onelog: applovin: InitAOAAds");
+            this.logService.Info($"applovin: InitAOAAds");
             MaxSdkCallbacks.AppOpen.OnAdHiddenEvent += this.OnAppOpenDismissedEvent;
             MaxSdkCallbacks.AppOpen.OnAdLoadedEvent += this.OnAppOpenLoadedEvent;
             MaxSdkCallbacks.AppOpen.OnAdLoadFailedEvent += this.OnAppOpenLoadFailedEvent;
@@ -391,13 +392,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenDisplayFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)
         {
-            this.logService.Log($"onelog: OnAppOpenDisplayFailedEvent: {arg2.Message}");
+            this.logService.Info($"OnAppOpenDisplayFailedEvent: {arg2.Message}");
             this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(this.aoaAdPlacement, arg2.Message));
         }
 
         private void OnAppOpenDisplayedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.logService.Log($"onelog: OnAppOpenDisplayedEvent: {arg2.AdUnitIdentifier}");
+            this.logService.Info($"OnAppOpenDisplayedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.AppOpen, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(this.aoaAdPlacement, adInfo));
             this.IsShowingAOAAd = true;
@@ -405,20 +406,20 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenClickedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.logService.Log($"onelog: OnAppOpenClickedEvent: {arg2.AdUnitIdentifier}");
+            this.logService.Info($"OnAppOpenClickedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.AppOpen, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adInfo));
         }
 
         private void OnAppOpenLoadFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2)
         {
-            this.logService.Log($"onelog: OnAppOpenLoadFailedEvent: {arg2.Message}");
+            this.logService.Info($"OnAppOpenLoadFailedEvent: {arg2.Message}");
             this.signalBus.Fire(new AppOpenLoadFailedSignal(arg1));
         }
 
         private void OnAppOpenLoadedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.logService.Log($"onelog: OnAppOpenLoadedEvent: {arg2.AdUnitIdentifier}");
+            this.logService.Info($"OnAppOpenLoadedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.AppOpen, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenLoadedSignal(arg1, adInfo));
         }
@@ -438,7 +439,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenDismissedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            this.logService.Log($"onelog: OnAppOpenDismissedEvent: {arg2.AdUnitIdentifier}");
+            this.logService.Info($"OnAppOpenDismissedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.AppOpen, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adInfo));
             this.InternalLoadAppOpenAd();
