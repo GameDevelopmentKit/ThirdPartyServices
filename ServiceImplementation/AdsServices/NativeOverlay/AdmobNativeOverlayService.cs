@@ -11,29 +11,29 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using Cysharp.Threading.Tasks;
-    using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     public class AdmobNativeOverlayService : INativeOverlayService
     {
-        private readonly ILogService        logService;
+        private readonly ILogger            logger;
         private readonly SignalBus          signalBus;
         private readonly ThirdPartiesConfig thirdPartiesConfig;
         private readonly IAnalyticServices  analyticServices;
 
         [Preserve]
         public AdmobNativeOverlayService(
-            ILogService        logService,
+            ILoggerManager     loggerManager,
             SignalBus          signalBus,
             ThirdPartiesConfig thirdPartiesConfig,
             IAnalyticServices  analyticServices
         )
         {
-            this.logService         = logService;
+            this.logger             = loggerManager.GetLogger(this);
             this.signalBus          = signalBus;
             this.thirdPartiesConfig = thirdPartiesConfig;
             this.analyticServices   = analyticServices;
@@ -71,7 +71,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
 
             if (this.adUnitIdToNativeOverlayAd[adUnitId].IsLoaded) return;
 
-            this.logService.Log($"oneLog: NativeOverlayWrapper, Loading native overlay ad placement {placement}");
+            this.logger.Info($"Loading native overlay ad placement {placement}");
 
             // Create our request used to load the ad.
             var adRequest = new AdRequest();
@@ -84,7 +84,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
                     if (error != null)
                     {
                         this.adUnitIdToNativeOverlayAd[adUnitId].IsLoaded = false;
-                        this.logService.Error("oneLog: NativeOverlayWrapper, Native Overlay ad failed to load an ad with error : " + error);
+                        this.logger.Error("Native Overlay ad failed to load an ad with error : " + error);
                         return;
                     }
                     // If the operation failed for unknown reasons.
@@ -92,12 +92,12 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
                     if (ad == null)
                     {
                         this.adUnitIdToNativeOverlayAd[adUnitId].IsLoaded = false;
-                        this.logService.Error("oneLog: NativeOverlayWrapper, Unexpected error: Native Overlay ad load event fired with null ad and null error.");
+                        this.logger.Error("Unexpected error: Native Overlay ad load event fired with null ad and null error.");
                         return;
                     }
 
                     // The operation completed successfully.
-                    this.logService.Log("oneLog: NativeOverlayWrapper, Native Overlay ad loaded with response : " + ad.GetResponseInfo());
+                    this.logger.Log("Native Overlay ad loaded with response : " + ad.GetResponseInfo());
                     this.adUnitIdToNativeOverlayAd[adUnitId].NativeOverlayAd = ad;
                     this.adUnitIdToNativeOverlayAd[adUnitId].IsLoaded        = true;
                     this.SubscribeEvent(adUnitId);
@@ -115,7 +115,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
             {
                 this.LoadAd(placement);
             }
-            this.logService.Log($"oneLog: NativeOverlayWrapper, ShowAd placement {placement}, position {adViewPosition}");
+            this.logger.Log($"ShowAd placement {placement}, position {adViewPosition}");
             UniTask.WhenAll(UniTask.WaitUntil(() => this.adUnitIdToNativeOverlayAd[this.AdUnitId(placement)].IsLoaded))
                 .AttachExternalCancellation((this.showAdsCts = new()).Token)
                 .ContinueWith(() =>
@@ -129,7 +129,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
                     {
                         this.RenderAd(placement, this.GetAdPosition(adViewPosition));
                     }
-                    this.logService.Log("oneLog: NativeOverlayWrapper, Showing Native Overlay ad.");
+                    this.logger.Log("Showing Native Overlay ad.");
                     value.NativeOverlayAd.Show();
                     value.Showing = true;
                 }).Forget();
@@ -142,7 +142,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
             if (ad.NativeOverlayAd == null) return;
             if (!ad.IsLoaded) return;
             if (!ad.Showing) return;
-            this.logService.Log("oneLog: NativeOverlayWrapper, Hiding Native Overlay ad.");
+            this.logger.Log("Hiding Native Overlay ad.");
             this.adUnitIdToNativeOverlayAd[this.AdUnitId(placement)].NativeOverlayAd.Hide();
             ad.Showing = false;
         }
@@ -153,7 +153,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
             this.ResetShowAdsCts();
             if (this.adUnitIdToNativeOverlayAd[adUnitId] == null) return;
             this.UnsubscribeEvent(adUnitId);
-            this.logService.Log("oneLog: NativeOverlayWrapper, destroying Native Overlay ad.");
+            this.logger.Info("destroying Native Overlay ad.");
             this.adUnitIdToNativeOverlayAd[adUnitId].NativeOverlayAd.Destroy();
             this.adUnitIdToNativeOverlayAd.Remove(adUnitId);
         }
@@ -172,7 +172,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
         {
             var adUnitId = this.AdUnitId(placement);
             if (this.adUnitIdToNativeOverlayAd[adUnitId] == null) return;
-            this.logService.Log("oneLog: NativeOverlayWrapper, render config style");
+            this.logger.Info("render config style");
 
             var style = new NativeTemplateStyle
             {
@@ -195,7 +195,7 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
         {
             if (!this.adMobSettings.NativeOverlayAdIds.ContainsKey(AdPlacement.PlacementWithName(placement)))
             {
-                this.logService.Error($"oneLog: NativeOverlayWrapper, dictionary is missing placement {placement}.");
+                this.logger.Error($"dictionary is missing placement {placement}.");
                 return string.Empty;
             }
             return this.adMobSettings.NativeOverlayAdIds[AdPlacement.PlacementWithName(placement)].DefaultValue;
@@ -263,26 +263,26 @@ namespace ServiceImplementation.AdsServices.NativeOverlay
 
         private void OnAdClicked()
         {
-            this.logService.Log("oneLog: NativeOverlayWrapper, Clicked native overlay ad");
+            this.logger.Info("Clicked native overlay ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.adMobSettings.NativeOverlayAdIds.First().Value.DefaultValue, AdFormatConstants.NativeOverlay);
             this.signalBus.Fire(new NativeOverlayClickedSignal("", adRevenueEvent));
         }
 
         private void OnAdImpressionRecord()
         {
-            this.logService.Log("oneLog: NativeOverlayWrapper, Recorded ad impression");
+            this.logger.Info("Recorded ad impression");
         }
 
         private void OnAdFullScreenContentOpened()
         {
-            this.logService.Log("oneLog: NativeOverlayWrapper, Closed native overlay ad");
+            this.logger.Info("Closed native overlay ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.adMobSettings.NativeOverlayAdIds.First().Value.DefaultValue, AdFormatConstants.NativeOverlay);
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal("", adRevenueEvent));
         }
 
         private void OnAdFullScreenContentClosed()
         {
-            this.logService.Log("oneLog: NativeOverlayWrapper, Closed native overlay ad");
+            this.logger.Info("Closed native overlay ad");
             var adRevenueEvent = new AdInfo(AdPlatForm, this.adMobSettings.NativeOverlayAdIds.First().Value.DefaultValue, AdFormatConstants.NativeOverlay);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal("", adRevenueEvent));
         }

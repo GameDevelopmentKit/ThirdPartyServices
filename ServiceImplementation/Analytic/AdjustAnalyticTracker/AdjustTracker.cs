@@ -10,27 +10,29 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
     using Core.AnalyticServices.Signal;
-    using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using GameFoundation.Signals;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     public class AdjustTracker : BaseTracker
     {
-        private readonly ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
         [Preserve]
-        public AdjustTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus,
-            analyticConfig)
+        public AdjustTracker(
+            SignalBus                         signalBus,
+            AnalyticConfig                    analyticConfig,
+            ILoggerManager                    loggerManager,
+            AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig
+        ) : base(signalBus, analyticConfig, loggerManager)
         {
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
-            this.logger = logger;
             if (analyticsEventCustomizationConfig.CustomEventKeys.Count == 0)
             {
                 this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
             }
-            
+
             this.eventTokens = this.analyticsEventCustomizationConfig.CustomEventKeys.Values.ToHashSet();
         }
 
@@ -40,7 +42,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         protected override TaskCompletionSource<bool> TrackerReady    { get; } = new();
 
         private readonly HashSet<string> eventTokens;
-        
+
         // flow by source: https://dev.adjust.com/en/sdk/unity/integrations/admob
         private readonly Dictionary<string, string> adRevenueSourceMapping = new()
         {
@@ -56,7 +58,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             { AdRevenueConstants.ARSourceImmersiveAds, "immersive_ads_sdk" },
             { AdRevenueConstants.ARSourceGadsmeAds, "gadsme_ads" },
         };
-        
+
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
         {
             { typeof(IapTransactionDidSucceed), this.TrackIAP },
@@ -69,7 +71,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             // Dont fire event that haven't defined token yet
             if (!this.eventTokens.Contains(eventToken)) return;
-            
+
             var adjustEvent = new AdjustEvent(eventToken);
 
             var eventDataString = "";
@@ -84,7 +86,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                 eventDataString = string.Join(", ", data.Select(x => $"{x.Key}: {x.Value}"));
             }
 
-            this.logger.Log($"Adjust: OnEvent {eventToken} with data: {eventDataString}");
+            this.logger.Info($"OnEvent {eventToken} with data: {eventDataString}");
 
             Adjust.TrackEvent(adjustEvent);
         }
@@ -93,55 +95,54 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            this.logger.Log("setting up adjust tracker");
+            this.logger.Info("setting up adjust tracker");
 
             var appToken = this.analyticConfig.AdjustAppToken;
 
-#if THEONE_MMP_DEBUG && !PRODUCTION
+            #if THEONE_MMP_DEBUG && !PRODUCTION
             var environment = AdjustEnvironment.Sandbox;
-#else
+            #else
             var environment = AdjustEnvironment.Production;
-#endif
+            #endif
 
-
-#if UNITY_IOS || UNITY_STANDALONE_OSX
+            #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(appToken))
             {
                 this.logger.Error("Adjust can't be initialized, Adjust AppToken not found");
                 this.TrackerReady.SetResult(false);
                 return this.TrackerReady.Task;
             }
-#endif
+            #endif
 
             var adjustConfig = new AdjustConfig(appToken, environment);
             adjustConfig.AttConsentWaitingInterval      = 120;
             adjustConfig.IsCostDataInAttributionEnabled = true;
             adjustConfig.IsSendingInBackgroundEnabled   = true;
             adjustConfig.AttributionChangedDelegate     = this.OnAttributionChanged;
-#if THEONE_MMP_DEBUG && !PRODUCTION
+            #if THEONE_MMP_DEBUG && !PRODUCTION
             adjustConfig.LogLevel = AdjustLogLevel.Verbose;
-#endif
+            #endif
             Adjust.InitSdk(adjustConfig);
             this.TrackerReady.SetResult(true);
 
             return this.TrackerReady.Task;
         }
-        
+
         // Handle attribution callback
         private void OnAttributionChanged(AdjustAttribution attributionData)
         {
             if (attributionData != null)
             {
-                this.logger.Log("Attribution Data Received:");
+                this.logger.Info("Attribution Data Received:");
                 // Log key attribution data
-                this.logger.Log($"Network: {attributionData.Network}");
-                this.logger.Log($"Campaign: {attributionData.Campaign}");
-                this.logger.Log($"Ad Group: {attributionData.Adgroup}");
-                this.logger.Log($"Creative: {attributionData.Creative}");
-                this.logger.Log($"Click Label: {attributionData.ClickLabel}");
-                this.logger.Log($"Tracker Token: {attributionData.TrackerToken}");
-                this.logger.Log($"Tracker Name: {attributionData.TrackerName}");
-                
+                this.logger.Info($"Network: {attributionData.Network}");
+                this.logger.Info($"Campaign: {attributionData.Campaign}");
+                this.logger.Info($"Ad Group: {attributionData.Adgroup}");
+                this.logger.Info($"Creative: {attributionData.Creative}");
+                this.logger.Info($"Click Label: {attributionData.ClickLabel}");
+                this.logger.Info($"Tracker Token: {attributionData.TrackerToken}");
+                this.logger.Info($"Tracker Name: {attributionData.TrackerName}");
+
                 // Log all key-value pairs to a dictionary
                 var dataDictionary = new Dictionary<string, object>
                 {
@@ -194,8 +195,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             adjustRevenue.AdRevenueUnit      = adsRevenueEvent.AdUnit;
             adjustRevenue.AdRevenuePlacement = adsRevenueEvent.Placement;
             Adjust.TrackAdRevenue(adjustRevenue);
-            this.logger.Log(
-                $"Adjust: OnEvent Ad Revenue : {adsRevenueEvent.AdUnit} - {adsRevenueEvent.AdFormat} - {adsRevenueEvent.AdNetwork} - {adsRevenueEvent.Placement} - {adsRevenueEvent.Currency} - {adsRevenueEvent.Revenue}");
+            this.logger.Info($"OnEvent Ad Revenue : {adsRevenueEvent.AdUnit} - {adsRevenueEvent.AdFormat} - {adsRevenueEvent.AdNetwork} - {adsRevenueEvent.Placement} - {adsRevenueEvent.Currency} - {adsRevenueEvent.Revenue}");
         }
     }
 }

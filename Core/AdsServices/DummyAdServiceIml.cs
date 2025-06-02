@@ -2,41 +2,41 @@ namespace Core.AdsServices
 {
     using System;
     using Core.AdsServices.Signals;
-    using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
-    using UnityEngine;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
+    using ILogger = TheOne.Logging.ILogger;
 
     public class DummyAdServiceIml : IAdServices
     {
-        private readonly ILogService logService;
-        private readonly SignalBus   signalBus;
+        private readonly SignalBus signalBus;
+        private readonly ILogger   logger;
 
         [Preserve]
-        public DummyAdServiceIml(ILogService logService, SignalBus signalBus)
+        public DummyAdServiceIml(SignalBus signalBus, ILoggerManager loggerManager)
         {
-            this.logService = logService;
-            this.signalBus  = signalBus;
+            this.signalBus = signalBus;
+            this.logger    = loggerManager.GetLogger(this);
         }
 
         public void GrantDataPrivacyConsent()
         {
-            this.logService.Log("Dummy Grant consent");
+            this.logger.Info("Dummy Grant consent");
         }
 
         public void RevokeDataPrivacyConsent()
         {
-            this.logService.Log("Dummy Revoke consent");
+            this.logger.Info("Dummy Revoke consent");
         }
 
         public void GrantDataPrivacyConsent(AdNetwork adNetwork)
         {
-            this.logService.Log($"Dummy Grant consent {adNetwork}");
+            this.logger.Info($"Dummy Grant consent {adNetwork}");
         }
 
         public void RevokeDataPrivacyConsent(AdNetwork adNetwork)
         {
-            this.logService.Log($"Dummy revoke consent {adNetwork}");
+            this.logger.Info($"Dummy revoke consent {adNetwork}");
         }
 
         public ConsentStatus GetDataPrivacyConsent(AdNetwork adNetwork)
@@ -48,17 +48,17 @@ namespace Core.AdsServices
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
-            this.logService.Log($"Dummy show banner ad ay {bannerAdsPosition}");
+            this.logger.Info($"Dummy show banner ad ay {bannerAdsPosition}");
         }
 
         public void HideBannedAd()
         {
-            this.logService.Log($"Dummy hide banner ad");
+            this.logger.Info($"Dummy hide banner ad");
         }
 
         public void DestroyBannerAd()
         {
-            this.logService.Log($"Dummy destroy banner ad");
+            this.logger.Info($"Dummy destroy banner ad");
         }
 
         public bool IsInterstitialAdReady(string place)
@@ -69,7 +69,7 @@ namespace Core.AdsServices
         public void ShowInterstitialAd(string place)
         {
             this.signalBus.Fire<InterstitialAdClosedSignal>(new(place, null));
-            this.logService.Log($"Dummy show Interstitial ad at {place}");
+            this.logger.Info($"Dummy show Interstitial ad at {place}");
         }
 
         public bool IsRewardedAdReady(string place)
@@ -79,14 +79,14 @@ namespace Core.AdsServices
 
         public void ShowRewardedAd(string place)
         {
-            this.logService.Log($"Dummy show Reward ad at {place}");
+            this.logger.Info($"Dummy show Reward ad at {place}");
         }
 
         public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
             onCompleted?.Invoke();
             this.signalBus.Fire<RewardedAdClosedSignal>(new(place, null));
-            this.logService.Log($"Dummy show Reward ad at {place} then do {onCompleted}");
+            this.logger.Info($"Dummy show Reward ad at {place} then do {onCompleted}");
         }
 
         public bool IsRewardedInterstitialAdReady()
@@ -96,12 +96,12 @@ namespace Core.AdsServices
 
         public void ShowRewardedInterstitialAd(string place)
         {
-            this.logService.Log($"Dummy show Rewarded Interstitial ad at {place}");
+            this.logger.Info($"Dummy show Rewarded Interstitial ad at {place}");
         }
 
         public void ShowRewardedInterstitialAd(string place, Action onCompleted)
         {
-            this.logService.Log($"Dummy show Rewarded Interstitial ad at {place} then do {onCompleted}");
+            this.logger.Info($"Dummy show Rewarded Interstitial ad at {place} then do {onCompleted}");
         }
 
         public bool IsAdsInitialized()

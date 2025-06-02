@@ -2,53 +2,53 @@
 namespace ServiceImplementation.AdsServices.NativeOverlay
 {
     using Core.AdsServices;
-    using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     public class DummyNativeOverlayService : INativeOverlayService
     {
         private readonly ThirdPartiesConfig thirdPartiesConfig;
-        private readonly ILogService        logService;
+        private readonly ILogger            logger;
 
         [Preserve]
-        public DummyNativeOverlayService(ThirdPartiesConfig thirdPartiesConfig, ILogService logService)
+        public DummyNativeOverlayService(ThirdPartiesConfig thirdPartiesConfig, ILoggerManager loggerManager)
         {
             this.thirdPartiesConfig = thirdPartiesConfig;
-            this.logService         = logService;
+            this.logger             = loggerManager.GetLogger(this);
         }
 
         public void LoadAd(string placement)
         {
-            this.logService.Log($"oneLog: DummyNativeOverlayService LoadAd placement {placement}");
+            this.logger.Info($"LoadAd placement {placement}");
         }
 
         public bool IsAdReady(string placement)
         {
             var isAdReady = this.thirdPartiesConfig.AdSettings.AdMob.NativeOverlayAdIds.ContainsKey(AdPlacement.PlacementWithName(placement));
-            this.logService.Log($"oneLog: DummyNativeOverlayService IsAdReady {isAdReady} - placement {placement}");
+            this.logger.Info($"IsAdReady {isAdReady} - placement {placement}");
             return isAdReady;
         }
 
         public void ShowAd(string placement, AdViewPosition adViewPosition)
         {
-            this.logService.Log($"oneLog: DummyNativeOverlayService ShowAd placement {placement}, position {adViewPosition}");
+            this.logger.Info($"ShowAd placement {placement}, position {adViewPosition}");
         }
 
         public void HideAd(string placement)
         {
-            this.logService.Log($"oneLog: DummyNativeOverlayService HideAd placement {placement}");
+            this.logger.Info($"HideAd placement {placement}");
         }
 
         public void DestroyAd(string placement)
         {
-            this.logService.Log($"oneLog: DummyNativeOverlayService void DestroyAd placement {placement}");
+            this.logger.Info($"void DestroyAd placement {placement}");
         }
 
         public void DestroyAll()
         {
-            this.logService.Log($"oneLog: DummyNativeOverlayService DestroyAll");
+            this.logger.Info($"DestroyAll");
         }
     }
 }

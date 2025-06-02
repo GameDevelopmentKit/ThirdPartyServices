@@ -8,8 +8,8 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using Firebase.Extensions;
     using Firebase.RemoteConfig;
     using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     /// <summary>
@@ -17,14 +17,14 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     /// </summary>
     public class FirebaseRemoteConfigMobile : IRemoteConfig, IInitializable
     {
-        private readonly ILogService         logger;
+        private readonly ILogger             logger;
         private readonly SignalBus           signalBus;
         private readonly RemoteConfigSetting remoteConfigSetting;
 
         [Preserve]
-        public FirebaseRemoteConfigMobile(ILogService logger, SignalBus signalBus, RemoteConfigSetting remoteConfigSetting)
+        public FirebaseRemoteConfigMobile(ILoggerManager loggerManager, SignalBus signalBus, RemoteConfigSetting remoteConfigSetting)
         {
-            this.logger              = logger;
+            this.logger              = loggerManager.GetLogger(this);
             this.signalBus           = signalBus;
             this.remoteConfigSetting = remoteConfigSetting;
         }
@@ -33,13 +33,13 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public void Initialize()
         {
-            this.logger.Log($"onelog: FirebaseRemoteConfig InitFirebase");
+            this.logger.Info($"InitFirebase");
             FirebaseRemoteConfig.GetInstance(FirebaseApp.DefaultInstance); // This fix a magic bug, don't remove it
             FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
             {
                 var dependencyStatus = task.Result;
 
-                this.logger.Log($"onelog: FirebaseRemoteConfig CheckAndFixDependenciesAsync {dependencyStatus}");
+                this.logger.Info($"CheckAndFixDependenciesAsync {dependencyStatus}");
                 if (dependencyStatus == DependencyStatus.Available)
                     this.FetchDataAsync();
                 else
@@ -65,23 +65,23 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         private void FetchComplete(Task fetchTask)
         {
             if (fetchTask.IsCanceled)
-                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch canceled.");
+                this.logger.Info($"Fetch canceled.");
             else if (fetchTask.IsFaulted)
             {
-                this.logger.Log($"onelog: FirebaseRemoteConfig Fetch encountered an error");
-                this.ReloadDataAsync();
+                this.logger.Info($"Fetch encountered an error");
+                _ = this.ReloadDataAsync();
             }
-            else if (fetchTask.IsCompleted) this.logger.Log($"onelog: FirebaseRemoteConfig Fetch completed successfully!");
+            else if (fetchTask.IsCompleted) this.logger.Info($"Fetch completed successfully!");
 
             var info = FirebaseRemoteConfig.DefaultInstance.Info;
-            this.logger.Log($"onelog: FirebaseRemoteConfig FetchComplete {info.LastFetchStatus}");
+            this.logger.Info($"FetchComplete {info.LastFetchStatus}");
 
             switch (info.LastFetchStatus)
             {
                 case LastFetchStatus.Success:
                     FirebaseRemoteConfig.DefaultInstance.ActivateAsync().ContinueWithOnMainThread(task =>
                     {
-                        this.logger.Log($"onelog: FirebaseRemoteConfig Remote data loaded and ready (last fetch time {info.FetchTime}).");
+                        this.logger.Info($"Remote data loaded and ready (last fetch time {info.FetchTime}).");
                         this.IsConfigFetchedSucceed = true;
                         this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal(this));
                     });
@@ -91,11 +91,11 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                     switch (info.LastFetchFailureReason)
                     {
                         case FetchFailureReason.Error:
-                            this.logger.Log($"onelog: FirebaseRemoteConfig Fetch failed for unknown reason");
+                            this.logger.Info($"Fetch failed for unknown reason");
 
                             break;
                         case FetchFailureReason.Throttled:
-                            this.logger.Log($"onelog: FirebaseRemoteConfig Fetch throttled until " + info.ThrottledEndTime);
+                            this.logger.Info($"Fetch throttled until " + info.ThrottledEndTime);
 
                             break;
                         case FetchFailureReason.Invalid: break;
@@ -104,7 +104,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
                     break;
                 case LastFetchStatus.Pending:
-                    this.logger.Log($"onelog: FirebaseRemoteConfig Latest Fetch call still pending.");
+                    this.logger.Info($"Latest Fetch call still pending.");
 
                     break;
                 default: throw new ArgumentOutOfRangeException();

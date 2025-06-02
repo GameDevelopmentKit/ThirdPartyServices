@@ -1,20 +1,20 @@
 namespace Core.AdsServices
 {
-    using GameFoundation.Scripts.Utilities.LogService;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     public class DummyAOAAdServiceIml : IAOAAdService
     {
         #region inject
 
-        private readonly ILogService logService;
+        private readonly ILogger logger;
 
         #endregion
 
         [Preserve]
-        public DummyAOAAdServiceIml(ILogService logService)
+        public DummyAOAAdServiceIml(ILoggerManager loggerManager)
         {
-            this.logService = logService;
+            this.logger = loggerManager.GetLogger(this);
         }
 
         public bool IsAOAReady()
@@ -24,7 +24,7 @@ namespace Core.AdsServices
 
         public void ShowAOAAds(string placement)
         {
-            this.logService.Log("Dummy show app open ad");
+            this.logger.Info("Dummy show app open ad");
         }
     }
 }

@@ -10,6 +10,7 @@ namespace ServiceImplementation.AdsServices
     using GameFoundation.Signals;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
+    using ServiceImplementation.AdsServices.NativeOverlay;
     #if CRAZYGAMES
     using ServiceImplementation.AdsServices.CrazyGames;
     #endif
@@ -26,13 +27,11 @@ namespace ServiceImplementation.AdsServices
     using global::PubScale.SdkOne;
     using ServiceImplementation.AdsServices.PubScale;
     #endif
-
     #if APPLOVIN
     using ServiceImplementation.AdsServices.AppLovin;
     #endif
     #if ADMOB
     using ServiceImplementation.AdsServices.Admob;
-    using ServiceImplementation.AdsServices.NativeOverlay;
     #endif
     #if YANDEX
     using ServiceImplementation.AdsServices.Yandex;
@@ -97,7 +96,6 @@ namespace ServiceImplementation.AdsServices
             #if GADSME
             builder.Register<GadsmeWrapper>(Lifetime.Singleton).AsImplementedInterfaces();
             #endif
-
 
             #region Ads signal
 

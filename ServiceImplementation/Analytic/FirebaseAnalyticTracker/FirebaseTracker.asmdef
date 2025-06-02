@@ -3,7 +3,8 @@
   "references": [
     "FirebaseWebGL",
     "3rdCore.Analytic",
-    "GameFoundation.Signals"
+    "GameFoundation.Signals",
+    "TheOne.Logging"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

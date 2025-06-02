@@ -8,24 +8,29 @@
     using Core.AnalyticServices.Data;
     using GameFoundation.Signals;
     using Newtonsoft.Json;
-    using UnityEngine;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     public class FirebaseAnalyticTracker : BaseTracker
     {
-        private readonly   AnalyticsEventCustomizationConfig customizationConfig;
-        protected override TaskCompletionSource<bool>        TrackerReady         { get; } = new();
-        protected override Dictionary<Type, EventDelegate>   CustomEventDelegates { get; }
+        private readonly AnalyticsEventCustomizationConfig customizationConfig;
 
         [Preserve]
-        public FirebaseAnalyticTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
+        public FirebaseAnalyticTracker(
+            SignalBus                         signalBus,
+            AnalyticConfig                    analyticConfig,
+            ILoggerManager                    loggerManager,
+            AnalyticsEventCustomizationConfig customizationConfig
+        ) : base(signalBus, analyticConfig, loggerManager)
         {
             this.customizationConfig = customizationConfig;
         }
 
-        protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
-        protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
-        protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
+        protected override TaskCompletionSource<bool>      TrackerReady         { get; } = new();
+        protected override Dictionary<Type, EventDelegate> CustomEventDelegates { get; }
+        protected override HashSet<Type>                   IgnoreEvents         => this.customizationConfig.IgnoreEvents;
+        protected override HashSet<string>                 IncludeEvents        => this.customizationConfig.IncludeEvents;
+        protected override Dictionary<string, string>      CustomEventKeys      => this.customizationConfig.CustomEventKeys;
 
         protected override Task TrackerSetup()
         {
@@ -50,7 +55,7 @@
         {
             if (!name.IsNameValid().Equals("Valid"))
             {
-                Debug.LogError($"Firebase: Event name error: {name} {name.IsNameValid()}");
+                this.logger.Error($"Event name error: {name} {name.IsNameValid()}");
 
                 return;
             }
@@ -58,14 +63,14 @@
             if (data == null)
             {
                 FirebaseAnalytics.LogEvent(name);
-                Debug.Log($"Firebase: OnEvent - {name}");
+                this.logger.Info($"OnEvent - {name}");
 
                 return;
             }
 
             if (!this.CheckConventions(data)) return;
 
-            Debug.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
+            this.logger.Info($"OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
             switch (data.Count)
             {
                 case > 1:
@@ -117,14 +122,14 @@
             {
                 if (!entry.Key.IsNameValid().Equals("Valid"))
                 {
-                    Debug.LogError($"Parameter name error: {entry} {entry.Key.IsNameValid()}");
+                    this.logger.Error($"Parameter name error: {entry} {entry.Key.IsNameValid()}");
 
                     return false;
                 }
 
                 if (!entry.Value.IsParameterValueValid().Equals("Valid"))
                 {
-                    Debug.LogError($"Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}");
+                    this.logger.Error($"Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}");
 
                     return false;
                 }

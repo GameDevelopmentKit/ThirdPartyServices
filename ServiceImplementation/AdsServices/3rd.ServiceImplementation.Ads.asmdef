@@ -25,7 +25,8 @@
     "ColumbusSdk",
     "GadsmeSDK",
     "CrazySDK.Scripts",
-    "TheOne.Extensions"
+    "TheOne.Extensions",
+    "TheOne.Logging"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

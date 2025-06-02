@@ -11,8 +11,8 @@ namespace ServiceImplementation.AdsServices.PreloadService
     using GameFoundation.DI;
     using GameFoundation.Signals;
     using ServiceImplementation.Configs.Ads;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
-    using Debug = UnityEngine.Debug;
 
     public class PreloadAdService : IInitializable, ITickable, IDisposable
     {
@@ -24,6 +24,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
         private readonly IAnalyticServices             analyticServices;
         private readonly List<IAOAAdService>           aOaAdServices;
         private readonly UnScaleInGameStopWatchManager unScaleInGameStopWatchManager;
+        private readonly ILogger                       logger;
 
         #endregion
 
@@ -32,7 +33,15 @@ namespace ServiceImplementation.AdsServices.PreloadService
         private Dictionary<IAOAAdService, UnScaleInGameStopWatch>            aoaAdStartTime          = new();
 
         [Preserve]
-        public PreloadAdService(IEnumerable<IAdLoadService> adLoadServices, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices, IEnumerable<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
+        public PreloadAdService(
+            IEnumerable<IAdLoadService>   adLoadServices,
+            AdServicesConfig              adServicesConfig,
+            SignalBus                     signalBus,
+            IAnalyticServices             analyticServices,
+            IEnumerable<IAOAAdService>    aOAAdServices,
+            UnScaleInGameStopWatchManager unScaleInGameStopWatchManager,
+            ILoggerManager                loggerManager
+        )
         {
             this.adLoadServices                = adLoadServices.ToList();
             this.adServicesConfig              = adServicesConfig;
@@ -40,6 +49,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
             this.analyticServices              = analyticServices;
             this.aOaAdServices                 = aOAAdServices.ToList();
             this.unScaleInGameStopWatchManager = unScaleInGameStopWatchManager;
+            this.logger                        = loggerManager.GetLogger(this);
         }
 
         public void Initialize()
@@ -52,7 +62,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         public async UniTaskVoid LoadAdsInterval()
         {
-            Debug.Log("load ads interval");
+            this.logger.Info("load ads interval");
             this.adLoadServices.ForEach(this.LoadAdsOneTime);
             await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.IntervalLoadAds));
             this.LoadAdsInterval().Forget();

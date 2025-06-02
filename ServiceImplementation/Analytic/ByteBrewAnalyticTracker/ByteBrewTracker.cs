@@ -13,6 +13,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using UnityEngine;
     using GameFoundation.Signals;
     using ServiceImplementation.IAPServices.Signals;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     public class ByteBrewTracker : BaseTracker
@@ -28,25 +29,25 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
 
         [Preserve]
-        public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig)
+        public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig, ILoggerManager loggerManager, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig, loggerManager)
         {
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
         }
 
-        protected override TaskCompletionSource<bool>      TrackerReady                                            { get; } = new();
+        protected override TaskCompletionSource<bool> TrackerReady { get; } = new();
 
-        protected override Dictionary<Type, EventDelegate> CustomEventDelegates                                    { get; } = new();
+        protected override Dictionary<Type, EventDelegate> CustomEventDelegates { get; } = new();
 
         protected override Task TrackerSetup()
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            Debug.Log($"ByteBrew: Create ByteBrew GameObject");
+            this.logger.Info("Create ByteBrew GameObject");
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
-            Debug.Log($"ByteBrew: Initialize ByteBrew");
+            this.logger.Info("Initialize ByteBrew");
             ByteBrew.InitializeByteBrew();
-            Debug.Log($"ByteBrew: Initialize Finished");
+            this.logger.Info("Initialize Finished");
 
             this.TrackerReady.SetResult(true);
             this.signalBus.Subscribe<AdRevenueSignal>(this.OnAdRevenueSignal);
@@ -54,7 +55,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
             return this.TrackerReady.Task;
         }
-        
+
         private void OnIAPPurchaseSuccess(OnIAPPurchaseSuccessSignal obj)
         {
             var store = "Unknow";
@@ -86,13 +87,13 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             {
                 // Don't fire event if data is null to avoid noise events
                 // ByteBrew.NewCustomEvent(name);
-                // Debug.Log($"ByteBrew: OnEvent - {name}");
+                // this.logger.Info($"OnEvent - {name}");
                 return;
             }
 
             var convertedData = data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             ByteBrew.NewCustomEvent(name, convertedData);
-            Debug.Log($"ByteBrew: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
+            this.logger.Info($"OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
         }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)

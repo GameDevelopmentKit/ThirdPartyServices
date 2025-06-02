@@ -10,7 +10,8 @@
     "ByteBrewSDK",
     "3rd.Configs.Editor",
     "ByteBrewSDK.Editor",
-    "TheOne.Extensions"
+    "TheOne.Extensions",
+    "TheOne.Logging"
   ],
   "versionDefines": [
     {

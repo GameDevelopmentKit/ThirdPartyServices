@@ -7,7 +7,8 @@
     "ByteBrewSDK",
     "GameFoundation.Utilities",
     "UniTask",
-    "3rd.IAP"
+    "3rd.IAP",
+    "TheOne.Logging"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

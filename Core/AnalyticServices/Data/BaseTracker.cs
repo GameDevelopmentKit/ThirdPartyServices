@@ -8,8 +8,10 @@ namespace Core.AnalyticServices.Data
     using Core.AnalyticServices.Tools;
     using GameFoundation.DI;
     using GameFoundation.Signals;
+    using TheOne.Logging;
     using UnityEngine;
     using Utilities.Extension;
+    using ILogger = TheOne.Logging.ILogger;
 
     public delegate void EventDelegate(IEvent trackedEvent, Dictionary<string, object> data);
 
@@ -17,10 +19,21 @@ namespace Core.AnalyticServices.Data
     {
         #region inject
 
-        protected readonly   SignalBus    signalBus;
+        protected readonly SignalBus      signalBus;
         protected readonly AnalyticConfig analyticConfig;
+        protected readonly ILogger        logger;
 
         #endregion
+
+        /// <summary>
+        /// base constructor for trackers which sets up when/how events and states should be tracked
+        /// </summary>
+        protected BaseTracker(SignalBus signalBus, AnalyticConfig analyticConfig, ILoggerManager loggerManager)
+        {
+            this.signalBus      = signalBus;
+            this.analyticConfig = analyticConfig;
+            this.logger         = loggerManager.GetLogger(this);
+        }
 
         /// <summary>
         /// signal to the base tracker that the "On" events are ready to be invoked
@@ -67,15 +80,6 @@ namespace Core.AnalyticServices.Data
         /// </summary>
         /// <param name="userId"></param>
         protected abstract void SetUserId(string userId);
-
-        /// <summary>
-        /// base constructor for trackers which sets up when/how events and states should be tracked
-        /// </summary>
-        protected BaseTracker(SignalBus signalBus, AnalyticConfig analyticConfig)
-        {
-            this.signalBus      = signalBus;
-            this.analyticConfig = analyticConfig;
-        }
 
         public void Initialize()
         {
@@ -153,8 +157,7 @@ namespace Core.AnalyticServices.Data
                 if (!string.IsNullOrEmpty(parsedReceipt.Payload) && !string.IsNullOrEmpty(parsedReceipt.Store) && !string.IsNullOrEmpty(parsedReceipt.TransactionID))
                 {
                     //Return the receipt Payload to prevent integration errors.
-                    Debug.LogWarning(
-                        "[AnalyticService BaseTracker] Wrong receipt parameter detected. Replacing it with Receipt.Payload");
+                    this.logger.Warning("Wrong receipt parameter detected. Replacing it with Receipt.Payload");
 
                     return parsedReceipt.Payload;
                 }

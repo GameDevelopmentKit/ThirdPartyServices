@@ -10,21 +10,7 @@
     "GameFoundation.Signals",
     "GameFoundation.UIModule",
     "FirebaseRemoteConfig",
-    "GameFoundation.DI"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [
-    {
-      "name": "Select...",
-      "expression": "",
-      "define": ""
-    }
-  ],
-  "noEngineReferences": false
+    "GameFoundation.DI",
+    "TheOne.Logging"
+  ]
 }

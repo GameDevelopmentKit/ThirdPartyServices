@@ -6,7 +6,8 @@
     "GameFoundation.Signals",
     "3rd.RemoteConfig",
     "GameFoundation.DI",
-    "3rd.Configs"
+    "3rd.Configs",
+    "TheOne.Logging"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
