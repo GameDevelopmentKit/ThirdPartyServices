@@ -1,4 +1,4 @@
-#if IRONSOURCE
+#if !IRONSOURCE
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
     using System;
@@ -13,13 +13,12 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices.Signal;
     using Cysharp.Threading.Tasks;
     using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
-    using UnityEngine;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
-    using Debug = UnityEngine.Debug;
+    using ILogger = TheOne.Logging.ILogger;
 
     public class IronSourceWrapper : IMRECAdService, IAdServices, IInitializable, IDisposable, IAdLoadService
     {
@@ -29,19 +28,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private readonly AdServicesConfig   adServicesConfig;
         private readonly SignalBus          signalBus;
         private readonly ThirdPartiesConfig thirdPartiesConfig;
-        private readonly ILogService        logService;
+        private readonly ILogger            logger;
         private readonly IronSourceSettings ironSourceSettings;
 
         #endregion
 
         [Preserve]
-        public IronSourceWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig, ILogService logService)
+        public IronSourceWrapper(IAnalyticServices analyticServices, AdServicesConfig adServicesConfig, SignalBus signalBus, ThirdPartiesConfig thirdPartiesConfig, ILoggerManager loggerManager)
         {
             this.analyticServices   = analyticServices;
             this.adServicesConfig   = adServicesConfig;
             this.signalBus          = signalBus;
             this.thirdPartiesConfig = thirdPartiesConfig;
-            this.logService         = logService;
+            this.logger             = loggerManager.GetLogger(this);
             this.ironSourceSettings = this.thirdPartiesConfig.AdSettings.IronSource;
         }
 
@@ -58,7 +57,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void Initialize()
         {
-            this.logService.Log("oneLog: IronSourceWrapper Initialize");
+            this.logger.Info("Initialize");
             IronSourceEvents.onImpressionDataReadyEvent        += this.ImpressionDataReadyEvent;
             IronSourceEvents.onSdkInitializationCompletedEvent += this.OnSdkInitializationCompleted;
 
@@ -99,19 +98,19 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void OnLevelPlayInitSuccess(LevelPlayConfiguration obj)
         {
-            this.logService.Log($"oneLog: IronSourceWrapper OnLevelPlayInitSuccess IsAdQualityEnabled {obj.IsAdQualityEnabled}");
+            this.logger.Info($"IsAdQualityEnabled {obj.IsAdQualityEnabled}");
             this.isLevelPlayInitialized = true;
         }
 
         private void OnLevelPlayInitFailed(LevelPlayInitError obj)
         {
-            this.logService.Log($"oneLog: IronSourceWrapper OnLevelPlayInitFailed {obj}");
+            this.logger.Info($"{obj}");
             this.InitLevelPlaySdk();
         }
 
         private void InitLevelPlaySdk()
         {
-            this.logService.Log($"oneLog: IronSourceWrapper InitLevelPlaySdk");
+            this.logger.Info($"");
             LevelPlay.Init(this.thirdPartiesConfig.AdSettings.IronSource.AppId, adFormats: new[] { LevelPlayAdFormat.BANNER });
         }
 
@@ -141,7 +140,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void OnSdkInitializationCompleted()
         {
             #if THEONE_ADS_DEBUG
-            this.logService.Log($"onelog: IronSource Sdk initialized!");
+            this.logger.Info($"IronSource Sdk initialized!");
             IronSource.Agent.launchTestSuite();
             #endif
         }
@@ -161,7 +160,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void RewardedVideoOnAdUnavailable()
         {
-            this.logService.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdUnavailable");
+            this.logger.Info($"");
             this.rewardedStopwatch.Stop();
             this.signalBus.Fire(new RewardedAdLoadFailedSignal("", "", this.rewardedStopwatch.ElapsedMilliseconds));
         }
@@ -189,7 +188,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             this.onRewardFailed?.Invoke();
             this.onRewardFailed = null;
-            this.logService.Log($"oneLog: IronSourceWrapper RewardedVideoOnAdShowFailedEvent. Message: {obj.getDescription()}");
+            this.logger.Info($"{obj.getDescription()}");
             var adInfo = new AdInfo(this.AdPlatform, info.adUnit, AdFormatConstants.Rewarded, info.adNetwork, value: info.revenue ?? 0, currency: "USD");
             this.signalBus.Fire(new RewardedAdShowFailedSignal(this.rewardedPlacement, obj.getDescription(), adInfo));
         }
@@ -218,7 +217,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void InterstitialOnAdShowFailedEvent(IronSourceError arg1, IronSourceAdInfo arg2)
         {
-            this.logService.Log($"oneLog: IronSourceWrapper InterstitialOnAdShowFailedEvent, Message: {arg1.getDescription()}");
+            this.logger.Info($"{arg1.getDescription()}");
             this.signalBus.Fire(new InterstitialAdDisplayedFailedSignal(this.interstitialPlacement));
         }
 
@@ -227,7 +226,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void InterstitialOnAdLoadFailed(IronSourceError obj)
         {
             this.stopwatchInterstitial.Stop();
-            this.logService.Log($"oneLog: IronSourceWrapper InterstitialOnAdLoadFailed, Message: {obj.getDescription()}");
+            this.logger.Info($"{obj.getDescription()}");
             this.signalBus.Fire(new InterstitialAdLoadFailedSignal("", obj.getDescription(), this.stopwatchInterstitial.ElapsedMilliseconds));
         }
 
@@ -256,7 +255,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void OnBannerLoaded(LevelPlayAdInfo info)
         {
-            Debug.Log($"onelog: IronSourceWrapper OnBannerLoaded {info}");
+            this.logger.Info($"{info}");
             var adInfo = new AdInfo(this.AdPlatform, info.adUnitId, AdFormatConstants.Banner, info.adNetwork, value: info.revenue ?? 0, currency: "USD");
             this.signalBus.Fire(new BannerAdLoadedSignal("", adInfo));
             this.isLoadedBanner = true;
@@ -264,26 +263,26 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void OnBannerLoadFailed(LevelPlayAdError info)
         {
-            Debug.Log($"onelog: IronSourceWrapper OnBannerLoadFailed {info}");
+            this.logger.Info($"{info}");
             this.signalBus.Fire(new BannerAdLoadFailedSignal("", $"{info}"));
         }
 
         private void OnBannerClicked(LevelPlayAdInfo info)
         {
-            Debug.Log($"onelog: IronSourceWrapper OnBannerClicked {info}");
+            this.logger.Info($"{info}");
             var adInfo = new AdInfo(this.AdPlatform, info.adUnitId, AdFormatConstants.Banner, info.adNetwork, value: info.revenue ?? 0, currency: "USD");
             this.signalBus.Fire(new BannerAdClickedSignal("", adInfo));
         }
 
         private void BannerOnAdScreenDismissedEvent(LevelPlayAdInfo levelPlayAdInfo)
         {
-            Debug.Log($"onelog: IronSourceWrapper BannerOnAdScreenDismissedEvent");
+            this.logger.Info($"");
             this.signalBus.Fire(new BannerAdDismissedSignal(""));
         }
 
         private void BannerOnAdScreenPresentedEvent(LevelPlayAdInfo levelPlayAdInfo)
         {
-            Debug.Log($"onelog: IronSourceWrapper BannerOnAdScreenPresentedEvent");
+            this.logger.Info($"");
             this.signalBus.Fire(new BannerAdPresentedSignal(""));
         }
 
@@ -355,7 +354,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void OnMrecLoaded(LevelPlayAdInfo info)
         {
-            Debug.Log($"onelog: IronSourceWrapper OnMrecLoaded {info}");
+            this.logger.Info($"{info}");
             var revenue = info.revenue ?? 0;
             var adInfo  = new AdInfo(this.AdPlatform, info.adUnitId, AdFormatConstants.MREC, info.adNetwork, info.instanceName, revenue);
             this.signalBus.Fire(new MRecAdLoadedSignal(info.adUnitId, adInfo));
@@ -363,13 +362,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void OnMrecLoadFailed(LevelPlayAdError info)
         {
-            Debug.Log($"onelog: IronSourceWrapper OnMrecLoadFailed {info}");
+            this.logger.Info($"{info}");
             this.signalBus.Fire(new MRecAdLoadFailedSignal(info.AdUnitId));
         }
 
         private void OnMrecClicked(LevelPlayAdInfo info)
         {
-            Debug.Log($"onelog: IronSourceWrapper OnMrecClicked {info}");
+            this.logger.Info($"{info}");
             var revenue = info.revenue ?? 0;
             var ad      = new AdInfo(this.AdPlatform, info.adUnitId, AdFormatConstants.MREC, info.adNetwork, info.instanceName, revenue);
             this.signalBus.Fire(new MRecAdClickedSignal(info.adUnitId, ad));
@@ -377,14 +376,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private void OnMrecPresentedEvent(LevelPlayAdInfo info)
         {
-            Debug.Log($"onelog: IronSourceWrapper OnMrecPresentedEvent {info}");
+            this.logger.Info($"{info}");
             var adInfo = new AdInfo(this.AdPlatform, info.adUnitId, AdFormatConstants.MREC, info.adNetwork, info.instanceName, info.revenue ?? 0);
             this.signalBus.Fire(new MRecAdDisplayedSignal(info.placementName, adInfo));
         }
 
         private void OnMrecDismissedEvent(LevelPlayAdInfo info)
         {
-            Debug.Log($"onelog: IronSourceWrapper OnMrecDismissedEvent {info}");
+            this.logger.Info($"{info}");
             this.signalBus.Fire(new MRecAdDismissedSignal(info.placementName));
         }
 
@@ -429,7 +428,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
-            this.logService.Log("oneLog: IronSourceWrapper ShowBannerAd");
+            this.logger.Info("");
             this.ResetLevelPlayInitializedCts();
             this.levelPlayInitializedCts = new();
             UniTask.WaitUntil(() => this.isLevelPlayInitialized, cancellationToken: this.levelPlayInitializedCts.Token).ContinueWith(InternalShowBannerAd).Forget();
@@ -439,7 +438,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             {
                 if (this.isLoadedBanner)
                 {
-                    this.logService.Log("oneLog: IronSourceWrapper ShowBannerAd: show banner loaded");
+                    this.logger.Info("show banner loaded");
                     this.bannerAd.ShowAd();
 
                     return;
@@ -448,10 +447,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.DestroyBannerAd(); // unlisten old banner
 
                 var position = bannerAdsPosition switch
-                               {
-                                   BannerAdsPosition.Top => LevelPlayBannerPosition.TopCenter,
-                                   _                     => LevelPlayBannerPosition.BottomCenter
-                               };
+                {
+                    BannerAdsPosition.Top => LevelPlayBannerPosition.TopCenter,
+                    _                     => LevelPlayBannerPosition.BottomCenter
+                };
                 this.bannerAd = new(this.ironSourceSettings.BannerId.DefaultValue, this.BannerSize(), position);
 
                 this.bannerAd.OnAdLoaded     += this.OnBannerLoaded;
@@ -462,7 +461,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
                 this.bannerAd.LoadAd();
                 this.bannerAd.ShowAd();
-                this.logService.Log("oneLog: IronSourceWrapper ShowBannerAd: show new banner");
+                this.logger.Info("show new banner");
             }
         }
 
@@ -488,7 +487,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void DestroyBannerAd()
         {
             this.isLoadedBanner = false;
-            if(this.bannerAd == null) return;
+            if (this.bannerAd == null) return;
             this.bannerAd.OnAdLoaded     -= this.OnBannerLoaded;
             this.bannerAd.OnAdLoadFailed -= this.OnBannerLoadFailed;
             this.bannerAd.OnAdClicked    -= this.OnBannerClicked;
@@ -564,10 +563,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             };
 
             IronSourceAdQuality.Initialize(this.thirdPartiesConfig.AdSettings.IronSource.AppId, adQualityConfig);
-            this.logService.Log("onelog: IronSourceAdQuality debug initialize");
+            this.logger.Info("IronSourceAdQuality debug initialize");
             #elif IRONSOURCE_AD_QUALITY
             IronSourceAdQuality.Initialize(this.thirdPartiesConfig.AdSettings.IronSource.AppId);
-            this.logService.Log("onelog: IronSourceAdQuality initialize");
+            this.logger.Info("IronSourceAdQuality initialize");
             #endif
         }
     }

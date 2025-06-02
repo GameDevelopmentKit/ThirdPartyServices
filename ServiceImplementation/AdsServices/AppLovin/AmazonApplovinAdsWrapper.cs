@@ -3,10 +3,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
 {
     using AmazonAds;
     using Core.AdsServices;
-    using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using GameFoundation.Signals;
+    using TheOne.Logging;
     using UnityEngine.Scripting;
 
     public class AmazonApplovinAdsWrapper : AppLovinAdsWrapper
@@ -31,9 +31,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private const string AmazonErrorMessage = "amazon_ad_error";
 
         [Preserve]
-        public AmazonApplovinAdsWrapper(ILogService logService, SignalBus signalBus, AdServicesConfig adServicesConfig,
-            ThirdPartiesConfig thirdPartiesConfig)
-            : base(logService, signalBus, thirdPartiesConfig)
+        public AmazonApplovinAdsWrapper(ILoggerManager loggerManager, SignalBus signalBus, AdServicesConfig adServicesConfig, ThirdPartiesConfig thirdPartiesConfig) : base(loggerManager, signalBus, thirdPartiesConfig)
         {
             this.amazonSetting = thirdPartiesConfig.AdSettings.AppLovin.AmazonApplovinSetting;
         }

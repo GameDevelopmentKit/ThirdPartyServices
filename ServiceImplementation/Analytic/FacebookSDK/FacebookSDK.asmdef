@@ -4,7 +4,8 @@
   "references": [
     "GameFoundation.Signals",
     "GameFoundation.Utilities",
-    "GameFoundation.DI"
+    "GameFoundation.DI",
+    "TheOne.Logging"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

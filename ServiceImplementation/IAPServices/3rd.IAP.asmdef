@@ -14,7 +14,8 @@
     "UnityEngine.Purchasing.Security",
     "UnityEngine.Purchasing.SecurityCore",
     "UnityEngine.Purchasing.SecurityStub",
-    "Unity.Security.Tangle"
+    "Unity.Security.Tangle",
+    "TheOne.Logging"
   ],
   "versionDefines": [
     {

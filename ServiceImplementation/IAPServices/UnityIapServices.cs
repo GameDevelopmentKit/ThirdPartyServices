@@ -10,6 +10,7 @@ namespace ServiceImplementation.IAPServices
     using GameFoundation.Signals;
     using Newtonsoft.Json;
     using ServiceImplementation.IAPServices.Signals;
+    using TheOne.Logging;
     using Unity.Services.Core;
     using Unity.Services.Core.Environments;
     using UnityEngine;
@@ -17,6 +18,7 @@ namespace ServiceImplementation.IAPServices
     using UnityEngine.Purchasing.Extension;
     using UnityEngine.Purchasing.Security;
     using UnityEngine.Scripting;
+    using ILogger = TheOne.Logging.ILogger;
 
     public class UnityIapServices : IIapServices, IDetailedStoreListener
     {
@@ -27,7 +29,7 @@ namespace ServiceImplementation.IAPServices
 
         #region inject
 
-        private readonly ILogService                  logger;
+        private readonly ILogger                      logger;
         private readonly SignalBus                    signalBus;
         private readonly IAdServices                  adServices;
         private          Dictionary<string, IAPModel> iapPacks;
@@ -35,9 +37,9 @@ namespace ServiceImplementation.IAPServices
         #endregion
 
         [Preserve]
-        public UnityIapServices(ILogService log, SignalBus signalBus)
+        public UnityIapServices(ILoggerManager loggerManager, SignalBus signalBus)
         {
-            this.logger    = log;
+            this.logger    = loggerManager.GetLogger(this);
             this.signalBus = signalBus;
         }
 
@@ -57,7 +59,7 @@ namespace ServiceImplementation.IAPServices
             catch (Exception exception)
             {
                 // An error occurred during services initialization.
-                this.logger.Log($"onelog: IAP init failed {exception.Message}");
+                this.logger.Info($"init failed {exception.Message}");
             }
 
             this.InitializePurchasing();
@@ -114,7 +116,7 @@ namespace ServiceImplementation.IAPServices
             }
             catch (Exception e)
             {
-                this.logger.Log($"onelog: IAP GetPriceById {e.Message}");
+                this.logger.Error($"{e.Message}");
             }
 
             return s;
@@ -130,23 +132,23 @@ namespace ServiceImplementation.IAPServices
 
                 if (product is { availableToPurchase: true })
                 {
-                    this.logger.Log($"onelog: IAP Purchasing product asychronously: '{product.definition.id}'");
+                    this.logger.Info($"Purchasing product asychronously: '{product.definition.id}'");
 
                     this.onPurchaseComplete = onComplete;
-                    this.onPurchaseFailed = onFailed;
+                    this.onPurchaseFailed   = onFailed;
                     this.mStoreController.InitiatePurchase(product);
                 }
                 else
                 {
                     onFailed?.Invoke(productId);
-                    this.logger.Log("onelog: IAP BuyProductID: FAIL. Not purchasing product, either is not found or is not available for purchase");
+                    this.logger.Info("FAIL. Not purchasing product, either is not found or is not available for purchase");
                 }
             }
             else
             {
                 this.InitializePurchasing();
                 onFailed?.Invoke(productId);
-                this.logger.Log("onelog: IAP BuyProductID FAIL. Not initialized.");
+                this.logger.Info("FAIL. Not initialized.");
             }
         }
 
@@ -170,7 +172,7 @@ namespace ServiceImplementation.IAPServices
             if (!this.IsInitialized)
             {
                 // ... report the situation and stop restoring. Consider either waiting longer, or retrying initialization.
-                this.logger.Log("onelog: IAP RestorePurchases FAIL. Not initialized.");
+                this.logger.Info("FAIL. Not initialized.");
                 onFailed?.Invoke();
                 return;
             }
@@ -181,7 +183,7 @@ namespace ServiceImplementation.IAPServices
                 this.signalBus.Fire<OnStartDoingIAPSignal>();
 
                 // ... begin restoring purchases
-                this.logger.Log("onelog: IAP RestorePurchases started ...");
+                this.logger.Info("started ...");
 
                 // Fetch the Apple store-specific subsystem.
                 var apple = this.mStoreExtensionProvider.GetExtension<IAppleExtensions>();
@@ -192,7 +194,7 @@ namespace ServiceImplementation.IAPServices
                 {
                     // The first phase of restoration. If no more responses are received on ProcessPurchase then
                     // no purchases are available to be restored.
-                    this.logger.Log("onelog: IAP RestorePurchases continuing: " + result + ". If no further messages, no purchases available to restore.");
+                    this.logger.Info("continuing: " + result + ". If no further messages, no purchases available to restore.");
 
                     if (!result)
                     {
@@ -213,7 +215,7 @@ namespace ServiceImplementation.IAPServices
             else
             {
                 // We are not running on an Apple device. No work is necessary to restore purchases.
-                this.logger.Log("onelog: IAP RestorePurchases FAIL. Not supported on this platform. Current = " + Application.platform);
+                this.logger.Info("FAIL. Not supported on this platform. Current = " + Application.platform);
                 onFailed?.Invoke();
             }
         }
@@ -257,7 +259,7 @@ namespace ServiceImplementation.IAPServices
             // Does the receipt has some content?
             if (string.IsNullOrEmpty(receipt))
             {
-                this.logger.Log("onelog: IAP Receipt Validation: receipt is null or empty.");
+                this.logger.Info("receipt is null or empty.");
 
                 return false;
             }
@@ -302,14 +304,14 @@ namespace ServiceImplementation.IAPServices
                     // For informational purposes, we list the receipt(s)
                     if (logReceiptContent)
                     {
-                        this.logger.Log("onelog: IAP Receipt contents:");
+                        this.logger.Info("Receipt contents:");
 
                         foreach (var productReceipt in result)
                         {
                             if (productReceipt == null) continue;
-                            this.logger.Log(productReceipt.productID);
-                            this.logger.Log(productReceipt.purchaseDate.ToString(CultureInfo.InvariantCulture));
-                            this.logger.Log(productReceipt.transactionID);
+                            this.logger.Info(productReceipt.productID);
+                            this.logger.Info(productReceipt.purchaseDate.ToString(CultureInfo.InvariantCulture));
+                            this.logger.Info(productReceipt.transactionID);
                         }
                     }
                 }
@@ -325,7 +327,7 @@ namespace ServiceImplementation.IAPServices
 
         public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
         {
-            this.logger.Log("onelog: IAP OnInitialized: PASS");
+            this.logger.Info("PASS");
             this.mStoreController        = controller;
             this.mStoreExtensionProvider = extensions;
         }
@@ -341,7 +343,7 @@ namespace ServiceImplementation.IAPServices
             var receipt   = args.purchasedProduct.receipt;
             var quantity  = this.GetPurchaseQuantityFromReceipt(receipt);
 
-            this.logger.Log($"onelog: IAP ProcessPurchase {productId} quantity: {quantity}");
+            this.logger.Info($"{productId} quantity: {quantity}");
 
             if (this.onPurchaseComplete == null)
             {
@@ -374,7 +376,7 @@ namespace ServiceImplementation.IAPServices
             }
             catch (Exception e)
             {
-                this.logger.Log($"onelog: IAP Fail GetPurchaseQuantityFromReceipt {e.Message}");
+                this.logger.Error($"Fail {e.Message}");
                 return 1; // Default to 1 if quantity is not available or parsing fails
             }
         }
@@ -407,7 +409,7 @@ namespace ServiceImplementation.IAPServices
             this.onPurchaseFailed?.Invoke(productId);
             this.onPurchaseFailed = null;
             this.signalBus.Fire(new OnIAPPurchaseFailedSignal(productId, failureDescription.reason.ToString()));
-            this.logger.Log($"onelog: IAP OnPurchaseFailed: FAIL. Product: '{productId}', Reason: {failureDescription.reason}, Message: {failureDescription.message}");
+            this.logger.Info($"FAIL. Product: '{productId}', Reason: {failureDescription.reason}, Message: {failureDescription.message}");
         }
 
         [Obsolete]

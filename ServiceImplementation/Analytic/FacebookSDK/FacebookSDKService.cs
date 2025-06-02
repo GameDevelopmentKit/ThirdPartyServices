@@ -3,17 +3,17 @@ namespace ServiceImplementation.Analytic.FacebookSDK
 {
     using Facebook.Unity;
     using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.LogService;
+    using TheOne.Logging;
 
     public class FacebookSDKService : IInitializable
     {
         #region Inject
 
-        private readonly ILogService logService;
+        private readonly ILogger logger;
 
-        public FacebookSDKService(ILogService logService)
+        public FacebookSDKService(ILoggerManager loggerManager)
         {
-            this.logService = logService;
+            this.logger = loggerManager.GetLogger(this);
         }
 
         #endregion
@@ -34,12 +34,12 @@ namespace ServiceImplementation.Analytic.FacebookSDK
         {
             if (FB.IsInitialized)
             {
-                this.logService.Log("onelog: Facebook SDK Initialized Successfully");
+                this.logger.Info("Facebook SDK Initialized Successfully");
                 FB.ActivateApp();
             }
             else
             {
-                this.logService.Error("onelog: Failed to Initialize the Facebook SDK");
+                this.logger.Error("Failed to Initialize the Facebook SDK");
             }
         }
 
@@ -48,6 +48,6 @@ namespace ServiceImplementation.Analytic.FacebookSDK
             //
         }
     }
-   
+
 }
 #endif
