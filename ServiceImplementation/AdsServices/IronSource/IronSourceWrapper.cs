@@ -1,4 +1,4 @@
-#if !IRONSOURCE
+#if IRONSOURCE
 namespace ServiceImplementation.AdsServices.EasyMobile
 {
     using System;
