@@ -398,11 +398,7 @@ namespace ServiceImplementation.AdsServices.Admob
             adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
             adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
             adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
-            #if ADMOB_BELLOW_9_0_0
-            adLoader.LoadAd(new AdRequest.Builder().Build());
-            #else
             adLoader.LoadAd(new AdRequest());
-            #endif
         }
 
         private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e)
@@ -506,12 +502,12 @@ namespace ServiceImplementation.AdsServices.Admob
         private void AdMobNativePaidHandler(object sender, AdValueEventArgs e)
         {
             // TODO: Temporary get the first native ad id, only work for single native ad. Refactor later
-            this.AdMobHandlePaidEvent(e.AdValue, this.ADMobSettings.NativeAdIds.First().Id, AdFormatConstants.Native);
+            this.AdMobHandlePaidEvent(e.AdValue, this.ADMobSettings.NativeAdIds.First().DefaultValue, AdFormatConstants.Native);
         }
 
         private void LoadAllNativeAds()
         {
-            foreach (var adId in this.ADMobSettings.NativeAdIds.Select(nativeAdId => nativeAdId.Id))
+            foreach (var adId in this.ADMobSettings.NativeAdIds.Select(nativeAdId => nativeAdId.DefaultValue))
             {
                 this.LoadNativeAds(adId);
             }

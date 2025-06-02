@@ -198,13 +198,18 @@
             AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
             #endif
 
-            this.disableOptimizeInitialization = (bool)settingType.GetField("disableOptimizeInitialization", bindingFlags).GetValue(googleMobileAdsSettings);
+            var disableOptimizeInitialization = settingType.GetField("disableOptimizeInitialization", bindingFlags);
+            if (disableOptimizeInitialization == null)
+            {
+                this.disableOptimizeInitialization = !(bool)settingType.GetField("optimizeInitialization", bindingFlags).GetValue(googleMobileAdsSettings);
+                this.disableOptimizeAdLoading      = !(bool)settingType.GetField("optimizeAdLoading", bindingFlags).GetValue(googleMobileAdsSettings);
+            }
+            else
+            {
+                this.disableOptimizeInitialization = (bool)disableOptimizeInitialization.GetValue(googleMobileAdsSettings);
+                this.disableOptimizeAdLoading      = (bool)settingType.GetField("disableOptimizeAdLoading", bindingFlags).GetValue(googleMobileAdsSettings);
+            }
 
-            this.disableOptimizeAdLoading = (bool)settingType.GetField("disableOptimizeAdLoading", bindingFlags).GetValue(googleMobileAdsSettings);
-
-            #if ADMOB_BELLOW_9_0_0
-            this.mDelayAppMeasurementInit = (bool)settingType.GetField("delayAppMeasurementInit", bindingFlags).GetValue(googleMobileAdsSettings);
-            #endif
             this.enableKotlinXCoroutinesPackagingOption = (bool)settingType.GetField("enableKotlinXCoroutinesPackagingOption", bindingFlags).GetValue(googleMobileAdsSettings);
             this.mUserTrackingUsageDescription          = settingType.GetField("userTrackingUsageDescription", bindingFlags).GetValue(googleMobileAdsSettings) as string;
         }
@@ -223,11 +228,18 @@
             #if APPLOVIN && UNITY_EDITOR
             AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
             #endif
-            settingType.GetField("disableOptimizeInitialization", bindingFlags).SetValue(googleMobileAdsSettings, this.disableOptimizeInitialization);
-            settingType.GetField("disableOptimizeAdLoading", bindingFlags).SetValue(googleMobileAdsSettings, this.disableOptimizeAdLoading);
-            #if ADMOB_BELLOW_9_0_0
-            settingType.GetField("delayAppMeasurementInit", bindingFlags).SetValue(googleMobileAdsSettings, this.mDelayAppMeasurementInit);
-            #endif
+            var disableOptimizeInitialization = settingType.GetField("disableOptimizeInitialization", bindingFlags);
+            if (disableOptimizeInitialization == null)
+            {
+                settingType.GetField("optimizeInitialization", bindingFlags).SetValue(googleMobileAdsSettings, !this.disableOptimizeInitialization);
+                settingType.GetField("optimizeAdLoading", bindingFlags).SetValue(googleMobileAdsSettings, !this.disableOptimizeAdLoading);
+            }
+            else
+            {
+                disableOptimizeInitialization.SetValue(googleMobileAdsSettings, this.disableOptimizeInitialization);
+                disableOptimizeInitialization.SetValue(googleMobileAdsSettings, this.disableOptimizeAdLoading);
+            }
+
             settingType.GetField("enableKotlinXCoroutinesPackagingOption", bindingFlags).SetValue(googleMobileAdsSettings, this.enableKotlinXCoroutinesPackagingOption);
             settingType.GetField("userTrackingUsageDescription", bindingFlags).SetValue(googleMobileAdsSettings, this.mUserTrackingUsageDescription);
 
@@ -256,10 +268,6 @@
 
         [OnValueChanged("SaveAdmobSetting")] [BoxGroup("Admob Settings")] [SerializeField] [LabelText("Disable optimize ad loading")] private bool disableOptimizeAdLoading;
 
-        #if ADMOB_BELLOW_9_0_0
-        [OnValueChanged("SaveAdmobSetting")] [Header("Admob-specific settings")] [SerializeField] [BoxGroup("Admob Settings")]
-        private bool mDelayAppMeasurementInit;
-        #endif
         [FormerlySerializedAs("mEnableKotlinXCoroutinesPackagingOption")]
         [OnValueChanged("SaveAdmobSetting")]
         [Header("Admob-specific settings")]
