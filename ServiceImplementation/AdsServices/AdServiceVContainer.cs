@@ -7,7 +7,6 @@ namespace ServiceImplementation.AdsServices
     using Core.AdsServices.Native;
     using Core.AdsServices.Signals;
     using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Signals;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
@@ -17,6 +16,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.PreloadService;
     using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs.Ads;
+    using TheOne.Extensions;
     using VContainer;
     using VContainer.Unity;
     #if GADSME
@@ -43,8 +43,8 @@ namespace ServiceImplementation.AdsServices
         public static void RegisterAdService(this IContainerBuilder builder)
         {
             //config
-            builder.Register<AdServicesConfig>(Lifetime.Singleton).AsInterfacesAndSelf();
-            builder.Register<MiscConfig>(Lifetime.Singleton).AsInterfacesAndSelf();
+            builder.Register<AdServicesConfig>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
+            builder.Register<MiscConfig>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
 
             #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
             builder.RegisterComponentOnNewGameObject<PubScaleManager>(Lifetime.Singleton);
@@ -85,7 +85,7 @@ namespace ServiceImplementation.AdsServices
             builder.Register<PreloadAdService>(Lifetime.Singleton).AsInterfacesAndSelf();
             typeof(IAdRevenueTracker).GetDerivedTypes().ForEach(type => builder.Register(type, Lifetime.Singleton).AsImplementedInterfaces());
 
-            builder.Register<AppTrackingServices>(Lifetime.Singleton).AsInterfacesAndSelf();
+            builder.Register<AppTrackingServices>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             #if ADMOB
             builder.Register<UmpConsentInformation>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<AdmobNativeOverlayService>(Lifetime.Singleton).AsImplementedInterfaces();

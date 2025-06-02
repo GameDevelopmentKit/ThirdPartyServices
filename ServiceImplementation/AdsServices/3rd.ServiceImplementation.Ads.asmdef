@@ -24,7 +24,8 @@
     "GameFoundation.UIModule",
     "ColumbusSdk",
     "GadsmeSDK",
-    "CrazySDK.Scripts"
+    "CrazySDK.Scripts",
+    "TheOne.Extensions"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

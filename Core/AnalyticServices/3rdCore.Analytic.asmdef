@@ -9,7 +9,8 @@
     "GameFoundation.Models",
     "ByteBrewSDK",
     "3rd.Configs.Editor",
-    "ByteBrewSDK.Editor"
+    "ByteBrewSDK.Editor",
+    "TheOne.Extensions"
   ],
   "versionDefines": [
     {

@@ -8,9 +8,9 @@ namespace Core.AnalyticServices
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
     using GameFoundation.Signals;
+    using TheOne.Extensions;
     using UnityEngine;
     using UnityEngine.Scripting;
-    using Utilities.Extension;
 
     public interface IAnalyticServices
     {
@@ -76,7 +76,7 @@ namespace Core.AnalyticServices
         {
             await this.started.Task;
             this.eventTrackedSignal.TrackedEvent = trackedEvent;
-            this.eventTrackedSignal.ChangedProps = this.UserProperties.ChangedProps.Count > 0 ? this.UserProperties.ChangedProps.Copy() : null;
+            this.eventTrackedSignal.ChangedProps = this.UserProperties.ChangedProps.Count > 0 ? this.UserProperties.ChangedProps.ToDictionary() : null;
             this.signalBus.Fire(this.eventTrackedSignal);
 
             this.UserProperties.ChangedProps.Clear();
