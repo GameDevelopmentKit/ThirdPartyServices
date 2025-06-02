@@ -86,7 +86,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                 eventDataString = string.Join(", ", data.Select(x => $"{x.Key}: {x.Value}"));
             }
 
-            this.logger.Info($"OnEvent {eventToken} with data: {eventDataString}");
+            this.logger.Info($"{eventToken} with data: {eventDataString}");
 
             Adjust.TrackEvent(adjustEvent);
         }

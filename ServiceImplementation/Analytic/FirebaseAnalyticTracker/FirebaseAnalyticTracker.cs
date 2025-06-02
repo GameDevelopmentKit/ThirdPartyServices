@@ -63,14 +63,14 @@
             if (data == null)
             {
                 FirebaseAnalytics.LogEvent(name);
-                this.logger.Info($"OnEvent - {name}");
+                this.logger.Info($"{name}");
 
                 return;
             }
 
             if (!this.CheckConventions(data)) return;
 
-            this.logger.Info($"OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
+            this.logger.Info($"{name} - {JsonConvert.SerializeObject(data)}");
             switch (data.Count)
             {
                 case > 1:

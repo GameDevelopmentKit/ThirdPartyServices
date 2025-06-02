@@ -87,13 +87,13 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             {
                 // Don't fire event if data is null to avoid noise events
                 // ByteBrew.NewCustomEvent(name);
-                // this.logger.Info($"OnEvent - {name}");
+                // this.logger.Info($"{name}");
                 return;
             }
 
             var convertedData = data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             ByteBrew.NewCustomEvent(name, convertedData);
-            this.logger.Info($"OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
+            this.logger.Info($"{name} - {JsonConvert.SerializeObject(data)}");
         }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
