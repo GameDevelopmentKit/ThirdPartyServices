@@ -6,7 +6,6 @@ namespace ServiceImplementation.IAPServices
     using System.Globalization;
     using System.Linq;
     using Core.AdsServices;
-    using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Signals;
     using Newtonsoft.Json;
     using ServiceImplementation.IAPServices.Signals;
