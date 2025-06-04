@@ -25,7 +25,7 @@ namespace ServiceImplementation.IAPServices
         #region inject
 
         private readonly ILogService                  logger;
-        private readonly ISignalBus                    signalBus;
+        private readonly ISignalBus                   signalBus;
         private readonly IAdServices                  adServices;
         private          Dictionary<string, IAPModel> iapPacks;
 
@@ -39,6 +39,8 @@ namespace ServiceImplementation.IAPServices
 
         public async void InitIapServices(Dictionary<string, IAPModel> iapPack, string environment = "production")
         {
+            this.logger.Log("Initializing IAP Services...");
+
             if (this.mStoreController != null) return;
             this.iapPacks = iapPack;
 
@@ -322,7 +324,7 @@ namespace ServiceImplementation.IAPServices
             this.mStoreExtensionProvider = extensions;
         }
 
-        public void OnInitializeFailed(InitializationFailureReason error, string message) { }
+        public void OnInitializeFailed(InitializationFailureReason error, string message) { this.logger.Log("OnInitializeFailed InitializationFailureReason:" + error + "||" + message); }
 
         public void OnInitializeFailed(InitializationFailureReason error)
         {
