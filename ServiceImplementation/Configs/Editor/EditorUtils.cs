@@ -43,7 +43,7 @@ namespace ServiceImplementation.Configs.Editor
         // add: true to add a package, false to remove a package
         // packageName: the package name to add or remove
         // packagePath: the package path to add, null to get the latest version
-        public static void ModifyPackage(bool add, string packageName, string packagePath)
+        public static void ModifyPackage(bool add, string packageName, string packagePath, bool isReplace = false)
         {
             var manifestPath = Path.Combine(Application.dataPath, "../Packages/manifest.json");
             if (File.Exists(manifestPath))
@@ -62,7 +62,7 @@ namespace ServiceImplementation.Configs.Editor
                         manifestJson["dependencies"][packageName] = packagePath;
                         Debug.Log($"Package {packageName} added successfully.");
                     }
-                    else
+                    else if (isReplace)
                     {
                         if (packageToken.ToString().Equals(packagePath)) Debug.LogWarning($"Package {packageName} already exists. No action taken.");
                         manifestJson["dependencies"][packageName] = packagePath;
