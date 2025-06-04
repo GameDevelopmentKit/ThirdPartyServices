@@ -322,6 +322,19 @@ namespace ServiceImplementation.IAPServices
             this.logger.Log("OnInitialized: PASS");
             this.mStoreController        = controller;
             this.mStoreExtensionProvider = extensions;
+
+            try
+            {
+                foreach (var product in this.mStoreController.products.all)
+                {
+                    this.logger.Log(
+                        $"IAP Product: {product.definition.id}, Available: {product.availableToPurchase}, Type: {product.definition.type}, Price: {product.metadata.localizedPriceString}, Currency: {product.metadata.isoCurrencyCode}");
+                }
+            }
+            catch (Exception e)
+            {
+                this.logger.Log($"GetProduct: FAIL. Exception: {e.Message}");
+            }
         }
 
         public void OnInitializeFailed(InitializationFailureReason error, string message) { this.logger.Log("OnInitializeFailed InitializationFailureReason:" + error + "||" + message); }
