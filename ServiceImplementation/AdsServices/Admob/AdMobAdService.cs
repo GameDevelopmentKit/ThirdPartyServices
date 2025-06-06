@@ -33,6 +33,7 @@ namespace ServiceImplementation.AdsServices.Admob
             this.config          = config.AdSettings.AdMob;
             this.signalBus       = signalBus;
             this.analyticService = analyticService;
+            this.logger          = loggerManager.GetLogger(this);
         }
 
         #endregion
