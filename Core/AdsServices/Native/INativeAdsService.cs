@@ -7,7 +7,9 @@ namespace Core.AdsServices.Native
     #if ADMOB_NATIVE_ADS
     public interface IAdMobNativeAdsService : INativeAdsService
     {
-        void DrawNativeAds(NativeAdsView nativeAdsView);
+        bool IsNativeAdsReady(string       placement);
+        void CreateNativeAds(NativeAdsView nativeAdsView);
+        void ReleaseNativeAds(string       placement);
     }
     #endif
 }

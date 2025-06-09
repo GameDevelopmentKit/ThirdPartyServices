@@ -88,14 +88,13 @@
         /// <summary>
         /// Gets or sets the default native ad identifier.
         /// </summary>
-        public List<CrossPlatformValue> NativeAdIds
+        public Dictionary<AdPlacement, CrossPlatformValue> NativeAdIds
         {
             #if THEONE_ADS_DEBUG || ADMOB_ADS_DEBUG
-            get => this.mNativeAdIds.Select(x => !string.IsNullOrEmpty(x.AndroidValue) ? new ("ca-app-pub-3940256099942544/3986624511", "ca-app-pub-3940256099942544/2247696110") : x).ToList();
+            get => this.ConvertIdsToTestId(this.mNativeAdIds, new("ca-app-pub-3940256099942544/3986624511", "ca-app-pub-3940256099942544/2247696110"));
             #else
             get => this.mNativeAdIds;
             #endif
-            set => this.mNativeAdIds = value;
         }
 
         /// <summary>
@@ -297,8 +296,6 @@
 
         [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")] private CrossPlatformValue mAoaAdId;
 
-        [SerializeField] [LabelText("Native")] [BoxGroup("Default Id")] private List<CrossPlatformValue> mNativeAdIds;
-
         [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
 
         [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomInterstitialAdIds;
@@ -310,6 +307,8 @@
         [SerializeField] [LabelText("Rewarded Interstitial")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomRewardedInterstitialAdIds;
 
         [SerializeField] [LabelText("MREC")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mRECAdIds;
+
+        [SerializeField] [LabelText("Native")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mNativeAdIds;
 
         [SerializeField] [LabelText("Is Adaptive Banner")] [BoxGroup("Admob Settings")] private bool mIsAdaptiveBannerEnabled = true;
     }

@@ -74,10 +74,12 @@
 
         #region Native Overlay
 
-        public const string NativeOverlayInterEnable          = "native_overlay_inter_enable";
-        public const string NativeOverlayInterCappingTime     = "native_overlay_inter_capping_time";
-        public const string NativeOverlayInterCountdown       = "native_overlay_inter_countdown";
-        public const string NativeOverlayInterShowAdsComplete = "native_overlay_inter_show_ads_complete";
+        public const string NativeOverlayInterEnable   = "native_overlay_inter_enable"; // overlay
+        public const string NativeInterEnable          = "native_inter_enable";
+        public const string ShowNativeInterAfterInter  = "show_native_inter_after_inter";
+        public const string NativeInterCappingTime     = "native_inter_capping_time";
+        public const string NativeInterCountdown       = "native_inter_countdown";
+        public const string NativeInterShowAdsComplete = "native_inter_show_ads_complete";
 
         #endregion
 

@@ -2,7 +2,8 @@
   "name": "3rd.Editor",
   "rootNamespace": "",
   "references": [
-    "GUID:563749aea2450c64fb6d1e8f8ea88217"
+    "GUID:563749aea2450c64fb6d1e8f8ea88217",
+    "GUID:d5b34dada42fd2a46af3b40b69efba3a"
   ],
   "includePlatforms": [
     "Editor"

@@ -24,6 +24,7 @@ namespace ServiceImplementation.AdsServices.Admob
     using UnityEngine.Scripting;
     using ILogger = TheOne.Logging.ILogger;
     #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
+    using System.Runtime.Remoting.Channels;
     using Core.AdsServices.Native;
     #endif
 
@@ -94,6 +95,9 @@ namespace ServiceImplementation.AdsServices.Admob
                                  {
                                      this.logService.Info("AOA finished init");
                                      this.LoadAppOpenAd();
+                                     #if ADMOB_NATIVE_ADS
+                                     this.PreloadAllNativeAds();
+                                     #endif
                                      #if ADMOB_ADS_DEBUG
                                      MobileAds.OpenAdInspector(_ => {});
                                      #endif
@@ -113,6 +117,8 @@ namespace ServiceImplementation.AdsServices.Admob
         {
             return this.ADMobSettings.CustomInterstitialAdIds.GetValueOrDefault(AdPlacement.PlacementWithName(place), this.ADMobSettings.DefaultInterstitialAdId).DefaultValue;
         }
+
+        private AdPlacement GetPlacement(string placementId) => AdPlacement.PlacementWithName(placementId);
 
 #region AOA
 
@@ -371,146 +377,165 @@ namespace ServiceImplementation.AdsServices.Admob
 #region Native Ads
 
         #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
-        private Dictionary<string, NativeAd>        nativeAdsIdToNativeAd   { get; } = new();
-        private HashSet<string>                     loadingNativeAdsIds     { get; } = new();
-        private Dictionary<NativeAdsView, NativeAd> nativeAdsViewToNativeAd { get; } = new();
+        private HashSet<string>              loadingNativeAdsId  { get; } = new();
+        private Dictionary<string, NativeAd> adsIdToLoadedNativeAds { get; } = new();
+        private AdLoadingStrategy            nativeLoadingStrategy      { get; } = new();
 
         private const string PrefixNativeAdsText = "loading...";
 
-        private void LoadNativeAds(string adsId)
+        bool IAdMobNativeAdsService.IsNativeAdsReady(string placement)
         {
-            if (this.loadingNativeAdsIds.Contains(adsId) || this.nativeAdsIdToNativeAd.ContainsKey(adsId)) return;
+            return this.adServicesConfig.EnableNativeAd && this.adsIdToLoadedNativeAds.ContainsKey(this.GetNativeAdsId(placement));
+        }
+
+        void IAdMobNativeAdsService.CreateNativeAds(NativeAdsView nativeAdsView)
+        {
+            if (!this.adServicesConfig.EnableNativeAd) return;
+            var isReady = ((IAdMobNativeAdsService)this).IsNativeAdsReady(nativeAdsView.Placement);
+            this.logService.Info($"native ads, placement {nativeAdsView.Placement}, is ready: {isReady}");
+            if (isReady)
+            {
+                DrawNativeAds(this.adsIdToLoadedNativeAds[this.GetNativeAdsId(nativeAdsView.Placement)]);
+            }
+
+            return;
+            void DrawNativeAds(NativeAd nativeAd)
+            {
+                this.logService.Info($"Start set native ad: {nativeAdsView.name}");
+
+                this.logService.Info($"native star rating : {nativeAd.GetStarRating()}");
+                this.logService.Info($"native store: {nativeAd.GetStore()}");
+                this.logService.Info($"native Price: {nativeAd.GetPrice()}");
+                this.logService.Info($"native advertiser text: {nativeAd.GetAdvertiserText()}");
+                this.logService.Info($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
+
+                this.logService.Info($"native headline: {nativeAd.GetHeadlineText()}");
+                this.logService.Info($"native call to action text: {nativeAd.GetCallToActionText()}");
+                this.logService.Info($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
+
+                // Get Texture2D for icon asset of native ad.
+                nativeAdsView.headlineText.text = nativeAd.GetHeadlineText();
+
+                if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
+                {
+                    // Handle failure to register ad asset.
+                    this.logService.Info($"Failed to register Headline text for native ad: {nativeAdsView.name}");
+                }
+
+                nativeAdsView.advertiserText.text = nativeAd.GetAdvertiserText();
+
+                if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.advertiserText.gameObject))
+                {
+                    nativeAdsView.advertiserText.text = PrefixNativeAdsText;
+
+                    // Handle failure to register ad asset.
+                    this.logService.Info($"Failed to register advertiser text for native ad: {nativeAdsView.name}");
+                }
+
+                nativeAdsView.callToActionText.text = nativeAd.GetCallToActionText();
+
+                if (!nativeAd.RegisterCallToActionGameObject(nativeAdsView.callToActionText.gameObject))
+                {
+                    nativeAdsView.callToActionText.text = PrefixNativeAdsText;
+                    this.logService.Info($"Failed to register call to action text for native ad: {nativeAdsView.name}");
+                }
+
+                if (nativeAd.GetIconTexture() != null)
+                {
+                    nativeAdsView.iconImage.gameObject.SetActive(true);
+                    nativeAdsView.iconImage.texture = nativeAd.GetIconTexture();
+
+                    // Register GameObject that will display icon asset of native ad.
+                    if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.iconImage.gameObject))
+                    {
+                        // Handle failure to register ad asset.
+                        this.logService.Info($"Failed to register icon image for native ad: {nativeAdsView.name}");
+                    }
+                }
+
+                if (nativeAd.GetAdChoicesLogoTexture() != null)
+                {
+                    nativeAdsView.adChoicesImage.gameObject.SetActive(true);
+                    nativeAdsView.adChoicesImage.texture = nativeAd.GetAdChoicesLogoTexture();
+
+                    if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoicesImage.gameObject))
+                    {
+                        // Handle failure to register ad asset.
+                        this.logService.Info($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
+                    }
+                }
+            }
+        }
+
+        void IAdMobNativeAdsService.ReleaseNativeAds(string placement)
+        {
+            if (!this.adsIdToLoadedNativeAds.Remove(this.GetNativeAdsId(placement), out var nativeAd)) return;
+            nativeAd.Destroy();
+            this.logService.Info($"Release native ad: {placement}");
+            this.PreloadNativeAds(placement);
+        }
+
+        private string GetNativeAdsId(string placement) => this.ADMobSettings.NativeAdIds[this.GetPlacement(placement)].DefaultValue;
+
+        private void PreloadAllNativeAds()
+        {
+            foreach (var (placement, _) in this.ADMobSettings.NativeAdIds)
+            {
+                this.PreloadNativeAds(placement.Name);
+            }
+        }
+
+        private void PreloadNativeAds(string placement)
+        {
+            if (!this.adServicesConfig.EnableNativeAd) return;
+            if (this.nativeLoadingStrategy.IsWaiting) return;
+            var adsId = this.GetNativeAdsId(placement);
+            if (this.loadingNativeAdsId.Contains(adsId) || this.adsIdToLoadedNativeAds.ContainsKey(adsId)) return;
+            this.logService.Info($"Native ad start preload, placement {placement}");
+
 
             var adLoader = new AdLoader.Builder(adsId).ForNativeAd().Build();
-            this.loadingNativeAdsIds.Add(adsId);
+            this.loadingNativeAdsId.Add(adsId);
 
-            adLoader.OnNativeAdLoaded += (_, arg) =>
+            adLoader.OnNativeAdLoaded += (_, args) =>
                                          {
-                                             this.nativeAdsIdToNativeAd.Add(adsId, arg.nativeAd);
-                                             this.loadingNativeAdsIds.Remove(adsId);
+                                             this.loadingNativeAdsId.Remove(adsId);
+                                             this.adsIdToLoadedNativeAds.Add(adsId, args.nativeAd);
+                                             this.nativeLoadingStrategy.LoadSucceeded();
                                          };
 
             adLoader.OnAdFailedToLoad += (_, _) =>
                                          {
-                                             this.loadingNativeAdsIds.Remove(adsId);
+                                             this.loadingNativeAdsId.Remove(adsId);
+                                             this.nativeLoadingStrategy.LoadFailed();
+                                             this.nativeLoadingStrategy.WaitingAsync().ContinueWith(() => this.PreloadNativeAds(placement)).Forget();
                                          };
 
-            adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
-            adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
-            adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
+            adLoader.OnNativeAdLoaded  += (sender, args) => this.HandleNativeAdLoaded(adsId, sender, args);
+            adLoader.OnAdFailedToLoad  += (sender, args) => this.HandleAdFailedToLoad(adsId, sender, args);
+            adLoader.OnNativeAdClicked += (sender, args) => this.AdLoaderOnOnNativeAdClicked(adsId, sender, args);
             adLoader.LoadAd(new AdRequest());
         }
 
-        private void AdLoaderOnOnNativeAdClicked(object sender, EventArgs e)
+        private void AdLoaderOnOnNativeAdClicked(string adsId, object sender, EventArgs e)
         {
-            this.logService.Info("native ad clicked");
+            this.logService.Info($"native ad clicked: {adsId}");
         }
 
-        private NativeAd GetAvailableNativeAd()
-        {
-            var nativeAdPair = this.nativeAdsIdToNativeAd.First();
-            this.nativeAdsIdToNativeAd.Remove(nativeAdPair.Key);
-
-            return nativeAdPair.Value;
-        }
-
-        public void DrawNativeAds(NativeAdsView nativeAdsView)
-        {
-            if (!this.adServicesConfig.EnableNativeAd) return;
-
-            this.LoadAllNativeAds();
-
-            if (this.nativeAdsIdToNativeAd.Count == 0 || this.nativeAdsViewToNativeAd.ContainsKey(nativeAdsView)) return;
-            var nativeAd = this.nativeAdsViewToNativeAd.GetOrAdd(nativeAdsView, this.GetAvailableNativeAd);
-
-            this.logService.Info($"Start set native ad: {nativeAdsView.name}");
-
-            this.logService.Info($"native star rating : {nativeAd.GetStarRating()}");
-            this.logService.Info($"native store: {nativeAd.GetStore()}");
-            this.logService.Info($"native Price: {nativeAd.GetPrice()}");
-            this.logService.Info($"native advertiser text: {nativeAd.GetAdvertiserText()}");
-            this.logService.Info($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
-
-            this.logService.Info($"native headline: {nativeAd.GetHeadlineText()}");
-            this.logService.Info($"native call to action text: {nativeAd.GetCallToActionText()}");
-            this.logService.Info($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
-
-            // Get Texture2D for icon asset of native ad.
-            nativeAdsView.headlineText.text = nativeAd.GetHeadlineText();
-
-            if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
-            {
-                // Handle failure to register ad asset.
-                this.logService.Info($"Failed to register Headline text for native ad: {nativeAdsView.name}");
-            }
-
-            nativeAdsView.advertiserText.text = nativeAd.GetAdvertiserText();
-
-            if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.advertiserText.gameObject))
-            {
-                nativeAdsView.advertiserText.text = PrefixNativeAdsText;
-
-                // Handle failure to register ad asset.
-                this.logService.Info($"Failed to register advertiser text for native ad: {nativeAdsView.name}");
-            }
-
-            nativeAdsView.callToActionText.text = nativeAd.GetCallToActionText();
-
-            if (!nativeAd.RegisterCallToActionGameObject(nativeAdsView.callToActionText.gameObject))
-            {
-                nativeAdsView.callToActionText.text = PrefixNativeAdsText;
-                this.logService.Info($"Failed to register call to action text for native ad: {nativeAdsView.name}");
-            }
-
-            if (nativeAd.GetIconTexture() != null)
-            {
-                nativeAdsView.iconImage.gameObject.SetActive(true);
-                nativeAdsView.iconImage.texture = nativeAd.GetIconTexture();
-
-                // Register GameObject that will display icon asset of native ad.
-                if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.iconImage.gameObject))
-                {
-                    // Handle failure to register ad asset.
-                    this.logService.Info($"Failed to register icon image for native ad: {nativeAdsView.name}");
-                }
-            }
-
-            if (nativeAd.GetAdChoicesLogoTexture() != null)
-            {
-                nativeAdsView.adChoicesImage.gameObject.SetActive(true);
-                nativeAdsView.adChoicesImage.texture = nativeAd.GetAdChoicesLogoTexture();
-
-                if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoicesImage.gameObject))
-                {
-                    // Handle failure to register ad asset.
-                    this.logService.Info($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
-                }
-            }
-        }
-
-        private void HandleAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
+        private void HandleAdFailedToLoad(string adsId, object sender, AdFailedToLoadEventArgs e)
         {
             this.logService.Info($"Native ad failed to load: {e.LoadAdError.GetMessage()}");
         }
 
-        private void HandleNativeAdLoaded(object sender, NativeAdEventArgs e)
+        private void HandleNativeAdLoaded(string adsId, object sender, NativeAdEventArgs e)
         {
-            e.nativeAd.OnPaidEvent += this.AdMobNativePaidHandler;
+            e.nativeAd.OnPaidEvent += (obj, arg) => this.AdMobNativePaidHandler(adsId, obj, arg);
             this.logService.Info($"Native ad loaded successfully");
         }
 
-        private void AdMobNativePaidHandler(object sender, AdValueEventArgs e)
+        private void AdMobNativePaidHandler(string adsId, object sender, AdValueEventArgs e)
         {
-            // TODO: Temporary get the first native ad id, only work for single native ad. Refactor later
-            this.AdMobHandlePaidEvent(e.AdValue, this.ADMobSettings.NativeAdIds.First().DefaultValue, AdFormatConstants.Native);
-        }
-
-        private void LoadAllNativeAds()
-        {
-            foreach (var adId in this.ADMobSettings.NativeAdIds.Select(nativeAdId => nativeAdId.DefaultValue))
-            {
-                this.LoadNativeAds(adId);
-            }
+            this.AdMobHandlePaidEvent(e.AdValue, adsId, AdFormatConstants.Native);
         }
 
         #endif

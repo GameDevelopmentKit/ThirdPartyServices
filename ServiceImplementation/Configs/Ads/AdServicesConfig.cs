@@ -172,10 +172,12 @@ namespace ServiceImplementation.Configs.Ads
 
         #region NativeOverlay
 
-        public bool NativeOverlayInterEnable          { get; private set; }
-        public int  NativeOverlayInterCappingTime     { get; private set; }
-        public int  NativeOverlayInterCountdown       { get; private set; }
-        public bool NativeOverlayInterShowAdsComplete { get; private set; }
+        public bool NativeOverlayInterEnable   { get; private set; }
+        public bool NativeInterEnable          { get; private set; }
+        public bool ShowNativeInterAfterInter  { get; private set; }
+        public int  NativeInterCappingTime     { get; private set; }
+        public int  NativeInterCountdown       { get; private set; }
+        public bool NativeInterShowAdsComplete { get; private set; }
 
         #endregion
 
@@ -252,10 +254,12 @@ namespace ServiceImplementation.Configs.Ads
 
             #region NativeOverlay
 
-            this.NativeOverlayInterEnable          = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeOverlayInterEnable);
-            this.NativeOverlayInterCappingTime     = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeOverlayInterCappingTime);
-            this.NativeOverlayInterCountdown       = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeOverlayInterCountdown);
-            this.NativeOverlayInterShowAdsComplete = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeOverlayInterShowAdsComplete);
+            this.NativeOverlayInterEnable   = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeOverlayInterEnable);
+            this.NativeInterEnable          = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeInterEnable);
+            this.ShowNativeInterAfterInter  = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.ShowNativeInterAfterInter);
+            this.NativeInterCappingTime     = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeInterCappingTime);
+            this.NativeInterCountdown       = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeInterCountdown);
+            this.NativeInterShowAdsComplete = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeInterShowAdsComplete);
 
             #endregion
 

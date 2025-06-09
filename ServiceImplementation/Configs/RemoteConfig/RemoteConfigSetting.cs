@@ -119,9 +119,11 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             #region NativeOverlay
 
             this.TryAddAddsConfig(RemoteConfigKey.NativeOverlayInterEnable, "false");
-            this.TryAddAddsConfig(RemoteConfigKey.NativeOverlayInterCappingTime, "10");
-            this.TryAddAddsConfig(RemoteConfigKey.NativeOverlayInterCountdown, "3");
-            this.TryAddAddsConfig(RemoteConfigKey.NativeOverlayInterShowAdsComplete, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.NativeInterEnable, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.ShowNativeInterAfterInter, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.NativeInterCappingTime, "10");
+            this.TryAddAddsConfig(RemoteConfigKey.NativeInterCountdown, "3");
+            this.TryAddAddsConfig(RemoteConfigKey.NativeInterShowAdsComplete, "false");
 
             #endregion
 
