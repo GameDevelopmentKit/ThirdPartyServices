@@ -65,7 +65,7 @@ namespace ServiceImplementation.Configs.Ads
         /// <summary>
         ///     The interval between two interstitial ads, we also count the rewarded interstitial ads
         /// </summary>
-        public int InterstitialAdInterval { get; private set; }
+        public int InterstitialAdInterval { get; set; }
 
         /// <summary>
         ///     The level to start showing interstitial ads
