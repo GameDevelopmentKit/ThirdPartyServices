@@ -264,17 +264,17 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region MREC
 
-        public void ShowMREC(AdViewPosition adViewPosition)
+        public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             if (!this.adServicesConfig.EnableMRECAd) return;
         }
 
-        public void HideMREC(AdViewPosition adViewPosition)             { }
-        public void StopMRECAutoRefresh(AdViewPosition adViewPosition)  { }
-        public void StartMRECAutoRefresh(AdViewPosition adViewPosition) { }
-        public void LoadMREC(AdViewPosition adViewPosition)             { }
-        public bool IsMRECReady(AdViewPosition adViewPosition)          { return false; }
-        public void HideAllMREC()                                       { }
+        public void HideMREC(string placement, AdScreenPosition position)    { }
+        public void StopMRECAutoRefresh(string adUnitId)                     { }
+        public void StartMRECAutoRefresh(string adUnitId)                    { }
+        public void LoadMREC(string adUnitId)                                { }
+        public bool IsMRECReady(string placement, AdScreenPosition position) { return false; }
+        public void HideAllMREC()                                            { }
 
         #endregion
 
@@ -339,7 +339,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         public void              DestroyBannerAd()                   { IronSource.Agent.destroyBanner(); }
         public bool              IsInterstitialAdReady(string place) { return IronSource.Agent.isInterstitialReady(); }
 
-        public void ShowInterstitialAd(string place)
+        public void ShowInterstitialAd(string place, Action finishIfFailed = null)
         {
             this.interstitialPlacement = place;
             IronSource.Agent.showInterstitial(place);
@@ -386,6 +386,16 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         {
             id = default;
             return false;
+        }
+
+        public bool HasDefaultInterAdsId()
+        {
+            return true;
+        }
+
+        public bool HasRewardAdsId()
+        {
+            return true;
         }
 
         private void InitAdQuality()

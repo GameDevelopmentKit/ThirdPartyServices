@@ -72,11 +72,18 @@ namespace ServiceImplementation.AdsServices.PreloadService
         {
             if (!adLoadService.IsInterstitialAdReady(placement))
             {
+                if (!adLoadService.HasDefaultInterAdsId())
+                {
+                    this.logger.Log($"{adLoadService.GetType().Name} does not have default interstitial ad ids configured.");
+
+                    return;
+                }
+
                 adLoadService.LoadInterstitialAd(placement);
                 this.interstitialAdStopwatch.TryAdd((adLoadService, placement), this.unScaleInGameStopWatchManager.StartNew());
                 var adUnitId = adLoadService.TryGetInterstitialPlacementId(placement, out var id) ? id : string.Empty;
                 var adInfo   = new AdInfo(adLoadService.AdPlatform, adUnitId, "Interstitial");
-                this.signalBus.Fire<AdRequestSignal>(new(placement, adInfo));
+                this.signalBus.Fire(new AdRequestSignal(placement, adInfo));
             }
         }
 
@@ -107,11 +114,18 @@ namespace ServiceImplementation.AdsServices.PreloadService
         {
             if (!adLoadService.IsRewardedAdReady(placement))
             {
+                if (!adLoadService.HasRewardAdsId())
+                {
+                    this.logger.Log($"{adLoadService.GetType().Name} does not have default rewarded ad ids configured.");
+
+                    return;
+                }
+
                 adLoadService.LoadRewardAds(placement);
                 this.rewardAdStopwatch.TryAdd((adLoadService, placement), this.unScaleInGameStopWatchManager.StartNew());
                 var adUnitId = adLoadService.TryGetRewardPlacementId(placement, out var id) ? id : string.Empty;
                 var adInfo   = new AdInfo(adLoadService.AdPlatform, adUnitId, "Rewarded");
-                this.signalBus.Fire<AdRequestSignal>(new(placement, adInfo));
+                this.signalBus.Fire(new AdRequestSignal(placement, adInfo));
             }
         }
 

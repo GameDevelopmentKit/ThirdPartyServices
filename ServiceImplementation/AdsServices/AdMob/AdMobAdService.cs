@@ -113,6 +113,14 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.bannerView = null;
         }
 
+        public bool HasDefaultInterAdsId() =>
+            !string.IsNullOrEmpty(this.config.DefaultInterstitialAdId.Id);
+
+        public bool HasRewardAdsId()
+        {
+            return !string.IsNullOrEmpty(this.config.DefaultRewardedAdId.Id);
+        }
+
         #endregion
 
         #region Interstitial
@@ -135,6 +143,11 @@ namespace ServiceImplementation.AdsServices.AdMob
             if (this.IsInterstitialAdReady(place)) return;
 
             var stopwatch = Stopwatch.StartNew();
+
+            if (string.IsNullOrEmpty(this.config.DefaultInterstitialAdId.Id))
+            {
+                return;
+            }
 
             InterstitialAd.Load(this.config.DefaultInterstitialAdId.Id, new AdRequest(), (ad, error) =>
             {
@@ -159,6 +172,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             if (!this.IsInterstitialAdReady(place))
             {
                 finishIfFailed?.Invoke();
+
                 return;
             }
 
@@ -288,7 +302,7 @@ namespace ServiceImplementation.AdsServices.AdMob
                 };
 
 #if ADMOB_ANALYTICS_ENABLE
-                 this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
+                this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
 
                 this.analyticService.Track(adsRevenueEvent);
 #endif

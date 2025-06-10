@@ -40,7 +40,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private event Action RewardedAdCompletedOneTimeAction;
         private event Action RewardedAdFailed;
         private List<string> MrectLoadedId = new();
-        public  int          Order        => 1;
+        public  int          Order          => 1;
         public  bool         IsShowingAOAAd { get; set; }
 
         #endregion
@@ -230,6 +230,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void DestroyBannerAd() { this.InternalDestroyBanner(AdPlacement.Default); }
 
+        public bool HasDefaultInterAdsId() =>
+            !string.IsNullOrEmpty(this.AppLovinSetting.DefaultInterstitialAdId.Id);
+
+        public bool HasRewardAdsId()
+        {
+            return !string.IsNullOrEmpty(this.AppLovinSetting.DefaultRewardedAdId.Id);
+        }
+
         private bool IsBannerPlacementReady(string place, out string id)
         {
             var placement = AdPlacement.PlacementWithName(place);
@@ -303,7 +311,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent += this.OnInterstitialAdLoadFailedHandler;
             MaxSdkCallbacks.Interstitial.OnAdClickedEvent    += this.OnInterstitialAdClickedHandler;
 
-            this.InternalLoadInterstitialAd(AdPlacement.Default);
+            // this.InternalLoadInterstitialAd(AdPlacement.Default);
         }
 
         private void DisposeInterstitialAds()
