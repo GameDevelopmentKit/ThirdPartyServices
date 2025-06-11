@@ -27,7 +27,7 @@ namespace Core.AdsServices
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
-            this.logService.Log($"Dummy show banner ad ay {bannerAdsPosition}");
+            this.logService.Log($"Dummy show banner ad at {bannerAdsPosition}");
         }
 
         public void HideBannedAd()                      { this.logService.Log($"Dummy hide banner ad"); }
