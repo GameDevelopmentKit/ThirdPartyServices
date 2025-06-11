@@ -8,10 +8,18 @@
         public static bool TryGetPlacementId(string place, CrossPlatformValue defaultId, Dictionary<AdPlacement, CrossPlatformValue> customIds, out string id)
         {
             var placement = AdPlacement.PlacementWithName(place);
-            id = placement == AdPlacement.Default
-                ? defaultId?.DefaultValue
-                : FindIdForPlacement(customIds, placement);
-
+            if (placement == AdPlacement.Default)
+            {
+                id = defaultId?.DefaultValue;
+            }
+            else
+            {
+                id = FindIdForPlacement(customIds, placement);
+                if (string.IsNullOrEmpty(id))
+                {
+                    id = defaultId?.DefaultValue;
+                }
+            }
             return !string.IsNullOrEmpty(id);
         }
 
