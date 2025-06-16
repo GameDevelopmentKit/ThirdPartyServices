@@ -13,12 +13,12 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
     {
         #region Inject
 
-        private readonly SignalBus   signalBus;
+        private readonly ISignalBus   signalBus;
         private readonly ILogService logService;
 
         #endregion
 
-        public ByteBrewRemoteConfig(SignalBus signalBus, ILogService logService)
+        public ByteBrewRemoteConfig(ISignalBus signalBus, ILogService logService)
         {
             this.signalBus  = signalBus;
             this.logService = logService;

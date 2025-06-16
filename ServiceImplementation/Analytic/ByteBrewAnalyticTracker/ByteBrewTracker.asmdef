@@ -4,9 +4,9 @@
     "references": [
         "3rdCore.Analytic",
         "Zenject-Signals",
-        "ByteBrew",
         "GameFoundation.Utilities",
-        "UniTask"
+        "UniTask",
+        "ByteBrewSDK"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,4 +1,4 @@
-#if BYTEBREW && !UNITY_EDITOR
+// #if BYTEBREW && !UNITY_EDITOR
 namespace ServiceImplementation.ByteBrewAnalyticTracker
 {
     using System;
@@ -25,7 +25,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         protected override HashSet<string>            IncludeEvents   => this.analyticsEventCustomizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
 
-        public ByteBrewTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig)
+        public ByteBrewTracker(ISignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig)
         {
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
         }
@@ -93,4 +93,4 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         }
     }
 }
-#endif
+// #endif

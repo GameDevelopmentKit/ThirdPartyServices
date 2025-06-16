@@ -3,7 +3,7 @@
     "rootNamespace": "",
     "references": [
         "UniTask",
-        "ByteBrew",
+        "ByteBrewSDK",
         "GameFoundation.Utilities",
         "Zenject-Signals",
         "Zenject"
