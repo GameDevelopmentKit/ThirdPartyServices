@@ -15,7 +15,7 @@ namespace Core.AnalyticServices
     /// </summary>
     public partial class AnalyticConfig
     {
-        public const  string ByteBrewPackageGitURL = "https://github.com/ByteBrewIO/ByteBrewUnitySDK.git?path=UPMPackage#";
+        public const  string ByteBrewPackageGitURL = "0.1.9";
         private const string ByteBrewSymbol        = "BYTEBREW";
 
         [BoxGroup("ByteBrew")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeByteBrewEnabled")] [SerializeField] private bool isByteBrewEnabled = true;
