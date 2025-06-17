@@ -90,5 +90,11 @@
         public const string EnableGadsme = "enable_gadsme";
 
         #endif
+
+        #region MiscConfig
+
+        public const string TesterEmails = "tester_emails";
+
+        #endregion
     }
 }

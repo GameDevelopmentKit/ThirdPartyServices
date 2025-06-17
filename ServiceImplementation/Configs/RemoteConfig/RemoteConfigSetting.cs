@@ -34,11 +34,19 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         [TableList] [LabelText("Game Remote Configs")] [SerializeField] private List<RemoteConfig> mGameRemoteConfigs = new();
 
-        private bool TryAddAddsConfig(string key, string value)
+        private bool TryAddAdsConfig(string key, string value)
         {
             if (this.mAdsRemoteConfigs.Any(x => x.key.Equals(key))) return false;
 
             this.mAdsRemoteConfigs.Add(new(key, key, value));
+            return true;
+        }
+        
+        private bool TryAddMiscConfig(string key, string value)
+        {
+            if (this.mMiscRemoteConfigs.Any(x => x.key.Equals(key))) return false;
+
+            this.mMiscRemoteConfigs.Add(new(key, key, value));
             return true;
         }
 
@@ -48,27 +56,27 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             #region General
 
-            this.TryAddAddsConfig(RemoteConfigKey.EnableBannerAD, "true");
-            this.TryAddAddsConfig(RemoteConfigKey.EnableInterstitialAD, "true");
-            this.TryAddAddsConfig(RemoteConfigKey.EnableMrecAD, "true");
-            this.TryAddAddsConfig(RemoteConfigKey.EnableAoaAD, "true");
-            this.TryAddAddsConfig(RemoteConfigKey.EnableRewardedAD, "true");
-            this.TryAddAddsConfig(RemoteConfigKey.EnableRewardedInterstitialAD, "true");
-            this.TryAddAddsConfig(RemoteConfigKey.EnableNativeAD, "true");
-            this.TryAddAddsConfig(RemoteConfigKey.EnableCollapsibleBanner, "false");
-            this.TryAddAddsConfig(RemoteConfigKey.IntervalLoadAds, "5");
-            this.TryAddAddsConfig(RemoteConfigKey.EnableAds, "true");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableBannerAD, "true");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableInterstitialAD, "true");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableMrecAD, "true");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableAoaAD, "true");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableRewardedAD, "true");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableRewardedInterstitialAD, "true");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableNativeAD, "true");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableCollapsibleBanner, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.IntervalLoadAds, "5");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableAds, "true");
 
             #endregion
 
             #region AOA
 
-            this.TryAddAddsConfig(RemoteConfigKey.AOALoadingThreshold, "5");
-            this.TryAddAddsConfig(RemoteConfigKey.MinPauseSecondToShowAoaAD, "0");
-            this.TryAddAddsConfig(RemoteConfigKey.AoaStartSession, "2");
-            this.TryAddAddsConfig(RemoteConfigKey.AoaAdResumeStartLevel, "2");
-            this.TryAddAddsConfig(RemoteConfigKey.AoaAdResumeStartSession, "2");
-            this.TryAddAddsConfig(RemoteConfigKey.UseAoaAdmob, "true");
+            this.TryAddAdsConfig(RemoteConfigKey.AOALoadingThreshold, "5");
+            this.TryAddAdsConfig(RemoteConfigKey.MinPauseSecondToShowAoaAD, "0");
+            this.TryAddAdsConfig(RemoteConfigKey.AoaStartSession, "2");
+            this.TryAddAdsConfig(RemoteConfigKey.AoaAdResumeStartLevel, "2");
+            this.TryAddAdsConfig(RemoteConfigKey.AoaAdResumeStartSession, "2");
+            this.TryAddAdsConfig(RemoteConfigKey.UseAoaAdmob, "true");
 
             #if BRAVESTARS
             this.TryAddAddsConfig(RemoteConfigKey.UseAoaResume, "true");
@@ -80,53 +88,53 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             #region Interstitial
 
-            this.TryAddAddsConfig(RemoteConfigKey.InterstitialADInterval, "15");
-            this.TryAddAddsConfig(RemoteConfigKey.InterstitialADStartLevel, "1");
-            this.TryAddAddsConfig(RemoteConfigKey.InterstitialAdActivePlacements, "");
-            this.TryAddAddsConfig(RemoteConfigKey.DelayFirstIntersADInterval, "0");
-            this.TryAddAddsConfig(RemoteConfigKey.DelayFirstIntersNewSession, "0");
-            this.TryAddAddsConfig(RemoteConfigKey.ResetInterAdIntervalAfterRewardAd, "true");
-            this.TryAddAddsConfig(RemoteConfigKey.IsIntersInsteadAoaResume, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.InterstitialADInterval, "15");
+            this.TryAddAdsConfig(RemoteConfigKey.InterstitialADStartLevel, "1");
+            this.TryAddAdsConfig(RemoteConfigKey.InterstitialAdActivePlacements, "");
+            this.TryAddAdsConfig(RemoteConfigKey.DelayFirstIntersADInterval, "0");
+            this.TryAddAdsConfig(RemoteConfigKey.DelayFirstIntersNewSession, "0");
+            this.TryAddAdsConfig(RemoteConfigKey.ResetInterAdIntervalAfterRewardAd, "true");
+            this.TryAddAdsConfig(RemoteConfigKey.IsIntersInsteadAoaResume, "false");
 
             #endregion
 
             #region Rewarded
 
-            this.TryAddAddsConfig(RemoteConfigKey.RewardedAdFreePlacements, "");
+            this.TryAddAdsConfig(RemoteConfigKey.RewardedAdFreePlacements, "");
 
             #endregion
 
             #region Collapsible
 
-            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleBannerADInterval, "0");
-            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleBannerExpandOnRefreshInterval, "0");
-            this.TryAddAddsConfig(RemoteConfigKey.EnableCollapsibleBannerFallback, "false");
-            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleBannerAutoRefreshEnabled, "true");
-            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.CollapsibleBannerADInterval, "0");
+            this.TryAddAdsConfig(RemoteConfigKey.CollapsibleBannerExpandOnRefreshInterval, "0");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableCollapsibleBannerFallback, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.CollapsibleBannerAutoRefreshEnabled, "true");
+            this.TryAddAdsConfig(RemoteConfigKey.CollapsibleBannerExpandOnRefreshEnabled, "false");
 
             #endregion
 
             #region MREC
 
-            this.TryAddAddsConfig(RemoteConfigKey.EnableMrecRefreshInterval, "false");
-            this.TryAddAddsConfig(RemoteConfigKey.MrecRefreshInterval, "10");
-            this.TryAddAddsConfig(RemoteConfigKey.EnableCollapsibleMrec, "false");
-            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleMrecInterval, "30");
-            this.TryAddAddsConfig(RemoteConfigKey.CollapsibleMrecDisplayTime, "5");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableMrecRefreshInterval, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.MrecRefreshInterval, "10");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableCollapsibleMrec, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.CollapsibleMrecInterval, "30");
+            this.TryAddAdsConfig(RemoteConfigKey.CollapsibleMrecDisplayTime, "5");
 
             #endregion
 
             #region Native
 
-            this.TryAddAddsConfig(RemoteConfigKey.NativeOverlayInterEnable, "false");
-            this.TryAddAddsConfig(RemoteConfigKey.NativeInterEnable, "false");
-            this.TryAddAddsConfig(RemoteConfigKey.ShowNativeInterAfterInter, "false");
-            this.TryAddAddsConfig(RemoteConfigKey.NativeInterCappingTime, "10");
-            this.TryAddAddsConfig(RemoteConfigKey.NativeInterCountdown, "3");
-            this.TryAddAddsConfig(RemoteConfigKey.NativeInterShowAdsComplete, "false");
-            this.TryAddAddsConfig(RemoteConfigKey.EnableNativeCollapse, "false");
-            this.TryAddAddsConfig(RemoteConfigKey.NativeCollapseCloseTime, "3");
-            this.TryAddAddsConfig(RemoteConfigKey.NativeCollapseLoad, "2");
+            this.TryAddAdsConfig(RemoteConfigKey.NativeOverlayInterEnable, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.NativeInterEnable, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.ShowNativeInterAfterInter, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.NativeInterCappingTime, "10");
+            this.TryAddAdsConfig(RemoteConfigKey.NativeInterCountdown, "3");
+            this.TryAddAdsConfig(RemoteConfigKey.NativeInterShowAdsComplete, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableNativeCollapse, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.NativeCollapseCloseTime, "3");
+            this.TryAddAdsConfig(RemoteConfigKey.NativeCollapseLoad, "2");
 
             #endregion
 
@@ -135,6 +143,12 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.TryAddAddsConfig(RemoteConfigKey.EnableGadsme, "false");
 
             #endif
+
+            #endregion
+
+            #region MiscConfig
+
+            this.TryAddMiscConfig(RemoteConfigKey.TesterEmails, "tuha_263@gmail.com");
 
             #endregion
         }
