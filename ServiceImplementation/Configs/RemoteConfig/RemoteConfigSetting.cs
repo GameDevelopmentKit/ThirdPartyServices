@@ -140,7 +140,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             #if GADSME
 
-            this.TryAddAddsConfig(RemoteConfigKey.EnableGadsme, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.EnableGadsme, "false");
 
             #endif
 
