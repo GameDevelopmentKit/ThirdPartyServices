@@ -12,7 +12,7 @@ namespace Core.AnalyticServices.Data
 
     public delegate void EventDelegate(IEvent trackedEvent, Dictionary<string, object> data);
 
-    public abstract class BaseTracker
+    public abstract class BaseTracker : IInitializable
     {
         #region inject
 
@@ -74,28 +74,28 @@ namespace Core.AnalyticServices.Data
             this.analyticConfig = analyticConfig;
             signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);
             signalBus.Subscribe<SetUserIdSignal>(signal => this.SetUserId(signal.UserId));
-            this.Init();
         }
 
-        private async void Init()
-        {
-            await this.TrackerSetup();
-        }
+        public        void Initialize() { this.Init(); }
+        private async void Init()       { await this.TrackerSetup(); }
 
         private async void EventTracked(EventTrackedSignal trackedData)
         {
             // if the tracker has failed setup we should not forward it any events
             if (this.TrackerReady.Task.Status == TaskStatus.Canceled || this.TrackerReady.Task.Status == TaskStatus.Faulted)
                 return;
+
             await this.TrackerReady.Task;
 
             if (trackedData.ChangedProps != null)
                 this.OnChangedProps(trackedData.ChangedProps);
 
             var trackedEvent = trackedData.TrackedEvent;
+
             if (this.CustomEventDelegates != null && this.CustomEventDelegates.ContainsKey(trackedEvent.GetType()))
             {
                 var eventDelegate = this.CustomEventDelegates[trackedEvent.GetType()];
+
                 if (trackedEvent is IapTransactionDidSucceed iapEvent)
                 {
                     iapEvent.Receipt = this.CheckReceiptFormat(iapEvent.Receipt);
@@ -161,6 +161,7 @@ namespace Core.AnalyticServices.Data
             try
             {
                 var parsedReceipt = JsonUtility.FromJson<UnityReceipt>(receipt);
+
                 //Check if the parameter sent follows the Unity Purchase Receipt format.
                 if (!string.IsNullOrEmpty(parsedReceipt.Payload) &&
                     !string.IsNullOrEmpty(parsedReceipt.Store) &&

@@ -1,4 +1,4 @@
-// #if BYTEBREW && !UNITY_EDITOR
+#if BYTEBREW
 namespace ServiceImplementation.ByteBrewAnalyticTracker
 {
     using System;
@@ -9,6 +9,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
     using GameFoundation.Scripts.Utilities.Extension;
+    using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
     using UnityEngine;
     using Zenject;
@@ -17,6 +18,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     {
         #region inject
 
+        private readonly ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
         #endregion
@@ -25,8 +27,9 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         protected override HashSet<string>            IncludeEvents   => this.analyticsEventCustomizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
 
-        public ByteBrewTracker(ISignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig)
+        public ByteBrewTracker(ISignalBus signalBus,ILogService logger, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig)
         {
+            this.logger                            = logger;
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
         }
 
@@ -38,12 +41,12 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
             
-            Debug.Log($"ByteBrew: Create ByteBrew GameObject");
+            this.logger.Log($"ByteBrew: Create ByteBrew GameObject");
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
-            Debug.Log($"ByteBrew: Initialize ByteBrew");
+            this.logger.Log($"ByteBrew: Initialize ByteBrew");
             ByteBrew.InitializeByteBrew();
-            Debug.Log($"ByteBrew: Initialize Finished");
+            this.logger.Log($"ByteBrew: Initialize Finished");
 
             this.TrackerReady.SetResult(true);
             
@@ -60,14 +63,14 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             if (data == null)
             {
                 ByteBrew.NewCustomEvent(name);
-                Debug.Log($"ByteBrew: OnEvent - {name}");
+                this.logger.Log($"ByteBrew: OnEvent - {name}");
                 
                 return;
             }
             
             var convertedData = data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             ByteBrew.NewCustomEvent(name, convertedData);
-            Debug.Log($"ByteBrew: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
+            this.logger.Log($"ByteBrew: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
         }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
@@ -93,4 +96,4 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         }
     }
 }
-// #endif
+#endif
