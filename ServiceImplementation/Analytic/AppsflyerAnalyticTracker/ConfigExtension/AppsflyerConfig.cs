@@ -11,7 +11,8 @@ namespace Core.AnalyticServices
     /// </summary>
     public partial class AnalyticConfig
     {
-        private const string AppsflyerSymbol = "APPSFLYER";
+        private const string AppsflyerSymbol        = "APPSFLYER";
+        public const  string AppsflyerPackageGitURL = "https://github.com/AppsFlyerSDK/appsflyer-unity-plugin.git#upm";
         
         [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")]
         [SerializeField] private bool isAppsflyerEnabled;
@@ -19,6 +20,7 @@ namespace Core.AnalyticServices
         private void OnChangeAppsflyerEnabled()
         {
 #if UNITY_EDITOR
+            EditorUtils.ModifyPackage(this.isByteBrewEnabled, "appsflyer-unity-plugin", AppsflyerPackageGitURL);
             EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
 #endif
         }
