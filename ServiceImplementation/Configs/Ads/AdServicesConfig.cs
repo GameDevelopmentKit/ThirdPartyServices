@@ -170,7 +170,9 @@ namespace ServiceImplementation.Configs.Ads
 
         public bool EnableGadsme { get; private set; }
 
-        #region NativeOverlay
+        #endregion
+
+        #region Native
 
         public bool NativeOverlayInterEnable   { get; private set; }
         public bool NativeInterEnable          { get; private set; }
@@ -178,8 +180,9 @@ namespace ServiceImplementation.Configs.Ads
         public int  NativeInterCappingTime     { get; private set; }
         public int  NativeInterCountdown       { get; private set; }
         public bool NativeInterShowAdsComplete { get; private set; }
-
-        #endregion
+        public bool EnableNativeCollapse       { get; private set; }
+        public int  NativeCollapseCloseTime    { get; private set; }
+        public int  NativeCollapseLoad         { get; private set; }
 
         #endregion
 
@@ -252,7 +255,7 @@ namespace ServiceImplementation.Configs.Ads
 
             #endregion
 
-            #region NativeOverlay
+            #region Native
 
             this.NativeOverlayInterEnable   = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeOverlayInterEnable);
             this.NativeInterEnable          = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeInterEnable);
@@ -260,6 +263,9 @@ namespace ServiceImplementation.Configs.Ads
             this.NativeInterCappingTime     = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeInterCappingTime);
             this.NativeInterCountdown       = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeInterCountdown);
             this.NativeInterShowAdsComplete = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeInterShowAdsComplete);
+            this.EnableNativeCollapse       = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableNativeCollapse);
+            this.NativeCollapseCloseTime    = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeCollapseCloseTime);
+            this.NativeCollapseLoad         = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeCollapseLoad);
 
             #endregion
 

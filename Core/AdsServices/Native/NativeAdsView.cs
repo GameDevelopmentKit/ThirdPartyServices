@@ -1,6 +1,7 @@
 namespace Core.AdsServices.Native
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
@@ -17,11 +18,12 @@ namespace Core.AdsServices.Native
         [SerializeField]                   private GameObject nonAdsHolder;
         [SerializeField]                   private GameObject adsHolder;
 
-        public RawImage iconImage;
-        public RawImage adChoicesImage;
-        public Text     headlineText;
-        public Text     advertiserText;
-        public Text     callToActionText;
+        public RawImage       iconImage;
+        public RawImage       adChoicesImage;
+        public Text           headlineText;
+        public Text           advertiserText;
+        public Text           callToActionText;
+        public List<RawImage> imageTextures;
 
         public string Placement => this.placement;
 

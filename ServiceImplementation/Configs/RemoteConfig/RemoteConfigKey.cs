@@ -27,9 +27,9 @@
         public const string AoaAdResumeStartSession   = "aoa_resume_start_session";
 
         #if BRAVESTARS
-        public const string UseAoaResume              = "use_aoa_resume";
-        public const string AoaFirstOpen              = "show_open_ads_first_open";
-        public const string AoaStartGame              = "show_open_ads_start_game";
+        public const string UseAoaResume = "use_aoa_resume";
+        public const string AoaFirstOpen = "show_open_ads_first_open";
+        public const string AoaStartGame = "show_open_ads_start_game";
         #endif
 
         #endregion
@@ -72,7 +72,7 @@
 
         #endregion
 
-        #region Native Overlay
+        #region Native
 
         public const string NativeOverlayInterEnable   = "native_overlay_inter_enable"; // overlay
         public const string NativeInterEnable          = "native_inter_enable";
@@ -80,11 +80,13 @@
         public const string NativeInterCappingTime     = "native_inter_capping_time";
         public const string NativeInterCountdown       = "native_inter_countdown";
         public const string NativeInterShowAdsComplete = "native_inter_show_ads_complete";
+        public const string EnableNativeCollapse       = "enable_native_collapsible";
+        public const string NativeCollapseCloseTime    = "native_collapse_close_time";
+        public const string NativeCollapseLoad         = "native_collapse_load";
 
         #endregion
 
         #if GADSME
-
         public const string EnableGadsme = "enable_gadsme";
 
         #endif

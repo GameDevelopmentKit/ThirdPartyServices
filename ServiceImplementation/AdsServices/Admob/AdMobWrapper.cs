@@ -453,6 +453,20 @@ namespace ServiceImplementation.AdsServices.Admob
                     }
                 }
 
+                if (nativeAdsView.imageTextures.Count > 0 && nativeAd.GetImageTextures() != null)
+                {
+                    for (var i = 0; i < nativeAdsView.imageTextures.Count; i++)
+                    {
+                        var rawImage = nativeAdsView.imageTextures[i];
+                        rawImage.texture = nativeAd.GetImageTextures()[i];
+                    }
+
+                    if (nativeAd.RegisterImageGameObjects(nativeAdsView.imageTextures.Select(x => x.gameObject).ToList()) == 0)
+                    {
+                        this.logService.Info($"Failed to register list image for native ad: {nativeAdsView.name}");
+                    }
+                }
+
                 if (nativeAd.GetAdChoicesLogoTexture() != null)
                 {
                     nativeAdsView.adChoicesImage.gameObject.SetActive(true);
@@ -469,7 +483,9 @@ namespace ServiceImplementation.AdsServices.Admob
 
         void IAdMobNativeAdsService.ReleaseNativeAds(string placement)
         {
-            if (!this.adsIdToLoadedNativeAds.Remove(this.GetNativeAdsId(placement), out var nativeAd)) return;
+            var adsId = this.GetNativeAdsId(placement);
+            if (!this.adsIdToLoadedNativeAds.Remove(adsId, out var nativeAd)) return;
+            this.loadingNativeAdsId.Remove(adsId);
             nativeAd.Destroy();
             this.logService.Info($"Release native ad: {placement}");
             this.PreloadNativeAds(placement);

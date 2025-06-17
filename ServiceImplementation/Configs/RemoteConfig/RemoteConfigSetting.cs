@@ -116,7 +116,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
             #endregion
 
-            #region NativeOverlay
+            #region Native
 
             this.TryAddAddsConfig(RemoteConfigKey.NativeOverlayInterEnable, "false");
             this.TryAddAddsConfig(RemoteConfigKey.NativeInterEnable, "false");
@@ -124,6 +124,9 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.TryAddAddsConfig(RemoteConfigKey.NativeInterCappingTime, "10");
             this.TryAddAddsConfig(RemoteConfigKey.NativeInterCountdown, "3");
             this.TryAddAddsConfig(RemoteConfigKey.NativeInterShowAdsComplete, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.EnableNativeCollapse, "false");
+            this.TryAddAddsConfig(RemoteConfigKey.NativeCollapseCloseTime, "3");
+            this.TryAddAddsConfig(RemoteConfigKey.NativeCollapseLoad, "2");
 
             #endregion
 
