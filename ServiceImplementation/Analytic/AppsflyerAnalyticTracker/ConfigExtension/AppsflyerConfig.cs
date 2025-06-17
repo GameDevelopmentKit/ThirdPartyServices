@@ -11,7 +11,7 @@ namespace Core.AnalyticServices
     /// </summary>
     public partial class AnalyticConfig
     {
-        public const  string AppsflyerPackageGitURL = "https://github.com/The1Studio/appsflyer.git?path=Assets/AppsFlyer#appsflyer_sdk-purchase_sdk";
+        public const  string AppsflyerPackageGitURL = "6.15.2";
         private const string AppsflyerSymbol        = "APPSFLYER";
 
         [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")] [SerializeField] private bool isAppsflyerEnabled;
