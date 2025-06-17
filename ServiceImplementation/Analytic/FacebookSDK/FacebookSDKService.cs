@@ -4,6 +4,7 @@ namespace ServiceImplementation.Analytic.FacebookSDK
     using Facebook.Unity;
     using GameFoundation.DI;
     using TheOne.Logging;
+    using UnityEngine.Scripting;
 
     public class FacebookSDKService : IInitializable
     {
@@ -11,6 +12,7 @@ namespace ServiceImplementation.Analytic.FacebookSDK
 
         private readonly ILogger logger;
 
+        [Preserve]
         public FacebookSDKService(ILoggerManager loggerManager)
         {
             this.logger = loggerManager.GetLogger(this);
