@@ -390,7 +390,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             }
 
             this.LoadAllNativeAds();
-            UniTask.Delay(TimeSpan.FromSeconds(5)).ContinueWith(this.IntervalLoadNativeAds);
+            UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.NativeAdLoadInterval)).ContinueWith(this.IntervalLoadNativeAds);
         }
 
         private void LoadNativeAds(string adsId)

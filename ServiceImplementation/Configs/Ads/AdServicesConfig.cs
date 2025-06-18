@@ -135,7 +135,8 @@ namespace ServiceImplementation.Configs.Ads
         /// </summary>
         public bool CollapsibleBannerExpandOnRefreshEnabled { get; private set; }
 
-        public int NativeAdCount { get; set; }
+        public int    NativeAdCount        { get; set; }
+        public float NativeAdLoadInterval { get; set; }
 
         #endregion
 
@@ -200,7 +201,8 @@ namespace ServiceImplementation.Configs.Ads
 
             #endregion
 
-            this.NativeAdCount = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeAdCount);
+            this.NativeAdCount        = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeAdCount);
+            this.NativeAdLoadInterval = RemoteConfigHelpers.GetFloatRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.NativeAdLoadInterval);
         }
 
         public void SetAllAdsEnable(bool enable)

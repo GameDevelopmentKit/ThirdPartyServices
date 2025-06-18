@@ -111,6 +111,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             #region Native
 
             this.TryAddAddsConfig(RemoteConfigKey.NativeAdCount, "3");
+            this.TryAddAddsConfig(RemoteConfigKey.NativeAdLoadInterval, "5");
 
             #endregion
 
