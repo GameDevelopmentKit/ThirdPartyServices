@@ -8,7 +8,7 @@ namespace Core.AdsServices.Native
     public interface INativeAdsService
     {
         void   DrawNativeAds(NativeAdsView nativeAdsView);
-        List<NativeAd> GetNativeAds();
+        List<NativeAd> GetNativeAds(string adsId="");
         void   RemoveNativeAd(NativeAd nativeAd);
     }
 }

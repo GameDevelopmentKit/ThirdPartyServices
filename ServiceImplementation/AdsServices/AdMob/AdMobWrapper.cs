@@ -421,10 +421,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.loadingNativeAdsIds.Remove(adsId);
             };
 
-            adLoader.OnNativeAdLoaded += this.HandleNativeAdLoaded;
-            adLoader.OnAdFailedToLoad += this.HandleAdFailedToLoad;
+            adLoader.OnNativeAdLoaded  += this.HandleNativeAdLoaded;
+            adLoader.OnAdFailedToLoad  += this.HandleAdFailedToLoad;
             adLoader.OnNativeAdClicked += this.AdLoaderOnOnNativeAdClicked;
-            adLoader.OnNativeAdClosed += this.HandleNativeAdClosed;
+            adLoader.OnNativeAdClosed  += this.HandleNativeAdClosed;
 #if ADMOB_BELLOW_9_0_0
             adLoader.LoadAd(new AdRequest.Builder().Build());
 #else
@@ -451,13 +451,15 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             return nativeAdPair.Value;
         }
 
-        public List<NativeAd> GetNativeAds()
+        public List<NativeAd> GetNativeAds(string adsId = "")
         {
 #if CREATIVE &&!FORCE_ADS
             return new List<NativeAd>();
 
 #endif
-            return this.nativeAdsIdToNativeAd.Count == 0 ? new List<NativeAd>() : this.GetAvailableNativeAd();
+            return this.nativeAdsIdToNativeAd.Count == 0                         ? new List<NativeAd>() :
+                string.IsNullOrEmpty(adsId)                                      ? this.GetAvailableNativeAd() :
+                this.nativeAdsIdToNativeAd.TryGetValue(adsId, out var nativeAds) ? nativeAds : new List<NativeAd>();
         }
 
         public void RemoveNativeAd(NativeAd nativeAd)
@@ -479,7 +481,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
             if (this.nativeAdsIdToNativeAd.Count == 0 || this.nativeAdsViewToNativeAd.ContainsKey(nativeAdsView)) return;
             var nativeList = this.GetAvailableNativeAd();
-            var nativeAd = nativeList.First();
+            var nativeAd   = nativeList.First();
 
             this.nativeAdsIdToNativeAd.Remove(this.nativeAdsIdToNativeAd.First().Key);
             this.nativeAdsViewToNativeAd.TryAdd(nativeAdsView, nativeAd);
