@@ -574,7 +574,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 }
 
                 var totalNativeAds = this.adServicesConfig.NativeAdCount - this.nativeAdsIdToNativeAd[adId].Count;
-                this.logService.Log($"Total need load native ads: {totalNativeAds}");
+                this.logService.Log($"Total need load native ads for Id: {totalNativeAds} - {adId}");
 
                 if (this.loadingNativeAdsIds.Contains(adId)) break;
 
