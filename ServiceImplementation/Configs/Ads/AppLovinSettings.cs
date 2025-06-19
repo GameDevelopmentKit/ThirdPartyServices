@@ -4,22 +4,22 @@
     using System.Collections.Generic;
     using System.IO;
     using Cysharp.Threading.Tasks;
-    #if APS_ENABLE
+#if APS_ENABLE
     using AmazonAds;
-    #endif
+#endif
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
     using UnityEngine.Networking;
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     using UnityEditor;
     using ServiceImplementation.Configs.Editor;
-    #endif
+#endif
 
     [Serializable]
     public class AppLovinSettings : AdNetworkSettings
     {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         public static async void DownloadApplovin()
         {
             var downloadURL     = "https://artifacts.applovin.com/unity/com/applovin/applovin-sdk/AppLovin-MAX-Unity-Plugin-6.5.2-Android-12.5.0-iOS-12.5.0.unitypackage";
@@ -35,20 +35,22 @@
 
             webRequest.Dispose();
         }
-        #endif
+#endif
 
         /// <summary>
         /// Gets or sets the AppLovin SDKKey.
         /// </summary>
         public string SDKKey { get => this.mSDKKey; set => this.mSDKKey = value; }
 
-        [OnValueChanged("SaveApplovinSetting")] public bool EnableMAXAdReview;
+        [OnValueChanged("SaveApplovinSetting")]
+        public bool EnableMAXAdReview;
 
-        #if UNITY_EDITOR && APPLOVIN
+#if UNITY_EDITOR && APPLOVIN
         [OnInspectorInit]
         private void LoadApplovinSetting()
         {
             this.SDKKey = appLovinSettings.SdkKey;
+
             if (string.IsNullOrEmpty(this.SDKKey))
             {
                 this.EnableMAXAdReview = appLovinSettings.QualityServiceEnabled = true; //Default by true
@@ -60,12 +62,12 @@
                 this.EnableMAXAdReview = appLovinSettings.QualityServiceEnabled;
             }
         }
-        
+
         private void SaveApplovinSetting()
         {
-            appLovinSettings.SdkKey = this.SDKKey;
+            appLovinSettings.SdkKey                = this.SDKKey;
             appLovinSettings.QualityServiceEnabled = this.EnableMAXAdReview;
-            
+
             EditorUtility.SetDirty(appLovinSettings);
             AssetDatabase.SaveAssets();
         }
@@ -75,12 +77,12 @@
         public static void UpdateGoogleAdsId(string androidAppId, string iosAppId)
         {
             appLovinSettings.AdMobAndroidAppId = androidAppId;
-            appLovinSettings.AdMobIosAppId = iosAppId;
+            appLovinSettings.AdMobIosAppId     = iosAppId;
 
             EditorUtility.SetDirty(appLovinSettings);
             AssetDatabase.SaveAssets();
         }
-        #endif
+#endif
 
         public bool IsAdaptiveBanner => this.isAdaptiveBanner;
 
@@ -129,37 +131,48 @@
 
         public AmazonApplovinSetting AmazonApplovinSetting => this.amazonApplovinSetting;
 
-        [SerializeField] [LabelText("Enable APS")] [OnValueChanged("OnSetEnableAPS")] [BoxGroup("Amazon")] private bool mEnableAPS;
+        [SerializeField] [LabelText("Enable APS")] [OnValueChanged("OnSetEnableAPS")] [BoxGroup("Amazon")]
+        private bool mEnableAPS;
 
-        [SerializeField] [BoxGroup("Amazon")] [HideLabel] [ShowIf("mEnableAPS")] private AmazonApplovinSetting amazonApplovinSetting;
+        [SerializeField] [BoxGroup("Amazon")] [HideLabel] [ShowIf("mEnableAPS")]
+        private AmazonApplovinSetting amazonApplovinSetting;
 
         [SerializeField] private bool isAdaptiveBanner = true;
 
-        [SerializeField] [LabelText("SDK Key")] [OnValueChanged("SaveApplovinSetting")] private string mSDKKey;
+        [SerializeField] [LabelText("SDK Key")] [OnValueChanged("SaveApplovinSetting")]
+        private string mSDKKey;
 
-        [SerializeField] [LabelText("Banner")] [BoxGroup("Default Id")] private AdId mDefaultBannerAdId;
+        [SerializeField] [LabelText("Banner")] [BoxGroup("Default Id")]
+        private AdId mDefaultBannerAdId;
 
-        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Default Id")] private AdId mDefaultInterstitialAdId;
+        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Default Id")]
+        private AdId mDefaultInterstitialAdId;
 
-        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Default Id")] private AdId mDefaultRewardedAdId;
+        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Default Id")]
+        private AdId mDefaultRewardedAdId;
 
-        [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")] private AdId mAOAAdId;
+        [SerializeField] [LabelText("AOA")] [BoxGroup("Default Id")]
+        private AdId mAOAAdId;
 
-        [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")] private Dictionary_AdPlacement_AdId mRECAdIds;
+        [SerializeField] [LabelText("MREC")] [BoxGroup("Default Id")]
+        private Dictionary_AdPlacement_AdId mRECAdIds;
 
-        [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
+        [SerializeField] [LabelText("Banner")] [BoxGroup("Custom Placement Id")]
+        private Dictionary_AdPlacement_AdId mCustomBannerAdIds;
 
-        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomInterstitialAdIds;
+        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Custom Placement Id")]
+        private Dictionary_AdPlacement_AdId mCustomInterstitialAdIds;
 
-        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Custom Placement Id")] private Dictionary_AdPlacement_AdId mCustomRewardedAdIds;
+        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Custom Placement Id")]
+        private Dictionary_AdPlacement_AdId mCustomRewardedAdIds;
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         private void OnSetEnableAPS()
         {
             const string APSSymbol = "APS_ENABLE";
             EditorUtils.SetDefineSymbol(APSSymbol, this.mEnableAPS);
         }
-        #endif
+#endif
     }
 
     [Serializable]
@@ -171,11 +184,11 @@
         public bool EnableLogging  => this.enableLogging;
         public bool UseGeoLocation => this.useGeoLocation;
 
-        #if APS_ENABLE
-        public Amazon.MRAIDPolicy MRAIDPolicy    => this.mraidPolicy;
-        #endif
+#if APS_ENABLE
+        public Amazon.MRAIDPolicy MRAIDPolicy => this.mraidPolicy;
+#endif
 
-        public string AppId                  => this.appId;
+        public string AppId                  => Application.platform == RuntimePlatform.Android ? this.appIdAndroid : this.appIdIos;
         public AdId   AmazonBannerAdId       { get => this.amazonBannerAdId;       set => this.amazonBannerAdId = value; }
         public AdId   AmazonMRecAdId         { get => this.amazonMRecAdId;         set => this.amazonMRecAdId = value; }
         public AdId   AmazonInterstitialAdId { get => this.amazonInterstitialAdId; set => this.amazonInterstitialAdId = value; }
@@ -184,19 +197,26 @@
         [SerializeField] private bool enableTesting  = true;
         [SerializeField] private bool enableLogging  = true;
         [SerializeField] private bool useGeoLocation = true;
-        #if APS_ENABLE
+#if APS_ENABLE
         [SerializeField] private Amazon.MRAIDPolicy mraidPolicy = Amazon.MRAIDPolicy.CUSTOM;
-        #endif
+#endif
 
-        [SerializeField] [BoxGroup("Amazon Id")] private string appId;
+        [SerializeField] [BoxGroup("AmazonAppId")]
+        private string appIdAndroid;
+        [SerializeField] [BoxGroup("AmazonAppId")]
+        private string appIdIos;
 
-        [SerializeField] [LabelText("Banner")] [BoxGroup("Amazon Id")] private AdId amazonBannerAdId;
+        [SerializeField] [LabelText("Banner")] [BoxGroup("Amazon Id")]
+        private AdId amazonBannerAdId;
 
-        [SerializeField] [LabelText("MREC")] [BoxGroup("Amazon Id")] private AdId amazonMRecAdId;
+        [SerializeField] [LabelText("MREC")] [BoxGroup("Amazon Id")]
+        private AdId amazonMRecAdId;
 
-        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Amazon Id")] private AdId amazonInterstitialAdId;
+        [SerializeField] [LabelText("Interstitial")] [BoxGroup("Amazon Id")]
+        private AdId amazonInterstitialAdId;
 
-        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Amazon Id")] private AdId amazonRewardedAdId;
+        [SerializeField] [LabelText("Rewarded")] [BoxGroup("Amazon Id")]
+        private AdId amazonRewardedAdId;
 
         #endregion
     }
