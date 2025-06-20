@@ -42,8 +42,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
-        public int  Order          => 0;
-        public bool IsShowingAOAAd { get; set; }
+        public  int  Order          => 0;
+        public  bool IsShowingAOAAd { get; set; }
+        private bool isRemoteConfigFetched;
 
         [Preserve]
         public AdMobWrapper
@@ -67,12 +68,22 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public void Initialize()
         {
+            this.SetTimeoutFirebase();
+            this.signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetchedSucceeded);
             this.VerifySetting();
             this.Init();
 #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
             this.IntervalLoadNativeAds();
 #endif
         }
+
+        private async void SetTimeoutFirebase()
+        {
+            await UniTask.WaitForSeconds(5);
+            this.isRemoteConfigFetched = true;
+        }
+
+        private void OnRemoteConfigFetchedSucceeded(RemoteConfigFetchedSucceededSignal obj) { this.isRemoteConfigFetched = true; }
 
         private const string AdPlatForm = AdRevenueConstants.ARSourceAdMob;
 
@@ -382,15 +393,23 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         private const string PrefixNativeAdsText = "loading...";
 
-        private void IntervalLoadNativeAds()
+        private async void IntervalLoadNativeAds()
         {
+            await UniTask.SwitchToMainThread();
+
+            if (!this.isRemoteConfigFetched)
+            {
+                await UniTask.WaitUntil(() => this.isRemoteConfigFetched);
+            }
+
             if (!this.adServicesConfig.EnableNativeAd || !this.adServicesConfig.EnableAds)
             {
                 return;
             }
 
             this.LoadAllNativeAds();
-            UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.NativeAdLoadInterval)).ContinueWith(this.IntervalLoadNativeAds);
+            await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.NativeAdLoadInterval));
+            this.IntervalLoadNativeAds();
         }
 
         private void LoadNativeAds(string adsId)
@@ -404,13 +423,13 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             adLoader.OnNativeAdLoaded += (_, arg) =>
             {
                 var listAds = this.nativeAdsIdToNativeAd[adsId];
+                listAds.Add(arg.nativeAd);
 
                 if (listAds.Count == this.adServicesConfig.NativeAdCount)
                 {
                     this.loadingNativeAdsIds.Remove(adsId);
                 }
 
-                listAds.Add(arg.nativeAd);
                 this.nativeAdsIdToNativeAd[adsId] = listAds;
                 this.logService.Log($"Native ad Count: {listAds.Count}");
             };
@@ -429,6 +448,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             adLoader.LoadAd(new AdRequest.Builder().Build());
 #else
             adLoader.LoadAd(new AdRequest());
+#endif
+
+#if UNITY_EDITOR
+            var listAds = this.nativeAdsIdToNativeAd[adsId];
+            listAds.Add(null);
 #endif
         }
 
