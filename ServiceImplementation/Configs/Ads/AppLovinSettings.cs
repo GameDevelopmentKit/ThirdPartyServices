@@ -20,9 +20,9 @@
     public class AppLovinSettings : AdNetworkSettings
     {
 #if UNITY_EDITOR
-        public static async void DownloadApplovin()
+        public static async void DownloadApplovin(string url = "https://artifacts.applovin.com/unity/com/applovin/applovin-sdk/AppLovin-MAX-Unity-Plugin-6.5.2-Android-12.5.0-iOS-12.5.0.unitypackage")
         {
-            var downloadURL     = "https://artifacts.applovin.com/unity/com/applovin/applovin-sdk/AppLovin-MAX-Unity-Plugin-6.5.2-Android-12.5.0-iOS-12.5.0.unitypackage";
+            var downloadURL     = url;
             var path            = Path.Combine(Application.temporaryCachePath, "MaxSDK.unitypackage");
             var downloadHandler = new DownloadHandlerFile(path);
             var webRequest      = new UnityWebRequest(downloadURL) { method = UnityWebRequest.kHttpVerbGET, downloadHandler = downloadHandler };
@@ -129,6 +129,39 @@
         /// </summary>
         public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds { get => this.mCustomRewardedAdIds; set => this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId; }
 
+        [SerializeField] [LabelText("Applovin Version")] [OnValueChanged("SaveApplovinSetting")]
+        public string applovinDownloadUrl = "https://artifacts.applovin.com/unity/com/applovin/applovin-sdk/AppLovin-MAX-Unity-Plugin-8.2.0-Android-13.2.0-iOS-13.2.0.unitypackage";
+
+        //Create button refresh
+        [SerializeField] [LabelText("Update AppLovin")] [OnValueChanged("OnUpdateApplovinVersion")]
+        private bool mUpdateApplovin;
+
+        public void OnUpdateApplovinVersion()
+        {
+#if UNITY_EDITOR
+
+            if (string.IsNullOrEmpty(this.applovinDownloadUrl))
+            {
+                Debug.LogError("Applovin url is empty. Please set a valid url.");
+
+                return;
+            }
+
+            //remove old version
+            var maxSdkPath = Path.Combine(Application.dataPath, "MaxSdk");
+
+            if (Directory.Exists(maxSdkPath))
+            {
+                Directory.Delete(maxSdkPath, true);
+            }
+
+            DownloadApplovin(this.applovinDownloadUrl);
+            this.mUpdateApplovin = false;
+            //Refresh the AssetDatabase
+            AssetDatabase.Refresh();
+#endif
+        }
+
         public AmazonApplovinSetting AmazonApplovinSetting => this.amazonApplovinSetting;
 
         [SerializeField] [LabelText("Enable APS")] [OnValueChanged("OnSetEnableAPS")] [BoxGroup("Amazon")]
@@ -203,6 +236,7 @@
 
         [SerializeField] [BoxGroup("AmazonAppId")]
         private string appIdAndroid;
+
         [SerializeField] [BoxGroup("AmazonAppId")]
         private string appIdIos;
 

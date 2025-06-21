@@ -132,7 +132,7 @@
         private void OnChangeAdMob()
         {
             EditorUtils.SetDefineSymbol(AdModSymbol, this.enableAdMob);
-            EditorUtils.ModifyPackage(this.enableAdMob, "com.google.ads.mobile", "9.1.0");
+            EditorUtils.ModifyPackage(this.enableAdMob, "com.google.ads.mobile", "9.6.0");
         }
 
         private void OnChangeAppLovin()
@@ -140,7 +140,7 @@
             EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin);
 
             if (this.enableAppLovin)
-                AppLovinSettings.DownloadApplovin();
+                AppLovinSettings.DownloadApplovin(this.AppLovin.applovinDownloadUrl);
             else
                 UnityPackageHelper.DeleteFolderIfExists("Assets/MaxSdk");
         }
