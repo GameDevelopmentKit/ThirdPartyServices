@@ -140,7 +140,7 @@
             EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin);
 
             if (this.enableAppLovin)
-                AppLovinSettings.DownloadApplovin(this.AppLovin.applovinDownloadUrl);
+                AppLovinSettings.DownloadApplovin(this.AppLovin.applovinVersion);
             else
                 UnityPackageHelper.DeleteFolderIfExists("Assets/MaxSdk");
         }

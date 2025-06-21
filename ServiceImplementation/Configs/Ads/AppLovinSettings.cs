@@ -63,13 +63,17 @@
             }
         }
 
-        private void SaveApplovinSetting()
+        private void SaveApplovinSetting(bool inCludeSave = true)
         {
             appLovinSettings.SdkKey                = this.SDKKey;
             appLovinSettings.QualityServiceEnabled = this.EnableMAXAdReview;
 
             EditorUtility.SetDirty(appLovinSettings);
-            AssetDatabase.SaveAssets();
+
+            if (inCludeSave)
+            {
+                AssetDatabase.SaveAssets();
+            }
         }
 
         private static global::AppLovinSettings appLovinSettings => global::AppLovinSettings.Instance;
@@ -130,17 +134,25 @@
         public override Dictionary<AdPlacement, AdId> CustomRewardedAdIds { get => this.mCustomRewardedAdIds; set => this.mCustomRewardedAdIds = value as Dictionary_AdPlacement_AdId; }
 
         [SerializeField] [LabelText("Applovin Version")] [OnValueChanged("SaveApplovinSetting")]
-        public string applovinDownloadUrl = "https://artifacts.applovin.com/unity/com/applovin/applovin-sdk/AppLovin-MAX-Unity-Plugin-8.2.0-Android-13.2.0-iOS-13.2.0.unitypackage";
+        public string applovinVersion = "8.2.0";
 
         //Create button refresh
         [SerializeField] [LabelText("Update AppLovin")] [OnValueChanged("OnUpdateApplovinVersion")]
         private bool mUpdateApplovin;
 
-        public void OnUpdateApplovinVersion()
+        public async void OnUpdateApplovinVersion()
         {
 #if UNITY_EDITOR
+            var urlDownload = await ApplovinDownloadHelper.GetDownloadPackage(this.applovinVersion);
 
-            if (string.IsNullOrEmpty(this.applovinDownloadUrl))
+            if (string.IsNullOrEmpty(urlDownload))
+            {
+                Debug.LogError($"No Applovin version {this.applovinVersion} found. Please choose another version.");
+
+                return;
+            }
+
+            if (string.IsNullOrEmpty(urlDownload))
             {
                 Debug.LogError("Applovin url is empty. Please set a valid url.");
 
@@ -155,7 +167,7 @@
                 Directory.Delete(maxSdkPath, true);
             }
 
-            DownloadApplovin(this.applovinDownloadUrl);
+            DownloadApplovin(urlDownload);
             this.mUpdateApplovin = false;
             //Refresh the AssetDatabase
             AssetDatabase.Refresh();
