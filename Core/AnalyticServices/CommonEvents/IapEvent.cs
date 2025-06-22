@@ -6,7 +6,9 @@ namespace Core.AnalyticServices.CommonEvents
     /*
      * Purchasing
      */
+
     #region Purchasing
+
     /// <summary>
     /// Default purchase event class which contains properties common to all purchase events
     /// </summary>
@@ -92,6 +94,9 @@ namespace Core.AnalyticServices.CommonEvents
         /// If the purchase was made against a sandbox environment
         /// </summary>
         public bool IsTest;
+
+        public string Category;
+        public float  Amount;
     }
 
     /// <summary>
@@ -180,5 +185,6 @@ namespace Core.AnalyticServices.CommonEvents
     public sealed class IapRestorationProcessDidFail : IEvent
     {
     }
+
     #endregion
 }

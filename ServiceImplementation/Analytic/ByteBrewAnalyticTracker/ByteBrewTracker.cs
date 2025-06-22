@@ -7,6 +7,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using System.Threading.Tasks;
     using ByteBrewSDK;
     using Core.AnalyticServices;
+    using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
@@ -27,20 +28,73 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
         protected override HashSet<string>            IncludeEvents   => this.analyticsEventCustomizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.analyticsEventCustomizationConfig.CustomEventKeys;
 
-        public ByteBrewTracker(ISignalBus signalBus,ILogService logger, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus, analyticConfig)
+        public ByteBrewTracker(ISignalBus signalBus, ILogService logger, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig) : base(signalBus,
+            analyticConfig)
         {
             this.logger                            = logger;
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
         }
 
-        protected override TaskCompletionSource<bool>      TrackerReady                                            { get; } = new();
-        
-        protected override Dictionary<Type, EventDelegate> CustomEventDelegates                                    { get; } = new();
-        
+        protected override TaskCompletionSource<bool> TrackerReady { get; } = new();
+
+        protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
+        {
+            { typeof(IapTransactionDidSucceed), this.TrackIAP },
+            { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
+        };
+
+        private void TrackIAP(IEvent trackedEvent, Dictionary<string, object> data)
+        {
+            if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
+            {
+                this.logger.Error("ByteBrew: trackedEvent in TrackIAP is not of correct type");
+
+                return;
+            }
+
+            var store = "Google Play";
+#if UNITY_IOS
+            store = "Apple App Store";
+#endif
+            ByteBrew.TrackInAppPurchaseEvent(store, iapTransaction.CurrencyCode, iapTransaction.Amount, iapTransaction.OfferSku, iapTransaction.Category);
+        }
+
+        private void TrackAdsRevenue(IEvent trackedEvent, Dictionary<string, object> data)
+        {
+            if (trackedEvent is not AdsRevenueEvent adsRevenueEvent) return;
+
+            switch (adsRevenueEvent.AdFormat)
+            {
+                case "BANNER":
+                    ByteBrew.TrackAdEvent(ByteBrewAdTypes.Banner, adsRevenueEvent.AdNetwork, adsRevenueEvent.Placement, adsRevenueEvent.Revenue);
+                    this.logger.Log($"ByteBrew: TrackAdEvent Banner- {adsRevenueEvent.Placement} - {adsRevenueEvent.AdFormat}");
+
+                    break;
+                case "INTER":
+                    ByteBrew.TrackAdEvent(ByteBrewAdTypes.Interstitial, adsRevenueEvent.AdNetwork, adsRevenueEvent.Placement, adsRevenueEvent.Revenue);
+                    this.logger.Log($"ByteBrew: TrackAdEvent Interstitial- {adsRevenueEvent.Placement} - {adsRevenueEvent.AdFormat}");
+
+                    break;
+                case "LEADER":
+                case "REWARDED":
+                    ByteBrew.TrackAdEvent(ByteBrewAdTypes.Reward, adsRevenueEvent.AdNetwork, adsRevenueEvent.Placement, adsRevenueEvent.Revenue);
+                    this.logger.Log($"ByteBrew: TrackAdEvent Reward- {adsRevenueEvent.Placement} - {adsRevenueEvent.AdFormat}");
+
+                    break;
+                case "Interstitial":
+                    ByteBrew.TrackAdEvent(ByteBrewAdTypes.Interstitial, adsRevenueEvent.AdNetwork, adsRevenueEvent.Placement, adsRevenueEvent.Revenue);
+                    this.logger.Log($"ByteBrew: TrackAdEvent Interstitial- {adsRevenueEvent.Placement} - {adsRevenueEvent.AdFormat}");
+
+                    break;
+                case "AOA":
+                case "NATIVE": break;
+            }
+        }
+
         protected override Task TrackerSetup()
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
-            
+
             this.logger.Log($"ByteBrew: Create ByteBrew GameObject");
             var byteBrewGameObject = new GameObject("ByteBrew");
             byteBrewGameObject.AddComponent<ByteBrew>();
@@ -49,14 +103,11 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             this.logger.Log($"ByteBrew: Initialize Finished");
 
             this.TrackerReady.SetResult(true);
-            
+
             return this.TrackerReady.Task;
         }
-        
-        protected override void SetUserId(string userId)
-        {
-            ByteBrew.SetCustomUserDataAttribute("user_id", userId);
-        }
+
+        protected override void SetUserId(string userId) { ByteBrew.SetCustomUserDataAttribute("user_id", userId); }
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
@@ -64,10 +115,10 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
             {
                 ByteBrew.NewCustomEvent(name);
                 this.logger.Log($"ByteBrew: OnEvent - {name}");
-                
+
                 return;
             }
-            
+
             var convertedData = data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             ByteBrew.NewCustomEvent(name, convertedData);
             this.logger.Log($"ByteBrew: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
@@ -81,15 +132,19 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
                 {
                     case int intValue:
                         ByteBrew.SetCustomUserDataAttribute(key, intValue);
+
                         break;
                     case double doubleValue:
                         ByteBrew.SetCustomUserDataAttribute(key, doubleValue);
+
                         break;
                     case string stringValue:
                         ByteBrew.SetCustomUserDataAttribute(key, stringValue);
+
                         break;
                     case bool boolValue:
                         ByteBrew.SetCustomUserDataAttribute(key, boolValue);
+
                         break;
                 }
             }
