@@ -14,7 +14,10 @@ namespace Core.AnalyticServices
     public partial class AnalyticConfig
     {
         private const string AppsflyerSymbol        = "APPSFLYER";
-        public const  string AppsflyerPackageGitURL = "https://github.com/AppsFlyerSDK/appsflyer-unity-plugin.git#upm";
+        private       string AppsflyerPackageGitURL = "https://github.com/AppsFlyerSDK/appsflyer-unity-plugin.git#upm";
+
+        [BoxGroup("Appsflyer")] [SerializeField]
+        private bool isStrickMode;
 
         [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")] [SerializeField]
         private bool isAppsflyerEnabled;
@@ -33,6 +36,11 @@ namespace Core.AnalyticServices
 #if UNITY_EDITOR
             var url =
                 $"https://github.com/AppsFlyerSDK/appsflyer-unity-purchase-connector/raw/refs/heads/master/strict-mode/appsflyer-unity-purchase-connector-strict-mode-{this.purhaseSdkVersion}.unitypackage";
+
+            if (!this.isStrickMode)
+            {
+                url = $"https://github.com/AppsFlyerSDK/appsflyer-unity-purchase-connector/raw/refs/heads/master/appsflyer-unity-purchase-connector-${this.purhaseSdkVersion}.unitypackage";
+            }
 
             var appsFlyerPath = Path.Combine(Application.dataPath, "AppsFlyer");
 
@@ -55,6 +63,7 @@ namespace Core.AnalyticServices
                 {
                     AppsflyerHelper.DeleteFolderWithMeta(appsFlyerPath);
                 }
+
                 var dependencymanager = Path.Combine(Application.dataPath, "ExternalDependencyManager");
 
                 AppsflyerHelper.DeleteFolderWithMeta(dependencymanager);
@@ -68,6 +77,11 @@ namespace Core.AnalyticServices
         private void OnChangeAppsflyerEnabled()
         {
 #if UNITY_EDITOR
+            if (this.isStrickMode)
+            {
+                this.AppsflyerPackageGitURL = "https://github.com/AppsFlyerSDK/appsflyer-unity-plugin.git#Strict-upm";
+            }
+
             EditorUtils.ModifyPackage(this.isByteBrewEnabled, "appsflyer-unity-plugin", AppsflyerPackageGitURL);
             EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
 #endif
