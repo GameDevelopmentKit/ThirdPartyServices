@@ -135,7 +135,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 { AFInAppEvents.CURRENCY, iapTransaction.CurrencyCode },
                 { AFInAppEvents.PRICE, iapTransaction.Price.ToString(CultureInfo.InvariantCulture) },
                 { AFInAppEvents.PURCHASE, iapTransaction.Price.ToString(CultureInfo.InvariantCulture) },
-                { AFInAppEvents.REVENUE, iapTransaction.Price.ToString(CultureInfo.InvariantCulture) },
+                { AFInAppEvents.REVENUE, iapTransaction.Revenue.ToString(CultureInfo.InvariantCulture) },
                 { AFInAppEvents.CONTENT_ID, iapTransaction.OfferSku }
             };
 

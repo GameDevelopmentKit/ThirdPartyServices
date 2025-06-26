@@ -176,7 +176,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
             var adjustEvent = new AdjustEvent(this.analyticConfig.AdjustPurchaseToken);
             adjustEvent.TransactionId = iapTransaction.TransactionId;
-            adjustEvent.SetRevenue(iapTransaction.Price, iapTransaction.CurrencyCode);
+            adjustEvent.SetRevenue(iapTransaction.Revenue, iapTransaction.CurrencyCode);
             Adjust.TrackEvent(adjustEvent);
         }
 

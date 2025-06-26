@@ -86,6 +86,22 @@ namespace Core.AnalyticServices.CommonEvents
         public double Price;
 
         /// <summary>
+        /// real price of the product after discounts, taxes, etc.
+        /// </summary>
+        public double Revenue
+        {
+            get
+            {
+#if UNITY_IOS
+                return this.Price * 0.67f;
+#elif UNITY_ANDROID
+                return this.Price * 0.63f;
+#endif
+                return this.Price;
+            }
+        }
+
+        /// <summary>
         /// Identify if it's a featured item
         /// </summary>
         public bool Featured;
