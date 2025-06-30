@@ -34,42 +34,45 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private            AdPlacement                   currentShowingRewarded;
         private            Dictionary<AdPlacement, bool> rewardedCompleted = new();
 
-        private readonly List<string>                                                         idMRecCreating = new();
+        private readonly List<string>                                                         idMRecCreating    = new();
         private readonly Dictionary<AdPlacement, KeyValuePair<BannerAdsPosition, BannerSize>> placementToBanner = new();
 
-        private bool         isInit;
-        private event Action RewardedAdCompletedOneTimeAction;
-        private event Action RewardedAdFailed;
+        private bool   isInit;
+        private Action rewardedAdCompletedOneTimeAction;
+        private Action rewardedAdFailed;
 
         #endregion
 
         [Preserve]
-        public AppLovinAdsWrapper(ILoggerManager loggerManager, SignalBus signalBus,
-            ThirdPartiesConfig thirdPartiesConfig)
+        public AppLovinAdsWrapper(
+            ILoggerManager     loggerManager,
+            SignalBus          signalBus,
+            ThirdPartiesConfig thirdPartiesConfig
+        )
         {
             this.logService      = loggerManager.GetLogger(this);
             this.signalBus       = signalBus;
             this.AppLovinSetting = thirdPartiesConfig.AdSettings.AppLovin;
         }
 
-        public string            AdPlatform        => AdRevenueConstants.ARSourceAppLovinMAX;
+        public string AdPlatform => AdRevenueConstants.ARSourceAppLovinMAX;
 
         public virtual async void Initialize()
         {
             await UniTask.SwitchToMainThread();
-#if THEONE_ADS_DEBUG
+            #if THEONE_ADS_DEBUG
             MaxSdk.SetCreativeDebuggerEnabled(true);
-#endif
-            
-#if BRAVESTARS
+            #endif
+
+            #if BRAVESTARS
             MaxSdk.SetHasUserConsent(true);
             MaxSdk.SetDoNotSell(false);
-#endif
-            
+            #endif
+
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
-#if COLUMBUS
+            #if COLUMBUS
             ColumbusSdk.SetGDPRConsent(false);
-#endif
+            #endif
             MaxSdk.InitializeSdk();
 
             await UniTask.WaitUntil(MaxSdk.IsInitialized);
@@ -79,9 +82,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InitRewardedAds();
             this.InitAOAAds();
 
-#if THEONE_ADS_DEBUG
+            #if THEONE_ADS_DEBUG
             MaxSdk.ShowMediationDebugger();
-#endif
+            #endif
             this.isInit = true;
 
             this.logService.Info("ApplovinAdsWrapper has been initialized!");
@@ -101,15 +104,15 @@ namespace ServiceImplementation.AdsServices.AppLovin
         protected MaxSdkBase.BannerPosition ConvertToBannerAdPosition(BannerAdsPosition pos)
         {
             return pos switch
-                   {
-                       BannerAdsPosition.Top         => MaxSdkBase.BannerPosition.TopCenter,
-                       BannerAdsPosition.Bottom      => MaxSdkBase.BannerPosition.BottomCenter,
-                       BannerAdsPosition.TopLeft     => MaxSdkBase.BannerPosition.TopLeft,
-                       BannerAdsPosition.TopRight    => MaxSdkBase.BannerPosition.TopRight,
-                       BannerAdsPosition.BottomLeft  => MaxSdkBase.BannerPosition.BottomLeft,
-                       BannerAdsPosition.BottomRight => MaxSdkBase.BannerPosition.BottomRight,
-                       _                             => MaxSdkBase.BannerPosition.Centered
-                   };
+            {
+                BannerAdsPosition.Top         => MaxSdkBase.BannerPosition.TopCenter,
+                BannerAdsPosition.Bottom      => MaxSdkBase.BannerPosition.BottomCenter,
+                BannerAdsPosition.TopLeft     => MaxSdkBase.BannerPosition.TopLeft,
+                BannerAdsPosition.TopRight    => MaxSdkBase.BannerPosition.TopRight,
+                BannerAdsPosition.BottomLeft  => MaxSdkBase.BannerPosition.BottomLeft,
+                BannerAdsPosition.BottomRight => MaxSdkBase.BannerPosition.BottomRight,
+                _                             => MaxSdkBase.BannerPosition.Centered
+            };
         }
 
         #endregion
@@ -119,16 +122,16 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void InitMRECAds()
         {
             this.CreateAllMRec();
-            MaxSdkCallbacks.MRec.OnAdLoadedEvent += this.OnMRecAdLoadedEvent;
+            MaxSdkCallbacks.MRec.OnAdLoadedEvent     += this.OnMRecAdLoadedEvent;
             MaxSdkCallbacks.MRec.OnAdLoadFailedEvent += this.OnMRecAdLoadFailedEvent;
-            MaxSdkCallbacks.MRec.OnAdClickedEvent += this.OnMRecAdClickedEvent;
+            MaxSdkCallbacks.MRec.OnAdClickedEvent    += this.OnMRecAdClickedEvent;
         }
 
         private void DisposeMRECAds()
         {
-            MaxSdkCallbacks.MRec.OnAdLoadedEvent -= this.OnMRecAdLoadedEvent;
+            MaxSdkCallbacks.MRec.OnAdLoadedEvent     -= this.OnMRecAdLoadedEvent;
             MaxSdkCallbacks.MRec.OnAdLoadFailedEvent -= this.OnMRecAdLoadFailedEvent;
-            MaxSdkCallbacks.MRec.OnAdClickedEvent -= this.OnMRecAdClickedEvent;
+            MaxSdkCallbacks.MRec.OnAdClickedEvent    -= this.OnMRecAdClickedEvent;
         }
 
         private void CreateAllMRec()
@@ -147,7 +150,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public virtual void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
             this.CreateAllMRec();
-            var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].DefaultValue;
+            var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].DefaultValue;
             this.OnMRecAdDisplayed(adsId);
             var mrecPosition = position.CanvasToUnityCoordinateSystem().ToApplovinPosition() + offset.FlipY();
             MaxSdk.UpdateMRecPosition(adsId, mrecPosition.x, mrecPosition.y);
@@ -186,11 +189,20 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.HideMRec(adUnitId);
         }
 
-        public void StopMRECAutoRefresh(string adUnitId) { MaxSdk.StopMRecAutoRefresh(adUnitId); }
+        public void StopMRECAutoRefresh(string adUnitId)
+        {
+            MaxSdk.StopMRecAutoRefresh(adUnitId);
+        }
 
-        public void StartMRECAutoRefresh(string adUnitId) { MaxSdk.StartMRecAutoRefresh(adUnitId); }
+        public void StartMRECAutoRefresh(string adUnitId)
+        {
+            MaxSdk.StartMRecAutoRefresh(adUnitId);
+        }
 
-        public void LoadMREC(string adUnitId) { MaxSdk.LoadMRec(adUnitId); }
+        public void LoadMREC(string adUnitId)
+        {
+            MaxSdk.LoadMRec(adUnitId);
+        }
 
         public void HideAllMREC()
         {
@@ -206,20 +218,20 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitBannerAds()
         {
-            MaxSdkCallbacks.Banner.OnAdLoadedEvent += this.OnBannerAdLoadedHandler;
+            MaxSdkCallbacks.Banner.OnAdLoadedEvent     += this.OnBannerAdLoadedHandler;
             MaxSdkCallbacks.Banner.OnAdLoadFailedEvent += this.OnBannerAdLoadFailedHandler;
-            MaxSdkCallbacks.Banner.OnAdClickedEvent += this.OnBannerAdClickedHandler;
-            MaxSdkCallbacks.Banner.OnAdExpandedEvent += this.OnBannerAdExpandedHandler;
-            MaxSdkCallbacks.Banner.OnAdCollapsedEvent += this.OnBannerAdCollapsedHandler;
+            MaxSdkCallbacks.Banner.OnAdClickedEvent    += this.OnBannerAdClickedHandler;
+            MaxSdkCallbacks.Banner.OnAdExpandedEvent   += this.OnBannerAdExpandedHandler;
+            MaxSdkCallbacks.Banner.OnAdCollapsedEvent  += this.OnBannerAdCollapsedHandler;
         }
 
         private void DisposeBannerAds()
         {
-            MaxSdkCallbacks.Banner.OnAdLoadedEvent -= this.OnBannerAdLoadedHandler;
+            MaxSdkCallbacks.Banner.OnAdLoadedEvent     -= this.OnBannerAdLoadedHandler;
             MaxSdkCallbacks.Banner.OnAdLoadFailedEvent -= this.OnBannerAdLoadFailedHandler;
-            MaxSdkCallbacks.Banner.OnAdClickedEvent -= this.OnBannerAdClickedHandler;
-            MaxSdkCallbacks.Banner.OnAdExpandedEvent -= this.OnBannerAdExpandedHandler;
-            MaxSdkCallbacks.Banner.OnAdCollapsedEvent -= this.OnBannerAdCollapsedHandler;
+            MaxSdkCallbacks.Banner.OnAdClickedEvent    -= this.OnBannerAdClickedHandler;
+            MaxSdkCallbacks.Banner.OnAdExpandedEvent   -= this.OnBannerAdExpandedHandler;
+            MaxSdkCallbacks.Banner.OnAdCollapsedEvent  -= this.OnBannerAdCollapsedHandler;
         }
 
         string IAdServices.AdPlatform => AdRevenueConstants.ARSourceAppLovinMAX;
@@ -229,16 +241,22 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InternalShowBanner(AdPlacement.Default, bannerAdsPosition, new BannerSize(width, height));
         }
 
-        public void HideBannedAd() { this.InternalHideBanner(AdPlacement.Default); }
+        public void HideBannedAd()
+        {
+            this.InternalHideBanner(AdPlacement.Default);
+        }
 
-        public void DestroyBannerAd() { this.InternalDestroyBanner(AdPlacement.Default); }
+        public void DestroyBannerAd()
+        {
+            this.InternalDestroyBanner(AdPlacement.Default);
+        }
 
         private bool IsBannerPlacementReady(string place, out string id)
         {
             var placement = AdPlacement.PlacementWithName(place);
             id = placement == AdPlacement.Default
-                     ? this.AppLovinSetting.DefaultBannerAdId.DefaultValue
-                     : AdPlacementHelper.FindIdForPlacement(this.AppLovinSetting.CustomBannerAdIds, placement);
+                ? this.AppLovinSetting.DefaultBannerAdId.DefaultValue
+                : AdPlacementHelper.FindIdForPlacement(this.AppLovinSetting.CustomBannerAdIds, placement);
 
             return !string.IsNullOrEmpty(id);
         }
@@ -248,8 +266,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (!this.IsBannerPlacementReady(adPlacement.Name, out var id)) return;
 
             var shouldCreateBanner = !this.placementToBanner.ContainsKey(adPlacement)
-                                     || this.placementToBanner[adPlacement].Key   != position
-                                     || this.placementToBanner[adPlacement].Value != bannerSize;
+                || this.placementToBanner[adPlacement].Key != position
+                || this.placementToBanner[adPlacement].Value != bannerSize;
 
             if (shouldCreateBanner)
             {
@@ -264,7 +282,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdk.ShowBanner(id);
         }
 
-        protected virtual void InternalCreateBanner(string id, BannerAdsPosition position, BannerSize bannerSize) { this.CreateAdBanner(id, position, bannerSize); }
+        protected virtual void InternalCreateBanner(string id, BannerAdsPosition position, BannerSize bannerSize)
+        {
+            this.CreateAdBanner(id, position, bannerSize);
+        }
 
         protected void CreateAdBanner(string id, BannerAdsPosition position, BannerSize bannerSize)
         {
@@ -297,22 +318,22 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitInterstitialAds()
         {
-            MaxSdkCallbacks.Interstitial.OnAdHiddenEvent += this.OnInterstitialCompleted;
-            MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent += this.InterstitialAdDisplayedSignal;
-            MaxSdkCallbacks.Interstitial.OnAdLoadedEvent += this.OnInterstitialAdLoadedHandler;
+            MaxSdkCallbacks.Interstitial.OnAdHiddenEvent     += this.OnInterstitialCompleted;
+            MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent  += this.InterstitialAdDisplayedSignal;
+            MaxSdkCallbacks.Interstitial.OnAdLoadedEvent     += this.OnInterstitialAdLoadedHandler;
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent += this.OnInterstitialAdLoadFailedHandler;
-            MaxSdkCallbacks.Interstitial.OnAdClickedEvent += this.OnInterstitialAdClickedHandler;
+            MaxSdkCallbacks.Interstitial.OnAdClickedEvent    += this.OnInterstitialAdClickedHandler;
 
             this.InternalLoadInterstitialAd(AdPlacement.Default);
         }
 
         private void DisposeInterstitialAds()
         {
-            MaxSdkCallbacks.Interstitial.OnAdHiddenEvent -= this.OnInterstitialCompleted;
-            MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent -= this.InterstitialAdDisplayedSignal;
-            MaxSdkCallbacks.Interstitial.OnAdLoadedEvent -= this.OnInterstitialAdLoadedHandler;
+            MaxSdkCallbacks.Interstitial.OnAdHiddenEvent     -= this.OnInterstitialCompleted;
+            MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent  -= this.InterstitialAdDisplayedSignal;
+            MaxSdkCallbacks.Interstitial.OnAdLoadedEvent     -= this.OnInterstitialAdLoadedHandler;
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent -= this.OnInterstitialAdLoadFailedHandler;
-            MaxSdkCallbacks.Interstitial.OnAdClickedEvent -= this.OnInterstitialAdClickedHandler;
+            MaxSdkCallbacks.Interstitial.OnAdClickedEvent    -= this.OnInterstitialAdClickedHandler;
         }
 
         public bool IsInterstitialAdReady(string place)
@@ -336,7 +357,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 this.AppLovinSetting.CustomInterstitialAdIds,
                 out id);
         }
-
 
         protected virtual void InternalLoadInterstitialAd(AdPlacement adPlacement)
         {
@@ -369,11 +389,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.DefaultValue)) return;
 
             this.logService.Info($"applovin: InitAOAAds");
-            MaxSdkCallbacks.AppOpen.OnAdHiddenEvent += this.OnAppOpenDismissedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdLoadedEvent += this.OnAppOpenLoadedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdLoadFailedEvent += this.OnAppOpenLoadFailedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdClickedEvent += this.OnAppOpenClickedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdDisplayedEvent += this.OnAppOpenDisplayedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdHiddenEvent        += this.OnAppOpenDismissedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdLoadedEvent        += this.OnAppOpenLoadedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdLoadFailedEvent    += this.OnAppOpenLoadFailedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdClickedEvent       += this.OnAppOpenClickedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdDisplayedEvent     += this.OnAppOpenDisplayedEvent;
             MaxSdkCallbacks.AppOpen.OnAdDisplayFailedEvent += this.OnAppOpenDisplayFailedEvent;
             this.InternalLoadAppOpenAd();
         }
@@ -382,11 +402,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.DefaultValue)) return;
 
-            MaxSdkCallbacks.AppOpen.OnAdHiddenEvent -= this.OnAppOpenDismissedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdLoadedEvent -= this.OnAppOpenLoadedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdLoadFailedEvent -= this.OnAppOpenLoadFailedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdClickedEvent -= this.OnAppOpenClickedEvent;
-            MaxSdkCallbacks.AppOpen.OnAdDisplayedEvent -= this.OnAppOpenDisplayedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdHiddenEvent        -= this.OnAppOpenDismissedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdLoadedEvent        -= this.OnAppOpenLoadedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdLoadFailedEvent    -= this.OnAppOpenLoadFailedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdClickedEvent       -= this.OnAppOpenClickedEvent;
+            MaxSdkCallbacks.AppOpen.OnAdDisplayedEvent     -= this.OnAppOpenDisplayedEvent;
             MaxSdkCallbacks.AppOpen.OnAdDisplayFailedEvent -= this.OnAppOpenDisplayFailedEvent;
         }
 
@@ -452,29 +472,32 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitRewardedAds()
         {
-            MaxSdkCallbacks.Rewarded.OnAdHiddenEvent += this.OnRewardedHidden;
+            MaxSdkCallbacks.Rewarded.OnAdHiddenEvent         += this.OnRewardedHidden;
             MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent += this.OnRewardedCompleted;
-            MaxSdkCallbacks.Rewarded.OnAdLoadedEvent += this.OnRewardedAdLoadedHandler;
-            MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent += this.OnRewardedAdLoadFailedHandler;
-            MaxSdkCallbacks.Rewarded.OnAdClickedEvent += this.OnRewardedAdClickedHandler;
-            MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent += this.OnRewardedAdDisplayedHandler;
-            MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent += this.OnRewardedAdDisplayFailedEventHandler;
+            MaxSdkCallbacks.Rewarded.OnAdLoadedEvent         += this.OnRewardedAdLoadedHandler;
+            MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent     += this.OnRewardedAdLoadFailedHandler;
+            MaxSdkCallbacks.Rewarded.OnAdClickedEvent        += this.OnRewardedAdClickedHandler;
+            MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent      += this.OnRewardedAdDisplayedHandler;
+            MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent  += this.OnRewardedAdDisplayFailedEventHandler;
 
             this.InternalLoadRewarded(AdPlacement.Default);
         }
 
         private void DisposeRewardedAds()
         {
-            MaxSdkCallbacks.Rewarded.OnAdHiddenEvent -= this.OnRewardedHidden;
+            MaxSdkCallbacks.Rewarded.OnAdHiddenEvent         -= this.OnRewardedHidden;
             MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent -= this.OnRewardedCompleted;
-            MaxSdkCallbacks.Rewarded.OnAdLoadedEvent -= this.OnRewardedAdLoadedHandler;
-            MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent -= this.OnRewardedAdLoadFailedHandler;
-            MaxSdkCallbacks.Rewarded.OnAdClickedEvent -= this.OnRewardedAdClickedHandler;
-            MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent -= this.OnRewardedAdDisplayedHandler;
-            MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent -= this.OnRewardedAdDisplayFailedEventHandler;
+            MaxSdkCallbacks.Rewarded.OnAdLoadedEvent         -= this.OnRewardedAdLoadedHandler;
+            MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent     -= this.OnRewardedAdLoadFailedHandler;
+            MaxSdkCallbacks.Rewarded.OnAdClickedEvent        -= this.OnRewardedAdClickedHandler;
+            MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent      -= this.OnRewardedAdDisplayedHandler;
+            MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent  -= this.OnRewardedAdDisplayFailedEventHandler;
         }
 
-        private void OnRewardedCompleted(string arg1, MaxSdkBase.Reward arg2, MaxSdkBase.AdInfo arg3) { this.rewardedCompleted[this.currentShowingRewarded] = true; }
+        private void OnRewardedCompleted(string arg1, MaxSdkBase.Reward arg2, MaxSdkBase.AdInfo arg3)
+        {
+            this.rewardedCompleted[this.currentShowingRewarded] = true;
+        }
 
         private void OnRewardedHidden(string arg1, MaxSdkBase.AdInfo arg2)
         {
@@ -500,11 +523,19 @@ namespace ServiceImplementation.AdsServices.AppLovin
             var adInfo = new AdInfo(AdPlatform, arg3.AdUnitIdentifier, AdFormatConstants.Rewarded, arg3.NetworkName, arg3.NetworkPlacement, arg3.Revenue);
             this.signalBus.Fire(new RewardedAdShowFailedSignal(arg1, arg2.Message, adInfo));
         }
+
         private void OnRewardCompleted(AdPlacement placement, AdInfo adInfo)
         {
-            this.RewardedAdCompletedOneTimeAction?.Invoke();
-            this.RewardedAdCompletedOneTimeAction = null;
-            this.RewardedAdFailed = null;
+            try
+            {
+                this.rewardedAdCompletedOneTimeAction?.Invoke();
+            }
+            catch (Exception e)
+            {
+                this.logService.Exception(e);
+            }
+            this.rewardedAdCompletedOneTimeAction = null;
+            this.rewardedAdFailed                 = null;
 
             this.signalBus.Fire(new RewardedAdCompletedSignal(placement.Name, adInfo));
             this.InternalLoadRewarded(placement);
@@ -512,9 +543,16 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnRewardedSkipped(AdPlacement placement, AdInfo adInfo)
         {
-            this.RewardedAdFailed?.Invoke();
-            this.RewardedAdFailed = null;
-            this.RewardedAdCompletedOneTimeAction = null;
+            try
+            {
+                this.rewardedAdFailed?.Invoke();
+            }
+            catch (Exception e)
+            {
+                this.logService.Exception(e);
+            }
+            this.rewardedAdFailed                 = null;
+            this.rewardedAdCompletedOneTimeAction = null;
             this.signalBus.Fire(new RewardedSkippedSignal(placement.Name, adInfo));
             this.InternalLoadRewarded(placement);
         }
@@ -528,7 +566,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 out id);
         }
 
-
         public bool IsRewardedAdReady(string place)
         {
             var isPlacementReady = this.TryGetRewardPlacementId(place, out var id);
@@ -539,8 +576,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
             var placement = AdPlacement.PlacementWithName(place);
-            this.RewardedAdCompletedOneTimeAction = onCompleted;
-            this.RewardedAdFailed = onFailed;
+            this.rewardedAdCompletedOneTimeAction = onCompleted;
+            this.rewardedAdFailed                 = onFailed;
             this.InternalShowRewarded(placement);
         }
 
@@ -584,7 +621,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.signalBus.Fire(new BannerAdClickedSignal(arg2.Placement, adInfo));
         }
 
-        private void OnBannerAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2) { this.signalBus.Fire(new BannerAdLoadFailedSignal("empty", arg2.Message)); }
+        private void OnBannerAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2)
+        {
+            this.signalBus.Fire(new BannerAdLoadFailedSignal("empty", arg2.Message));
+        }
 
         private void OnBannerAdLoadedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
@@ -605,7 +645,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnInterstitialAdLoadedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.Interstitial, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
-            this.signalBus.Fire(new InterstitialAdLoadedSignal(arg2.Placement, arg2.LatencyMillis,adInfo));
+            this.signalBus.Fire(new InterstitialAdLoadedSignal(arg2.Placement, arg2.LatencyMillis, adInfo));
         }
 
         private void OnInterstitialAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2)
@@ -670,11 +710,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.signalBus.Fire(new MRecAdClickedSignal(adUnitId, ad));
         }
 
-        private void OnMRecAdDismissed(string adUnitId) { this.signalBus.Fire(new MRecAdDismissedSignal(adUnitId)); }
+        private void OnMRecAdDismissed(string adUnitId)
+        {
+            this.signalBus.Fire(new MRecAdDismissedSignal(adUnitId));
+        }
 
         private void OnMRecAdDisplayed(string adUnitId)
         {
-            var adInfo = new AdInfo(this.AdPlatform, adUnitId,  AdFormatConstants.MREC);
+            var adInfo = new AdInfo(this.AdPlatform, adUnitId, AdFormatConstants.MREC);
             this.signalBus.Fire(new MRecAdDisplayedSignal(adUnitId, adInfo));
         }
 
@@ -682,11 +725,20 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #region Load Ads
 
-        public void LoadRewardAds(string           place)                    { this.InternalLoadRewarded(AdPlacement.PlacementWithName(place)); }
+        public void LoadRewardAds(string place)
+        {
+            this.InternalLoadRewarded(AdPlacement.PlacementWithName(place));
+        }
 
-        public bool IsAdsInitialized() { return this.isInit; }
+        public bool IsAdsInitialized()
+        {
+            return this.isInit;
+        }
 
-        public void LoadInterstitialAd(string place) { this.InternalLoadInterstitialAd(AdPlacement.PlacementWithName(place)); }
+        public void LoadInterstitialAd(string place)
+        {
+            this.InternalLoadInterstitialAd(AdPlacement.PlacementWithName(place));
+        }
 
         public AdNetworkSettings AdNetworkSettings => this.AppLovinSetting;
 
@@ -696,7 +748,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsShowingAOAAd { get; set; } = false;
 
-        private void InternalLoadAppOpenAd() { MaxSdk.LoadAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.DefaultValue); }
+        private void InternalLoadAppOpenAd()
+        {
+            MaxSdk.LoadAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.DefaultValue);
+        }
 
         #endregion
     }
