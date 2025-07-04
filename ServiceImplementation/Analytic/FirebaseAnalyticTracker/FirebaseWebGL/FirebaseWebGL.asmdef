@@ -1,7 +1,9 @@
 {
     "name": "FirebaseWebGL",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "3rdCore.Analytic"
+    ],
     "includePlatforms": [
         "WebGL"
     ],

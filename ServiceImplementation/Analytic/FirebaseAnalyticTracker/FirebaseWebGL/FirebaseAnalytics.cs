@@ -4,7 +4,8 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
     using Newtonsoft.Json;
-
+    using Core.AnalyticServices.CommonEvents;
+    
     public class FirebaseAnalytics
     {
         public static void SetUserId(string userId) => AnalyticsSetUserIdWeb(userId);
@@ -26,6 +27,8 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
         public static void LogEvent(string name, string param, long value) => AnalyticsLogEventWeb1(name, param, $"{value}");
         
         public static void LogEvent(string name, Dictionary<string, object> parameters) => AnalyticsLogEventWeb2(name, JsonConvert.SerializeObject((object)parameters));
+
+        public static void LogEventPurchase(IapTransactionDidSucceed data){}
         
         [DllImport("__Internal")]
         private static extern void AnalyticsSetUserIdWeb(string id);

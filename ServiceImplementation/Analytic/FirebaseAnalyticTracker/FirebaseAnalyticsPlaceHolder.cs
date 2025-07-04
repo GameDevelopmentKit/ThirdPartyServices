@@ -1,7 +1,9 @@
 ﻿#if !FIREBASE_SDK_EXISTS && !FIREBASE_WEBGL|| UNITY_EDITOR && FIREBASE_WEBGL
+
 namespace ServiceImplementation.FirebaseAnalyticTracker
 {
     using System.Collections.Generic;
+    using Core.AnalyticServices.CommonEvents;
 
     /// <summary>
     /// Placeholder in case Firebase SDK is not available or current platform is not WebGL
@@ -15,6 +17,8 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
         public static void LogEvent(string name, string data, long longValue)       { }
         public static void LogEvent(string name, string data, string stringValue)   { }
         public static void LogEvent(string name, string data, double doubleValue)   { }
+        public static void LogEventPurchase(IapTransactionDidSucceed data)          { }
     }
 }
+
 #endif

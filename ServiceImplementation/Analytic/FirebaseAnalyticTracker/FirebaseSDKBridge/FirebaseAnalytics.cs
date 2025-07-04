@@ -2,10 +2,9 @@
 namespace ServiceImplementation.FirebaseAnalyticTracker
 {
     using System.Collections.Generic;
-    using System.Globalization;
+    using Core.AnalyticServices.CommonEvents;
     using Firebase.Analytics;
     using Newtonsoft.Json;
-    using UnityEngine;
 
     /// <summary>
     /// Wrap main functions from Firebase.Analytics.FirebaseAnalytics
@@ -13,7 +12,7 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
     public class FirebaseAnalytics
     {
         public static void SetUserId(string userId) => Firebase.Analytics.FirebaseAnalytics.SetUserId(userId);
-        
+
         public static void SetUserProperty(Dictionary<string, object> changedProps)
         {
             foreach (var (key, value) in changedProps)
@@ -26,6 +25,7 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
         {
             var parameterArray = new Parameter[paramenter.Count];
             var index          = 0;
+
             foreach (var (paramName, paramValue) in paramenter)
             {
                 parameterArray[index] = paramValue switch
@@ -37,6 +37,7 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
                     float floatValue => new Parameter(paramName, floatValue),
                     _ => new Parameter(paramName, JsonConvert.SerializeObject(paramValue))
                 };
+
                 ++index;
             }
 
@@ -49,6 +50,21 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
         public static void LogEvent(string eventName, string parameter, string value) => Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName, parameter, value);
         public static void LogEvent(string eventName, string parameter, double value) => Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName, parameter, value);
         public static void LogEvent(string eventName, string parameter, float value)  => Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName, parameter, value);
+
+        public static void LogEventPurchase(IapTransactionDidSucceed data)
+        {
+            Firebase.Analytics.FirebaseAnalytics.LogEvent(Firebase.Analytics.FirebaseAnalytics.EventPurchase, new[]
+            {
+                new Parameter(Firebase.Analytics.FirebaseAnalytics.ParameterTransactionID, data.TransactionId),
+                new Parameter(Firebase.Analytics.FirebaseAnalytics.ParameterCurrency, data.CurrencyCode),
+                new Parameter(Firebase.Analytics.FirebaseAnalytics.ParameterValue, data.Price),
+
+                new("receipt", data.Receipt ?? "unknown"),
+                new("featured", data.Featured ? "1" : "0"),
+                new("category", data.Category ?? "unknown"),
+                new Parameter("amount", data.Amount)
+            });
+        }
     }
 }
 #endif

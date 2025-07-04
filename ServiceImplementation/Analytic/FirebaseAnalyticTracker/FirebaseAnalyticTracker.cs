@@ -6,11 +6,13 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
     using System.Linq;
     using System.Threading.Tasks;
     using Core.AnalyticServices;
+    using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
     using ServiceImplementation.FireBaseRemoteConfig;
+    using UnityEngine;
     using Zenject;
 
     public class FirebaseAnalyticTracker : BaseTracker
@@ -19,7 +21,20 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
         private readonly   ILogService                       logger;
         private readonly   AnalyticsEventCustomizationConfig customizationConfig;
         protected override TaskCompletionSource<bool>        TrackerReady         { get; } = new TaskCompletionSource<bool>();
-        protected override Dictionary<Type, EventDelegate>   CustomEventDelegates { get; }
+        protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
+        {
+            { typeof(IapTransactionDidSucceed), this.TrackIAP },
+        };
+
+        private void TrackIAP(IEvent trackedEvent, Dictionary<string, object> data)
+        {
+            if (trackedEvent is not IapTransactionDidSucceed iapTransactionDidSucceed)
+            {
+                return;
+            }
+
+            FirebaseAnalytics.LogEventPurchase(iapTransactionDidSucceed);
+        }
 
         public FirebaseAnalyticTracker(ISignalBus signalBus, IRemoteConfig remoteConfig, ILogService logger, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) :
             base(signalBus, analyticConfig)
