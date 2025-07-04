@@ -121,6 +121,10 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         //new update: appsflyer connector still not work, we need to use this method to track IAP
         private void TrackIAP(IEvent trackedEvent, Dictionary<string, object> data)
         {
+#if AF_DISABLE_TRACK_IAP
+            return;
+#endif
+            
             if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
             {
                 Debug.LogError("trackedEvent in TrackIAP is not of correct type");

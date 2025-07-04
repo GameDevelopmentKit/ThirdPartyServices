@@ -288,6 +288,10 @@ namespace ServiceImplementation.AdsServices.AdMob
 
         private Action<AdValue> TrackAdRevenue(string format, string placement, string adUnit)
         {
+#if ADMOB_ANALYTICS_DISABLE
+return;
+#endif
+
             return adValue =>
             {
                 var adsRevenueEvent = new AdsRevenueEvent
@@ -301,11 +305,10 @@ namespace ServiceImplementation.AdsServices.AdMob
                     Currency           = adValue.CurrencyCode,
                 };
 
-#if ADMOB_ANALYTICS_ENABLE
+
                 this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
 
                 this.analyticService.Track(adsRevenueEvent);
-#endif
             };
         }
 
