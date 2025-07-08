@@ -1,12 +1,12 @@
 namespace Core.AnalyticServices
 {
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     using ServiceImplementation.Configs.Editor;
     using UnityEditor;
-#endif
-#if BYTEBREW
+    #endif
+    #if BYTEBREW
     using ByteBrewSDK;
-#endif
+    #endif
     using Sirenix.OdinInspector;
     using UnityEngine;
 
@@ -15,21 +15,21 @@ namespace Core.AnalyticServices
     /// </summary>
     public partial class AnalyticConfig
     {
-        private const string ByteBrewSymbol = "BYTEBREW";
+        public const  string ByteBrewPackageGitURL = "https://github.com/ByteBrewIO/ByteBrewUnitySDK.git?path=UPMPackage#";
+        private const string ByteBrewSymbol        = "BYTEBREW";
 
-        [BoxGroup("ByteBrew")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeByteBrewEnabled")] [SerializeField]
-        private bool isByteBrewEnabled = true;
+        [BoxGroup("ByteBrew")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeByteBrewEnabled")] [SerializeField] private bool isByteBrewEnabled = true;
 
         [OnInspectorInit]
         private void OnChangeByteBrewEnabled()
         {
-#if UNITY_EDITOR
-            if (this.autoImportPackages) EditorUtils.ModifyPackage(this.isByteBrewEnabled, "com.theone.bytebrew", "https://github.com/The1Studio/ByteBrew.git?path=Assets/Src/ByteBrewSDK#");
+            #if UNITY_EDITOR
+            EditorUtils.ModifyPackage(this.isByteBrewEnabled, "com.bytebrew.unitysdk", ByteBrewPackageGitURL);
             EditorUtils.SetDefineSymbol(ByteBrewSymbol, this.isByteBrewEnabled);
-#endif
+            #endif
         }
 
-#if BYTEBREW
+        #if BYTEBREW
         [OnValueChanged("SaveByteBrewSetting")] [Header("Android")] [SerializeField] [BoxGroup("ByteBrew")]
         private bool androidEnabled;
 
@@ -87,6 +87,6 @@ namespace Core.AnalyticServices
             AssetDatabase.SaveAssets();
 #endif
         }
-#endif
+        #endif
     }
 }

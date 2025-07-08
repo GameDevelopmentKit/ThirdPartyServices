@@ -3,12 +3,11 @@
     "rootNamespace": "",
     "references": [
         "Zenject-Signals",
-        "Zenject",
         "GameFoundation.Utilities",
         "3rd.Configs.Editor",
         "Zenject-Source",
         "GameFoundation.GameConfigs",
-        "ByteBrew"
+        "ByteBrewSDK"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
