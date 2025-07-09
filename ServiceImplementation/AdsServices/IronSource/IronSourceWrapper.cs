@@ -147,6 +147,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #region Rewarded
 
+        private Dictionary<string, object> rewardedMetadata = new();
+
         private void RewardedVideoOnAdRewardedEvent(IronSourcePlacement arg1, IronSourceAdInfo arg2)
         {
             this.isGotRewarded = true;
@@ -202,12 +204,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void RewardedVideoOnAdOpenedEvent(IronSourceAdInfo info)
         {
             var adInfo = new AdInfo(this.AdPlatform, info.adUnit, AdFormatConstants.Rewarded, info.adNetwork, value: info.revenue ?? 0, currency: "USD");
-            this.signalBus.Fire(new RewardedAdDisplayedSignal(this.rewardedPlacement, adInfo));
+            this.signalBus.Fire(new RewardedAdDisplayedSignal(this.rewardedPlacement, adInfo, this.rewardedMetadata));
         }
 
         #endregion
 
         #region Interstitial
+        
+        private Dictionary<string, object> interstitialMetadata = new();
 
         private void InterstitialOnAdClosedEvent(IronSourceAdInfo obj)
         {
@@ -240,7 +244,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         private void InterstitialOnAdOpenedEvent(IronSourceAdInfo info)
         {
             var adInfo = new AdInfo(this.AdPlatform, info.adUnit, AdFormatConstants.Interstitial, info.adNetwork, value: info.revenue ?? 0, currency: "USD");
-            this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.interstitialPlacement, adInfo));
+            this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.interstitialPlacement, adInfo, this.interstitialMetadata));
         }
 
         private void InterstitialOnAdClickedEvent(IronSourceAdInfo info)
@@ -501,10 +505,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             return IronSource.Agent.isInterstitialReady();
         }
 
-        public void ShowInterstitialAd(string place)
+        public void ShowInterstitialAd(string place, Dictionary<string, object> metadata)
         {
             this.interstitialPlacement = place;
             IronSource.Agent.showInterstitial(place);
+            this.interstitialMetadata = metadata;
         }
 
         public AdNetworkSettings AdNetworkSettings => this.thirdPartiesConfig.AdSettings.IronSource;
@@ -514,13 +519,14 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             return IronSource.Agent.isRewardedVideoAvailable();
         }
 
-        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
+        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed, Dictionary<string, object> metadata)
         {
             this.rewardedPlacement = place;
             this.isGotRewarded     = false;
             IronSource.Agent.showRewardedVideo(place);
             this.onRewardComplete = onCompleted;
             this.onRewardFailed   = onFailed;
+            this.rewardedMetadata = metadata;
         }
 
         public bool IsAdsInitialized()

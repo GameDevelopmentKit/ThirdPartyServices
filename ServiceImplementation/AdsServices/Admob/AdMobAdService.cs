@@ -2,6 +2,7 @@
 namespace ServiceImplementation.AdsServices.Admob
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
@@ -168,7 +169,7 @@ namespace ServiceImplementation.AdsServices.Admob
             });
         }
 
-        public void ShowInterstitialAd(string place)
+        public void ShowInterstitialAd(string place, Dictionary<string, object> metadata)
         {
             if (!this.IsInterstitialAdReady(place)) return;
             var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultInterstitialAdId.DefaultValue, AdFormatConstants.Interstitial);
@@ -183,7 +184,7 @@ namespace ServiceImplementation.AdsServices.Admob
 
             void OnAdFullScreenContentOpened()
             {
-                this.signalBus.Fire(new InterstitialAdDisplayedSignal(place, adInfo));
+                this.signalBus.Fire(new InterstitialAdDisplayedSignal(place, adInfo, metadata));
             }
 
             void OnAddFullScreenContentClosed()
@@ -242,7 +243,7 @@ namespace ServiceImplementation.AdsServices.Admob
             });
         }
 
-        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
+        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed, Dictionary<string, object> metadata)
         {
             if (!this.IsRewardedAdReady(place)) return;
             var adInfo = new AdInfo(this.AdPlatform, this.config.DefaultRewardedAdId.DefaultValue, AdFormatConstants.Rewarded);
@@ -273,7 +274,7 @@ namespace ServiceImplementation.AdsServices.Admob
 
             void OnAdFullScreenContentOpened()
             {
-                this.signalBus.Fire(new RewardedAdDisplayedSignal(place, adInfo));
+                this.signalBus.Fire(new RewardedAdDisplayedSignal(place, adInfo, metadata));
             }
 
             void OnAdFullScreenContentFailed()

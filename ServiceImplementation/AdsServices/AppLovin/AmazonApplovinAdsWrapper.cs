@@ -54,8 +54,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public override void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
-            var amazonId = this.amazonSetting.AmazonMRecAdId.Id;
-            var id = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            var amazonId = this.amazonSetting.AmazonMRecAdId.DefaultValue;
+            var id       = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].DefaultValue;
             if (this.isFirstMRecRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstMRecRequest = false;
@@ -87,7 +87,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         protected override void InternalCreateBanner(string id, BannerAdsPosition position, BannerSize bannerSize)
         {
-            var amazonId = this.amazonSetting.AmazonBannerAdId.Id;
+            var amazonId = this.amazonSetting.AmazonBannerAdId.DefaultValue;
             if (!string.IsNullOrEmpty(amazonId))
             {
                 this.bannerAdRequest = new APSBannerAdRequest(bannerSize.width, bannerSize.height, amazonId);
@@ -119,7 +119,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             if (!this.TryGetInterstitialPlacementId(adPlacement.Name, out var id)) return;
 
-            var amazonId = this.amazonSetting.AmazonInterstitialAdId.Id;
+            var amazonId = this.amazonSetting.AmazonInterstitialAdId.DefaultValue;
             if (this.isFirstInterstitialRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstInterstitialRequest = false;
@@ -149,7 +149,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         {
             if (!this.TryGetRewardPlacementId(placement.Name, out var id)) return;
 
-            var amazonId = this.amazonSetting.AmazonRewardedAdId.Id;
+            var amazonId = this.amazonSetting.AmazonRewardedAdId.DefaultValue;
             if (this.isFirstRewardedVideoRequest && !string.IsNullOrEmpty(amazonId))
             {
                 this.isFirstRewardedVideoRequest = false;

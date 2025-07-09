@@ -1,5 +1,7 @@
 ﻿namespace Core.AdsServices.Signals
 {
+    using System.Collections.Generic;
+
     public class InterstitialAdCalledSignal : BaseAdsSignal
     {
         public InterstitialAdCalledSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
@@ -45,9 +47,12 @@
 
     public class InterstitialAdDisplayedSignal : BaseAdsSignal
     {
-        public InterstitialAdDisplayedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
+        public InterstitialAdDisplayedSignal(string placement, AdInfo adInfo, Dictionary<string, object> metadata) : base(placement, adInfo)
         {
+            this.Metadata = metadata;
         }
+
+        public Dictionary<string, object> Metadata { get; }
     }
 
     public class InterstitialAdDisplayedFailedSignal : BaseAdsSignal

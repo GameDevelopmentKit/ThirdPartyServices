@@ -2,6 +2,7 @@
 namespace ServiceImplementation.AdsServices.Yandex
 {
     using System;
+    using System.Collections.Generic;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Core.AnalyticServices;
@@ -61,13 +62,13 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         private string aoaAdPlacement;
 
-        private Banner               banner;
-        private AppOpenAdLoader      appOpenAdLoader;
-        private AppOpenAd            appOpenAd;
-        private InterstitialAdLoader interstitialAdLoader;
-        private Interstitial         interstitialAd;
-        private RewardedAdLoader     rewardedAdLoader;
-        private RewardedAd           rewardedAd;
+        private MaxSdkCallbacks.Banner       banner;
+        private AppOpenAdLoader              appOpenAdLoader;
+        private AppOpenAd                    appOpenAd;
+        private InterstitialAdLoader         interstitialAdLoader;
+        private MaxSdkCallbacks.Interstitial interstitialAd;
+        private RewardedAdLoader             rewardedAdLoader;
+        private RewardedAd                   rewardedAd;
 
         #endregion
 
@@ -94,7 +95,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         {
             this.IsBannerAdLoaded = false;
 
-            this.banner = new Banner(this.YandexSettings.BannerAdId.DefaultValue, bannerSize, AdPosition.BottomCenter);
+            this.banner = new MaxSdkCallbacks.Banner(this.YandexSettings.BannerAdId.DefaultValue, bannerSize, AdPosition.BottomCenter);
 
             this.banner.OnAdLoaded += this.HandleBannerAdLoaded;
             this.banner.OnAdFailedToLoad += this.HandleBannerAdFailedToLoad;
@@ -155,6 +156,8 @@ namespace ServiceImplementation.AdsServices.Yandex
         #endregion
 
         #region Rewarded
+
+        private Dictionary<string, object> rewardedMetadata = new();
 
         private void InitRewardedAd()
         {
@@ -229,10 +232,10 @@ namespace ServiceImplementation.AdsServices.Yandex
         {
             this.logger.Info($"HandleRewardedAdShown");
             var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.RewardedAdId.DefaultValue, AdFormatConstants.Rewarded, AdFormatConstants.Rewarded);
-            this.signalBus.Fire(new RewardedAdDisplayedSignal(this.CurrentRewardedAdPlacement, adInfo));
+            this.signalBus.Fire(new RewardedAdDisplayedSignal(this.CurrentRewardedAdPlacement, adInfo, this.rewardedMetadata));
         }
 
-        private void HandleRewardedAdReward(object sender, Reward args)
+        private void HandleRewardedAdReward(object sender, MaxSdkBase.Reward args)
         {
             this.logger.Info($"HandleRewardedAdReward");
             this.IsRewardedAdReward = true;
@@ -256,12 +259,13 @@ namespace ServiceImplementation.AdsServices.Yandex
             return false;
         }
 
-        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
+        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed, Dictionary<string, object> metadata)
         {
             this.IsRewardedAdReward = false;
             this.CurrentRewardedAdPlacement = place;
             this.OnRewardedAdCompleted = onCompleted;
             this.OnRewardedAdFailed = onFailed;
+            this.rewardedMetadata = metadata;
             this.rewardedAd?.Show();
         }
 
@@ -270,6 +274,8 @@ namespace ServiceImplementation.AdsServices.Yandex
         #endregion
 
         #region Interstitial
+
+        private Dictionary<string, object> interstitialMetadata = new();
 
         private void InitInterstitialAd()
         {
@@ -336,7 +342,7 @@ namespace ServiceImplementation.AdsServices.Yandex
         {
             this.logger.Info($"HandleInterstitialShown");
             var adInfo = new AdInfo(this.AdPlatform, this.YandexSettings.InterstitialAdId.DefaultValue, AdFormatConstants.Interstitial);
-            this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.CurrentInterstitialAdPlacement, adInfo));
+            this.signalBus.Fire(new InterstitialAdDisplayedSignal(this.CurrentInterstitialAdPlacement, adInfo, this.interstitialMetadata));
         }
 
         #endregion
@@ -353,9 +359,10 @@ namespace ServiceImplementation.AdsServices.Yandex
 
         public         bool TryGetInterstitialPlacementId(string placement, out string id) { id = default; return false; }
 
-        public void ShowInterstitialAd(string place)
+        public void ShowInterstitialAd(string place, Dictionary<string, object> metadata)
         {
             this.CurrentInterstitialAdPlacement = place;
+            this.interstitialMetadata = metadata;
             this.interstitialAd?.Show();
         }
 

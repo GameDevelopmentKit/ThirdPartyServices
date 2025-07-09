@@ -316,6 +316,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #region Interstitial
 
+        private Dictionary<string, object> interstitialMetadata = new();
+
         private void InitInterstitialAds()
         {
             MaxSdkCallbacks.Interstitial.OnAdHiddenEvent     += this.OnInterstitialCompleted;
@@ -343,10 +345,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
             return isPlacementReady && MaxSdk.IsInterstitialReady(id);
         }
 
-        public void ShowInterstitialAd(string place)
+        public void ShowInterstitialAd(string place, Dictionary<string, object> metadata)
         {
             var placement = AdPlacement.PlacementWithName(place);
             this.InternalShowInterstitialAd(placement);
+            this.interstitialMetadata = metadata;
         }
 
         public bool TryGetInterstitialPlacementId(string place, out string id)
@@ -470,6 +473,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         #region Rewarded
 
+        private Dictionary<string, object> rewardedMetadata = new();
+
         private void InitRewardedAds()
         {
             MaxSdkCallbacks.Rewarded.OnAdHiddenEvent         += this.OnRewardedHidden;
@@ -573,12 +578,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
             return isPlacementReady && MaxSdk.IsRewardedAdReady(id);
         }
 
-        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
+        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed, Dictionary<string, object> metadata)
         {
             var placement = AdPlacement.PlacementWithName(place);
             this.rewardedAdCompletedOneTimeAction = onCompleted;
             this.rewardedAdFailed                 = onFailed;
             this.InternalShowRewarded(placement);
+            this.rewardedMetadata = metadata;
         }
 
         protected virtual void InternalLoadRewarded(AdPlacement placement)
@@ -656,7 +662,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void InterstitialAdDisplayedSignal(string arg1, MaxSdkBase.AdInfo arg2)
         {
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.Interstitial, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
-            this.signalBus.Fire(new InterstitialAdDisplayedSignal(arg2.Placement, adInfo));
+            this.signalBus.Fire(new InterstitialAdDisplayedSignal(arg2.Placement, adInfo, this.interstitialMetadata));
         }
 
         //.............
@@ -672,7 +678,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private void OnRewardedAdDisplayedHandler(string arg1, MaxSdkBase.AdInfo arg2)
         {
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.Rewarded, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
-            this.signalBus.Fire(new RewardedAdDisplayedSignal(arg2.Placement, adInfo));
+            this.signalBus.Fire(new RewardedAdDisplayedSignal(arg2.Placement, adInfo, this.rewardedMetadata));
         }
 
         private void OnRewardedAdLoadFailedHandler(string arg1, MaxSdkBase.ErrorInfo arg2)

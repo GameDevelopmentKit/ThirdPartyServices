@@ -1,5 +1,7 @@
 ﻿namespace Core.AdsServices.Signals
 {
+    using System.Collections.Generic;
+
     public class RewardedAdLoadedSignal : BaseAdsSignal
     {
         public long LoadingTime;
@@ -31,9 +33,12 @@
 
     public class RewardedAdDisplayedSignal : BaseAdsSignal
     {
-        public RewardedAdDisplayedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
+        public RewardedAdDisplayedSignal(string placement, AdInfo adInfo, Dictionary<string, object> metadata) : base(placement, adInfo)
         {
+            this.Metadata = metadata;
         }
+
+        public Dictionary<string, object> Metadata { get; }
     }
 
     public class RewardedAdCompletedSignal : BaseAdsSignal

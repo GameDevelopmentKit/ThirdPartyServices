@@ -41,7 +41,7 @@ namespace ServiceImplementation.AdsServices.CrazyGames
         public  void ShowInterstitialAd(string place)    { CrazySDK.Ad.RequestAd(CrazyAdType.Midgame, null, null, null); }
         public  bool IsRewardedAdReady(string place)     => !this.IsAdBlocked();
         private bool IsAdBlocked()                       => CrazySDK.Ad.AdblockStatus != AdblockStatus.Missing;
-        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
+        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed, Dictionary<string, object> metadata)
         {
             CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => // or CrazyAdType.Rewarded
             {

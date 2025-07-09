@@ -1,6 +1,7 @@
 namespace Core.AdsServices
 {
     using System;
+    using System.Collections.Generic;
     using Core.AdsServices.Signals;
     using GameFoundation.Signals;
     using TheOne.Logging;
@@ -66,7 +67,7 @@ namespace Core.AdsServices
             return true;
         }
 
-        public void ShowInterstitialAd(string place)
+        public void ShowInterstitialAd(string place, Dictionary<string, object> metadata)
         {
             this.signalBus.Fire<InterstitialAdClosedSignal>(new(place, null));
             this.logger.Info($"Dummy show Interstitial ad at {place}");
@@ -82,7 +83,7 @@ namespace Core.AdsServices
             this.logger.Info($"Dummy show Reward ad at {place}");
         }
 
-        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
+        public void ShowRewardedAd(string place, Action onCompleted, Action onFailed, Dictionary<string, object> metadata)
         {
             onCompleted?.Invoke();
             this.signalBus.Fire<RewardedAdClosedSignal>(new(place, null));

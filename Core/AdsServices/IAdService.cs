@@ -1,6 +1,7 @@
 namespace Core.AdsServices
 {
     using System;
+    using System.Collections.Generic;
     using UnityEngine;
 
     // Do not set place empty by default to make sure we have enough data to analyze
@@ -24,7 +25,7 @@ namespace Core.AdsServices
 
         bool IsInterstitialAdReady(string place);
 
-        void ShowInterstitialAd(string place);
+        void ShowInterstitialAd(string place, Dictionary<string, object> metadata);
 
         #endregion
 
@@ -32,7 +33,7 @@ namespace Core.AdsServices
 
         bool IsRewardedAdReady(string place);
 
-        void ShowRewardedAd(string place, Action onCompleted, Action onFailed);
+        void ShowRewardedAd(string place, Action onCompleted, Action onFailed, Dictionary<string, object> metadata);
 
         #endregion
     }
