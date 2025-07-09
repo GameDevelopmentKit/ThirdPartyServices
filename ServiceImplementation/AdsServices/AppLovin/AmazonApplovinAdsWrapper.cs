@@ -39,7 +39,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         public override void Initialize()
         {
             // Amazon
-            Amazon.Initialize(this.amazonSetting.AppId);
+            Amazon.Initialize(this.amazonSetting.AppId.DefaultValue);
             Amazon.EnableTesting(this.amazonSetting.EnableTesting);
             Amazon.EnableLogging(this.amazonSetting.EnableLogging);
             Amazon.UseGeoLocation(this.amazonSetting.UseGeoLocation);

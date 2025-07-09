@@ -175,11 +175,11 @@
         public Amazon.MRAIDPolicy MRAIDPolicy    => this.mraidPolicy;
         #endif
 
-        public string AppId                  => this.appId;
-        public CrossPlatformValue   AmazonBannerAdId       { get => this.amazonBannerAdId;       set => this.amazonBannerAdId = value; }
-        public CrossPlatformValue   AmazonMRecAdId         { get => this.amazonMRecAdId;         set => this.amazonMRecAdId = value; }
-        public CrossPlatformValue   AmazonInterstitialAdId { get => this.amazonInterstitialAdId; set => this.amazonInterstitialAdId = value; }
-        public CrossPlatformValue   AmazonRewardedAdId     { get => this.amazonRewardedAdId;     set => this.amazonRewardedAdId = value; }
+        public CrossPlatformValue AppId                  { get => this.appId;                  set => this.appId = value; }
+        public CrossPlatformValue AmazonBannerAdId       { get => this.amazonBannerAdId;       set => this.amazonBannerAdId = value; }
+        public CrossPlatformValue AmazonMRecAdId         { get => this.amazonMRecAdId;         set => this.amazonMRecAdId = value; }
+        public CrossPlatformValue AmazonInterstitialAdId { get => this.amazonInterstitialAdId; set => this.amazonInterstitialAdId = value; }
+        public CrossPlatformValue AmazonRewardedAdId     { get => this.amazonRewardedAdId;     set => this.amazonRewardedAdId = value; }
 
         [SerializeField] private bool enableTesting  = true;
         [SerializeField] private bool enableLogging  = true;
@@ -188,7 +188,7 @@
         [SerializeField] private Amazon.MRAIDPolicy mraidPolicy = Amazon.MRAIDPolicy.CUSTOM;
         #endif
 
-        [SerializeField] [BoxGroup("Amazon Id")] private string appId;
+        [SerializeField] [BoxGroup("Amazon Id")] private CrossPlatformValue appId;
 
         [SerializeField] [LabelText("Banner")] [BoxGroup("Amazon Id")] private CrossPlatformValue amazonBannerAdId;
 
