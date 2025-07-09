@@ -1,5 +1,5 @@
 #if IAP
-namespace ServiceImplementation.IAPServices
+namespace ServiceImplementation.IAPServices.Iap5Below
 {
     using System;
     using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace ServiceImplementation.IAPServices
     using UnityEngine.Purchasing.Extension;
     using UnityEngine.Purchasing.Security;
     using Zenject;
-
+    using ProductType = ServiceImplementation.IAPServices.ProductType;
     public class UnityIapServices : IIapServices, IDetailedStoreListener
     {
         private Action<string>     onPurchaseComplete, onPurchaseFailed;
@@ -272,46 +272,46 @@ namespace ServiceImplementation.IAPServices
             // #endif
 
 #if (UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_TVOS) && !UNITY_EDITOR
-            appleTangleData = AppleTangle.Data();
+            // appleTangleData = AppleTangle.Data();
 #endif
 
             // Prepare the validator with the secrets we prepared in the Editor obfuscation window.
-            var validator = new CrossPlatformValidator(googlePlayTangleData, appleTangleData, Application.identifier);
-
-            try
-            {
-                // On Google Play, result has a single product ID.
-                // On Apple stores, receipts contain multiple products.
-                var result = validator.Validate(receipt);
-
-                // If the validation is successful, the result won't be null.
-                if (result == null)
-                {
-                    isValidReceipt = false;
-                }
-                else
-                {
-                    purchaseReceipts = result;
-
-                    // For informational purposes, we list the receipt(s)
-                    if (logReceiptContent)
-                    {
-                        this.logger.Log("Receipt contents:");
-
-                        foreach (var productReceipt in result)
-                        {
-                            if (productReceipt == null) continue;
-                            this.logger.Log(productReceipt.productID);
-                            this.logger.Log(productReceipt.purchaseDate.ToString(CultureInfo.InvariantCulture));
-                            this.logger.Log(productReceipt.transactionID);
-                        }
-                    }
-                }
-            }
-            catch (IAPSecurityException)
-            {
-                isValidReceipt = false;
-            }
+            // var validator = new CrossPlatformValidator(googlePlayTangleData, appleTangleData, Application.identifier);
+            //
+            // try
+            // {
+            //     // On Google Play, result has a single product ID.
+            //     // On Apple stores, receipts contain multiple products.
+            //     var result = validator.Validate(receipt);
+            //
+            //     // If the validation is successful, the result won't be null.
+            //     if (result == null)
+            //     {
+            //         isValidReceipt = false;
+            //     }
+            //     else
+            //     {
+            //         purchaseReceipts = result;
+            //
+            //         // For informational purposes, we list the receipt(s)
+            //         if (logReceiptContent)
+            //         {
+            //             this.logger.Log("Receipt contents:");
+            //
+            //             foreach (var productReceipt in result)
+            //             {
+            //                 if (productReceipt == null) continue;
+            //                 this.logger.Log(productReceipt.productID);
+            //                 this.logger.Log(productReceipt.purchaseDate.ToString(CultureInfo.InvariantCulture));
+            //                 this.logger.Log(productReceipt.transactionID);
+            //             }
+            //         }
+            //     }
+            // }
+            // catch (IAPSecurityException)
+            // {
+            //     isValidReceipt = false;
+            // }
 #endif
 
             return isValidReceipt;

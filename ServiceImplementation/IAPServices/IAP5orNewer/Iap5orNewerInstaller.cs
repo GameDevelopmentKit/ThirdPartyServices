@@ -1,17 +1,19 @@
-﻿namespace ServiceImplementation.IAPServices
+﻿
+namespace ServiceImplementation.IAPServices.IAP5orNewer
 {
-    using GameFoundation.Scripts.Utilities.LogService;
+    using ServiceImplementation.IAPServices.Iap5Below;
     using ServiceImplementation.IAPServices.Signals;
+    using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using Zenject;
 
-    public class IapInstaller : Installer<IapInstaller>
+    public class Iap5orNewerInstaller : Installer<Iap5orNewerInstaller>
     {
         public override void InstallBindings()
         {
-            #if IAP
-            this.Container.Bind<IIapServices>()
-                .To<UnityIapServices>()
+#if IAP_5_OR_NEWER
+            this.Container.Bind(typeof(IIapServices), typeof(IInitializable))
+                .To<Iap5OrNewerServices>()
                 .AsCached()
                 .OnInstantiated((ctx, _) =>
                 {
@@ -19,9 +21,9 @@
                         .LogWithColor("IAP Enable, don't forget to call IIapServices.InitIapServices in your game,ignore if already done!!", Color.red);
                 })
                 .NonLazy();
-            #else
-            this.Container.Bind<IIapServices>().To<DummyIapServices>().AsCached().NonLazy();
-            #endif
+
+            this.Container.Bind<IapLogWrapped>().AsCached();
+#endif
 
             this.Container.DeclareSignal<OnRestorePurchaseCompleteSignal>();
             this.Container.DeclareSignal<OnStartDoingIAPSignal>();
