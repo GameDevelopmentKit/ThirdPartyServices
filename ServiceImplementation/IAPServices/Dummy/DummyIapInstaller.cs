@@ -1,10 +1,14 @@
 ﻿namespace ServiceImplementation.IAPServices.Dummy
 {
+    using ServiceImplementation.IAPServices.Common;
     using ServiceImplementation.IAPServices.Iap5Below;
-    using Zenject;
 
-    public class DummyIapInstaller : Installer<DummyIapInstaller>
+    public class DummyIapInstaller : BaseIapInstaller<DummyIapInstaller>
     {
-        public override void InstallBindings() { this.Container.BindInterfacesAndSelfTo<DummyIapServices>(); }
+        public override void InstallBindings()
+        {
+            base.InstallBindings();
+            this.Container.BindInterfacesAndSelfTo<DummyIapServices>().AsCached();
+        }
     }
 }

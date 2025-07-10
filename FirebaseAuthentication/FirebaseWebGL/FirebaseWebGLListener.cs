@@ -1,4 +1,5 @@
-﻿namespace FirebaseServices.FirebaseWebGL
+﻿#if FIREBASE_WEBGL_AUTHENTICATION
+namespace FirebaseServices.FirebaseWebGL
 {
     using System;
     using System.Collections.Generic;
@@ -72,3 +73,5 @@
         }
     }
 }
+
+#endif

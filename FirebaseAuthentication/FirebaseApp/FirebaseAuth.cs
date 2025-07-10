@@ -1,3 +1,4 @@
+#if FIREBASE_MOBILE_AUTHENTICATION
 namespace FirebaseAuthentication.FirebaseApp
 {
     using Cysharp.Threading.Tasks;
@@ -95,3 +96,4 @@ namespace FirebaseAuthentication.FirebaseApp
         }
     }
 }
+#endif

@@ -1,4 +1,6 @@
-﻿namespace FirebaseAuthentication.FirebaseWebGL
+﻿#if FIREBASE_WEBGL_AUTHENTICATION
+
+namespace FirebaseAuthentication.FirebaseWebGL
 {
     using System;
     using System.Runtime.InteropServices;
@@ -74,3 +76,4 @@
         private static extern string ResetPasswordWeb(string email);
     }
 }
+#endif

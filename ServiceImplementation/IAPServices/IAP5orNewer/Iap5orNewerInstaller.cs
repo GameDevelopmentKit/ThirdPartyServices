@@ -1,16 +1,16 @@
-﻿
-namespace ServiceImplementation.IAPServices.IAP5orNewer
+﻿namespace ServiceImplementation.IAPServices.IAP5orNewer
 {
     using ServiceImplementation.IAPServices.Iap5Below;
-    using ServiceImplementation.IAPServices.Signals;
     using GameFoundation.Scripts.Utilities.LogService;
+    using ServiceImplementation.IAPServices.Common;
     using UnityEngine;
     using Zenject;
 
-    public class Iap5orNewerInstaller : Installer<Iap5orNewerInstaller>
+    public class Iap5orNewerInstaller : BaseIapInstaller<Iap5orNewerInstaller>
     {
         public override void InstallBindings()
         {
+            base.InstallBindings();
 #if IAP_5_OR_NEWER
             this.Container.Bind(typeof(IIapServices), typeof(IInitializable))
                 .To<Iap5OrNewerServices>()
@@ -24,11 +24,6 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
 
             this.Container.Bind<IapLogWrapped>().AsCached();
 #endif
-
-            this.Container.DeclareSignal<OnRestorePurchaseCompleteSignal>();
-            this.Container.DeclareSignal<OnStartDoingIAPSignal>();
-            this.Container.DeclareSignal<OnIAPPurchaseSuccessSignal>();
-            this.Container.DeclareSignal<OnIAPPurchaseFailedSignal>();
         }
     }
 }
