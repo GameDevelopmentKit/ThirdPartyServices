@@ -538,9 +538,9 @@ namespace ServiceImplementation.AdsServices.Admob
             this.logService.Info($"native ad clicked: {adsId}");
         }
 
-        private void HandleAdFailedToLoad(string adsId, object sender, AdFailedToLoadEventArgs e)
+        private void HandleAdFailedToLoad(string adsId, object sender, LoadAdError e)
         {
-            this.logService.Info($"Native ad failed to load: {e.LoadAdError.GetMessage()}");
+            this.logService.Info($"Native ad failed to load: {e.GetMessage()}");
         }
 
         private void HandleNativeAdLoaded(string adsId, object sender, NativeAdEventArgs e)
@@ -549,9 +549,9 @@ namespace ServiceImplementation.AdsServices.Admob
             this.logService.Info($"Native ad loaded successfully");
         }
 
-        private void AdMobNativePaidHandler(string adsId, object sender, AdValueEventArgs e)
+        private void AdMobNativePaidHandler(string adsId, object sender, AdValue e)
         {
-            this.AdMobHandlePaidEvent(e.AdValue, adsId, AdFormatConstants.Native);
+            this.AdMobHandlePaidEvent(e, adsId, AdFormatConstants.Native);
         }
 
         #endif
