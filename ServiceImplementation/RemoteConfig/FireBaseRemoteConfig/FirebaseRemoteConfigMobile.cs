@@ -3,6 +3,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 {
     using System;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Firebase;
     using Firebase.Extensions;
@@ -15,11 +16,12 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     /// <summary>
     /// We need to use MonoBehaviour to use Firebase Remote Config
     /// </summary>
-    public class FirebaseRemoteConfigMobile : IRemoteConfig, IInitializable
+    public class FirebaseRemoteConfigMobile : IRemoteConfig, IInitializable, IDisposable
     {
-        private readonly ILogger             logger;
-        private readonly SignalBus           signalBus;
-        private readonly RemoteConfigSetting remoteConfigSetting;
+        private readonly ILogger                 logger;
+        private readonly SignalBus               signalBus;
+        private readonly RemoteConfigSetting     remoteConfigSetting;
+        private readonly CancellationTokenSource cancellationTokenSource = new();
 
         [Preserve]
         public FirebaseRemoteConfigMobile(ILoggerManager loggerManager, SignalBus signalBus, RemoteConfigSetting remoteConfigSetting)
@@ -58,7 +60,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private async Task ReloadDataAsync()
         {
-            await Task.Delay(TimeSpan.FromSeconds(this.remoteConfigSetting.FirebaseReloadInterval));
+            await Task.Delay(TimeSpan.FromSeconds(this.remoteConfigSetting.FirebaseReloadInterval), cancellationToken: this.cancellationTokenSource.Token);
             await this.FetchDataAsync();
         }
 
@@ -171,6 +173,11 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         }
 
         #endregion
+
+        void IDisposable.Dispose()
+        {
+            this.cancellationTokenSource.Dispose();
+        }
     }
 }
 #endif
