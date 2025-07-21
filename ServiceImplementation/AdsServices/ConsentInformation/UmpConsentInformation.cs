@@ -13,25 +13,21 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
         private readonly ILogService logService;
 
         [Preserve]
-        public UmpConsentInformation(ILogService logService)
-        {
-            this.logService = logService;
-        }
+        public UmpConsentInformation(ILogService logService) { this.logService = logService; }
 
         #endregion
 
         private bool isRequesting;
+        public  bool IsComplete { get; set; }
 
-        public void Initialize()
-        {
-            this.Request();
-        }
+        public void Initialize() { this.Request(); }
 
         public bool CanRequestAds() => ConsentInformation.CanRequestAds();
 
         public void Request()
         {
             this.isRequesting = true;
+
             var request = new ConsentRequestParameters
             {
                 TagForUnderAgeOfConsent = false
@@ -48,33 +44,37 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             {
                 this.logService.Error($"OnConsentInfoUpdated Error {consentError.Message}");
                 this.isRequesting = false;
+                this.IsComplete   = true;
+
                 return;
             }
 
-            #if UNITY_IOS
-            if (AttHelper.IsRequestTrackingComplete())
-            {
-                this.isRequesting = false;
-                return;
-            }
-            #endif
+            // #if UNITY_IOS
+            // if (AttHelper.IsRequestTrackingComplete())
+            // {
+            //     this.isRequesting = false;
+            //     return;
+            // }
+            // #endif
 
-            #if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
+#if !GOOGLE_MOBILE_ADS_BELLOW_8_5_2
             ConsentForm.LoadAndShowConsentFormIfRequired(formError =>
             {
                 this.isRequesting = false;
+                this.IsComplete   = true;
 
                 if (formError != null)
                 {
                     // Consent gathering failed.
                     this.logService.Error($"ConsentForm.LoadAndShowConsentFormIfRequired Error {formError.Message}");
+
                     return;
                 }
 
                 // Consent has been gathered.
                 this.logService.Log($"ConsentForm.LoadAndShowConsentFormIfRequired Success");
             });
-            #endif
+#endif
         }
     }
 }

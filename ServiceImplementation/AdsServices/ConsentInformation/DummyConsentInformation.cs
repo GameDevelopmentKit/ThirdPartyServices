@@ -12,6 +12,11 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         public DummyConsentInformation(ILogService logService) { this.logService = logService; }
 
-        public void Request() { this.logService.Log("Request consent information"); }
+        public void Request()
+        {
+            this.logService.Log("Request consent information");
+            this.IsComplete = true;
+        }
+        public bool IsComplete { get; set; }
     }
 }
