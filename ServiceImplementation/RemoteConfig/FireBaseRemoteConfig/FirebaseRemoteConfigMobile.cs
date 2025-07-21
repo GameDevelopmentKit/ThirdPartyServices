@@ -59,7 +59,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                 catch (Exception e)
                 {
                     this.logger.Info("Fetch error: " + e.Message);
-                    await UniTask.WaitForSeconds(this.remoteConfigSetting.FirebaseReloadInterval);
+                    await UniTask.WaitForSeconds(this.remoteConfigSetting.FirebaseReloadInterval, ignoreTimeScale: true);
                 }
             }
             await UniTask.SwitchToMainThread();
