@@ -3,25 +3,19 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 {
     using System;
     using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
+    using Cysharp.Threading.Tasks;
     using Firebase;
-    using Firebase.Extensions;
     using Firebase.RemoteConfig;
     using GameFoundation.DI;
     using GameFoundation.Signals;
     using TheOne.Logging;
     using UnityEngine.Scripting;
 
-    /// <summary>
-    /// We need to use MonoBehaviour to use Firebase Remote Config
-    /// </summary>
-    public class FirebaseRemoteConfigMobile : IRemoteConfig, IInitializable, IDisposable
+    public class FirebaseRemoteConfigMobile : IRemoteConfig, IInitializable
     {
-        private readonly ILogger                 logger;
-        private readonly SignalBus               signalBus;
-        private readonly RemoteConfigSetting     remoteConfigSetting;
-        private readonly CancellationTokenSource cancellationTokenSource = new();
+        private readonly ILogger             logger;
+        private readonly SignalBus           signalBus;
+        private readonly RemoteConfigSetting remoteConfigSetting;
 
         [Preserve]
         public FirebaseRemoteConfigMobile(ILoggerManager loggerManager, SignalBus signalBus, RemoteConfigSetting remoteConfigSetting)
@@ -35,82 +29,42 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public void Initialize()
         {
-            this.logger.Info($"InitFirebase");
+            this.InitializeAsync().Forget();
+        }
+
+        private async UniTask InitializeAsync()
+        {
+            this.logger.Info("Initializing");
             FirebaseRemoteConfig.GetInstance(FirebaseApp.DefaultInstance); // This fix a magic bug, don't remove it
-            FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+            var dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
+            if (dependencyStatus != DependencyStatus.Available)
             {
-                var dependencyStatus = task.Result;
-
-                this.logger.Info($"CheckAndFixDependenciesAsync {dependencyStatus}");
-                if (dependencyStatus == DependencyStatus.Available)
-                    this.FetchDataAsync();
-                else
-                    this.logger.Error($"Could not resolve all Firebase dependencies: {dependencyStatus}");
-            });
-        }
-
-        private Task FetchDataAsync()
-        {
-            var fetchTask =
-                FirebaseRemoteConfig.DefaultInstance.FetchAsync(
-                    TimeSpan.Zero);
-
-            return fetchTask.ContinueWithOnMainThread(this.FetchComplete);
-        }
-
-        private async Task ReloadDataAsync()
-        {
-            await Task.Delay(TimeSpan.FromSeconds(this.remoteConfigSetting.FirebaseReloadInterval), cancellationToken: this.cancellationTokenSource.Token);
-            await this.FetchDataAsync();
-        }
-
-        private void FetchComplete(Task fetchTask)
-        {
-            if (fetchTask.IsCanceled)
-                this.logger.Info($"Fetch canceled.");
-            else if (fetchTask.IsFaulted)
-            {
-                this.logger.Info($"Fetch encountered an error");
-                _ = this.ReloadDataAsync();
+                this.logger.Error($"Could not resolve all Firebase dependencies: {dependencyStatus}");
+                return;
             }
-            else if (fetchTask.IsCompleted) this.logger.Info($"Fetch completed successfully!");
-
-            var info = FirebaseRemoteConfig.DefaultInstance.Info;
-            this.logger.Info($"FetchComplete {info.LastFetchStatus}");
-
-            switch (info.LastFetchStatus)
+            while (true)
             {
-                case LastFetchStatus.Success:
-                    FirebaseRemoteConfig.DefaultInstance.ActivateAsync().ContinueWithOnMainThread(task =>
-                    {
-                        this.logger.Info($"Remote data loaded and ready (last fetch time {info.FetchTime}).");
-                        this.IsConfigFetchedSucceed = true;
-                        this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal(this));
-                    });
-
+                try
+                {
+                    this.logger.Info("Fetching");
+                    await FirebaseRemoteConfig.DefaultInstance.FetchAsync(TimeSpan.Zero);
+                    await FirebaseRemoteConfig.DefaultInstance.ActivateAsync();
+                    this.logger.Info("Fetch succeeded");
                     break;
-                case LastFetchStatus.Failure:
-                    switch (info.LastFetchFailureReason)
-                    {
-                        case FetchFailureReason.Error:
-                            this.logger.Info($"Fetch failed for unknown reason");
-
-                            break;
-                        case FetchFailureReason.Throttled:
-                            this.logger.Info($"Fetch throttled until " + info.ThrottledEndTime);
-
-                            break;
-                        case FetchFailureReason.Invalid: break;
-                        default:                         throw new ArgumentOutOfRangeException();
-                    }
-
-                    break;
-                case LastFetchStatus.Pending:
-                    this.logger.Info($"Latest Fetch call still pending.");
-
-                    break;
-                default: throw new ArgumentOutOfRangeException();
+                }
+                catch (OperationCanceledException)
+                {
+                    this.logger.Info("Fetch cancelled");
+                }
+                catch (Exception e)
+                {
+                    this.logger.Info("Fetch error: " + e.Message);
+                    await UniTask.WaitForSeconds(this.remoteConfigSetting.FirebaseReloadInterval);
+                }
             }
+            await UniTask.SwitchToMainThread();
+            this.IsConfigFetchedSucceed = true;
+            this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal(this));
         }
 
         #region Get Data Remote Config
@@ -173,11 +127,6 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         }
 
         #endregion
-
-        void IDisposable.Dispose()
-        {
-            this.cancellationTokenSource.Dispose();
-        }
     }
 }
 #endif

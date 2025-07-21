@@ -1,21 +1,12 @@
 {
   "name": "3rd.RemoteConfig.FireBase",
-  "rootNamespace": "",
   "references": [
     "GameFoundation.Utilities",
     "GameFoundation.Signals",
     "3rd.RemoteConfig",
     "GameFoundation.DI",
     "3rd.Configs",
-    "TheOne.Logging"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [],
-  "noEngineReferences": false
+    "TheOne.Logging",
+    "UniTask"
+  ]
 }
