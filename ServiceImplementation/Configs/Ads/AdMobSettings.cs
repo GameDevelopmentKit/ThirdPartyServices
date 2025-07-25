@@ -174,12 +174,12 @@
 #if APPLOVIN && UNITY_EDITOR
             AppLovinSettings.UpdateGoogleAdsId(this.mAndroidAppId, this.mIOSAppId);
 #endif
-            settingType.GetField("optimizeInitialization", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeInitialization);
-            settingType.GetField("optimizeAdLoading", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeAdLoading);
 #if ADMOB_BELLOW_9_0_0
+            settingType.GetField("optimizeAdLoading", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeAdLoading);
+            settingType.GetField("optimizeInitialization", bindingFlags).SetValue(googleMobileAdsSettings, this.mOptimizeInitialization);
             settingType.GetField("delayAppMeasurementInit", bindingFlags).SetValue(googleMobileAdsSettings, this.mDelayAppMeasurementInit);
-#endif
             settingType.GetField("validateGradleDependencies", bindingFlags).SetValue(googleMobileAdsSettings, this.mValidateGradleDependencies);
+#endif
             settingType.GetField("enableKotlinXCoroutinesPackagingOption", bindingFlags).SetValue(googleMobileAdsSettings, this.enableKotlinXCoroutinesPackagingOption);
             settingType.GetField("userTrackingUsageDescription", bindingFlags).SetValue(googleMobileAdsSettings, this.mUserTrackingUsageDescription);
 
