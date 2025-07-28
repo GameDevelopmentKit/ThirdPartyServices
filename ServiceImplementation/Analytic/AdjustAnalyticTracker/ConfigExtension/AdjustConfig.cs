@@ -11,7 +11,8 @@ namespace Core.AnalyticServices
     /// </summary>
     public partial class AnalyticConfig
     {
-        private const string AdjustSymbol = "ADJUST";
+        private const string AdjustSymbol        = "ADJUST";
+        private const string AdjustPackageGitURL = "https://github.com/adjust/unity_sdk.git?path=Assets/Adjust";
 
         [BoxGroup("Adjust")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAdjustEnabled")] [SerializeField]
         private bool isAdjustEnabled;
@@ -19,10 +20,12 @@ namespace Core.AnalyticServices
         private void OnChangeAdjustEnabled()
         {
 #if UNITY_EDITOR
+
+            EditorUtils.ModifyPackage(this.isAdjustEnabled, "com.adjust.sdk", AdjustPackageGitURL);
             EditorUtils.SetDefineSymbol(AdjustSymbol, this.isAdjustEnabled);
 #endif
         }
-        
+
         [OnInspectorInit]
         private void InitAdjustSetting()
         {
@@ -30,6 +33,7 @@ namespace Core.AnalyticServices
             if (!string.IsNullOrEmpty(this.adjustAndroidAppToken) || !string.IsNullOrEmpty(this.adjustIOSAppToken))
             {
                 this.isAdjustEnabled = true;
+
                 return;
             }
 #endif

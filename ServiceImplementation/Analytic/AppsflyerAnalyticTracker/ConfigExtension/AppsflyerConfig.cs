@@ -82,7 +82,7 @@ namespace Core.AnalyticServices
                 this.AppsflyerPackageGitURL = "https://github.com/AppsFlyerSDK/appsflyer-unity-plugin.git#Strict-upm";
             }
 
-            EditorUtils.ModifyPackage(this.isByteBrewEnabled, "appsflyer-unity-plugin", AppsflyerPackageGitURL);
+            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "appsflyer-unity-plugin", AppsflyerPackageGitURL);
             EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
 #endif
         }
