@@ -2,6 +2,7 @@ namespace ServiceImplementation.AdsServices
 {
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
+    using Core.AdsServices.Native;
     using Core.AdsServices.Signals;
     using GameFoundation.Scripts.Utilities.Extension;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
@@ -21,6 +22,7 @@ namespace ServiceImplementation.AdsServices
 #if ADMOB
     using ServiceImplementation.AdsServices.AdMob;
 #endif
+
 #if YANDEX
     using ServiceImplementation.AdsServices.Yandex;
 #endif
@@ -63,6 +65,9 @@ namespace ServiceImplementation.AdsServices
 
             this.Container.BindInterfacesAndSelfTo<PreloadAdService>().AsCached().NonLazy();
             this.Container.BindAllTypeDriveFrom<IAdRevenueTracker>();
+#if !ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
+            this.Container.Bind<INativeAdsService>().To<DummyNativeAds>().AsCached();
+#endif
 
             ConsentInformationInstaller.Install(this.Container);
 
@@ -122,7 +127,7 @@ namespace ServiceImplementation.AdsServices
 
             // This signal is used to all type of ad request
             this.Container.DeclareSignal<AdRequestSignal>();
-            
+
             this.Container.DeclareSignal<AppStateChangeSignal>();
             this.Container.DeclareSignal<AttDisplayedSignal>();
             this.Container.DeclareSignal<AttClosedSignal>();

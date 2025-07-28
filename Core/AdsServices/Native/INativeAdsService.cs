@@ -1,15 +1,11 @@
-#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
 namespace Core.AdsServices.Native
 {
     using System.Collections.Generic;
-    using GoogleMobileAds.Api;
-
 
     public interface INativeAdsService
     {
-        void   DrawNativeAds(NativeAdsView nativeAdsView);
-        List<NativeAd> GetNativeAds(string adsId="");
-        void   RemoveNativeAd(NativeAd nativeAd);
+        void                          DrawNativeAds(NativeAdsView nativeAdsView);
+        List<NativeAdInstanceWrapper> GetNativeAds(string adsId = "");
+        void                          RemoveNativeAd(NativeAdInstanceWrapper nativeAd);
     }
 }
-#endif 

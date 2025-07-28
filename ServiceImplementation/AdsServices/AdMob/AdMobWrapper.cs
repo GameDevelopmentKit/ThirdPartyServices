@@ -387,9 +387,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
         #region Native Ads
 
 #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
-        private Dictionary<string, List<NativeAd>>  nativeAdsIdToNativeAd   { get; } = new();
-        private HashSet<string>                     loadingNativeAdsIds     { get; } = new();
-        private Dictionary<NativeAdsView, NativeAd> nativeAdsViewToNativeAd { get; } = new();
+        private Dictionary<string, List<NativeAdInstanceWrapper>> nativeAdsIdToNativeAd   { get; } = new();
+        private HashSet<string>                                   loadingNativeAdsIds     { get; } = new();
+        private Dictionary<NativeAdsView, NativeAd>               nativeAdsViewToNativeAd { get; } = new();
 
         private const string PrefixNativeAdsText = "loading...";
 
@@ -423,7 +423,11 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             adLoader.OnNativeAdLoaded += (_, arg) =>
             {
                 var listAds = this.nativeAdsIdToNativeAd[adsId];
-                listAds.Add(arg.nativeAd);
+
+                listAds.Add(new NativeAdInstanceWrapper()
+                {
+                    NativeAdInstance = arg.nativeAd
+                });
 
                 if (listAds.Count == this.adServicesConfig.NativeAdCount)
                 {
@@ -452,7 +456,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
 #if UNITY_EDITOR
             var listAds = this.nativeAdsIdToNativeAd[adsId];
-            listAds.Add(null);
+            listAds.Add(new NativeAdInstanceWrapper() { NativeAdInstance = null });
 #endif
         }
 
@@ -468,31 +472,32 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.logService.Log("native ad clicked");
         }
 
-        private List<NativeAd> GetAvailableNativeAd()
+        private List<NativeAdInstanceWrapper> GetAvailableNativeAd()
         {
             var nativeAdPair = this.nativeAdsIdToNativeAd.First();
 
             return nativeAdPair.Value;
         }
 
-        public List<NativeAd> GetNativeAds(string adsId = "")
+        public List<NativeAdInstanceWrapper> GetNativeAds(string adsId = "")
         {
 #if CREATIVE &&!FORCE_ADS
-            return new List<NativeAd>();
+            return new List<NativeAdInstanceWrapper>();
 
 #endif
-            return this.nativeAdsIdToNativeAd.Count == 0                         ? new List<NativeAd>() :
+            return this.nativeAdsIdToNativeAd.Count == 0                         ? new List<NativeAdInstanceWrapper>() :
                 string.IsNullOrEmpty(adsId)                                      ? this.GetAvailableNativeAd() :
-                this.nativeAdsIdToNativeAd.TryGetValue(adsId, out var nativeAds) ? nativeAds : new List<NativeAd>();
+                this.nativeAdsIdToNativeAd.TryGetValue(adsId, out var nativeAds) ? nativeAds: new List<NativeAdInstanceWrapper>();
         }
 
-        public void RemoveNativeAd(NativeAd nativeAd)
+        public void RemoveNativeAd(NativeAdInstanceWrapper nativeAd)
         {
-            var findItem = this.nativeAdsIdToNativeAd.FirstOrDefault(x => x.Value.Contains(nativeAd));
+            var nativeAdsInstance =nativeAd;
+            var findItem          = this.nativeAdsIdToNativeAd.FirstOrDefault(x => x.Value.Contains(nativeAdsInstance));
 
             if (findItem.Key == null) return;
             this.loadingNativeAdsIds.Remove(findItem.Key);
-            findItem.Value.Remove(nativeAd);
+            findItem.Value.Remove(nativeAdsInstance);
             this.logService.Log($"Remove native ad: {findItem.Value.Count}");
             this.nativeAdsIdToNativeAd[findItem.Key] = findItem.Value;
         }
@@ -504,35 +509,35 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             this.LoadAllNativeAds();
 
             if (this.nativeAdsIdToNativeAd.Count == 0 || this.nativeAdsViewToNativeAd.ContainsKey(nativeAdsView)) return;
-            var nativeList = this.GetAvailableNativeAd();
-            var nativeAd   = nativeList.First();
-
+            var nativeList       = this.GetAvailableNativeAd();
+            var nativeAd         = nativeList.First();
+            var nativeAdInstance = (NativeAd)nativeAd.NativeAdInstance;
             this.nativeAdsIdToNativeAd.Remove(this.nativeAdsIdToNativeAd.First().Key);
-            this.nativeAdsViewToNativeAd.TryAdd(nativeAdsView, nativeAd);
+            this.nativeAdsViewToNativeAd.TryAdd(nativeAdsView, nativeAdInstance);
             this.logService.Log($"Start set native ad: {nativeAdsView.name}");
 
-            this.logService.Log($"native star rating : {nativeAd.GetStarRating()}");
-            this.logService.Log($"native store: {nativeAd.GetStore()}");
-            this.logService.Log($"native Price: {nativeAd.GetPrice()}");
-            this.logService.Log($"native advertiser text: {nativeAd.GetAdvertiserText()}");
-            this.logService.Log($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
+            this.logService.Log($"native star rating : {nativeAdInstance.GetStarRating()}");
+            this.logService.Log($"native store: {nativeAdInstance.GetStore()}");
+            this.logService.Log($"native Price: {nativeAdInstance.GetPrice()}");
+            this.logService.Log($"native advertiser text: {nativeAdInstance.GetAdvertiserText()}");
+            this.logService.Log($"native icon: {nativeAdInstance.GetIconTexture()?.texelSize}");
 
-            this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
-            this.logService.Log($"native call to action text: {nativeAd.GetCallToActionText()}");
-            this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
+            this.logService.Log($"native headline: {nativeAdInstance.GetHeadlineText()}");
+            this.logService.Log($"native call to action text: {nativeAdInstance.GetCallToActionText()}");
+            this.logService.Log($"native ad choice: {nativeAdInstance.GetAdChoicesLogoTexture()?.texelSize}");
 
             // Get Texture2D for icon asset of native ad.
-            nativeAdsView.headlineText.text = nativeAd.GetHeadlineText();
+            nativeAdsView.headlineText.text = nativeAdInstance.GetHeadlineText();
 
-            if (!nativeAd.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
+            if (!nativeAdInstance.RegisterHeadlineTextGameObject(nativeAdsView.headlineText.gameObject))
             {
                 // Handle failure to register ad asset.
                 this.logService.Log($"Failed to register Headline text for native ad: {nativeAdsView.name}");
             }
 
-            nativeAdsView.advertiserText.text = nativeAd.GetAdvertiserText();
+            nativeAdsView.advertiserText.text = nativeAdInstance.GetAdvertiserText();
 
-            if (!nativeAd.RegisterAdvertiserTextGameObject(nativeAdsView.advertiserText.gameObject))
+            if (!nativeAdInstance.RegisterAdvertiserTextGameObject(nativeAdsView.advertiserText.gameObject))
             {
                 nativeAdsView.advertiserText.text = PrefixNativeAdsText;
 
@@ -540,33 +545,33 @@ namespace ServiceImplementation.AdsServices.EasyMobile
                 this.logService.Log($"Failed to register advertiser text for native ad: {nativeAdsView.name}");
             }
 
-            nativeAdsView.callToActionText.text = nativeAd.GetCallToActionText();
+            nativeAdsView.callToActionText.text = nativeAdInstance.GetCallToActionText();
 
-            if (!nativeAd.RegisterCallToActionGameObject(nativeAdsView.callToActionText.gameObject))
+            if (!nativeAdInstance.RegisterCallToActionGameObject(nativeAdsView.callToActionText.gameObject))
             {
                 nativeAdsView.callToActionText.text = PrefixNativeAdsText;
                 this.logService.Log($"Failed to register call to action text for native ad: {nativeAdsView.name}");
             }
 
-            if (nativeAd.GetIconTexture() != null)
+            if (nativeAdInstance.GetIconTexture() != null)
             {
                 nativeAdsView.iconImage.gameObject.SetActive(true);
-                nativeAdsView.iconImage.texture = nativeAd.GetIconTexture();
+                nativeAdsView.iconImage.texture = nativeAdInstance.GetIconTexture();
 
                 // Register GameObject that will display icon asset of native ad.
-                if (!nativeAd.RegisterIconImageGameObject(nativeAdsView.iconImage.gameObject))
+                if (!nativeAdInstance.RegisterIconImageGameObject(nativeAdsView.iconImage.gameObject))
                 {
                     // Handle failure to register ad asset.
                     this.logService.Log($"Failed to register icon image for native ad: {nativeAdsView.name}");
                 }
             }
 
-            if (nativeAd.GetAdChoicesLogoTexture() != null)
+            if (nativeAdInstance.GetAdChoicesLogoTexture() != null)
             {
                 nativeAdsView.adChoicesImage.gameObject.SetActive(true);
-                nativeAdsView.adChoicesImage.texture = nativeAd.GetAdChoicesLogoTexture();
+                nativeAdsView.adChoicesImage.texture = nativeAdInstance.GetAdChoicesLogoTexture();
 
-                if (!nativeAd.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoicesImage.gameObject))
+                if (!nativeAdInstance.RegisterAdChoicesLogoGameObject(nativeAdsView.adChoicesImage.gameObject))
                 {
                     // Handle failure to register ad asset.
                     this.logService.Log($"Failed to register ad choices image for native ad: {nativeAdsView.name}");
@@ -594,7 +599,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             {
                 if (!this.nativeAdsIdToNativeAd.ContainsKey(adId))
                 {
-                    this.nativeAdsIdToNativeAd.Add(adId, new List<NativeAd>());
+                    this.nativeAdsIdToNativeAd.Add(adId, new  List<NativeAdInstanceWrapper>());
                 }
 
                 var totalNativeAds = this.adServicesConfig.NativeAdCount - this.nativeAdsIdToNativeAd[adId].Count;

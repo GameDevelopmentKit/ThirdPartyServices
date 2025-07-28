@@ -1,4 +1,3 @@
-#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
 namespace Core.AdsServices.Native
 {
     using System;
@@ -8,13 +7,11 @@ namespace Core.AdsServices.Native
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
-    using GoogleMobileAds.Api;
     using R3;
     using UnityEngine;
     using UnityEngine.UI;
-    using Zenject;
 
-    public class NativeAdsView : MonoBehaviour
+    public class NativeAdsView : MonoBehaviour, INativeAdsView
     {
         [SerializeField] private GameObject nonAdsHolder;
         [SerializeField] private GameObject adsHolder;
@@ -35,27 +32,39 @@ namespace Core.AdsServices.Native
         private IScreenPresenter visibleScreen;
         private IScreenManager   screenManager;
         private ILogService      logService;
-#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
+        private Camera           cam;
+        public  bool             useUiCam = true;
 
         private void Awake()
         {
-            this.colliders = this.GetComponentsInChildren<Collider>(true);
-            this.screenManager = this.GetCurrentContainer().Resolve<IScreenManager>();
+            this.colliders              = this.GetComponentsInChildren<Collider>(true);
+            this.screenManager          = this.GetCurrentContainer().Resolve<IScreenManager>();
             this.changeScreenDisposable = this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
-            this.logService = this.GetCurrentContainer().Resolve<ILogService>();
+            this.logService             = this.GetCurrentContainer().Resolve<ILogService>();
+
+            if (this.useUiCam)
+            {
+                this.cam = this.GetCurrentContainer().Resolve<ScreenManager>().RootUICanvas.UICamera;
+            }
+
+            this.cam ??= Camera.main;
         }
 
         private void Update()
         {
-            if (Camera.main == null) return;
+            if (!this.cam) return;
 
             if (Input.GetMouseButtonDown(0))
             {
-                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                var ray = this.cam.ScreenPointToRay(Input.mousePosition);
 
                 if (Physics.Raycast(ray, out var hit))
                 {
                     Debug.Log($"Mouse clicked on ad {hit.collider.gameObject.name}");
+#if UNITY_EDITOR
+
+                    Application.OpenURL("https://www.google.com/search?q=ad+clicked");
+#endif
                 }
 
                 Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 6f);
@@ -112,56 +121,63 @@ namespace Core.AdsServices.Native
         /// for 2d
         /// </summary>
         /// <param name="nativeAd"></param>
-        public void ShowNativeAds(NativeAd nativeAd, List<GameObject> registedObj)
+        public void ShowNativeAds(NativeAdInstanceWrapper nativeAd, List<GameObject> registedObj)
         {
+            this.SetColliderStatus(true);
+#if UNITY_EDITOR
+            return;
+#endif
+#if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
+            var nativeAdInstance = (GoogleMobileAds.Api.NativeAd)nativeAd.NativeAdInstance;
+
             this.logService.Log($"Start set native ad: {this.name}");
-            this.logService.Log($"native star rating : {nativeAd.GetStarRating()}");
-            this.logService.Log($"native store: {nativeAd.GetStore()}");
-            this.logService.Log($"native Price: {nativeAd.GetPrice()}");
-            this.logService.Log($"native advertiser text: {nativeAd.GetAdvertiserText()}");
-            this.logService.Log($"native icon: {nativeAd.GetIconTexture()?.texelSize}");
-            this.logService.Log($"native headline: {nativeAd.GetHeadlineText()}");
-            this.logService.Log($"native call to action text: {nativeAd.GetCallToActionText()}");
-            this.logService.Log($"native ad choice: {nativeAd.GetAdChoicesLogoTexture()?.texelSize}");
+            this.logService.Log($"native star rating : {nativeAdInstance.GetStarRating()}");
+            this.logService.Log($"native store: {nativeAdInstance.GetStore()}");
+            this.logService.Log($"native Price: {nativeAdInstance.GetPrice()}");
+            this.logService.Log($"native advertiser text: {nativeAdInstance.GetAdvertiserText()}");
+            this.logService.Log($"native icon: {nativeAdInstance.GetIconTexture()?.texelSize}");
+            this.logService.Log($"native headline: {nativeAdInstance.GetHeadlineText()}");
+            this.logService.Log($"native call to action text: {nativeAdInstance.GetCallToActionText()}");
+            this.logService.Log($"native ad choice: {nativeAdInstance.GetAdChoicesLogoTexture()?.texelSize}");
 
             // Get Texture2D for icon asset of native ad.
-            this.headlineText.text = nativeAd.GetHeadlineText();
+            this.headlineText.text = nativeAdInstance.GetHeadlineText();
 
-            this.advertiserText.text = nativeAd.GetAdvertiserText();
+            this.advertiserText.text = nativeAdInstance.GetAdvertiserText();
 
-            this.callToActionText.text = nativeAd.GetCallToActionText();
+            this.callToActionText.text = nativeAdInstance.GetCallToActionText();
 
-            if (nativeAd.GetIconTexture() != null)
+            if (nativeAdInstance.GetIconTexture() != null)
             {
                 this.iconImage.gameObject.SetActive(true);
-                this.iconImage.texture = nativeAd.GetIconTexture();
+                this.iconImage.texture = nativeAdInstance.GetIconTexture();
             }
 
             this.adChoicesImage.gameObject.SetActive(false);
 
-            if (nativeAd.GetAdChoicesLogoTexture() != null)
+            if (nativeAdInstance.GetAdChoicesLogoTexture() != null)
             {
                 this.adChoicesImage.gameObject.SetActive(true);
-                this.adChoicesImage.texture = nativeAd.GetAdChoicesLogoTexture();
+                this.adChoicesImage.texture = nativeAdInstance.GetAdChoicesLogoTexture();
             }
 
-            this.SetColliderStatus(true);
             this.GetCurrentContainer().Resolve<INativeAdsService>().RemoveNativeAd(nativeAd);
 
             if (!registedObj.Contains(this.iconImage.gameObject))
             {
-                nativeAd.RegisterIconImageGameObject(this.iconImage.gameObject);
+                nativeAdInstance.RegisterIconImageGameObject(this.iconImage.gameObject);
             }
 
             if (!registedObj.Contains(this.callToActionObj))
             {
-                nativeAd.RegisterCallToActionGameObject(this.callToActionObj);
+                nativeAdInstance.RegisterCallToActionGameObject(this.callToActionObj);
             }
 
             if (!registedObj.Contains(this.adChoicesImage.gameObject))
             {
-                nativeAd.RegisterAdChoicesLogoGameObject(this.adChoicesImage.gameObject);
+                nativeAdInstance.RegisterAdChoicesLogoGameObject(this.adChoicesImage.gameObject);
             }
+#endif
         }
 
         /// <summary>
@@ -173,7 +189,7 @@ namespace Core.AdsServices.Native
             this.nativeAdsService = nativeAdsService;
             this.iconImage.gameObject.SetActive(false);
             this.adChoicesImage.gameObject.SetActive(false);
-            this.isInit = true;
+            this.isInit   = true;
             this.isEnable = true;
             this.IntervalCall();
             this.ShowAds(true);
@@ -188,7 +204,7 @@ namespace Core.AdsServices.Native
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             this.IntervalCall();
         }
-#endif
+
+        public GameObject Instance => this.gameObject;
     }
 }
-#endif
