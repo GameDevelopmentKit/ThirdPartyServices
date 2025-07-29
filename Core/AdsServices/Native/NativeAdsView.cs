@@ -2,6 +2,7 @@ namespace Core.AdsServices.Native
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
@@ -35,9 +36,10 @@ namespace Core.AdsServices.Native
         private Camera           cam;
         public  bool             useUiCam = true;
 
+        [SerializeField] private bool isTestAutoShowNativeAds;
+
         private void Awake()
         {
-            this.colliders              = this.GetComponentsInChildren<Collider>(true);
             this.screenManager          = this.GetCurrentContainer().Resolve<IScreenManager>();
             this.changeScreenDisposable = this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
             this.logService             = this.GetCurrentContainer().Resolve<ILogService>();
@@ -48,27 +50,72 @@ namespace Core.AdsServices.Native
             }
 
             this.cam ??= Camera.main;
+            this.TestAutoShowNativeAds();
+        }
+
+        private async void TestAutoShowNativeAds()
+        {
+            if (!this.isTestAutoShowNativeAds)
+            {
+                return;
+            }
+
+            var nativeAdsCount = this.GetCurrentContainer().Resolve<INativeAdsService>().GetNativeAds();
+
+            if (nativeAdsCount.Count == 0)
+            {
+                await UniTask.Delay(3000);
+
+                this.TestAutoShowNativeAds();
+
+                return;
+            }
+
+            this.ShowNativeAds(nativeAdsCount.First(), new List<GameObject>());
         }
 
         private void Update()
         {
             if (!this.cam) return;
 
-            if (Input.GetMouseButtonDown(0))
+            if (this.IsClick(out var clickPosition))
             {
-                var ray = this.cam.ScreenPointToRay(Input.mousePosition);
+                var ray = this.cam.ScreenPointToRay(clickPosition);
 
                 if (Physics.Raycast(ray, out var hit))
                 {
-                    Debug.Log($"Mouse clicked on ad {hit.collider.gameObject.name}");
-#if UNITY_EDITOR
-
-                    Application.OpenURL("https://www.google.com/search?q=ad+clicked");
-#endif
+                    this.logService.Log($"[Ad] Clicked on: {hit.collider.gameObject.name} {hit.transform.GetComponent<BoxCollider>().size}");
+                }
+                else
+                {
+                    this.logService.Log($"[Ad] Raycast missed: {ray.origin}, {ray.direction}");
                 }
 
                 Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 6f);
+                this.logService.Log($"Native Ads check click {ray.origin}, {ray.direction}, {clickPosition},{this.transform.position}, {((RectTransform)this.transform).anchoredPosition}");
             }
+        }
+
+        private bool IsClick(out Vector2 clickPosition)
+        {
+#if UNITY_EDITOR || UNITY_STANDALONE
+            if (Input.GetMouseButtonDown(0))
+            {
+                clickPosition = Input.mousePosition;
+
+                return true;
+            }
+#elif UNITY_ANDROID || UNITY_IOS
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+            {
+                clickPosition = Input.GetTouch(0).position;
+                return true;
+            }
+#endif
+
+            clickPosition = default;
+
+            return false;
         }
 
         private void OnDisable() { this.SetColliderStatus(false); }
@@ -109,9 +156,13 @@ namespace Core.AdsServices.Native
 
         private void SetColliderStatus(bool isShow)
         {
+            this.colliders = this.GetComponentsInChildren<Collider>(true);
+            this.logService.Log($"Collider count: {this.colliders.Length} for {this.name} isShow: {isShow}");
+
             foreach (var col in this.colliders)
             {
                 col.enabled = isShow;
+                this.logService.Log($"[NativeAdsView] SetColliderStatus: {col.name} enabled: {col.bounds.size}");
             }
         }
 
@@ -123,8 +174,9 @@ namespace Core.AdsServices.Native
         /// <param name="nativeAd"></param>
         public void ShowNativeAds(NativeAdInstanceWrapper nativeAd, List<GameObject> registedObj)
         {
-            this.SetColliderStatus(true);
 #if UNITY_EDITOR
+            this.SetColliderStatus(true);
+
             return;
 #endif
 #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
@@ -161,8 +213,6 @@ namespace Core.AdsServices.Native
                 this.adChoicesImage.texture = nativeAdInstance.GetAdChoicesLogoTexture();
             }
 
-            this.GetCurrentContainer().Resolve<INativeAdsService>().RemoveNativeAd(nativeAd);
-
             if (!registedObj.Contains(this.iconImage.gameObject))
             {
                 nativeAdInstance.RegisterIconImageGameObject(this.iconImage.gameObject);
@@ -170,6 +220,8 @@ namespace Core.AdsServices.Native
 
             if (!registedObj.Contains(this.callToActionObj))
             {
+                this.logService.Log($"Register call to action game object: {this.callToActionObj.name}");
+                this.callToActionObj.SetActive(true);
                 nativeAdInstance.RegisterCallToActionGameObject(this.callToActionObj);
             }
 
@@ -177,6 +229,10 @@ namespace Core.AdsServices.Native
             {
                 nativeAdInstance.RegisterAdChoicesLogoGameObject(this.adChoicesImage.gameObject);
             }
+
+            this.SetColliderStatus(true);
+
+            this.GetCurrentContainer().Resolve<INativeAdsService>().RemoveNativeAd(nativeAd);
 #endif
         }
 
