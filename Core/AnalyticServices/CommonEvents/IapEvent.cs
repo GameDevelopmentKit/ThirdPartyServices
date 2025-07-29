@@ -97,6 +97,19 @@ namespace Core.AnalyticServices.CommonEvents
 
         public string Category;
         public float  Amount;
+        
+        public double Revenue
+        {
+            get
+            {
+#if UNITY_IOS
+                return this.Price * 0.67f;
+#elif UNITY_ANDROID
+                return this.Price * 0.63f;
+#endif
+                return this.Price;
+            }
+        }
     }
 
     /// <summary>

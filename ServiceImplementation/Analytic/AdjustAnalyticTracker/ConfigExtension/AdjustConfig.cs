@@ -1,5 +1,6 @@
 namespace Core.AnalyticServices
 {
+    using System.Collections.Generic;
     using Sirenix.OdinInspector;
     using UnityEngine;
 #if UNITY_EDITOR
@@ -51,11 +52,28 @@ namespace Core.AnalyticServices
         public string AdjustPurchaseToken => this.adjustAndroidPurchaseToken;
 #endif
 
-        [SerializeField] private string adjustAndroidAppToken;
-        [SerializeField] private string adjustIOSAppToken;
-        [SerializeField] private string adjustAndroidPurchaseToken;
-        [SerializeField] private string adjustIOSPurchaseToken;
-        [SerializeField] private bool   adjustIsDebug;
+        [SerializeField] private string                   adjustAndroidAppToken;
+        [SerializeField] private string                   adjustIOSAppToken;
+        [SerializeField] private string                   adjustAndroidPurchaseToken;
+        [SerializeField] private string                   adjustIOSPurchaseToken;
+        [SerializeField] private bool                     adjustIsDebug;
+        [SerializeField] private List<AdjustMappingEvent> adjustMappingEvents = new();
+        public                   List<AdjustMappingEvent> AdjustMappingEvents => this.adjustMappingEvents;
+
+#endif
+    }
+
+    [System.Serializable]
+    public class AdjustMappingEvent
+    {
+        public string EventName;
+        public string AndroidToken;
+        public string IosToken;
+
+#if UNITY_IOS||UNITY_IPHONE
+        public string EventToken => this.IosToken;
+#else 
+        public string EventToken => this.AndroidToken;
 #endif
     }
 }

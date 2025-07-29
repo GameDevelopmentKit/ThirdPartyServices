@@ -9,6 +9,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
+    using Core.AnalyticServices.Signal;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine.Scripting;
     using Zenject;
@@ -33,7 +34,10 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
             if (analyticsEventCustomizationConfig.CustomEventKeys.Count == 0)
             {
-                this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
+                foreach (var item in analyticConfig.AdjustMappingEvents)
+                {
+                    analyticsEventCustomizationConfig.CustomEventKeys.Add(item.EventName, item.EventToken);
+                }
             }
 
             this.eventTokens = this.analyticsEventCustomizationConfig.CustomEventKeys.Values.ToHashSet();
@@ -59,7 +63,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             { AdRevenueConstants.ARSourceHeliumChartboost, "helium_chartboost_sdk" },
             { AdRevenueConstants.ARSourcePublisher, "publisher_sdk" },
             { AdRevenueConstants.ARSourceImmersiveAds, "immersive_ads_sdk" },
-            // { AdRevenueConstants.ARSourceGadsmeAds, "gadsme_ads" },
+            { AdRevenueConstants.ARSourceGadsmeAds, "gadsme_ads" },
         };
 
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
@@ -159,7 +163,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
                     { "TrackerName", attributionData.TrackerName }
                 };
 
-                // this.signalBus.Fire(new AttributionChangedSignal(dataDictionary));
+                this.signalBus.Fire(new AttributionChangedSignal(dataDictionary));
             }
             else
             {
@@ -180,7 +184,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
             var adjustEvent = new AdjustEvent(this.analyticConfig.AdjustPurchaseToken);
             adjustEvent.TransactionId = iapTransaction.TransactionId;
-            adjustEvent.SetRevenue(iapTransaction.Price, iapTransaction.CurrencyCode);
+            adjustEvent.SetRevenue(iapTransaction.Revenue, iapTransaction.CurrencyCode);
             Adjust.TrackEvent(adjustEvent);
         }
 
