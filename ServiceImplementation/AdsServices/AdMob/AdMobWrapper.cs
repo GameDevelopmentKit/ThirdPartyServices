@@ -42,10 +42,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         #endregion
 
-        public  int  Order          => 0;
-        public  bool IsShowingAOAAd { get; set; }
-        private bool isRemoteConfigFetched;
-
+        public  int    Order          => 0;
+        public  bool   IsShowingAOAAd { get; set; }
+        private bool   isRemoteConfigFetched;
+        private Action onDoneAOA;
         [Preserve]
         public AdMobWrapper
         (
@@ -138,8 +138,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
         public bool IsAOAReady() { return this.aoaAdLoadedInstance.IsAoaAdAvailable && !this.IsShowingAOAAd; }
 
-        public void ShowAOAAds(string placement)
+        public void ShowAOAAds(string placement,Action onDone=null)
         {
+            this.onDoneAOA      = onDone;
             this.aoaAdPlacement = placement;
             this.aoaAdLoadedInstance.Show();
             this.LoadAppOpenAd();
@@ -243,6 +244,8 @@ namespace ServiceImplementation.AdsServices.EasyMobile
             var adRevenueEvent = new AdInfo(AdPlatForm, this.ADMobSettings.AOAAdId.Id, AdFormatConstants.AppOpen);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adRevenueEvent));
             this.IsShowingAOAAd = false;
+            this.onDoneAOA?.Invoke();
+            this.onDoneAOA = null;
         }
 
         private void AOAHandleAdFullScreenContentFailed(AdError args)

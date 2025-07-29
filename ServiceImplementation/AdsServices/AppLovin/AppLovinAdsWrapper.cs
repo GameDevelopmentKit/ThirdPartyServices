@@ -42,7 +42,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private List<string> MrectLoadedId = new();
         public  int          Order          => 1;
         public  bool         IsShowingAOAAd { get; set; }
-
+        private Action       onDoneAOA;
         #endregion
 
         [Preserve]
@@ -444,8 +444,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
             return MaxSdk.IsAppOpenAdReady(this.AppLovinSetting.DefaultAOAAdId.Id) && !this.IsShowingAOAAd;
         }
 
-        public void ShowAOAAds(string placement)
+        public void ShowAOAAds(string placement,Action onDone=null)
         {
+            this.onDoneAOA      = onDone;
             this.aoaAdPlacement = placement;
             MaxSdk.ShowAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.Id);
             this.InternalLoadAppOpenAd();
@@ -458,6 +459,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adInfo));
             this.InternalLoadAppOpenAd();
             this.IsShowingAOAAd = false;
+            this.onDoneAOA?.Invoke();
+            this.onDoneAOA = null;
         }
 
         #endregion
