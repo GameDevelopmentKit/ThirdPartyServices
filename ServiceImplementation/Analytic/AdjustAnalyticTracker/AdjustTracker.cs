@@ -122,6 +122,13 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             #if THEONE_MMP_DEBUG && !PRODUCTION
             adjustConfig.LogLevel = AdjustLogLevel.Verbose;
             #endif
+            
+            var adjustThirdPartySharing = new AdjustThirdPartySharing(null);
+            adjustThirdPartySharing.AddGranularOption("google_dma", "eea", "1");
+            adjustThirdPartySharing.AddGranularOption("google_dma", "ad_personalization", "1");
+            adjustThirdPartySharing.AddGranularOption("google_dma", "ad_user_data", "1");
+            Adjust.TrackThirdPartySharing(adjustThirdPartySharing);
+            
             Adjust.InitSdk(adjustConfig);
             this.TrackerReady.SetResult(true);
 
