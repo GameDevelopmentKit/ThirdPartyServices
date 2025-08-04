@@ -1,5 +1,7 @@
 ﻿namespace ServiceImplementation.FireBaseRemoteConfig
 {
+    using System.Collections.Generic;
+    using Newtonsoft.Json;
     using UnityEngine;
 
     public static class RemoteConfigHelpers
@@ -28,6 +30,11 @@
         {
             var config = remoteConfigSetting.GetRemoteConfig(key);
             return remoteConfig.GetRemoteConfigStringValue(config.mapping.DefaultValue, config.defaultValue.DefaultValue);
+        }
+        
+        public static T GetObjectRemoteValue<T>(IRemoteConfig remoteConfig, RemoteConfigSetting remoteConfigSetting, string key)
+        {
+            return JsonConvert.DeserializeObject<T>(GetStringRemoteValue(remoteConfig, remoteConfigSetting, key));
         }
 
         #endregion

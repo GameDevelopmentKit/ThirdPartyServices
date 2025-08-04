@@ -1,6 +1,7 @@
 namespace ServiceImplementation.Configs.Ads
 {
     using System;
+    using System.Collections.Generic;
     using GameFoundation.DI;
     using GameFoundation.Signals;
     using ServiceImplementation.FireBaseRemoteConfig;
@@ -101,6 +102,21 @@ namespace ServiceImplementation.Configs.Ads
         /// </summary>
         public bool IsIntersInsteadAoaResume { get; private set; }
 
+        /// <summary>
+        ///     A configuration to adjust the distance between the interstitial ads display by level.
+        /// </summary>
+        public Dictionary<int, int> LevelConditionInterstitialTimeGap { get; private set; }
+
+        /// <summary>
+        ///     Adjust the delay (waiting time) from opening the app to the first display of interstitial.
+        /// </summary>
+        public Dictionary<int, int> LevelConditionInterstitialAppOpenDelay { get; private set; }
+
+        /// <summary>
+        ///     Adjust the time between the Rewarded ADS (RW) display and the next interstitial.
+        /// </summary>
+        public Dictionary<int, int> LevelConditionInterRwTimeGap { get; private set; }
+        
         #endregion
 
         #region Rewarded
@@ -219,13 +235,16 @@ namespace ServiceImplementation.Configs.Ads
 
             #region Interstitial
 
-            this.InterstitialAdInterval            = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.InterstitialADInterval);
-            this.InterstitialAdStartLevel          = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.InterstitialADStartLevel);
-            this.InterstitialAdActivePlacements    = RemoteConfigHelpers.GetStringRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.InterstitialAdActivePlacements).Split(',');
-            this.DelayFirstInterstitialAdInterval  = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersADInterval);
-            this.DelayFirstInterNewSession         = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersNewSession);
-            this.ResetInterAdIntervalAfterRewardAd = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd);
-            this.IsIntersInsteadAoaResume          = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.IsIntersInsteadAoaResume);
+            this.InterstitialAdInterval                 = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.InterstitialADInterval);
+            this.InterstitialAdStartLevel               = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.InterstitialADStartLevel);
+            this.InterstitialAdActivePlacements         = RemoteConfigHelpers.GetStringRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.InterstitialAdActivePlacements).Split(',');
+            this.DelayFirstInterstitialAdInterval       = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersADInterval);
+            this.DelayFirstInterNewSession              = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.DelayFirstIntersNewSession);
+            this.ResetInterAdIntervalAfterRewardAd      = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.ResetInterAdIntervalAfterRewardAd);
+            this.IsIntersInsteadAoaResume               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.IsIntersInsteadAoaResume);
+            this.LevelConditionInterstitialTimeGap      = RemoteConfigHelpers.GetObjectRemoteValue<Dictionary<int, int>>(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.LevelConditionInterstitialTimeGap) ?? new Dictionary<int, int>();
+            this.LevelConditionInterstitialAppOpenDelay = RemoteConfigHelpers.GetObjectRemoteValue<Dictionary<int, int>>(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.LevelConditionInterstitialAppOpenDelay) ?? new Dictionary<int, int>();
+            this.LevelConditionInterRwTimeGap           = RemoteConfigHelpers.GetObjectRemoteValue<Dictionary<int, int>>(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.LevelConditionInterRwTimeGap) ?? new Dictionary<int, int>();
 
             #endregion
 

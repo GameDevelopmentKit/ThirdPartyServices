@@ -95,6 +95,9 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.TryAddAdsConfig(RemoteConfigKey.DelayFirstIntersNewSession, "0");
             this.TryAddAdsConfig(RemoteConfigKey.ResetInterAdIntervalAfterRewardAd, "true");
             this.TryAddAdsConfig(RemoteConfigKey.IsIntersInsteadAoaResume, "false");
+            this.TryAddAdsConfig(RemoteConfigKey.LevelConditionInterstitialTimeGap, "{}");
+            this.TryAddAdsConfig(RemoteConfigKey.LevelConditionInterstitialAppOpenDelay, "{}");
+            this.TryAddAdsConfig(RemoteConfigKey.LevelConditionInterRwTimeGap, "{}");
 
             #endregion
 
