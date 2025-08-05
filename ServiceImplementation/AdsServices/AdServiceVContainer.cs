@@ -10,7 +10,9 @@ namespace ServiceImplementation.AdsServices
     using GameFoundation.Signals;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
+    #if IRONSOURCE && !UNITY_EDITOR
     using ServiceImplementation.AdsServices.EasyMobile;
+    #endif
     using ServiceImplementation.AdsServices.NativeOverlay;
     #if CRAZYGAMES
     using ServiceImplementation.AdsServices.CrazyGames;
