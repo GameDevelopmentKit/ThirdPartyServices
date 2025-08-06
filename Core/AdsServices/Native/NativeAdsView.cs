@@ -92,7 +92,6 @@ namespace Core.AdsServices.Native
                 }
 
                 Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 6f);
-                this.logService.Log($"Native Ads check click {ray.origin}, {ray.direction}, {clickPosition},{this.transform.position}, {((RectTransform)this.transform).anchoredPosition}");
             }
         }
 
@@ -157,12 +156,10 @@ namespace Core.AdsServices.Native
         private void SetColliderStatus(bool isShow)
         {
             this.colliders = this.GetComponentsInChildren<Collider>(true);
-            this.logService.Log($"Collider count: {this.colliders.Length} for {this.name} isShow: {isShow}");
 
             foreach (var col in this.colliders)
             {
                 col.enabled = isShow;
-                this.logService.Log($"[NativeAdsView] SetColliderStatus: {col.name} enabled: {col.bounds.size}");
             }
         }
 
@@ -176,7 +173,7 @@ namespace Core.AdsServices.Native
         {
 #if UNITY_EDITOR
             this.SetColliderStatus(true);
-
+            this.GetCurrentContainer().Resolve<INativeAdsService>().RemoveNativeAd(nativeAd);
             return;
 #endif
 #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS

@@ -74,8 +74,6 @@ namespace ServiceImplementation.AdsServices.PreloadService
             {
                 if (!adLoadService.HasDefaultInterAdsId())
                 {
-                    this.logger.Log($"{adLoadService.GetType().Name} does not have default interstitial ad ids configured.");
-
                     return;
                 }
 
@@ -116,8 +114,6 @@ namespace ServiceImplementation.AdsServices.PreloadService
             {
                 if (!adLoadService.HasRewardAdsId())
                 {
-                    this.logger.Log($"{adLoadService.GetType().Name} does not have default rewarded ad ids configured.");
-
                     return;
                 }
 
