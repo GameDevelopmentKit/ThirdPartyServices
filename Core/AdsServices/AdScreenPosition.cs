@@ -39,5 +39,17 @@
         {
             return new AdScreenPosition(pos1.x - pos2.x, pos1.y - pos2.y);
         }
+        
+        public override bool Equals(object obj)
+        {
+            if (!(obj is AdScreenPosition)) return false;
+            var other = (AdScreenPosition)obj;
+            return this == other;
+        }
+
+        public override int GetHashCode()
+        {
+            return x.GetHashCode() ^ y.GetHashCode();
+        }
     }
 }
