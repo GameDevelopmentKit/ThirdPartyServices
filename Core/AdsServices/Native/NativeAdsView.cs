@@ -17,13 +17,13 @@ namespace Core.AdsServices.Native
         [SerializeField] private GameObject nonAdsHolder;
         [SerializeField] private GameObject adsHolder;
 
-        public RawImage   iconImage;
-        public RawImage   adChoicesImage;
-        public GameObject callToActionObj;
-        public Text       headlineText;
-        public Text       advertiserText;
-        public Text       callToActionText;
-
+        public  GameObject        iconTarget;
+        public  RawImage          iconImage;
+        public  RawImage          adChoicesImage;
+        public  GameObject        callToActionObj;
+        public  Text              headlineText;
+        public  Text              advertiserText;
+        public  Text              callToActionText;
         private INativeAdsService nativeAdsService;
         private Collider[]        colliders;
         private bool              isEnable;
@@ -212,7 +212,7 @@ namespace Core.AdsServices.Native
 
             if (!registedObj.Contains(this.iconImage.gameObject))
             {
-                nativeAdInstance.RegisterIconImageGameObject(this.iconImage.gameObject);
+                nativeAdInstance.RegisterIconImageGameObject(this.iconTarget?this.iconTarget:this.iconImage.gameObject);
             }
 
             if (!registedObj.Contains(this.callToActionObj))
