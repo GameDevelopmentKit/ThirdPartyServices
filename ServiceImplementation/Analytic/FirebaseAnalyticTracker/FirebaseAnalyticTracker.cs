@@ -71,9 +71,15 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
 
         protected override async void OnEvent(string name, Dictionary<string, object> data)
         {
+            if (name.Length > 40)
+            {
+                this.logger.LogWithColor($"Event Name too long {name} " ,Color.red);
+                name = name.Substring(0, 40);
+            }
+
             if (!name.IsNameValid().Equals("Valid"))
             {
-                this.logger.Error($"Firebase: Event name error: {name} {name.IsNameValid()}");
+                this.logger.LogWithColor($"Firebase: Event name error: {name} {name.IsNameValid()}",Color.red);
 
                 return;
             }
@@ -144,14 +150,14 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
             {
                 if (!entry.Key.IsNameValid().Equals("Valid"))
                 {
-                    this.logger.Error($"Parameter name error: {entry} {entry.Key.IsNameValid()}");
+                    this.logger.LogWithColor($"Parameter name error: {entry} {entry.Key.IsNameValid()}",Color.red);
 
                     return false;
                 }
 
                 if (!entry.Value.IsParameterValueValid().Equals("Valid"))
                 {
-                    this.logger.Error($"Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}");
+                    this.logger.LogWithColor($"Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}",Color.red);
 
                     return false;
                 }
