@@ -18,7 +18,8 @@ namespace Core.AnalyticServices
 
         [BoxGroup("Appsflyer")] [SerializeField]
         private bool isStrickMode;
-
+        [BoxGroup("Appsflyer")] [SerializeField]
+        private  string PackageName = "com.appsflyer.unity";
         [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")] [SerializeField]
         private bool isAppsflyerEnabled;
 
@@ -82,7 +83,7 @@ namespace Core.AnalyticServices
                 this.AppsflyerPackageGitURL = "https://github.com/AppsFlyerSDK/appsflyer-unity-plugin.git#Strict-upm";
             }
 
-            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "appsflyer-unity-plugin", AppsflyerPackageGitURL);
+            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, this.PackageName, AppsflyerPackageGitURL);
             EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
 #endif
         }
