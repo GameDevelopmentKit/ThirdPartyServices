@@ -19,7 +19,7 @@ namespace Core.AnalyticServices
         [BoxGroup("Appsflyer")] [SerializeField]
         private bool isStrickMode;
         [BoxGroup("Appsflyer")] [SerializeField]
-        private  string PackageName = "com.appsflyer.unity";
+        private  string PackageName = "appsflyer-unity-plugin";
         [BoxGroup("Appsflyer")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeAppsflyerEnabled")] [SerializeField]
         private bool isAppsflyerEnabled;
 
@@ -99,7 +99,7 @@ namespace Core.AnalyticServices
                 return;
             }
 #endif
-            this.OnChangeAppsflyerEnabled();
+            // this.OnChangeAppsflyerEnabled();
         }
 #if APPSFLYER
 

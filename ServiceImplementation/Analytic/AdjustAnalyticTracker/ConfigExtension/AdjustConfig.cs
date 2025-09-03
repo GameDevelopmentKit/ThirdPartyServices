@@ -38,7 +38,7 @@ namespace Core.AnalyticServices
                 return;
             }
 #endif
-            this.OnChangeAdjustEnabled();
+            // this.OnChangeAdjustEnabled();
         }
 #if ADJUST
 #if UNITY_ANDROID
