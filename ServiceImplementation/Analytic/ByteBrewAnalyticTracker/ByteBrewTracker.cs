@@ -8,10 +8,10 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
     using ByteBrewSDK;
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
-    using GameFoundation.Scripts.Utilities.Extension;
+    using caojweldjflwendl.Scripts.Utilities.Extension;
     using Newtonsoft.Json;
     using UnityEngine;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.Signals;
     using UnityEngine.Scripting;
 
     public class ByteBrewTracker : BaseTracker

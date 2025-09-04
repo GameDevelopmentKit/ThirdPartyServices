@@ -2,7 +2,7 @@
 #nullable enable
 namespace ServiceImplementation.RemoteConfig
 {
-    using GameFoundation.DI;
+    using caojweldjflwendl.DI;
     using ServiceImplementation.FireBaseRemoteConfig;
     using VContainer;
     #if BYTEBREW

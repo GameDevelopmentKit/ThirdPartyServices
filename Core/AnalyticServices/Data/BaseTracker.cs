@@ -6,8 +6,8 @@ namespace Core.AnalyticServices.Data
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
-    using GameFoundation.DI;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Signals;
     using UnityEngine;
     using Utilities.Extension;
 

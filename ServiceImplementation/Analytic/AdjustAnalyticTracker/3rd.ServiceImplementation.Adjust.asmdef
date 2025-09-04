@@ -3,8 +3,8 @@
   "rootNamespace": "",
   "references": [
     "3rdCore.Analytic",
-    "GameFoundation.Signals",
-    "GameFoundation.Utilities",
+    "caojweldjflwendl.Signals",
+    "caojweldjflwendl.Utilities",
     "AdjustSdk.Scripts",
     "AdjustSdk.Editor"
   ],

@@ -4,8 +4,8 @@ namespace Core.AnalyticServices
     using Core.AnalyticServices.Data;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
-    using GameFoundation.Scripts.Utilities.Extension;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.Scripts.Utilities.Extension;
+    using caojweldjflwendl.Signals;
     using Models;
     using UnityEngine;
     using Zenject;

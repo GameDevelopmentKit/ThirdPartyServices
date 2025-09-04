@@ -2,12 +2,12 @@ namespace Core.AdsServices.ImmersiveAds
 {
     using System;
     using System.Threading.Tasks;
-    using GameFoundation.DI;
-    using GameFoundation.Signals;
-    using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
-    using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
-    using GameFoundation.Scripts.UIModule.ScreenFlow.Signals;
-    using GameFoundation.Scripts.Utilities.Extension;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Signals;
+    using caojweldjflwendl.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
+    using caojweldjflwendl.Scripts.UIModule.ScreenFlow.Managers;
+    using caojweldjflwendl.Scripts.UIModule.ScreenFlow.Signals;
+    using caojweldjflwendl.Scripts.Utilities.Extension;
     #if ADMOB_NATIVE_ADS
     using GoogleMobileAds.Api;
     #endif

@@ -2,11 +2,11 @@
   "name": "3rdCore.Analytic",
   "rootNamespace": "",
   "references": [
-    "GameFoundation.DI",
-    "GameFoundation.Signals",
+    "caojweldjflwendl.DI",
+    "caojweldjflwendl.Signals",
     "VContainer",
-    "GameFoundation.Utilities",
-    "GameFoundation.Models",
+    "caojweldjflwendl.Utilities",
+    "caojweldjflwendl.Models",
     "ByteBrewSDK",
     "3rd.Configs.Editor",
     "ByteBrewSDK.Editor"

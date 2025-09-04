@@ -6,7 +6,7 @@
     using System.Threading.Tasks;
     using Core.AnalyticServices;
     using Core.AnalyticServices.Data;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.Signals;
     using Newtonsoft.Json;
     using UnityEngine;
     using UnityEngine.Scripting;

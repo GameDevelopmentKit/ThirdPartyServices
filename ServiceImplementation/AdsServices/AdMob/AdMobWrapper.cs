@@ -11,10 +11,10 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using Cysharp.Threading.Tasks;
-    using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.Extension;
-    using GameFoundation.Scripts.Utilities.LogService;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Scripts.Utilities.Extension;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
+    using caojweldjflwendl.Signals;
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;

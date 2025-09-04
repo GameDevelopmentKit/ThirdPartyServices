@@ -1,8 +1,8 @@
 namespace ServiceImplementation.Configs.Ads
 {
     using System;
-    using GameFoundation.DI;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Signals;
     using ServiceImplementation.FireBaseRemoteConfig;
     using UnityEngine.Scripting;
 

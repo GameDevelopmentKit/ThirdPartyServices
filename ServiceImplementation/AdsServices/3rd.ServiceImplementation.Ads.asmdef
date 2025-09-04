@@ -5,11 +5,11 @@
     "3rdCore.Ads",
     "EasyMobile.Scripts",
     "3rdCore.Analytic",
-    "GameFoundation.DI",
-    "GameFoundation.Utilities",
+    "caojweldjflwendl.DI",
+    "caojweldjflwendl.Utilities",
     "Zenject",
     "VContainer",
-    "GameFoundation.Signals",
+    "caojweldjflwendl.Signals",
     "MaxSdk.Scripts",
     "UniTask",
     "IronSource.Scripts",
@@ -21,7 +21,7 @@
     "Unity.Advertisement.IosSupport",
     "Unity.LevelPlay",
     "YandexMobileAds.Scripts",
-    "GameFoundation.UIModule"
+    "caojweldjflwendl.UIModule"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

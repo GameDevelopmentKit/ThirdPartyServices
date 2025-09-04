@@ -5,8 +5,8 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
-    using GameFoundation.DI;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Signals;
     using UnityEngine.Scripting;
 
     public class ApplovinAdRevenueTracker : IAdRevenueTracker, IInitializable

@@ -3,14 +3,14 @@
   "rootNamespace": "",
   "references": [
     "3rdCore.Analytic",
-    "GameFoundation.Utilities",
+    "caojweldjflwendl.Utilities",
     "Zenject",
     "Unity.TextMeshPro",
     "UniTask",
-    "GameFoundation.Signals",
-    "GameFoundation.UIModule",
+    "caojweldjflwendl.Signals",
+    "caojweldjflwendl.UIModule",
     "FirebaseRemoteConfig",
-    "GameFoundation.DI"
+    "caojweldjflwendl.DI"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

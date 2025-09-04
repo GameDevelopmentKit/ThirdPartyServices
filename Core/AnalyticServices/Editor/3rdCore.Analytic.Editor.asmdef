@@ -2,8 +2,8 @@
   "name": "3rdCore.Analytic.Editor",
   "rootNamespace": "",
   "references": [
-    "GameFoundation.Editor",
-    "GameFoundation.Models",
+    "caojweldjflwendl.Editor",
+    "caojweldjflwendl.Models",
     "3rdCore.Analytic"
   ],
   "includePlatforms": [

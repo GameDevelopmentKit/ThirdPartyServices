@@ -5,9 +5,9 @@
     "UniTask",
     "ByteBrewSDK",
     "3rd.RemoteConfig",
-    "GameFoundation.Signals",
-    "GameFoundation.Utilities",
-    "GameFoundation.DI"
+    "caojweldjflwendl.Signals",
+    "caojweldjflwendl.Utilities",
+    "caojweldjflwendl.DI"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

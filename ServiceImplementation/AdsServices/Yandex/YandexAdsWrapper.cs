@@ -7,8 +7,8 @@ namespace ServiceImplementation.AdsServices.Yandex
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
-    using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.LogService;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
@@ -16,7 +16,7 @@ namespace ServiceImplementation.AdsServices.Yandex
     using UnityEngine;
     using YandexMobileAds;
     using YandexMobileAds.Base;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.Signals;
     using AdInfo = Core.AdsServices.AdInfo;
     using UnityEngine.Scripting;
 

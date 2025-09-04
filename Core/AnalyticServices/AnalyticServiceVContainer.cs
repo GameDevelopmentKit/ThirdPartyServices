@@ -5,7 +5,7 @@ namespace Core.AnalyticServices
     using Core.AnalyticServices.Data;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.Signals;
     using Models;
     using VContainer;
     using VContainer.Unity;

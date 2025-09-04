@@ -1,7 +1,7 @@
 namespace Core.AdsServices
 {
     using System;
-    using GameFoundation.Scripts.Utilities.LogService;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
     using UnityEngine;
     using UnityEngine.Scripting;
 

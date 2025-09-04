@@ -7,13 +7,13 @@ namespace ServiceImplementation.AdsServices.PubScale
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
-    using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
-    using GameFoundation.Scripts.Utilities.LogService;
+    using caojweldjflwendl.Scripts.UIModule.ScreenFlow.Managers;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
     using global::PubScale.SdkOne.NativeAds;
     using GoogleMobileAds.Api;
     using ServiceImplementation.Configs;
     using UnityEngine;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.Signals;
     using UnityEngine.Scripting;
 
     public class PubScaleWrapper : IImmersiveAdsService

@@ -8,9 +8,9 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
-    using GameFoundation.Scripts.Utilities.LogService;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
     using UnityEngine;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.Signals;
     using UnityEngine.Scripting;
 
     public class AdjustTracker : BaseTracker

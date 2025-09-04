@@ -4,9 +4,9 @@
     "ByteBrew",
     "3rd.RemoteConfig.ByteBrew",
     "3rd.RemoteConfig.FireBase",
-    "GameFoundation.Signals",
-    "GameFoundation.Utilities",
-    "GameFoundation.DI",
+    "caojweldjflwendl.Signals",
+    "caojweldjflwendl.Utilities",
+    "caojweldjflwendl.DI",
     "3rd.RemoteConfig",
     "VContainer"
   ],

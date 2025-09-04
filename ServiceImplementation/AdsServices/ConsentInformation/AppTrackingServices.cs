@@ -1,8 +1,8 @@
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
     using Cysharp.Threading.Tasks;
-    using GameFoundation.DI;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Signals;
     using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs;
     using UnityEngine.Scripting;

@@ -4,8 +4,8 @@ namespace ServiceImplementation.AdsServices
     using Core.AdsServices;
     using Core.AdsServices.CollapsibleBanner;
     using Core.AdsServices.Signals;
-    using GameFoundation.Scripts.Utilities.Extension;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.Scripts.Utilities.Extension;
+    using caojweldjflwendl.Signals;
     using ServiceImplementation.AdsServices.AdRevenueTracker;
     using ServiceImplementation.AdsServices.ConsentInformation;
     using ServiceImplementation.AdsServices.EasyMobile;

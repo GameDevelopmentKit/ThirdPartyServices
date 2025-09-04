@@ -8,8 +8,8 @@ namespace ServiceImplementation.AdsServices.PreloadService
     using Core.AnalyticServices;
     using Core.AnalyticServices.Tools;
     using Cysharp.Threading.Tasks;
-    using GameFoundation.DI;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Signals;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine.Scripting;
     using Debug = UnityEngine.Debug;

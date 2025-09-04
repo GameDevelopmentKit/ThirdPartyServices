@@ -3,8 +3,8 @@
   "rootNamespace": "",
   "references": [
     "3rdCore.Ads",
-    "GameFoundation.DI",
-    "GameFoundation.Signals",
+    "caojweldjflwendl.DI",
+    "caojweldjflwendl.Signals",
     "3rd.RemoteConfig",
     "3rd.Configs.Editor",
     "MaxSdk.Scripts.IntegrationManager.Editor",

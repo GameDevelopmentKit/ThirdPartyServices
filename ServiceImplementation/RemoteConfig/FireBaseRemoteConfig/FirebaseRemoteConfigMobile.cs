@@ -7,9 +7,9 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using Firebase;
     using Firebase.Extensions;
     using Firebase.RemoteConfig;
-    using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.LogService;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
+    using caojweldjflwendl.Signals;
     using UnityEngine.Scripting;
 
     /// <summary>

@@ -6,8 +6,8 @@ namespace ServiceImplementation.IAPServices
     using System.Globalization;
     using System.Linq;
     using Core.AdsServices;
-    using GameFoundation.Scripts.Utilities.LogService;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
+    using caojweldjflwendl.Signals;
     using ServiceImplementation.IAPServices.Signals;
     using Unity.Services.Core;
     using Unity.Services.Core.Environments;

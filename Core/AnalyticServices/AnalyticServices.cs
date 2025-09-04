@@ -7,7 +7,7 @@ namespace Core.AnalyticServices
     using Core.AnalyticServices.Data;
     using Core.AnalyticServices.Signal;
     using Core.AnalyticServices.Tools;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.Signals;
     using UnityEngine;
     using UnityEngine.Scripting;
     using Utilities.Extension;

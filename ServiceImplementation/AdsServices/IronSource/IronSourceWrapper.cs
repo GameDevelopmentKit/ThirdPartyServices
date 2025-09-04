@@ -9,9 +9,9 @@ namespace ServiceImplementation.AdsServices.EasyMobile
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
     using Cysharp.Threading.Tasks;
-    using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.LogService;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
+    using caojweldjflwendl.Signals;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
     using UnityEngine;
@@ -278,7 +278,7 @@ namespace ServiceImplementation.AdsServices.EasyMobile
 
 
         #region MREC
-        
+
         public void ShowMREC(string                     placement, AdScreenPosition position, AdScreenPosition offset) {}
         public bool IsMRECReady(string                  placement, AdScreenPosition position) { return false;}
         public void HideMREC(string                     placement, AdScreenPosition position) { }

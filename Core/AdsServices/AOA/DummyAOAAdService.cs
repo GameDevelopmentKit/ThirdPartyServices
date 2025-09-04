@@ -1,6 +1,6 @@
 namespace Core.AdsServices
 {
-    using GameFoundation.Scripts.Utilities.LogService;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
     using UnityEngine.Scripting;
 
     public class DummyAOAAdServiceIml : IAOAAdService

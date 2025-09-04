@@ -3,9 +3,9 @@
   "rootNamespace": "",
   "references": [
     "3rdCore.Analytic",
-    "GameFoundation.Signals",
+    "caojweldjflwendl.Signals",
     "ByteBrewSDK",
-    "GameFoundation.Utilities",
+    "caojweldjflwendl.Utilities",
     "UniTask"
   ],
   "includePlatforms": [],

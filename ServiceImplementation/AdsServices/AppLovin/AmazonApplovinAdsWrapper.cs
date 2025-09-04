@@ -3,10 +3,10 @@ namespace ServiceImplementation.AdsServices.AppLovin
 {
     using AmazonAds;
     using Core.AdsServices;
-    using GameFoundation.Scripts.Utilities.LogService;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
     using ServiceImplementation.Configs;
     using ServiceImplementation.Configs.Ads;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.Signals;
     using UnityEngine.Scripting;
 
     public class AmazonApplovinAdsWrapper : AppLovinAdsWrapper

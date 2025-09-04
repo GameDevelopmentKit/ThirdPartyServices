@@ -1,8 +1,8 @@
 #if ADMOB
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
-    using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.LogService;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
     using GoogleMobileAds.Ump.Api;
     using UnityEngine.Scripting;
 

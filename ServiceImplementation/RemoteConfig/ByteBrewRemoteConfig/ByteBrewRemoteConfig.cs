@@ -4,9 +4,9 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
     using System.Globalization;
     using ByteBrewSDK;
     using Cysharp.Threading.Tasks;
-    using GameFoundation.DI;
-    using GameFoundation.Scripts.Utilities.LogService;
-    using GameFoundation.Signals;
+    using caojweldjflwendl.DI;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
+    using caojweldjflwendl.Signals;
     using ServiceImplementation.FireBaseRemoteConfig;
     using ServiceImplementation.RemoteConfig;
     using UnityEngine.Scripting;

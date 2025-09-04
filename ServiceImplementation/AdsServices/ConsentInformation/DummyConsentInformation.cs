@@ -1,6 +1,6 @@
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
-    using GameFoundation.Scripts.Utilities.LogService;
+    using caojweldjflwendl.Scripts.Utilities.LogService;
     using UnityEngine.Scripting;
 
     public class DummyConsentInformation : IConsentInformation
