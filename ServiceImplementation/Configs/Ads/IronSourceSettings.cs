@@ -34,7 +34,7 @@
         #if UNITY_EDITOR
         private void OnEnableAdQuality()
         {
-            EditorUtils.ModifyPackage(this.enableAdQuality, "com.theone.ironsource-adquality", "git@github.com:The1Studio/UnityAdQualitySDK.git");
+            EditorUtils.ModifyPackage(this.enableAdQuality, "com.laskfdkwbafoiaironsource-adquality", "git@github.com:The1Studio/UnityAdQualitySDK.git");
         }
         #endif
 

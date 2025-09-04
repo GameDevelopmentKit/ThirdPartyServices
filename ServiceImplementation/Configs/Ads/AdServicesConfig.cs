@@ -149,7 +149,7 @@ namespace ServiceImplementation.Configs.Ads
             this.EnableRewardedAd             = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableRewardedAD) && this.EnableAds;
             this.EnableRewardedInterstitialAd = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableRewardedInterstitialAD) && this.EnableAds;
             this.EnableNativeAd               = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableNativeAD) && this.EnableAds;
-            #if THEONE_COLLAPSIBLE_BANNER
+            #if BANA_COLLAPSIBLE_BANNER
             this.EnableCollapsibleBanner = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableCollapsibleBanner) && this.EnableAds;
             #endif
             this.IntervalLoadAds = RemoteConfigHelpers.GetIntRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.IntervalLoadAds);

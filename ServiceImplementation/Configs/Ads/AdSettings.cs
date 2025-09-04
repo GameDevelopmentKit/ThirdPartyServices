@@ -111,7 +111,7 @@
         private const string AppLovinSymbol          = "APPLOVIN";
         private const string IronSourceSymbol        = "IRONSOURCE";
         private const string YandexSymbol            = "YANDEX";
-        private const string CollapsibleBannerSymbol = "THEONE_COLLAPSIBLE_BANNER";
+        private const string CollapsibleBannerSymbol = "BANA_COLLAPSIBLE_BANNER";
         private const string ImmersiveAdsSymbol      = "IMMERSIVE_ADS";
 
         private void OnChangeAdMob()

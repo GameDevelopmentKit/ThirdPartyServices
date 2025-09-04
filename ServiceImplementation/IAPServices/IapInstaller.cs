@@ -11,7 +11,7 @@ namespace ServiceImplementation.IAPServices
     {
         public override void InstallBindings()
         {
-            #if THEONE_IAP
+            #if BANA_IAP
             this.Container.Bind<IIapServices>()
                 .To<UnityIapServices>()
                 .AsCached()

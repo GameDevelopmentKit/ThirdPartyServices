@@ -17,10 +17,6 @@ namespace Core.AnalyticServices
 
         private void OnChangeAppsflyerEnabled()
         {
-            #if UNITY_EDITOR
-            EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
-            EditorUtils.ModifyPackage(this.isAppsflyerEnabled, "com.theone.appsflyer-unity-plugin", "https://github.com/The1Studio/appsflyer.git?path=Assets/AppsFlyer#appsflyer_sdk-purchase_sdk");
-            #endif
         }
 
         [OnInspectorInit]
@@ -37,7 +33,7 @@ namespace Core.AnalyticServices
         }
         #if APPSFLYER
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string AppsflyerDevKey
         {
@@ -55,7 +51,7 @@ namespace Core.AnalyticServices
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string AppsflyerAppId
 #if UNITY_IOS

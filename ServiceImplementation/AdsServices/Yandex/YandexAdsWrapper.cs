@@ -76,7 +76,7 @@ namespace ServiceImplementation.AdsServices.Yandex
             this.InitRewardedAd();
             this.InitAoaAd();
 
-#if THEONE_ADS_DEBUG
+#if BANA_ADS_DEBUG
             MobileAds.ShowDebugPanel();
 #endif
 
