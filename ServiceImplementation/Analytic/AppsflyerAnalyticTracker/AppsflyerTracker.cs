@@ -14,9 +14,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using GameFoundation.Signals;
     using TheOne.Logging;
     using UnityEngine.Scripting;
-    #if THEONE_IAP
-    using AppsFlyerConnector;
-    #endif
 
     public class AppsflyerTracker : BaseTracker
     {
