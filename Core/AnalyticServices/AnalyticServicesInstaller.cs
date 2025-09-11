@@ -19,6 +19,7 @@ namespace Core.AnalyticServices
             this.Container.BindInterfacesAndSelfToAllTypeDriveFrom<BaseTracker>();
             this.Container.Bind<AnalyticsEventCustomizationConfig>().AsCached();
             this.Container.DeclareSignal<EventTrackedSignal>();
+            this.Container.DeclareSignal<DeeplinkActiveSignal>();
             this.Container.DeclareSignal<SetUserIdSignal>();
             this.Container.DeclareSignal<AdRevenueSignal>();
             this.Container.DeclareSignal<AttributionChangedSignal>();

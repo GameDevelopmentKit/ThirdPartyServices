@@ -11,6 +11,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
+    using Core.AnalyticServices.Signal;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
@@ -22,6 +23,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     public class AppsflyerTracker : BaseTracker
     {
         private readonly   ILogService                       logger;
+        private readonly   ISignalBus                        signalBus;
         private readonly   AnalyticsEventCustomizationConfig customizationConfig;
         protected override TaskCompletionSource<bool>        TrackerReady { get; } = new();
 
@@ -34,31 +36,43 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         public AppsflyerTracker(ILogService logger, ISignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
             this.logger              = logger;
+            this.signalBus           = signalBus;
             this.customizationConfig = customizationConfig;
 
             if (customizationConfig.CustomEventKeys.Count == 0)
             {
                 this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
             }
+
+            AppsFlyer.OnDeepLinkReceived += this.OnDeepLink;
+            this.logger.LogWithColor($"Deeplink subscribed AF", Color.red);
+            this.TrackerSetup();
         }
 
         protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
         protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
 
+        protected override void Init()
+        {
+        }
+
         protected override Task TrackerSetup()
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
             Debug.Log($"setting up appsflyer tracker");
+            var appsFlyerMono = AppsflyerMono.Create();
 
             var apiId  = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
 
+#if UNITY_IOS
             if (string.IsNullOrEmpty(apiId))
             {
                 throw new Exception("Appsflyer can't be initialized, Appsflyer AppId not found");
             }
+#endif
 
             if (string.IsNullOrEmpty(devKey))
             {
@@ -73,7 +87,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 return this.TrackerReady.Task;
             }
 #endif
-            AppsFlyer.initSDK(devKey, apiId);
+            AppsFlyer.initSDK(devKey, apiId, appsFlyerMono);
 #if UNITY_IOS && !UNITY_EDITOR
             AppsFlyer.waitForATTUserAuthorizationWithTimeoutInterval(60);
 #endif
@@ -83,7 +97,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             //IAP Revenue connector
 #if IAP
-            AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
+            AppsFlyerPurchaseConnector.init(appsFlyerMono, Store.GOOGLE);
 #if MMP_DEBUG && !PRODUCTION
             AppsFlyerPurchaseConnector.setIsSandbox(true);
 #endif
@@ -96,10 +110,21 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             //Start SDK
             AppsFlyer.startSDK();
-
             this.TrackerReady.SetResult(true);
+            this.logger.Log("Appsflyer Tracker setup completed");
 
             return this.TrackerReady.Task;
+        }
+
+        private void OnDeepLink(object sender, EventArgs e)
+        {
+            this.logger.Log($"Deeplink Active AF");
+
+            this.signalBus.Fire(new DeeplinkActiveSignal()
+            {
+                Sender = sender,
+                Args   = e
+            });
         }
 
         protected override void SetUserId(string userId) { AppsFlyer.setCustomerUserId(userId); }
@@ -124,7 +149,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 #if AF_DISABLE_TRACK_IAP
             return;
 #endif
-            
+
             if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
             {
                 Debug.LogError("trackedEvent in TrackIAP is not of correct type");

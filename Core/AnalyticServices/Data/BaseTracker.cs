@@ -77,7 +77,7 @@ namespace Core.AnalyticServices.Data
         }
 
         public        void Initialize() { this.Init(); }
-        private async void Init()       { await this.TrackerSetup(); }
+        protected virtual async void Init()       { await this.TrackerSetup(); }
 
         private async void EventTracked(EventTrackedSignal trackedData)
         {

@@ -128,7 +128,7 @@ namespace Core.AnalyticServices
 #if UNITY_IOS
             => this.appsflyerAppIdIos;
 #elif UNITY_ANDROID
-            => Application.identifier;
+            => null;
 #elif UNITY_WSA_10_0 && !UNITY_EDITOR
             => this.appsflyerAppIdUWP;
 #else
