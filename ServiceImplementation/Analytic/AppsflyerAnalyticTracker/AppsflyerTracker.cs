@@ -33,6 +33,8 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
         };
 
+        private AppsflyerMono appsFlyerMono;
+
         public AppsflyerTracker(ILogService logger, ISignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
             this.logger              = logger;
@@ -44,25 +46,18 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
             }
 
-            AppsFlyer.OnDeepLinkReceived += this.OnDeepLink;
-            this.logger.LogWithColor($"Deeplink subscribed AF", Color.red);
-            this.TrackerSetup();
+            this.appsFlyerMono = AppsflyerMono.Create();
         }
 
         protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
         protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
         protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
 
-        protected override void Init()
-        {
-        }
-
         protected override Task TrackerSetup()
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
             Debug.Log($"setting up appsflyer tracker");
-            var appsFlyerMono = AppsflyerMono.Create();
 
             var apiId  = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
@@ -87,7 +82,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 return this.TrackerReady.Task;
             }
 #endif
-            AppsFlyer.initSDK(devKey, apiId, appsFlyerMono);
+            AppsFlyer.initSDK(devKey, apiId, this.appsFlyerMono);
 #if UNITY_IOS && !UNITY_EDITOR
             AppsFlyer.waitForATTUserAuthorizationWithTimeoutInterval(60);
 #endif
@@ -97,7 +92,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             //IAP Revenue connector
 #if IAP
-            AppsFlyerPurchaseConnector.init(appsFlyerMono, Store.GOOGLE);
+            AppsFlyerPurchaseConnector.init(this.appsFlyerMono, Store.GOOGLE);
 #if MMP_DEBUG && !PRODUCTION
             AppsFlyerPurchaseConnector.setIsSandbox(true);
 #endif
@@ -107,7 +102,8 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();
 #endif
-
+            AppsFlyer.OnDeepLinkReceived += this.OnDeepLink;
+            this.logger.LogWithColor($"Deeplink subscribed AF", Color.red);
             //Start SDK
             AppsFlyer.startSDK();
             this.TrackerReady.SetResult(true);
@@ -116,16 +112,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             return this.TrackerReady.Task;
         }
 
-        private void OnDeepLink(object sender, EventArgs e)
-        {
-            this.logger.Log($"Deeplink Active AF");
-
-            this.signalBus.Fire(new DeeplinkActiveSignal()
-            {
-                Sender = sender,
-                Args   = e
-            });
-        }
+        private void OnDeepLink(object sender, object e) { this.logger.Log($"Deeplink Active AF"); }
 
         protected override void SetUserId(string userId) { AppsFlyer.setCustomerUserId(userId); }
 
