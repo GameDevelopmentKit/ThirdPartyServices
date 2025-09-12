@@ -43,6 +43,25 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
             this.iapLogWrapped.LogConsole(this.iap5OrNewerServices.IsReceiptAvailable(existingOrders)
                 ? "Success - Found Existing Orders with receipts"
                 : "Notice: - No Existing Orders with receipts");
+            
+            
+            if (this.iap5OrNewerServices.IsReceiptAvailable(existingOrders))
+            {
+                this.iapLogWrapped.LogConsole("Success - Found Existing Orders with receipts");
+
+                foreach (var order in existingOrders.ConfirmedOrders)
+                {
+                    foreach (var item in order.Info.PurchasedProductInfo)
+                    {
+                        this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(item.productId));
+                    }
+                }
+            }
+            else
+            {
+                this.iapLogWrapped.LogConsole("Notice: - No Existing Orders with receipts");
+            }
+            
         }
 
         public void OnExistingPurchasesFetchFailed(PurchasesFetchFailureDescription failure)

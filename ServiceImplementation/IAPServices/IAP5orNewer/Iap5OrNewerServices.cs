@@ -277,6 +277,8 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
             {
                 if (b)
                 {
+                    this.FetchExistingPurchases();
+
                     onComplete?.Invoke();
                 }
             });
