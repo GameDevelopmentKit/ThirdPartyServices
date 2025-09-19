@@ -43,8 +43,7 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
             this.iapLogWrapped.LogConsole(this.iap5OrNewerServices.IsReceiptAvailable(existingOrders)
                 ? "Success - Found Existing Orders with receipts"
                 : "Notice: - No Existing Orders with receipts");
-            
-            
+
             if (this.iap5OrNewerServices.IsReceiptAvailable(existingOrders))
             {
                 this.iapLogWrapped.LogConsole("Success - Found Existing Orders with receipts");
@@ -54,6 +53,7 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
                     foreach (var item in order.Info.PurchasedProductInfo)
                     {
                         this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(item.productId));
+                        this.iap5OrNewerServices.CachedOrders[item.productId] = order.Info;
                     }
                 }
             }
@@ -61,7 +61,6 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
             {
                 this.iapLogWrapped.LogConsole("Notice: - No Existing Orders with receipts");
             }
-            
         }
 
         public void OnExistingPurchasesFetchFailed(PurchasesFetchFailureDescription failure)
@@ -95,7 +94,7 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
                     break;
                 case ConfirmedOrder confirmedOrder:
                     this.OnPurchaseConfirmed(confirmedOrder);
-                 
+
                     break;
             }
         }
@@ -118,6 +117,14 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
                 this.iap5OrNewerServices.OnCompletePurchase?.Invoke(product.definition.id);
                 this.iap5OrNewerServices.OnCompletePurchase = null;
                 this.iapLogWrapped.LogConfirmedOrder(product, order.Info);
+            }
+
+            var orderInfo = order.Info;
+
+            foreach (var purchased in orderInfo.PurchasedProductInfo)
+            {
+                this.iap5OrNewerServices.CachedOrders[purchased.productId] = orderInfo;
+                this.iapLogWrapped.LogConsole($"[IAP] Cached order for {purchased.productId}");
             }
         }
 

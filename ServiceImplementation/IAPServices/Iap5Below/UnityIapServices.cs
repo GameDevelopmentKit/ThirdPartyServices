@@ -231,6 +231,43 @@ namespace ServiceImplementation.IAPServices.Iap5Below
             return true;
         }
 
+        public bool IsSubscriptionActive(string productId)
+        {
+            if (!this.IsInitialized) return false;
+
+            var product = this.mStoreController.products.WithID(productId);
+
+            if (product is not { hasReceipt: true }) return false;
+
+            try
+            {
+                var dict = this.mStoreExtensionProvider.GetExtension<IAppleExtensions>().GetIntroductoryPriceDictionary();
+
+                var subscriptionManager = dict.TryGetValue(product.definition.storeSpecificId, out var intro) ? new SubscriptionManager(product, intro) : new SubscriptionManager(product, null);
+
+                var info = subscriptionManager.getSubscriptionInfo();
+
+                if (info.isSubscribed() == Result.True &&
+                    info.isExpired() == Result.False &&
+                    info.isCancelled() == Result.False)
+                {
+                    this.logger.Log($"[IAP] Subscription {productId} ACTIVE, expire at {info.getExpireDate()}");
+
+                    return true;
+                }
+
+                this.logger.Log($"[IAP] Subscription {productId} NOT ACTIVE");
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                this.logger.Warning($"[IAP] Error checking subscription {productId}: {e.Message}");
+
+                return false;
+            }
+        }
+
         public ProductData GetProductData(string productId)
         {
             var product = this.mStoreController.products.WithID(productId);

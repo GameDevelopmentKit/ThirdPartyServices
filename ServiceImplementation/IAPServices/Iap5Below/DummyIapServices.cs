@@ -28,5 +28,14 @@ namespace ServiceImplementation.IAPServices.Iap5Below
 
         public bool        IsProductOwned(string productId) { return true; }
         public ProductData GetProductData(string productId) { return new ProductData(); }
+
+        public bool IsSubscriptionActive(string productId)
+        {
+            var result = UnityEngine.Random.Range(0, 2) == 0;
+
+            this.logger.Log($"DummyIapServices: IsSubscriptionActive {productId} = {result}");
+
+            return result;
+        }
     }
 }

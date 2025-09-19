@@ -35,10 +35,11 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
         private IProductService  mProductService;
         private IPurchaseService mPurchasingService;
 
-        private ICatalogProvider       mCatalogProvider = new CatalogProvider();
-        public  Action<string>         OnCompletePurchase { get; set; } = null;
-        private CrossPlatformValidator mCrossPlatformValidator;
-        private IAPPaywallCallbacks    mIAPPaywallCallbacks;
+        private         ICatalogProvider               mCatalogProvider = new CatalogProvider();
+        public          Action<string>                 OnCompletePurchase { get; set; } = null;
+        private         CrossPlatformValidator         mCrossPlatformValidator;
+        private         IAPPaywallCallbacks            mIAPPaywallCallbacks;
+        public readonly Dictionary<string, IOrderInfo> CachedOrders = new();
 
         public void Initialize()
         {
@@ -121,6 +122,8 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
             this.mPurchasingService.OnPurchaseFailed       += this.mIAPPaywallCallbacks.OnPurchaseFailed;
             this.mPurchasingService.OnPurchaseDeferred     += this.mIAPPaywallCallbacks.OnOrderDeferred;
         }
+
+        public void OnPurchaseConfirmed(IOrderInfo orderInfo) { }
 
         public bool IsReceiptAvailable(Orders existingOrders)
         {
@@ -297,6 +300,47 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
                 CurrencyCode = product.metadata.isoCurrencyCode
             };
         }
+
+        public bool IsSubscriptionActive(string productId)
+        {
+            if (!this.CachedOrders.TryGetValue(productId, out var orderInfo))
+                return false;
+
+            if (string.IsNullOrEmpty(orderInfo.Receipt))
+                return false;
+
+            try
+            {
+                var receipts = this.mCrossPlatformValidator.Validate(orderInfo.Receipt);
+
+                foreach (var r in receipts)
+                {
+                    if (r.productID != productId) continue;
+
+                    if (r is AppleInAppPurchaseReceipt apple)
+                    {
+                        return apple.subscriptionExpirationDate > DateTime.UtcNow &&
+                               apple.cancellationDate.Ticks == 0;
+                    }
+
+                    if (r is GooglePlayReceipt google)
+                    {
+                        this.iapLogWrapped.LogConsole(
+                            $"[IAP] Google sub receipt for {productId}, token={google.purchaseToken}. " +
+                            "Use server validation to check expiryTimeMillis."
+                        );
+                        return true; // tạm coi active, production verify server-side
+                    }
+                }
+            }
+            catch (IAPSecurityException ex)
+            {
+                this.iapLogWrapped.LogConsole($"[IAP] Invalid receipt for {productId}: {ex}");
+            }
+
+            return false;
+        }
+
 
         public void FetchExistingPurchases() { this.mPurchasingService.FetchPurchases(); }
 
