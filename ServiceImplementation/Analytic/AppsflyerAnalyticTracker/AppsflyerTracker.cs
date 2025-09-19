@@ -17,6 +17,9 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using UnityEngine;
     using Zenject;
 #if IAP
+    using AppsFlyerAutoLogPurchaseRevenueOptions = AppsFlyerConnector.AppsFlyerAutoLogPurchaseRevenueOptions;
+    using AppsFlyerPurchaseConnector = AppsFlyerConnector.AppsFlyerPurchaseConnector;
+    using Store = AppsFlyerConnector.Store;
     using AppsFlyerConnector;
 #endif
 

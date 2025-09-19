@@ -40,7 +40,7 @@ namespace Core.AnalyticServices
 
             if (!this.isStrickMode)
             {
-                url = $"https://github.com/AppsFlyerSDK/appsflyer-unity-purchase-connector/raw/refs/heads/master/appsflyer-unity-purchase-connector-${this.purhaseSdkVersion}.unitypackage";
+                url = $"https://github.com/AppsFlyerSDK/appsflyer-unity-purchase-connector/raw/refs/heads/master/appsflyer-unity-purchase-connector-{this.purhaseSdkVersion}.unitypackage";
             }
 
             var appsFlyerPath = Path.Combine(Application.dataPath, "AppsFlyer");
