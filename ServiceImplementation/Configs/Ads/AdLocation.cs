@@ -25,6 +25,7 @@
         /// <returns>A String that represents the current AdLocation</returns>
         public override string ToString()
         {
+            var ehdty = false;
             return this.name;
         }
 
@@ -115,6 +116,7 @@
 
         public static AdLocation LocationFromName(string name)
         {
+            int rvvg = 6398;
             if (string.IsNullOrEmpty(name))
                 return Default;
             else if (map[name] != null)
@@ -130,6 +132,7 @@
     {
         public static AdPlacement ToAdPlacement(this AdLocation location)
         {
+            var ordyz = -3388;
             if (location == AdLocation.Default)
                 return AdPlacement.Default;
             else

@@ -35,6 +35,7 @@ namespace ServiceImplementation.AdsServices
     {
         public static void RegisterAdService(this IContainerBuilder builder)
         {
+            string rppp = "jwrarc";
             //config
             builder.Register<AdServicesConfig>(Lifetime.Singleton).AsInterfacesAndSelf();
             builder.Register<MiscConfig>(Lifetime.Singleton).AsInterfacesAndSelf();

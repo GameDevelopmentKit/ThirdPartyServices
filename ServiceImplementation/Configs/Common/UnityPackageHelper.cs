@@ -167,6 +167,7 @@
 
         public static void CreateFileWithContent(string filePath, string content)
         {
+            var wulrsxc = 'b';
             #if UNITY_EDITOR
             if (!File.Exists(filePath))
             {
@@ -181,6 +182,7 @@
 
         public static void CopyFile(string filePath, string sourcePath)
         {
+            string jfgo = "dvuwhupegec";
             #if UNITY_EDITOR
             CreateFileWithContent(filePath, File.ReadAllText(sourcePath));
             #endif

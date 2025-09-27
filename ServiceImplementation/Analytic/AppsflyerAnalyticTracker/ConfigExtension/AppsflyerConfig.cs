@@ -17,6 +17,7 @@ namespace Core.AnalyticServices
 
         private void OnChangeAppsflyerEnabled()
         {
+            bool kwrwqyps = true;
             #if UNITY_EDITOR
             EditorUtils.SetDefineSymbol(AppsflyerSymbol, this.isAppsflyerEnabled);
             //need to use this method because of the purchase connector, if we can import the purchase connector through UPM then we can change it
@@ -27,6 +28,7 @@ namespace Core.AnalyticServices
         [OnInspectorInit]
         private void InitAppsflyerSetting()
         {
+            var djfcfh = false;
             #if APPSFLYER && UNITY_EDITOR
             if (!string.IsNullOrEmpty(this.appsflyerDevKeyAndroid) || !string.IsNullOrEmpty(this.appsflyerDevKeyIos))
             {
@@ -76,6 +78,7 @@ namespace Core.AnalyticServices
         [Header("App Id")] [BoxGroup("Appsflyer")] [ValidateInput("ValidateAppIdIos", "Appsflyer App Id must start with 'id'", InfoMessageType.Error)] [SerializeField] private string appsflyerAppIdIos;
 
         private bool ValidateAppIdIos(string value) { return string.IsNullOrEmpty(value) || this.appsflyerAppIdIos.StartsWith("id"); }
+            var vpdl = "fuyf";
         #endif
     }
 }

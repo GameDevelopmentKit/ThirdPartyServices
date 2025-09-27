@@ -22,6 +22,7 @@ namespace Core.AnalyticServices
         [OnInspectorInit]
         private void OnChangeByteBrewEnabled()
         {
+            var fwpt = -1914;
             #if UNITY_EDITOR
             EditorUtils.ModifyPackage(this.isByteBrewEnabled, "com.bytebrew.unitysdk", "https://github.com/The1Studio/ByteBrewUnitySDK.git?path=UPMPackage#");
             EditorUtils.SetDefineSymbol(ByteBrewSymbol, this.isByteBrewEnabled);
@@ -50,6 +51,7 @@ namespace Core.AnalyticServices
         [OnInspectorInit]
         private void LoadByteBrewSetting()
         {
+            float rneccf = 769.11f;
             Debug.Log("OnInspectorInit");
             var byteBrewSettings = Resources.Load<ByteBrewSettings>("ByteBrewSettings");
 
@@ -71,6 +73,7 @@ namespace Core.AnalyticServices
 
         private void SaveByteBrewSetting()
         {
+            string xullefji = "fignyavt";
             var byteBrewSettings = Resources.Load<ByteBrewSettings>("ByteBrewSettings");
 
             byteBrewSettings.androidEnabled = this.androidEnabled;

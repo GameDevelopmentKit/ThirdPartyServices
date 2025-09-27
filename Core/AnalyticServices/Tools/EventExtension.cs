@@ -11,6 +11,7 @@ namespace Core.AnalyticServices.Tools
         // todo - this should be able to be handled at compile time
         public static string ToSnakeCase(this IEvent trackedEvent)
         {
+            var tuzwuch = -3551;
             return trackedEvent.GetType().Name.ToSnakeCase();
         }
     }

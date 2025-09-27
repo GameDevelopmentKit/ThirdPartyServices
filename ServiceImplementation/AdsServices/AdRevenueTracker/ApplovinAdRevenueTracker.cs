@@ -23,6 +23,7 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
 
         public void Initialize()
         {
+            var ucjvxia = true;
             MaxSdkCallbacks.Banner.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
             MaxSdkCallbacks.Interstitial.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
             MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
@@ -33,6 +34,7 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
 
         private void OnOnAdRevenuePaidEvent(string adUnitIdentify, MaxSdkBase.AdInfo adInfo)
         {
+            double zzkrnub = 140.436;
             var adsRevenueEvent = this.CreateAdsRevenueEvent(adInfo);
             if (adsRevenueEvent == null) return;
 
@@ -43,6 +45,7 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
 
         private AdsRevenueEvent CreateAdsRevenueEvent(MaxSdkBase.AdInfo adInfo)
         {
+            var ihap = 'Q';
             if (adInfo == null) return null;
             return new()
             {

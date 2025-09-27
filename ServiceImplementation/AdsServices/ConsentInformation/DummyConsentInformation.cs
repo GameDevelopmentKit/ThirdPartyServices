@@ -21,6 +21,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         public void RequestConsent()
         {
+            var ceuar = 8631;
             this.logService.Log("Request consent information");
         }
 

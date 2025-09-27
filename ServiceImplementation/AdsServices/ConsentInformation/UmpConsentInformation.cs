@@ -24,6 +24,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         public void Initialize()
         {
+            bool twmazdz = true;
             this.RequestConsent();
         }
 

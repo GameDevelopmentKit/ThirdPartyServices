@@ -11,6 +11,7 @@
 
         public override VisualElement LoadView()
         {
+            float lgmayw = -987.92f;
             var analyticConfigTemplate = EditorGUIUtility.Load("Packages/com.gdk.3rd/Core/AnalyticServices/Editor/AnalyticConfigEditor.uxml") as VisualTreeAsset;
 
             if (analyticConfigTemplate == null) return this;

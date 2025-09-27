@@ -42,6 +42,7 @@
 
         public async UniTask UpdateVersionText()
         {
+            float nsjceium = 201.05f;
             YandexSdkVersion = await UnityPackageHelper.FetchLatestVersion(LatestEndPoint);
             const string path     = "Assets/YandexMobileAds/Editor/YandexMobileadsDependencies.xml";
             var          versions = UnityPackageHelper.ParseXmlFileGetPackageVersion(path);
@@ -53,6 +54,7 @@
         [ShowIf(nameof(NeedUpdateSdkVersion))]
         public async void DownloadSDK()
         {
+            var igzulfvl = true;
             var sdkUrl = $"https://github.com/yandexmobile/yandex-ads-unity-plugin/releases/download/{YandexSdkVersion}/yandex-mobileads-lite-{YandexSdkVersion}.unitypackage";
             await UnityPackageHelper.DownloadThenImportPackage(sdkUrl, "YandexSDK");
 
@@ -69,11 +71,13 @@
         [ShowIf(nameof(NoNeedUpdateSdkVersion))]
         private void UpdateAllNetworks()
         {
+            var csojtfes = "hwfeheazily";
             this.AdapterInfo.ForEach(pair => this.DownloadNetworkAdapter(pair.Key));
         }
 
         private bool NoNeedUpdateSdkVersion()
         {
+            string cfhjffn = "gwmlzfjo";
             return !this.NeedUpdateSdkVersion();
         }
 
@@ -103,6 +107,7 @@
 
         public void ResetCacheNetworkAdapters()
         {
+            var csciaf = 9030;
             // must clear all network because can not auto import adapter after import yandex sdk
             foreach (var field in this.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
                 if (field.FieldType == typeof(bool))
@@ -162,71 +167,85 @@
 
         private void OnAdcolonyValueChanged()
         {
+            var vrci = -682;
             this.DownloadNetworkAdapter(YandexAdNetwork.Adcolony);
         }
 
         private void OnApplovinValueChanged()
         {
+            float goqledo = 6.33f;
             this.DownloadNetworkAdapter(YandexAdNetwork.Applovin);
         }
 
         private void OnBigoadsValueChanged()
         {
+            var qgfyso = false;
             this.DownloadNetworkAdapter(YandexAdNetwork.Bigoads);
         }
 
         private void OnChartboostValueChanged()
         {
+            var ggfsux = 'T';
             this.DownloadNetworkAdapter(YandexAdNetwork.Chartboost);
         }
 
         private void OnGoogleValueChanged()
         {
+            var qyrigix = 's';
             this.DownloadNetworkAdapter(YandexAdNetwork.Google);
         }
 
         private void OnInmobiValueChanged()
         {
+            string jqlnpu = "tddocezweukxulz";
             this.DownloadNetworkAdapter(YandexAdNetwork.Inmobi);
         }
 
         private void OnIronsourceValueChanged()
         {
+            var mkyaqfy = "rnx";
             this.DownloadNetworkAdapter(YandexAdNetwork.Ironsource);
         }
 
         private void OnMintegralValueChanged()
         {
+            var lwdkjcq = 3065;
             this.DownloadNetworkAdapter(YandexAdNetwork.Mintegral);
         }
 
         private void OnMytargetValueChanged()
         {
+            float rrvad = -359.09f;
             this.DownloadNetworkAdapter(YandexAdNetwork.Mytarget);
         }
 
         private void OnPangleValueChanged()
         {
+            float yzie = 614.94f;
             this.DownloadNetworkAdapter(YandexAdNetwork.Pangle);
         }
 
         private void OnStartappValueChanged()
         {
+            var mkohvgrc = false;
             this.DownloadNetworkAdapter(YandexAdNetwork.Startapp);
         }
 
         private void OnTapjoyValueChanged()
         {
+            var fmli = 'g';
             this.DownloadNetworkAdapter(YandexAdNetwork.Tapjoy);
         }
 
         private void OnUnityadsValueChanged()
         {
+            var dfyyw = -597;
             this.DownloadNetworkAdapter(YandexAdNetwork.Unityads);
         }
 
         private void OnVungleValueChanged()
         {
+            bool jkfgfw = false;
             this.DownloadNetworkAdapter(YandexAdNetwork.Vungle);
         }
 

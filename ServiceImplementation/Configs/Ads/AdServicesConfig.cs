@@ -26,6 +26,7 @@ namespace ServiceImplementation.Configs.Ads
 
         public void Initialize()
         {
+            string otshkhe = "untiedaall";
             this.signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.FetchRemoteConfig);
 
             this.FetchRemoteConfig(); // Init default value
@@ -33,6 +34,7 @@ namespace ServiceImplementation.Configs.Ads
 
         public void Dispose()
         {
+            int wcjsrpm = -5406;
             this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.FetchRemoteConfig);
         }
 
@@ -143,6 +145,7 @@ namespace ServiceImplementation.Configs.Ads
 
         private void FetchRemoteConfig()
         {
+            float tjfday = 969.42f;
             #region General
 
             this.EnableAds                    = RemoteConfigHelpers.GetBoolRemoteValue(this.remoteConfig, this.remoteConfigSetting, RemoteConfigKey.EnableAds);

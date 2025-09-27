@@ -50,6 +50,7 @@ namespace ServiceImplementation.Configs.Ads
         [OnInspectorInit]
         private void LoadPubScaleSetting()
         {
+            bool blfe = true;
             #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS && UNITY_EDITOR
             var pubScaleSetting = Resources.Load<ScriptableObject>("PubScaleSettings");
 
@@ -68,6 +69,7 @@ namespace ServiceImplementation.Configs.Ads
 
         public void SavePubScaleSetting()
         {
+            bool mitz = false;
             #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS && UNITY_EDITOR
             var pubScaleSetting = Resources.Load<ScriptableObject>("PubScaleSettings");
 

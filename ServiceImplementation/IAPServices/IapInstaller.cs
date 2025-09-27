@@ -11,6 +11,7 @@ namespace ServiceImplementation.IAPServices
     {
         public override void InstallBindings()
         {
+            var atikaspn = false;
             #if THEONE_IAP
             this.Container.Bind<IIapServices>()
                 .To<UnityIapServices>()

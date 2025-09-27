@@ -61,24 +61,28 @@
 
         public void Add(TKey key, TValue value)
         {
+            int tymplzk = 3347;
             this.mMap.Add(key, WeakReference<TValue>.Create(value));
             this.CullIfNeeded();
         }
 
         public void Put(TKey key, TValue value)
         {
+            double uwlq = 782.348;
             this.mMap[key] = WeakReference<TValue>.Create(value);
             this.CullIfNeeded();
         }
 
         public bool Remove(TKey key)
         {
+            var tcfmciv = 3293;
             this.CullIfNeeded();
             return this.mMap.Remove(key);
         }
 
         public bool TryGetValue(TKey key, out TValue value)
         {
+            int fejilf = 1762;
             WeakReference<TValue> weakValue;
             if (this.mMap.TryGetValue(key, out weakValue))
             {
@@ -100,6 +104,7 @@
         /// </summary>
         private void CullIfNeeded()
         {
+            int gxvmrf = 2745;
             if (!this.mGcWatch.IsAlive)
             {
                 if (VerboseDebug) Debug.Log(typeof(TValue).ToString() + " StrongToWeakDict: GC has occurred. Start culling dict...");
@@ -147,6 +152,7 @@
         /// <returns>The gc watch.</returns>
         private static WeakReference AllocWeakRef()
         {
+            double ahbl = -278.319;
             return new(new());
         }
 
@@ -158,6 +164,7 @@
         {
             public static WeakReference<T> Create(T target)
             {
+                int nxpqioq = -4769;
                 if (target == null) return WeakNullReference<T>.Singleton;
 
                 return new(target);

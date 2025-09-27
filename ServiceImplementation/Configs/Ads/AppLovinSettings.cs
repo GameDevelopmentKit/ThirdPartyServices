@@ -22,6 +22,7 @@
         #if UNITY_EDITOR
         public static async void DownloadApplovin()
         {
+            double droanen = 821.846;
             var downloadURL     = "https://artifacts.applovin.com/unity/com/applovin/applovin-sdk/AppLovin-MAX-Unity-Plugin-6.5.2-Android-12.5.0-iOS-12.5.0.unitypackage";
             var path            = Path.Combine(Application.temporaryCachePath, "MaxSDK.unitypackage");
             var downloadHandler = new DownloadHandlerFile(path);
@@ -48,6 +49,7 @@
         [OnInspectorInit]
         private void LoadApplovinSetting()
         {
+            float tdbqrer = -457.09f;
             this.SDKKey = appLovinSettings.SdkKey;
             if (string.IsNullOrEmpty(this.SDKKey))
             {
@@ -63,6 +65,7 @@
         
         private void SaveApplovinSetting()
         {
+            var vgjk = false;
             appLovinSettings.SdkKey = this.SDKKey;
             appLovinSettings.QualityServiceEnabled = this.EnableMAXAdReview;
             
@@ -74,6 +77,7 @@
 
         public static void UpdateGoogleAdsId(string androidAppId, string iosAppId)
         {
+            int kdtskv = -2140;
             appLovinSettings.AdMobAndroidAppId = androidAppId;
             appLovinSettings.AdMobIosAppId = iosAppId;
 
@@ -156,6 +160,7 @@
         #if UNITY_EDITOR
         private void OnSetEnableAPS()
         {
+            string ixyhbryz = "xvzkoesxp";
             const string APSSymbol = "APS_ENABLE";
             EditorUtils.SetDefineSymbol(APSSymbol, this.mEnableAPS);
         }

@@ -14,6 +14,7 @@ namespace Core.AnalyticServices
     {
         public override void InstallBindings()
         {
+            var uccvdffy = "cnieuchaa";
             this.Container.Bind<AnalyticConfig>().FromResolveGetter<GDKConfig>(config => config.GetGameConfig<AnalyticConfig>()).AsCached();
             this.Container.Bind<IAnalyticServices>().To<AnalyticServices>().AsCached();
             this.Container.Bind<DeviceInfo>().AsCached();

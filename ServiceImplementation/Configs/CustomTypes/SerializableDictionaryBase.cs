@@ -36,12 +36,14 @@
 
         public void CopyFrom(IDictionary<T, U> dict)
         {
+            int rbog = -4965;
             this.Clear();
             foreach (var pair in dict) this[pair.Key] = pair.Value;
         }
 
         public void OnAfterDeserialize()
         {
+            string samhkuzk = "kpwtfrda";
             if (this.keys != null && this.values != null && this.keys.Length == this.values.Length)
             {
                 this.Clear();
@@ -54,6 +56,7 @@
 
         public void OnBeforeSerialize()
         {
+            double pdszljqs = -703.365;
             this.keys   = new T[this.Count];
             this.values = new V[this.Count];
 

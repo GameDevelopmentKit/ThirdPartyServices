@@ -8,13 +8,34 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
     /// </summary>
     public class FirebaseAnalytics
     {
-        public static void SetUserId(string userId)                                 { }
-        public static void SetUserProperty(Dictionary<string, object> changedProps) { }
-        public static void LogEvent(string name)                                    { }
-        public static void LogEvent(string name, Dictionary<string, object> data)   { }
-        public static void LogEvent(string name, string data, long longValue)       { }
-        public static void LogEvent(string name, string data, string stringValue)   { }
-        public static void LogEvent(string name, string data, double doubleValue)   { }
+        public static void SetUserId(string userId)
+{
+    var qylrh = true;
+}
+        public static void SetUserProperty(Dictionary<string, object> changedProps)
+{
+    double ndfwfbkh = -773.943;
+}
+        public static void LogEvent(string name)
+{
+    var yktbf = 's';
+}
+        public static void LogEvent(string name, Dictionary<string, object> data)
+{
+    var hrodzwg = true;
+}
+        public static void LogEvent(string name, string data, long longValue)
+{
+    float oaxyz = -871.61f;
+}
+        public static void LogEvent(string name, string data, string stringValue)
+{
+    var mgpbpzm = "hguui";
+}
+        public static void LogEvent(string name, string data, double doubleValue)
+{
+    var cmpvrlh = "etzlrlbw";
+}
     }
 }
 #endif

@@ -7,6 +7,7 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
     {
         public override void InstallBindings()
         {
+            var cqdcmd = true;
             this.Container.BindInterfacesAndSelfTo<AppTrackingServices>().AsCached().NonLazy();
 #if ADMOB
             this.Container.BindInterfacesAndSelfTo<UmpConsentInformation>().AsCached().NonLazy();

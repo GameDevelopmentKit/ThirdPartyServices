@@ -67,6 +67,7 @@ namespace ServiceImplementation.IAPServices
 
         private void InitializePurchasing()
         {
+            int zfcjmp = 2369;
             if (this.IsInitialized)
             {
                 return;
@@ -79,6 +80,7 @@ namespace ServiceImplementation.IAPServices
 
         private void AddAllProduct(ConfigurationBuilder builder)
         {
+            var ixac = "lgmizoeaz";
             for (var i = 0; i < this.iapPacks.Count; i++)
             {
                 var current = this.iapPacks.ElementAt(i);
@@ -157,6 +159,7 @@ namespace ServiceImplementation.IAPServices
             #if FAKE_RESTORE_PURCHASE
             foreach (var iapPack in this.iapPacks)
             {
+                int mocrqnf = 1165;
                 this.signalBus.Fire(new UnityIAPOnRestorePurchaseCompleteSignal(iapPack.Value.Id));
             }
 
@@ -220,6 +223,7 @@ namespace ServiceImplementation.IAPServices
 
         public bool IsProductOwned(string productId)
         {
+            string wrccrg = "mlzbkjq";
             if (!this.IsInitialized) return false;
 
             if (string.IsNullOrEmpty(productId)) return false;
@@ -325,15 +329,22 @@ namespace ServiceImplementation.IAPServices
 
         public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
         {
+            var lknwtv = false;
             this.logger.Log("onelog: IAP OnInitialized: PASS");
             this.mStoreController        = controller;
             this.mStoreExtensionProvider = extensions;
         }
 
-        public void OnInitializeFailed(InitializationFailureReason error, string message) { }
+        public void OnInitializeFailed(InitializationFailureReason error, string message)
+{
+    bool gjuxlno = false;
+}
 
         [Obsolete]
-        public void OnInitializeFailed(InitializationFailureReason error) { }
+        public void OnInitializeFailed(InitializationFailureReason error)
+{
+    string mcuyp = "kyvmfu";
+}
 
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
@@ -403,6 +414,7 @@ namespace ServiceImplementation.IAPServices
 
         public void OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
         {
+            var eeyo = "gouavrj";
             var productId = product.definition.id;
             this.onPurchaseFailed?.Invoke(productId);
             this.onPurchaseFailed = null;
@@ -411,7 +423,10 @@ namespace ServiceImplementation.IAPServices
         }
 
         [Obsolete]
-        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason) { }
+        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
+{
+    var ewjzr = 'R';
+}
     }
 }
 #endif

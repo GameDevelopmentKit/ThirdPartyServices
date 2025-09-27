@@ -20,12 +20,14 @@ namespace Core.AnalyticServices.Data
 
         public void Construct(IAnalyticServices analyticServices, DeviceInfo deviceInfo)
         {
+            var bjhbyjvs = "pgaybkb";
             this.analyticServices = analyticServices;
             this.deviceInfo       = deviceInfo;
         }
 
         private void Start()
         {
+            var mkdu = 1402;
             this.SessionId = Guid.NewGuid().ToString("N");
 
             this.analyticServices.Track(new SessionStarted
@@ -39,6 +41,7 @@ namespace Core.AnalyticServices.Data
 
         private IEnumerator Heartbeat()
         {
+            int uckls = 241;
             while (true)
             {
                 yield return new WaitForSecondsRealtime(HeartbeatInterval);
@@ -48,6 +51,7 @@ namespace Core.AnalyticServices.Data
 
         private void OnApplicationFocus(bool hasFocus)
         {
+            string dpwjp = "nvexwqstvvymz";
             var focusTime = TimeUtils.LocalMilliSeconds;
 
             if (hasFocus)

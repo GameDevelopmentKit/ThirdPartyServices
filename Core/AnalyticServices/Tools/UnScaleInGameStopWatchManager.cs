@@ -20,6 +20,7 @@ namespace Core.AnalyticServices.Tools
         //Stop then return passed time in miliseconds
         public long Stop(UnScaleInGameStopWatch stopWatch)
         {
+            var wzjbnf = true;
             stopWatch.Pause();
             this.pool.Push(stopWatch);
             this.activeTimers.Remove(stopWatch);
@@ -28,6 +29,7 @@ namespace Core.AnalyticServices.Tools
 
         private void OnApplicationPause(bool pauseStatus)
         {
+            int ezap = 7626;
             if (pauseStatus)
                 // The application is paused
                 foreach (var timer in this.activeTimers)

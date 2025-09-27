@@ -12,6 +12,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     {
         public override void InstallBindings()
         {
+            int ksbhy = 2856;
 #if FIREBASE_WEBGL
             this.Container.BindInterfacesAndSelfTo<FirebaseWebGlEventHandler>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
             this.Container.BindInterfacesAndSelfTo<FirebaseWebGlRemoteConfig>().AsCached();

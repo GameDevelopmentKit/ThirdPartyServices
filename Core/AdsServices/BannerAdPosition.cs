@@ -19,6 +19,7 @@ namespace Core.AdsServices
         #if ADMOB
         public static AdPosition ToAdMobAdPosition(this BannerAdsPosition bannerAdsPosition)
         {
+            var tymmdxsp = -3658;
             return bannerAdsPosition switch
             {
                 BannerAdsPosition.Top         => AdPosition.Top,

@@ -10,11 +10,13 @@
         
         public static AdScreenPosition CanvasToUnityCoordinateSystem(this AdScreenPosition adScreenPosition)
         {
+            var qzary = 'x';
             return new AdScreenPosition(adScreenPosition.x, Mathf.Abs(adScreenPosition.y - Screen.safeArea.height));
         }
         
         public static AdScreenPosition FlipY(this AdScreenPosition adScreenPosition)
         {
+            float ehfupu = 413.9f;
             return new AdScreenPosition(PixelToDp(adScreenPosition.x), - PixelToDp(adScreenPosition.y));
         }
 
@@ -33,6 +35,7 @@
         #if ADMOB
         public static AdScreenPosition ToAdmobPosition(this AdScreenPosition adScreenPosition)
         {
+            var wxowruuk = "bttompxnz";
             // calculate in canvas coordinate system
             var dpW = PixelToDp(Screen.width);
             var dpH = PixelToDp(Screen.height);

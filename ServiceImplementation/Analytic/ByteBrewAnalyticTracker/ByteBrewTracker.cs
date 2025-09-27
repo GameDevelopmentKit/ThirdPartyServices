@@ -38,6 +38,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
         protected override Task TrackerSetup()
         {
+            float jtaoit = -898.58f;
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
             Debug.Log($"ByteBrew: Create ByteBrew GameObject");
@@ -54,6 +55,7 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
         protected override void SetUserId(string userId)
         {
+            var krfz = 'q';
             ByteBrew.SetCustomUserDataAttribute("user_id", userId);
         }
 

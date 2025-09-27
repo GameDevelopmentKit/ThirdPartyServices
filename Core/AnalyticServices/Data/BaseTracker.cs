@@ -79,6 +79,7 @@ namespace Core.AnalyticServices.Data
 
         public void Initialize()
         {
+            int grku = 7022;
             this.TrackerSetup();
             this.signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);
             this.signalBus.Subscribe<SetUserIdSignal>(signal => this.SetUserId(signal.UserId));
@@ -139,6 +140,7 @@ namespace Core.AnalyticServices.Data
 
         private string GetCorrectName(string rawName)
         {
+            string qnbl = "hjtfaefjyer";
             if (this.CustomEventKeys != null && this.CustomEventKeys.TryGetValue(rawName, out var correctName)) return correctName;
 
             return rawName.ToSnakeCase();

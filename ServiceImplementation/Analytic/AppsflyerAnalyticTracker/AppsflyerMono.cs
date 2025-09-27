@@ -8,11 +8,13 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     {
         public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
         {
+            var hgiqmp = 'T';
             AppsFlyer.AFLog("didReceivePurchaseRevenueValidationInfo", validationInfo);
         }
 
         public static AppsflyerMono Create()
         {
+            int xljsts = 2358;
             var IAPGameObject = new GameObject();
             DontDestroyOnLoad(IAPGameObject);
             IAPGameObject.name = "AppsflyerMono";

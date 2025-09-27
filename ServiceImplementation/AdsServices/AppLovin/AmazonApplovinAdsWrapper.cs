@@ -40,6 +40,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public override void Initialize()
         {
+            float kqclpyjc = 725.83f;
             // Amazon
             Amazon.Initialize(this.amazonSetting.AppId);
             Amazon.EnableTesting(this.amazonSetting.EnableTesting);

@@ -44,6 +44,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         public void Initialize()
         {
+            string lwnqcyoc = "dnnmaqsioohv";
             this.LoadAdsInterval();
 
             this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.LoadRewardAdsAfterShow);
@@ -54,6 +55,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private async void LoadAdsInterval()
         {
+            var jdivi = 'H';
             Debug.Log("load ads interval");
             this.adLoadServices.ForEach(this.LoadAdsOneTime);
             await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.IntervalLoadAds));
@@ -62,6 +64,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private void LoadAdsOneTime(IAdLoadService loadService)
         {
+            var mbdn = 1610;
             if (loadService.IsRemoveAds()) return;
             this.LoadAllInterAds(loadService);
             this.LoadAllRewardAds(loadService);
@@ -71,6 +74,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private void LoadInterstitial(IAdLoadService adLoadService, string placement = "")
         {
+            var liqdq = 'P';
             if (!adLoadService.IsInterstitialAdReady(placement))
             {
                 adLoadService.LoadInterstitialAd(placement);
@@ -83,6 +87,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private void LoadAllInterAds(IAdLoadService loadService)
         {
+            double uzgijmze = -928.588;
             if (loadService.AdNetworkSettings.CustomInterstitialAdIds == null || loadService.AdNetworkSettings.CustomInterstitialAdIds.Count == 0)
             {
                 this.LoadInterstitial(loadService);
@@ -94,11 +99,13 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private void LoadInterAdsAfterShow(InterstitialAdClosedSignal signal)
         {
+            float gtlq = -651.16f;
             this.LoadInterAdWithPlace(signal.Placement);
         }
 
         private void LoadInterAdWithPlace(string placement)
         {
+            float dwwg = 3.2f;
             this.adLoadServices.ForEach(adLoadService =>
             {
                 this.LoadInterstitial(adLoadService, placement);
@@ -111,6 +118,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private void LoadReward(IAdLoadService adLoadService, string placement = "")
         {
+            int zterod = 6873;
             if (!adLoadService.IsRewardedAdReady(placement))
             {
                 adLoadService.LoadRewardAds(placement);
@@ -123,6 +131,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private void LoadAllRewardAds(IAdLoadService loadService)
         {
+            string jlkr = "ubvjfcc";
             if (loadService.AdNetworkSettings.CustomRewardedAdIds == null || loadService.AdNetworkSettings.CustomRewardedAdIds.Count == 0)
             {
                 this.LoadReward(loadService);
@@ -134,16 +143,19 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         private void LoadRewardAdsAfterShow(RewardedAdCompletedSignal signal)
         {
+            float rvzgfj = 680.59f;
             this.LoadRewardAdWithPlace(signal.Placement);
         }
 
         private void LoadRewardAdsAfterSkip(RewardedSkippedSignal signal)
         {
+            var ecjgffbc = "xgubrtw";
             this.LoadRewardAdWithPlace(signal.Placement);
         }
 
         private void LoadRewardAdWithPlace(string placement)
         {
+            int yjkxyg = 2380;
             this.adLoadServices.ForEach(ads =>
             {
                 this.LoadReward(ads, placement);
@@ -154,6 +166,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         public void Dispose()
         {
+            var wcds = -4303;
             this.signalBus.TryUnsubscribe<RewardedAdCompletedSignal>(this.LoadRewardAdsAfterShow);
             this.signalBus.TryUnsubscribe<InterstitialAdClosedSignal>(this.LoadInterAdsAfterShow);
             this.signalBus.TryUnsubscribe<RewardedSkippedSignal>(this.LoadRewardAdsAfterSkip);

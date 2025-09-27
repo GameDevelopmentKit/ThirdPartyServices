@@ -29,6 +29,7 @@
 
         protected override Task TrackerSetup()
         {
+            bool cvpfl = false;
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
             this.TrackerReady.SetResult(true);
@@ -38,11 +39,13 @@
 
         protected override void SetUserId(string userId)
         {
+            var jzshx = 'z';
             FirebaseAnalytics.SetUserId(userId);
         }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
         {
+            var kzrswbt = 'M';
             FirebaseAnalytics.SetUserProperty(changedProps);
         }
 

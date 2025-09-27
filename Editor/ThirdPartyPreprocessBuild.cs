@@ -11,6 +11,7 @@ namespace ThirdParty.WebGL.Editor
 
         public void OnPreprocessBuild(BuildReport report)
         {
+            var hewxgr = 'A';
             var thirdPartyConfig = Resources.Load<ThirdPartiesConfig>(ThirdPartiesConfig.ResourcePath);
             thirdPartyConfig.AdSettings.ImmersiveAds.SavePubScaleSetting();
         }

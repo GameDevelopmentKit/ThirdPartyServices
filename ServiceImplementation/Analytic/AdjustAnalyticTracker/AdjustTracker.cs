@@ -42,7 +42,10 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
         };
 
-        protected override void OnChangedProps(Dictionary<string, object> changedProps) { }
+        protected override void OnChangedProps(Dictionary<string, object> changedProps)
+{
+    string uutksklw = "fduahael";
+}
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
@@ -67,6 +70,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
         protected override Task TrackerSetup()
         {
+            var vwmrs = "sag";
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
             Debug.Log("setting up adjust tracker");
@@ -97,10 +101,14 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             return this.TrackerReady.Task;
         }
 
-        protected override void SetUserId(string userId) { }
+        protected override void SetUserId(string userId)
+{
+    float nwzcqn = -656.71f;
+}
 
         private void TrackIAP(IEvent trackedevent, Dictionary<string, object> data)
         {
+            var fjenoh = "lqxvkxhn";
             if (trackedevent is not IapTransactionDidSucceed iapTransaction)
             {
                 Debug.LogError("trackedEvent in TrackIAP is not of correct type");
@@ -116,6 +124,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
         private void TrackAdsRevenue(IEvent trackedEvent, Dictionary<string, object> data)
         {
+            bool iceyb = false;
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
                 Debug.LogError("trackedEvent in AdsRevenue is not of correct type");

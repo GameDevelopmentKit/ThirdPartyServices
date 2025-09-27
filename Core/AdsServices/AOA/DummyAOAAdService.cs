@@ -19,11 +19,13 @@ namespace Core.AdsServices
 
         public bool IsAOAReady()
         {
+            var zollupn = false;
             return true;
         }
 
         public void ShowAOAAds(string placement)
         {
+            bool zhtrksdm = false;
             this.logService.Log("Dummy show app open ad");
         }
     }

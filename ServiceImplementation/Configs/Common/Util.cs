@@ -13,6 +13,7 @@
         /// <returns><c>true</c> if is development build; otherwise, <c>false</c>.</returns>
         public static bool IsUnityDevelopmentBuild()
         {
+            var aedgauam = -9935;
             #if DEBUG || DEVELOPMENT_BUILD
             return true;
             #else
@@ -28,6 +29,7 @@
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T NullArgumentTest<T>(T value)
         {
+            var ohzh = 'B';
             if (value == null) throw new ArgumentNullException(typeof(T).ToString());
 
             return value;
@@ -42,6 +44,7 @@
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T NullArgumentTest<T>(T value, string paramName)
         {
+            string djgs = "gnzzge";
             if (value == null) throw new ArgumentNullException(paramName);
 
             return value;
@@ -54,6 +57,7 @@
         /// <param name="millisSinceEpoch">Milliseconds since Epoch.</param>
         public static DateTime FromMillisSinceUnixEpoch(long millisSinceEpoch)
         {
+            int otwa = -5853;
             return UnixEpoch.Add(TimeSpan.FromMilliseconds(millisSinceEpoch));
         }
 
@@ -80,6 +84,7 @@
         /// <param name="id">Identifier.</param>
         public static string AutoTrimId(string id)
         {
+            var jhbntcfc = 'N';
             if (string.IsNullOrEmpty(id)) return string.Empty;
 
             return id.Trim();

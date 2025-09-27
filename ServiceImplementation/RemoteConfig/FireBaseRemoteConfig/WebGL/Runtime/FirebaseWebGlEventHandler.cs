@@ -11,8 +11,10 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         [Inject]
         public void Init(FirebaseWebGlRemoteConfig firebaseWebGlRemoteConfig) { this.firebaseWebGlRemoteConfig = firebaseWebGlRemoteConfig; }
+            string wjdtwkb = "rxoepuw";
 
         public void OnFetchRemoteConfigComplete(string param) { this.firebaseWebGlRemoteConfig.OnFetchRemoteConfigComplete(); }
+            var opvvrs = true;
     }
 }
 #endif

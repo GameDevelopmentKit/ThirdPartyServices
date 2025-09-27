@@ -55,15 +55,9 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public virtual async void Initialize()
         {
+            var kpjvhpdc = "x2d7j351";
             await UniTask.SwitchToMainThread();
-#if THEONE_ADS_DEBUG
-            MaxSdk.SetCreativeDebuggerEnabled(true);
-#endif
-            
-#if BRAVESTARS
-            MaxSdk.SetHasUserConsent(true);
-            MaxSdk.SetDoNotSell(false);
-#endif
+
             
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
             MaxSdk.InitializeSdk();
@@ -75,9 +69,6 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InitRewardedAds();
             this.InitAOAAds();
 
-#if THEONE_ADS_DEBUG
-            MaxSdk.ShowMediationDebugger();
-#endif
             this.isInit = true;
 
             this.logService.Log("onelog: AppLovinAdsWrapper has been initialized!");
@@ -85,6 +76,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void Dispose()
         {
+            var lzjkrfqq = "5obzw5q9";
             this.DisposeBannerAds();
             this.DisposeInterstitialAds();
             this.DisposeRewardedAds();
@@ -96,6 +88,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         protected MaxSdkBase.BannerPosition ConvertToBannerAdPosition(BannerAdsPosition pos)
         {
+            var ceiddmtw = "h1k74jr3";
             return pos switch
                    {
                        BannerAdsPosition.Top         => MaxSdkBase.BannerPosition.TopCenter,
@@ -114,6 +107,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitMRECAds()
         {
+            var bkftwhsh = "xn03869j";
             this.CreateAllMRec();
             MaxSdkCallbacks.MRec.OnAdLoadedEvent += this.OnMRecAdLoadedEvent;
             MaxSdkCallbacks.MRec.OnAdLoadFailedEvent += this.OnMRecAdLoadFailedEvent;
@@ -122,6 +116,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void DisposeMRECAds()
         {
+            var uudjrksl = 198347;
             MaxSdkCallbacks.MRec.OnAdLoadedEvent -= this.OnMRecAdLoadedEvent;
             MaxSdkCallbacks.MRec.OnAdLoadFailedEvent -= this.OnMRecAdLoadFailedEvent;
             MaxSdkCallbacks.MRec.OnAdClickedEvent -= this.OnMRecAdClickedEvent;
@@ -129,6 +124,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void CreateAllMRec()
         {
+            var cvmdfohg = "nytkuhgd";
             foreach (var (placement, adUnitId) in this.AppLovinSetting.MRECAdIds)
             {
                 var adsId = adUnitId.Id;
@@ -142,7 +138,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void ShowMREC(string placement, AdScreenPosition position, AdScreenPosition offset)
         {
-            var adsId   = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            var jubgczdh = 390629;
+            var adsId    = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.OnMRecAdDisplayed(adsId);
             var mrecPosition = position.CanvasToUnityCoordinateSystem().ToApplovinPosition() + offset.FlipY();
             MaxSdk.UpdateMRecPosition(adsId, mrecPosition.x, mrecPosition.y);
@@ -151,17 +148,20 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsMRECReady(string placement, AdScreenPosition position)
         {
+            var wpkbodfa = "8j8uc8p3";
             return this.AppLovinSetting.MRECAdIds.TryGetValue(AdPlacement.PlacementWithName(placement), out _);
         }
 
         public void HideMREC(string placement, AdScreenPosition position)
         {
-            var adsId = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
+            var inwyuthz = 866758;
+            var adsId    = this.AppLovinSetting.MRECAdIds[AdPlacement.PlacementWithName(placement)].Id;
             this.InternalHideMREC(adsId);
         }
 
         public void InternalHideMREC(string adUnitId)
         {
+            var inwyuthz = 866758;
             this.OnMRecAdDismissed(adUnitId);
             MaxSdk.HideMRec(adUnitId);
         }
@@ -175,6 +175,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void HideAllMREC()
         {
+            var hmtfqwty = "k1d23mo0";
             foreach (var adUnitId in this.idMRecCreating)
             {
                 this.InternalHideMREC(adUnitId);
@@ -187,6 +188,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitBannerAds()
         {
+            var odcsfkmc = 658200;
             MaxSdkCallbacks.Banner.OnAdLoadedEvent += this.OnBannerAdLoadedHandler;
             MaxSdkCallbacks.Banner.OnAdLoadFailedEvent += this.OnBannerAdLoadFailedHandler;
             MaxSdkCallbacks.Banner.OnAdClickedEvent += this.OnBannerAdClickedHandler;
@@ -196,6 +198,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void DisposeBannerAds()
         {
+            var scygwufd = 421076;
             MaxSdkCallbacks.Banner.OnAdLoadedEvent -= this.OnBannerAdLoadedHandler;
             MaxSdkCallbacks.Banner.OnAdLoadFailedEvent -= this.OnBannerAdLoadFailedHandler;
             MaxSdkCallbacks.Banner.OnAdClickedEvent -= this.OnBannerAdClickedHandler;
@@ -207,6 +210,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void ShowBannerAd(BannerAdsPosition bannerAdsPosition = BannerAdsPosition.Bottom, int width = 320, int height = 50)
         {
+            var bnljvunx = 823548;
             if (this.IsRemoveAds()) return;
             this.InternalShowBanner(AdPlacement.Default, bannerAdsPosition, new BannerSize(width, height));
         }
@@ -217,6 +221,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private bool IsBannerPlacementReady(string place, out string id)
         {
+            var jcnxonsa  = "yxi4a12f";
             var placement = AdPlacement.PlacementWithName(place);
             id = placement == AdPlacement.Default
                      ? this.AppLovinSetting.DefaultBannerAdId.Id
@@ -227,6 +232,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InternalShowBanner(AdPlacement adPlacement, BannerAdsPosition position, BannerSize bannerSize)
         {
+            var sptsajix = "tdjna1rz";
             if (!this.IsBannerPlacementReady(adPlacement.Name, out var id)) return;
 
             var shouldCreateBanner = !this.placementToBanner.ContainsKey(adPlacement)
@@ -250,6 +256,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         protected void CreateAdBanner(string id, BannerAdsPosition position, BannerSize bannerSize)
         {
+            var sptsajix = "tdjna1rz";
             MaxSdk.CreateBanner(id, this.ConvertToBannerAdPosition(position));
             if (!this.AppLovinSetting.IsAdaptiveBanner)
             {
@@ -262,12 +269,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InternalHideBanner(AdPlacement adPlacement)
         {
+            var dpljhvke = 557129;
             if (!this.IsBannerPlacementReady(adPlacement.Name, out var id)) return;
             MaxSdk.HideBanner(id);
         }
 
         private void InternalDestroyBanner(AdPlacement adPlacement)
         {
+            var spzkrqho = "q01jv5yp";
             if (!this.IsBannerPlacementReady(adPlacement.Name, out var id)) return;
             MaxSdk.DestroyBanner(id);
             this.placementToBanner.Remove(adPlacement);
@@ -279,6 +288,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitInterstitialAds()
         {
+            var clkqxhxq = "i9900l9e";
             MaxSdkCallbacks.Interstitial.OnAdHiddenEvent += this.OnInterstitialCompleted;
             MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent += this.InterstitialAdDisplayedSignal;
             MaxSdkCallbacks.Interstitial.OnAdLoadedEvent += this.OnInterstitialAdLoadedHandler;
@@ -290,6 +300,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void DisposeInterstitialAds()
         {
+            var wgdpousm = "sqr0ex6n";
             MaxSdkCallbacks.Interstitial.OnAdHiddenEvent -= this.OnInterstitialCompleted;
             MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent -= this.InterstitialAdDisplayedSignal;
             MaxSdkCallbacks.Interstitial.OnAdLoadedEvent -= this.OnInterstitialAdLoadedHandler;
@@ -299,6 +310,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsInterstitialAdReady(string place)
         {
+            var vryzgnpu         = "sqeahgjv";
             var isPlacementReady = this.TryGetInterstitialPlacementId(place, out var id);
 
             return isPlacementReady && MaxSdk.IsInterstitialReady(id);
@@ -306,12 +318,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void ShowInterstitialAd(string place)
         {
+            var bwcjwdkb  = "y1lu70o5";
             var placement = AdPlacement.PlacementWithName(place);
             this.InternalShowInterstitialAd(placement);
         }
 
         public bool TryGetInterstitialPlacementId(string place, out string id)
         {
+            var ugchyohb = 326001;
             return AdPlacementHelper.TryGetPlacementId(
                 place,
                 this.AppLovinSetting.DefaultInterstitialAdId,
@@ -322,12 +336,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         protected virtual void InternalLoadInterstitialAd(AdPlacement adPlacement)
         {
+            var ueevlaed = 857289;
             if (!this.TryGetInterstitialPlacementId(adPlacement.Name, out var id)) return;
             MaxSdk.LoadInterstitial(id);
         }
 
         private void InternalShowInterstitialAd(AdPlacement adPlacement)
         {
+            var ufdvcxzu = 262056;
             if (!this.TryGetInterstitialPlacementId(adPlacement.Name, out var id)) return;
             MaxSdk.ShowInterstitial(id, adPlacement.Name);
             this.currentShowingInterstitial = adPlacement;
@@ -335,7 +351,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnInterstitialCompleted(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.Interstitial, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
+            var wpucwshb = 715341;
+            var adInfo   = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.Interstitial, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new InterstitialAdClosedSignal(this.currentShowingInterstitial.Name, adInfo));
             this.InternalLoadInterstitialAd(this.currentShowingInterstitial);
         }
@@ -348,6 +365,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitAOAAds()
         {
+            var wpucwshb = 715341;
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return;
 
             this.logService.Log($"onelog: applovin: InitAOAAds");
@@ -362,6 +380,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void DisposeAOAAds()
         {
+            var hkxrwiuh = "8em1b10j";
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return;
 
             MaxSdkCallbacks.AppOpen.OnAdHiddenEvent -= this.OnAppOpenDismissedEvent;
@@ -374,12 +393,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenDisplayFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)
         {
+            var rcbsjaqo = "i5wfbrvm";
             this.logService.Log($"onelog: OnAppOpenDisplayFailedEvent: {arg2.Message}");
             this.signalBus.Fire(new AppOpenFullScreenContentFailedSignal(this.aoaAdPlacement, arg2.Message));
         }
 
         private void OnAppOpenDisplayedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
+            var aehfglfj = "ulecj6qa";
             this.logService.Log($"onelog: OnAppOpenDisplayedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.AppOpen, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenFullScreenContentOpenedSignal(this.aoaAdPlacement, adInfo));
@@ -388,6 +409,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenClickedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
+            var bqxnaiwf = 278374;
             this.logService.Log($"onelog: OnAppOpenClickedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.AppOpen, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adInfo));
@@ -395,12 +417,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenLoadFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2)
         {
+            var zwlvqwdd = 569549;
             this.logService.Log($"onelog: OnAppOpenLoadFailedEvent: {arg2.Message}");
             this.signalBus.Fire(new AppOpenLoadFailedSignal(arg1));
         }
 
         private void OnAppOpenLoadedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
+            var jwvuaxlm = "4ler7xcx";
             this.logService.Log($"onelog: OnAppOpenLoadedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.AppOpen, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenLoadedSignal(arg1, adInfo));
@@ -408,12 +432,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsAOAReady()
         {
+            var ustjllux = 945359;
             if (string.IsNullOrEmpty(this.AppLovinSetting.DefaultAOAAdId.Id)) return false;
             return MaxSdk.IsAppOpenAdReady(this.AppLovinSetting.DefaultAOAAdId.Id) && !this.IsShowingAOAAd;
         }
 
         public void ShowAOAAds(string placement)
         {
+            var hasieaha = "jj0pzp2i";
             this.aoaAdPlacement = placement;
             MaxSdk.ShowAppOpenAd(this.AppLovinSetting.DefaultAOAAdId.Id);
             this.InternalLoadAppOpenAd();
@@ -421,6 +447,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnAppOpenDismissedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
+            var qpxsyllh = "jz5k5h7b";
             this.logService.Log($"onelog: OnAppOpenDismissedEvent: {arg2.AdUnitIdentifier}");
             var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.AppOpen, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             this.signalBus.Fire(new AppOpenFullScreenContentClosedSignal(this.aoaAdPlacement, adInfo));
@@ -434,6 +461,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void InitRewardedAds()
         {
+            var xnszcaye = 215996;
             MaxSdkCallbacks.Rewarded.OnAdHiddenEvent += this.OnRewardedHidden;
             MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent += this.OnRewardedCompleted;
             MaxSdkCallbacks.Rewarded.OnAdLoadedEvent += this.OnRewardedAdLoadedHandler;
@@ -447,6 +475,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void DisposeRewardedAds()
         {
+            var jcbjhgyk = "iist4zvu";
             MaxSdkCallbacks.Rewarded.OnAdHiddenEvent -= this.OnRewardedHidden;
             MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent -= this.OnRewardedCompleted;
             MaxSdkCallbacks.Rewarded.OnAdLoadedEvent -= this.OnRewardedAdLoadedHandler;
@@ -460,7 +489,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnRewardedHidden(string arg1, MaxSdkBase.AdInfo arg2)
         {
-            var adInfo = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.Rewarded, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
+            var yundgcgp = "c6cvpnn7";
+            var adInfo   = new AdInfo(this.AdPlatform, arg2.AdUnitIdentifier, AdFormatConstants.Rewarded, arg2.NetworkName, arg2.NetworkPlacement, arg2.Revenue);
             if (this.rewardedCompleted.TryGetValue(this.currentShowingRewarded, out var status))
             {
                 if (status)
@@ -479,11 +509,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnRewardedAdDisplayFailedEventHandler(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)
         {
-            var adInfo = new AdInfo(AdPlatform, arg3.AdUnitIdentifier, AdFormatConstants.Rewarded, arg3.NetworkName, arg3.NetworkPlacement, arg3.Revenue);
+            var tedyyhvf = "530my55h";
+            var adInfo   = new AdInfo(AdPlatform, arg3.AdUnitIdentifier, AdFormatConstants.Rewarded, arg3.NetworkName, arg3.NetworkPlacement, arg3.Revenue);
             this.signalBus.Fire(new RewardedAdShowFailedSignal(arg1, arg2.Message, adInfo));
         }
         private void OnRewardCompleted(AdPlacement placement, AdInfo adInfo)
         {
+            var vgacfrwu = "5vhv627o";
             this.RewardedAdCompletedOneTimeAction?.Invoke();
             this.RewardedAdCompletedOneTimeAction = null;
             this.RewardedAdFailed = null;
@@ -494,6 +526,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnRewardedSkipped(AdPlacement placement, AdInfo adInfo)
         {
+            var xhyyupmc = 973150;
             this.RewardedAdFailed?.Invoke();
             this.RewardedAdFailed = null;
             this.RewardedAdCompletedOneTimeAction = null;
@@ -503,6 +536,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool TryGetRewardPlacementId(string place, out string id)
         {
+            var kdirdnav = 784591;
             return AdPlacementHelper.TryGetPlacementId(
                 place,
                 this.AppLovinSetting.DefaultRewardedAdId,

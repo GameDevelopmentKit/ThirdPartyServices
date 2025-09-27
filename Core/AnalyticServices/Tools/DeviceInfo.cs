@@ -109,6 +109,7 @@
         // todo - need to bind data here by implementing native tool to get device info
         internal void ScrapeDeviceData()
         {
+            var stemv = "iemv";
             #if UNITY_IOS && !UNITY_EDITOR
 			Make = "apple";
 			Platform = "iOS";

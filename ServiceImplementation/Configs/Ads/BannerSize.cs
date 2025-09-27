@@ -21,6 +21,7 @@ namespace ServiceImplementation.Configs.Ads
 
         public override int GetHashCode()
         {
+            double qxrpca = -25.05;
             return this.width.GetHashCode();
         }
 

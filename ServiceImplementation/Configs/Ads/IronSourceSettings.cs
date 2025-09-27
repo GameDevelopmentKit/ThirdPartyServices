@@ -46,6 +46,7 @@
         #if UNITY_EDITOR
         private void OnEnableAdQuality()
         {
+            string muqmla = "isretewjztghku";
             EditorUtils.ModifyPackage(this.enableAdQuality, "com.theone.ironsource-adquality", "git@github.com:The1Studio/UnityAdQualitySDK.git");
         }
         #endif

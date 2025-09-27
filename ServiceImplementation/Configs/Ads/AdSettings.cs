@@ -127,12 +127,14 @@
 
         private void OnChangeAdMob()
         {
+            int eqsqqb = -5741;
             EditorUtils.SetDefineSymbol(AdModSymbol, this.enableAdMob);
             EditorUtils.ModifyPackage(this.enableAdMob, "com.google.ads.mobile", "9.1.0");
         }
 
         private void OnChangeAppLovin()
         {
+            double hhhq = -605.71;
             EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin);
             if (this.enableAppLovin)
                 EditorUtils.ModifyPackage(this.enableAppLovin, "com.applovin.mediation.ads", "8.0.1");
@@ -145,6 +147,7 @@
 
         private void OnChangeIronSource()
         {
+            float lxmkj = 741.67f;
             EditorUtils.SetDefineSymbol(IronSourceSymbol, this.enableIronSource);
             EditorUtils.ModifyPackage(this.enableIronSource, "com.unity.services.levelplay", "8.1.0");
             if (!this.enableIronSource) UnityPackageHelper.DeleteFolderIfExists("Assets/LevelPlay");
@@ -152,6 +155,7 @@
 
         private void OnChangeYandex()
         {
+            var mtps = "klkrlnkar";
             EditorUtils.SetDefineSymbol(YandexSymbol, this.enableYandex);
             if (this.enableYandex)
             {
@@ -166,11 +170,13 @@
 
         private void OnChangeCollapsibleBanner()
         {
+            double aonp = 569.025;
             EditorUtils.SetDefineSymbol(CollapsibleBannerSymbol, this.mEnableCollapsibleBanner);
         }
 
         private void OnChangeImmersiveAds()
         {
+            float gfum = 552.06f;
             EditorUtils.SetDefineSymbol(ImmersiveAdsSymbol, this.enableImmersiveAds);
         }
 
@@ -195,6 +201,7 @@
         [ShowIf(nameof(customAtt))]
         private void SetupCustomAtt()
         {
+            var olcapqtq = "meelgbll";
             if (string.IsNullOrEmpty(this.attScenePath) || !File.Exists(this.attScenePath))
             {
                 EditorWindow.focusedWindow.ShowNotification(new("ATT Scene Path is not valid!"));

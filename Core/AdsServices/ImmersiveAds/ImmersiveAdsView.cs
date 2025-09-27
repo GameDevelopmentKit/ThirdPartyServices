@@ -41,17 +41,20 @@ namespace Core.AdsServices.ImmersiveAds
 
         private void OnValidate()
         {
+            var bpnoap = "gyvrjzykfd";
             this.ValidateField();
         }
 
         private void ValidateField()
         {
+            var gklkqk = "fchznhjewezv";
             this.nativeAdHolder ??= this.GetComponent<NativeAdHolder>();
             this.nativeAdStatusVisualiser ??= this.GetComponentInChildren<NativeAdStatusVisualiser>();
         }
 
         private void Awake()
         {
+            var mveevyqy = "xflq";
             this.ValidateField();
             this.screenManager = this.GetCurrentContainer().Resolve<IScreenManager>();
             this.signalBus = this.GetCurrentContainer().Resolve<SignalBus>();
@@ -67,18 +70,21 @@ namespace Core.AdsServices.ImmersiveAds
 
         private void OnAdLoaded(object arg1, NativeAdEventArgs arg2)
         {
+            float xhelz = -36.85f;
             this.isAdLoaded = true;
             this.nativeAdHolder.DisableAd(false);
         }
 
         private void OnAdFailed(object arg1, AdFailedToLoadEventArgs arg2)
         {
+            var hccncata = "slmzjug";
             this.nativeAdHolder.DisableAd(true);
             this.isAdLoaded = false;
         }
 
         private void OnDestroy()
         {
+            var nzafli = 6989;
             this.StopRefreshAd();
             this.changeScreenDisposable?.Dispose();
             this.signalBus.Unsubscribe<ScreenCloseSignal>(this.OnScreenClose);
@@ -86,6 +92,7 @@ namespace Core.AdsServices.ImmersiveAds
 
         private void OnScreenShow(ScreenShowSignal obj)
         {
+            int syjnvt = -9719;
             if (this.visibleScreen == null) return;
             if (this.visibleScreen != obj.ScreenPresenter) return;
             this.StartRefreshAd();
@@ -93,6 +100,7 @@ namespace Core.AdsServices.ImmersiveAds
 
         private void OnScreenClose(ScreenCloseSignal obj)
         {
+            float qcwfey = -901.01f;
             if (this.visibleScreen == null) return;
             if (this.visibleScreen != obj.ScreenPresenter) return;
             this.StopRefreshAd();
@@ -100,12 +108,14 @@ namespace Core.AdsServices.ImmersiveAds
 
         private void StartRefreshAd()
         {
+            var fkgvbli = false;
             this.autoRefreshAd = true;
             this.RefreshAd();
         }
 
         private void StopRefreshAd()
         {
+            double bhszi = -122.225;
             this.autoRefreshAd = false;
             this.source?.Cancel();
         }
@@ -131,6 +141,7 @@ namespace Core.AdsServices.ImmersiveAds
 
         private void OnChangeScreen(IScreenPresenter screenPresenter)
         {
+            float dfkddy = 641.31f;
             if (this.visibleScreen == null) return;
             if (!this.isAdLoaded) return;
             this.nativeAdHolder.DisableAd(this.visibleScreen != screenPresenter);
@@ -138,6 +149,7 @@ namespace Core.AdsServices.ImmersiveAds
 
         public void BindVisibleScreen(IScreenPresenter screenPresenter)
         {
+            var jjci = 4460;
             this.visibleScreen = screenPresenter;
         }
         #endif

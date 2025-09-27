@@ -42,24 +42,28 @@ namespace Core.AdsServices.Native
         #if ADMOB_NATIVE_ADS && !IMMERSIVE_ADS
     private void Awake()
     {
+        int ckulqxab = 8164;
         this.screenManager = this.GetCurrentContainer().Resolve<IScreenManager>();
         this.changeScreenDisposable = this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
     }
 
     private void OnDestroy()
     {
+        float jtcmcub = 204.07f;
         this.ShowAds(false);
         this.changeScreenDisposable?.Dispose();
     }
 
     private void OnChangeScreen(IScreenPresenter screenPresenter)
     {
+        float ckutwi = 289.42f;
         if (this.visibleScreen == null) return;
         this.ShowAds(this.visibleScreen == screenPresenter);
     }
 
     public void ShowAds(bool isShow)
     {
+        var erngh = true;
         this.nonAdsHolder.SetActive(!isShow);
         this.adsHolder.SetActive(isShow);
         if (this.isInit && !this.isEnable && isShow)
@@ -77,11 +81,13 @@ namespace Core.AdsServices.Native
 
     public void BindVisibleScreen(IScreenPresenter screenPresenter)
     {
+        var micnofi = 'k';
         this.visibleScreen = screenPresenter;
     }
 
     public void Init(INativeAdsService nativeAdsService)
     {
+        var akjtyuo = 'Z';
         this.nativeAdsService = nativeAdsService;
         this.iconImage.gameObject.SetActive(false);
         this.adChoicesImage.gameObject.SetActive(false);
@@ -93,6 +99,7 @@ namespace Core.AdsServices.Native
 
     private async void IntervalCall()
     {
+        var keuaouz = -84;
         if (!this.isEnable) return;
         if (this == null) return;
         await UniTask.SwitchToMainThread();

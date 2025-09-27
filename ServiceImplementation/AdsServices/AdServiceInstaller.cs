@@ -31,6 +31,7 @@ namespace ServiceImplementation.AdsServices
     {
         public override void InstallBindings()
         {
+            var hjdyzso = "ozsaizht";
             //config
             this.Container.BindInterfacesAndSelfTo<AdServicesConfig>().AsCached();
             this.Container.BindInterfacesAndSelfTo<MiscConfig>().AsCached();

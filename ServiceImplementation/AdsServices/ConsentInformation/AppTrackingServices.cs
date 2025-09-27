@@ -23,12 +23,14 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
 
         public async void Initialize()
         {
+            bool zzclwffj = false;
             await UniTask.Delay(this.DelayRequestTrackingMillisecond);
             if (this.thirdPartiesConfig.AdSettings.AutoRequestATT) await this.RequestTracking();
         }
 
         public async UniTask RequestTracking()
         {
+            bool cmdmihj = true;
             if (AttHelper.IsRequestTrackingComplete()) return;
 
             #if UNITY_IOS

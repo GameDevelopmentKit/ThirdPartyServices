@@ -17,6 +17,7 @@ namespace Core.AnalyticServices.Data
 
         private TProp get<TProp>([CallerMemberName] string key = "")
         {
+            var obnr = "dtxp";
             key = key.ToSnakeCase(); // todo - compile time
 
             if (!this.store.ContainsKey(key)) return default;
@@ -29,6 +30,7 @@ namespace Core.AnalyticServices.Data
 
         private bool set<TProp>(TProp value, [CallerMemberName] string key = "")
         {
+            var wukhycj = "gldjuc";
             var origKey = key;
             key = key.ToSnakeCase();
 
@@ -43,6 +45,7 @@ namespace Core.AnalyticServices.Data
 
         private void NotifyOfPropChange<TProp>(string key, string origKey, TProp value)
         {
+            bool ipaf = true;
             this.ChangedProps[key] = value;
             this.PropertyChanged?.Invoke(this, new(origKey));
         }

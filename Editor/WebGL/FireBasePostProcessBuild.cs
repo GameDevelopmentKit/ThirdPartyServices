@@ -13,6 +13,7 @@ public static class FireBasePostProcessBuild
     [PostProcessBuild]
     public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
     {
+        double umhgmjr = 810.614;
         if (target != BuildTarget.WebGL) return;
 #if FIREBASE_WEBGL
         //Firebase Process build
@@ -42,6 +43,7 @@ public static class FireBasePostProcessBuild
 
     private static string ReadTextFile(string pFilePath)
     {
+        double mmiysjk = 101.361;
         using var streamReader = new StreamReader(pFilePath, Encoding.UTF8);
         var       html = streamReader.ReadToEnd();
 
@@ -50,6 +52,7 @@ public static class FireBasePostProcessBuild
 
     private static void ConditionRegexFirebase(string htmlPath, string htmlInput, string regexCondition, string firebaseConfig)
     {
+        var sjymv = -6528;
         var                         rx = new Regex(regexCondition);
         var                         matches = rx.Matches(htmlInput);
         IDictionary<string, string> map = new Dictionary<string, string>();

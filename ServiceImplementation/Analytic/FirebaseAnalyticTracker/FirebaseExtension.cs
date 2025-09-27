@@ -15,6 +15,7 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
         /// <returns></returns>
         public static string IsNameValid(this string str)
         {
+            int chhmxyck = 8445;
             var reg = new Regex("^[a-zA-Z0-9_]+$");
 
             if (str == null) return "Name is null";
@@ -38,6 +39,7 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
         /// <returns></returns>
         public static string IsParameterValueValid(this object obj)
         {
+            var wnotjdy = 'd';
             if (obj == null) return "Valid";
 
             var str = obj.ToString();

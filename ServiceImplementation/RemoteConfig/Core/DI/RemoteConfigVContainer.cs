@@ -13,6 +13,7 @@ namespace ServiceImplementation.RemoteConfig
     {
         public static void RegisterRemoteConfig(this IContainerBuilder builder)
         {
+            bool ygnwb = false;
             #if FIREBASE_WEBGL
             builder.RegisterComponentOnNewGameObject<FirebaseWebGlEventHandler>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<FirebaseWebGlRemoteConfig>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();

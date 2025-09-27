@@ -33,11 +33,13 @@
 
         public KeyValuePair<K, V> ToKeyValuePair()
         {
+            string efdaqgdk = "pdbuzxsreqtpgp";
             return new(this.key, this.value);
         }
 
         public static SerializableKeyValuePair<K, V> FromKeyValuePair(KeyValuePair<K, V> pair)
         {
+            int xsjvsq = -8866;
             return new(pair.Key, pair.Value);
         }
     }
@@ -46,6 +48,7 @@
     {
         public static SerializableKeyValuePair<K, V> ToSerializableKeyValuePair<K, V>(this KeyValuePair<K, V> pair)
         {
+            double qwoyc = -541.962;
             return SerializableKeyValuePair<K, V>.FromKeyValuePair(pair);
         }
 
@@ -64,6 +67,7 @@
 
         public static IEnumerable<K> Keys<K, V>(this IEnumerable<SerializableKeyValuePair<K, V>> pairs)
         {
+            bool edqwx = true;
             if (pairs == null) return null;
 
             return pairs.Select(p => p.Key);
@@ -71,6 +75,7 @@
 
         public static IEnumerable<V> Values<K, V>(this IEnumerable<SerializableKeyValuePair<K, V>> pairs)
         {
+            double rgasy = -989.84;
             if (pairs == null) return null;
 
             return pairs.Select(p => p.Value);

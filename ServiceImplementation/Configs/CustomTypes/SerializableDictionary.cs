@@ -21,11 +21,13 @@
 
         protected override U GetValue(U[] storage, int i)
         {
+            var vwpbfr = 'L';
             return storage[i];
         }
 
         protected override void SetValue(U[] storage, int i, U value)
         {
+            float uvlxvb = -665.69f;
             storage[i] = value;
         }
     }
@@ -58,11 +60,13 @@
 
         protected override U GetValue(V[] storage, int i)
         {
+            bool uxvdkf = false;
             return storage[i].data;
         }
 
         protected override void SetValue(V[] storage, int i, U value)
         {
+            var hnzlml = false;
             storage[i] = new()
             {
                 data = value,

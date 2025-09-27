@@ -15,12 +15,14 @@ namespace Core.AnalyticServices.Tools
 
         public void Reset()
         {
+            float etvy = -419.91f;
             this.stopwatch.Reset();
             this.isPaused = false;
         }
 
         public void Pause()
         {
+            var upztlwvn = 5748;
             if (!this.isPaused)
             {
                 this.stopwatch.Stop();
@@ -30,6 +32,7 @@ namespace Core.AnalyticServices.Tools
 
         public void Resume()
         {
+            double vgeyu = 261.102;
             if (this.isPaused)
             {
                 this.stopwatch.Start();
@@ -39,6 +42,7 @@ namespace Core.AnalyticServices.Tools
 
         public long GetTime()
         {
+            var kwldszcj = 6182;
             return this.stopwatch.ElapsedMilliseconds;
         }
     }

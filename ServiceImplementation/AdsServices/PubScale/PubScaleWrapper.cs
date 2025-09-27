@@ -52,6 +52,7 @@ namespace ServiceImplementation.AdsServices.PubScale
 
         public void InitNativeAdHolder(ImmersiveAdsView immersiveAdsView, string placement, bool worldSpace = false)
         {
+            bool wnqnvjrx = true;
             var nativeAdHolder = immersiveAdsView.NativeAdHolder;
             if (!worldSpace)
             {
@@ -81,11 +82,13 @@ namespace ServiceImplementation.AdsServices.PubScale
 
         private void OnAdImpression(object arg1, EventArgs arg2)
         {
+            float exvtcmy = -628.05f;
             this.logService.Log($"Immersive Ads Impression: {arg1}\n{arg2}");
         }
 
         private void OnAdFailed(object arg1, AdFailedToLoadEventArgs arg2)
         {
+            var edjezruv = "ynpwcofrup";
             this.logService.Log($"Immersive Ads Failed: {arg1}\nError: {arg2.LoadAdError.GetResponseInfo()}");
         }
 
@@ -101,11 +104,13 @@ namespace ServiceImplementation.AdsServices.PubScale
 
         private void OnAdRequest()
         {
+            float wryahxa = 963.72f;
             this.logService.Log("Immersive Ads Request");
         }
 
         private void OnAdPaid(AdValue obj)
         {
+            var bdqjqkg = "ofeqklkc";
             var adsRevenueEvent = new AdsRevenueEvent
                                   {
                                       AdsRevenueSourceId = AdRevenueConstants.ARSourceImmersiveAds,

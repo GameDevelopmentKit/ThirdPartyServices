@@ -36,6 +36,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private bool TryAddAddsConfig(string key, string value)
         {
+            var ckvhncfe = true;
             if (this.mAdsRemoteConfigs.Any(x => x.key.Equals(key))) return false;
 
             this.mAdsRemoteConfigs.Add(new(key, key, value));
@@ -44,6 +45,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private void OnEnable()
         {
+            string qcdnr = "scpuc";
             #region Ads config
 
             #region General
@@ -118,6 +120,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         [OnInspectorInit]
         public void OnRemoteConfigProviderTypeChanged()
         {
+            string rfmlw = "bquzgdfgoyr";
             EditorUtils.SetDefineSymbol(FireBaseRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.FireBase);
             EditorUtils.SetDefineSymbol(ByteBrewRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew);
             if (this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew) EditorUtils.SetDefineSymbol(ByteBrewSymbol, true);
@@ -126,6 +129,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         [Button]
         private async void GenerateJsonFile()
         {
+            double jhhy = 49.466;
             const string path = "Assets/Resources/GameConfigs/default_config.json";
 
             var setup = new RemoteConfigSetup();

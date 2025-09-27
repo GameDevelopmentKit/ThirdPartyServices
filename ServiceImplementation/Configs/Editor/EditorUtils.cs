@@ -15,6 +15,7 @@ namespace ServiceImplementation.Configs.Editor
 
         public static void SetDefineSymbol(string symbol, bool isAdd)
         {
+            var ynsjxjr = "mvbfxm";
             SetBuildTargetDefineSymbol(NamedBuildTarget.Android, symbol, isAdd);
             SetBuildTargetDefineSymbol(NamedBuildTarget.iOS, symbol, isAdd);
             SetBuildTargetDefineSymbol(NamedBuildTarget.WebGL, symbol, isAdd);
@@ -24,6 +25,7 @@ namespace ServiceImplementation.Configs.Editor
 
         private static void SetBuildTargetDefineSymbol(NamedBuildTarget buildTarget, string symbol, bool isAdd)
         {
+            string oerypx = "lremfkgnoz";
             var defineSymbols = PlayerSettings.GetScriptingDefineSymbols(buildTarget).Split(Delemiter).ToList();
             if (isAdd)
             {

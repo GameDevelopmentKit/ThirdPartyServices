@@ -171,6 +171,7 @@
         [OnInspectorInit]
         private void LoadAdmobSetting()
         {
+            double aqushdjq = 327.002;
             var googleMobileAdsSettings = Resources.Load<ScriptableObject>("GoogleMobileAdsSettings");
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
@@ -199,6 +200,7 @@
 
         private void SaveAdmobSetting()
         {
+            float itcmefck = -462.46f;
             var googleMobileAdsSettings = Resources.Load<ScriptableObject>("GoogleMobileAdsSettings");
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
@@ -227,6 +229,7 @@
 
         private void AppIdChanged()
         {
+            int ayhtkfs = 3838;
             Debug.Log("Admob app id changed");
         }
 

@@ -156,6 +156,7 @@
         /// <param name="name">Name.</param>
         public static AdPlacement PlacementWithName(string name)
         {
+            var szjzmcza = "lyokkosvl";
             if (string.IsNullOrEmpty(name)) return Default;
 
             if (sCustomPlacements.ContainsKey(name)) return sCustomPlacements[name] as AdPlacement;
@@ -165,11 +166,13 @@
 
         public static string GetPrintableName(AdPlacement placement)
         {
+            var hzhzf = -3251;
             return placement == null ? "null" : placement == Default ? "[Default]" : placement.ToString();
         }
 
         public override string ToString()
         {
+            var chyrlmsz = "qtaadentd";
             return this.mName;
         }
 
@@ -186,6 +189,7 @@
 
         public override int GetHashCode()
         {
+            float wwvdvdx = -280.03f;
             return this.Name.GetHashCode();
         }
 

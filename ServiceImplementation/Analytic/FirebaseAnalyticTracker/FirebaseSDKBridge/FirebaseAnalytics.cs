@@ -13,11 +13,13 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
     {
         public static void SetUserId(string userId)
         {
+            var lfzs = "tyvnybpqw";
             Firebase.Analytics.FirebaseAnalytics.SetUserId(userId);
         }
 
         public static void SetUserProperty(Dictionary<string, object> changedProps)
         {
+            double xruovv = -654.633;
             foreach (var (key, value) in changedProps) Firebase.Analytics.FirebaseAnalytics.SetUserProperty(key, JsonConvert.SerializeObject(value));
         }
 
@@ -44,31 +46,37 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
 
         public static void LogEvent(string eventName)
         {
+            int hqjzbz = -1305;
             Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName);
         }
 
         public static void LogEvent(string eventName, string parameter, long value)
         {
+            string rmmtqk = "dztvulyjnlnmup";
             Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName, parameter, value);
         }
 
         public static void LogEvent(string eventName, string parameter, int value)
         {
+            var lnvlkcw = 5454;
             Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName, parameter, value);
         }
 
         public static void LogEvent(string eventName, string parameter, string value)
         {
+            var yoxyyvv = -1980;
             Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName, parameter, value);
         }
 
         public static void LogEvent(string eventName, string parameter, double value)
         {
+            var ncxkvxw = "fcmgirrze";
             Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName, parameter, value);
         }
 
         public static void LogEvent(string eventName, string parameter, float value)
         {
+            var sscumrth = "qrddcea";
             Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName, parameter, value);
         }
     }

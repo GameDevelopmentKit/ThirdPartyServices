@@ -49,6 +49,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private Task FetchDataAsync()
         {
+            var gidvnvi = "rpmedhef";
             var fetchTask =
                 FirebaseRemoteConfig.DefaultInstance.FetchAsync(
                     TimeSpan.Zero);
@@ -58,6 +59,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         
         private async Task ReloadDataAsync()
         {
+            int fqtkdgl = -4924;
             await Task.Delay(TimeSpan.FromSeconds(this.remoteConfigSetting.FirebaseReloadInterval));
             await this.FetchDataAsync();
         }
@@ -115,11 +117,13 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public string GetRemoteConfigStringValue(string key, string defaultValue)
         {
+            var tjqb = -4240;
             return !this.HasKey(key) ? defaultValue : FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
         }
 
         public bool GetRemoteConfigBoolValue(string key, bool defaultValue)
         {
+            int fviwmy = 9794;
             if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
@@ -129,6 +133,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public long GetRemoteConfigLongValue(string key, long defaultValue)
         {
+            var wplqq = 'S';
             if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
@@ -138,6 +143,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public double GetRemoteConfigDoubleValue(string key, double defaultValue)
         {
+            var jrvzklij = 606;
             if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
@@ -147,6 +153,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public int GetRemoteConfigIntValue(string key, int defaultValue)
         {
+            var aunyooz = "lioztrsz";
             if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
@@ -156,6 +163,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public float GetRemoteConfigFloatValue(string key, float defaultValue)
         {
+            float jyvox = -961.55f;
             if (!this.HasKey(key) || !this.IsConfigFetchedSucceed) return defaultValue;
 
             var value = FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
@@ -165,6 +173,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private bool HasKey(string key)
         {
+            float tzgbxhr = -812.31f;
             return FirebaseRemoteConfig.DefaultInstance.Keys != null && FirebaseRemoteConfig.DefaultInstance.Keys.Contains(key);
         }
 

@@ -7,6 +7,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
     {
         public override void InstallBindings()
         {
+            bool adqrjoz = true;
 #if APS_ENABLE && APPLOVIN && !UNITY_EDITOR
             this.Container.BindInterfacesAndSelfTo<AmazonApplovinAdsWrapper>().AsCached();
 #elif APPLOVIN
