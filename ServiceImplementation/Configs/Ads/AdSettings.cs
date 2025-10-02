@@ -22,7 +22,7 @@
     }
 
     [Serializable]
-    public class AdSettings
+    public partial class AdSettings
     {
         public AdMobSettings       AdMob        => this.mAdMob;
         public AppLovinSettings    AppLovin     => this.mAppLovin;
@@ -32,9 +32,9 @@
 
         #region Misc
 
-        public bool EnableInterCappingTimeFocus => this.enableInterCappingTimeFocus;
-        public bool EnableBreakAds              => this.enableBreakAds;
-
+        public bool EnableInterCappingTimeFocus    => this.enableInterCappingTimeFocus;
+        public bool EnableBreakAds                 => this.enableBreakAds;
+        public bool AllowAoaOnStartGame            => this.aoaOnstart;
         public bool CollapsibleRefreshOnScreenShow => this.mCollapsibleRefreshOnScreenShow;
 
         public List<string> CollapsibleIgnoreRefreshOnScreens => this.mCollapsibleIgnoreRefreshOnScreens;
@@ -56,8 +56,13 @@
         #endregion
 
         #endregion
+
+        [SerializeField] [FoldoutGroup("Misc")] [LabelText("Allow AOA On Open Game", SdfIconType.Download)]
+        private bool aoaOnstart = true;
+
         [SerializeField] [FoldoutGroup("Misc")] [LabelText("AOA ThreshHold", SdfIconType.CupStraw)]
         private float mAOAThreshHold = 5f;
+
         public BannerAdsPosition BannerPosition => this.mBannerPosition;
 
         [SerializeField] [FoldoutGroup("Misc")] [LabelText("Banner Position", SdfIconType.BookmarkFill)]
@@ -117,8 +122,6 @@
 
         [SerializeField] [ShowIf("enableImmersiveAds")] [HideLabel] [FoldoutGroup("ImmersiveAds")]
         private ImmersiveAdsSetting mImmersiveAds;
-
-      
 
 #if UNITY_EDITOR
 
