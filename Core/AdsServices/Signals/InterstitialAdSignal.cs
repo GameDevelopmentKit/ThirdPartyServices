@@ -15,6 +15,11 @@
     {
         public InterstitialAdEligibleSignal(string placement) : base(placement) { }
     }
+    
+    public class InterstitialAdPassCappingTimeSignal : BaseAdsSignal
+    {
+        public InterstitialAdPassCappingTimeSignal(string placement) : base(placement) { }
+    }
 
     public class InterstitialAdLoadFailedSignal : BaseAdsSignal
     {
