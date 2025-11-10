@@ -17,6 +17,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
     public class AdjustTracker : BaseTracker
     {
         private readonly ISignalBus                        signalBus;
+        private readonly AnalyticConfig                    analyticConfig;
         private readonly ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
 
@@ -29,6 +30,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         ) : base(signalBus, analyticConfig)
         {
             this.signalBus                         = signalBus;
+            this.analyticConfig                    = analyticConfig;
             this.logger                            = logger;
             this.analyticsEventCustomizationConfig = analyticsEventCustomizationConfig;
 
@@ -203,6 +205,13 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             adjustRevenue.AdRevenueUnit      = adsRevenueEvent.AdUnit;
             adjustRevenue.AdRevenuePlacement = adsRevenueEvent.Placement;
             Adjust.TrackAdRevenue(adjustRevenue);
+
+            var item = this.analyticConfig.AdjustMappingEvents.FirstOrDefault(x => x.EventName.Equals(nameof(AdsRevenueEvent)));
+
+            if (item != null)
+            {
+                this.OnEvent(item.EventToken, data);
+            }
 
             this.logger.Log(
                 $"OnEvent Ad Revenue : {adsRevenueEvent.AdUnit} - {adsRevenueEvent.AdFormat} - {adsRevenueEvent.AdNetwork} - {adsRevenueEvent.Placement} - {adsRevenueEvent.Currency} - {adsRevenueEvent.Revenue}");
