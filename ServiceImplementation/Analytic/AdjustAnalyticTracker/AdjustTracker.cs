@@ -20,6 +20,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
         private readonly AnalyticConfig                    analyticConfig;
         private readonly ILogService                       logger;
         private readonly AnalyticsEventCustomizationConfig analyticsEventCustomizationConfig;
+        private          AdjustMono                        adjustMono;
 
         [Preserve]
         public AdjustTracker(
@@ -43,6 +44,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             }
 
             this.eventTokens = this.analyticsEventCustomizationConfig.CustomEventKeys.Values.ToHashSet();
+            this.adjustMono  = AdjustMono.Create();
         }
 
         protected override HashSet<Type>              IgnoreEvents    => this.analyticsEventCustomizationConfig.IgnoreEvents;
@@ -125,10 +127,12 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 #endif
 
             var adjustConfig = new AdjustConfig(appToken, environment);
-            adjustConfig.AttConsentWaitingInterval      = 120;
-            adjustConfig.IsCostDataInAttributionEnabled = true;
-            adjustConfig.IsSendingInBackgroundEnabled   = true;
-            adjustConfig.AttributionChangedDelegate     = this.OnAttributionChanged;
+            adjustConfig.AttConsentWaitingInterval        = 120;
+            adjustConfig.IsCostDataInAttributionEnabled   = true;
+            adjustConfig.IsSendingInBackgroundEnabled     = true;
+            adjustConfig.IsDeferredDeeplinkOpeningEnabled = true;
+            adjustConfig.AttributionChangedDelegate       = this.OnAttributionChanged;
+            adjustConfig.DeferredDeeplinkDelegate         = this.adjustMono.OnDeepLinking;
 #if MMP_DEBUG && !PRODUCTION
             adjustConfig.LogLevel = AdjustLogLevel.Verbose;
 #endif

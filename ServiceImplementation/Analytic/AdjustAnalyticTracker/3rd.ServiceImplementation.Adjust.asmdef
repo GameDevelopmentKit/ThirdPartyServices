@@ -1,20 +1,21 @@
 {
-  "name": "3rd.ServiceImplementation.Adjust",
-  "rootNamespace": "",
-  "references": [
-    "3rdCore.Analytic",
-    "Zenject-Signals",
-    "GameFoundation.Utilities",
-    "AdjustSdk.Scripts",
-    "AdjustSdk.Editor"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [],
-  "noEngineReferences": false
+    "name": "3rd.ServiceImplementation.Adjust",
+    "rootNamespace": "",
+    "references": [
+        "3rdCore.Analytic",
+        "Zenject-Signals",
+        "GameFoundation.Utilities",
+        "AdjustSdk.Scripts",
+        "AdjustSdk.Editor",
+        "Zenject"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
