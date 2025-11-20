@@ -24,7 +24,8 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
             this.GetCurrentContainer().Resolve<ISignalBus>().Fire(new DeeplinkActiveSignal()
             {
-                Message = message
+                Message = message,
+                Source = "Adjust"
             });
         }
     }

@@ -133,7 +133,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             adjustConfig.IsDeferredDeeplinkOpeningEnabled = true;
             adjustConfig.AttributionChangedDelegate       = this.OnAttributionChanged;
             adjustConfig.DeferredDeeplinkDelegate         = this.adjustMono.OnDeepLinking;
-#if MMP_DEBUG && !PRODUCTION
+#if MMP_DEBUG
             adjustConfig.LogLevel = AdjustLogLevel.Verbose;
 #endif
             Adjust.InitSdk(adjustConfig);
