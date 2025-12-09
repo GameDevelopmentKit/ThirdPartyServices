@@ -130,7 +130,7 @@ namespace ServiceImplementation.AdjustAnalyticTracker
             adjustConfig.AttConsentWaitingInterval        = 120;
             adjustConfig.IsCostDataInAttributionEnabled   = true;
             adjustConfig.IsSendingInBackgroundEnabled     = true;
-            adjustConfig.IsDeferredDeeplinkOpeningEnabled = true;
+            adjustConfig.IsDeferredDeeplinkOpeningEnabled = false;
             adjustConfig.AttributionChangedDelegate       = this.OnAttributionChanged;
             adjustConfig.DeferredDeeplinkDelegate         = this.adjustMono.OnDeepLinking;
 #if MMP_DEBUG
