@@ -3,7 +3,6 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 #if BYTEBREW
     using ServiceImplementation.ByteBrewRemoteConfig;
 #endif
-    using ServiceImplementation.RemoteConfig;
     using UnityEngine;
     using Zenject;
 
@@ -22,7 +21,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
             this.Container.BindInterfacesAndSelfTo<DummyRemoteConfig>().AsCached().NonLazy();
 #endif
 #if BYTEBREW && !BYTEBREW_REMOTE_CONFIG
-            this.Container.Bind(typeof(IInitializable), typeof(IInGameRemoteConfig)).To<ByteBrewRemoteConfig>().AsSingle().NonLazy();
+            this.Container.Bind(typeof(IRemoteConfig)).To<ByteBrewRemoteConfig>().AsSingle().NonLazy();
 #endif
         }
     }

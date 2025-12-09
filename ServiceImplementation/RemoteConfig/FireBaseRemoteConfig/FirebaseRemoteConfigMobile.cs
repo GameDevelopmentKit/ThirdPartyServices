@@ -14,15 +14,13 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     /// <summary>
     /// We need to use MonoBehaviour to use Firebase Remote Config
     /// </summary>
-    internal class FirebaseRemoteConfigMobile : MonoBehaviour, IRemoteConfig, IInitializable
+    internal class FirebaseRemoteConfigMobile : MonoBehaviour, IRemoteConfig
     {
         [Inject] private readonly ILogService logger;
         [Inject] private readonly SignalBus   signalBus;
         public                    bool        IsConfigFetchedSucceed { get; private set; }
 
-        private void Start() { this.InitFirebase(); }
-
-        public void Initialize() { }
+        public void Initialize() { this.InitFirebase(); }
 
         private void InitFirebase()
         {
@@ -109,7 +107,6 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         }
 
         #region Get Data Remote Config
-
         public string GetRemoteConfigStringValue(string key, string defaultValue) { return !this.HasKey(key) ? defaultValue : FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue; }
 
         public bool GetRemoteConfigBoolValue(string key, bool defaultValue)
@@ -173,7 +170,6 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         }
 
         private bool HasKey(string key) { return FirebaseRemoteConfig.DefaultInstance.Keys != null && FirebaseRemoteConfig.DefaultInstance.Keys.Contains(key); }
-
         #endregion
     }
 }

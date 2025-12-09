@@ -6,6 +6,9 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     public interface IRemoteConfig
     {
         bool   IsConfigFetchedSucceed { get; }
+
+        public void Initialize();
+        
         string GetRemoteConfigStringValue(string key, string defaultValue = "");
         async void GetRemoteConfigStringValueAsync(string key, Action<string> setter, string defaultValue = "")
         {
