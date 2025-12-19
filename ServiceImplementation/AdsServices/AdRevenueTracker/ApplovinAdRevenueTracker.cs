@@ -25,7 +25,6 @@ namespace ServiceImplementation.AdsServices.AdRevenueTracker
             MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent             += this.OnOnAdRevenuePaidEvent;
             MaxSdkCallbacks.AppOpen.OnAdRevenuePaidEvent              += this.OnOnAdRevenuePaidEvent;
             MaxSdkCallbacks.MRec.OnAdRevenuePaidEvent                 += this.OnOnAdRevenuePaidEvent;
-            MaxSdkCallbacks.RewardedInterstitial.OnAdRevenuePaidEvent += this.OnOnAdRevenuePaidEvent;
         }
 
         private void OnOnAdRevenuePaidEvent(string adUnitIdentify, MaxSdkBase.AdInfo adInfo)

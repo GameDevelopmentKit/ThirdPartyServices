@@ -48,12 +48,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public virtual async void Initialize()
         {
-#if THEONE_ADS_DEBUG
+#if ADS_DEBUG
             MaxSdk.SetCreativeDebuggerEnabled(true);
 #else
             MaxSdk.SetCreativeDebuggerEnabled(this.AppLovinSetting.CreativeDebugger);
 #endif
-            MaxSdk.SetIsAgeRestrictedUser(this.AppLovinSetting.AgeRestrictMode);
             MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
             MaxSdk.InitializeSdk();
             MaxSdkCallbacks.OnSdkInitializedEvent += this.OnSDKInitializedHandler;
@@ -74,7 +73,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private void OnSDKInitializedHandler(MaxSdkBase.SdkConfiguration obj)
         {
-#if THEONE_ADS_DEBUG
+#if ADS_DEBUG
             // Show Mediation Debugger
             MaxSdk.ShowMediationDebugger();
 #endif
@@ -521,10 +520,13 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private bool TryGetRewardedAdsId(string place, out string id)
         {
+            id = string.Empty;
             var placement = AdPlacement.PlacementWithName(place);
-            id = placement == AdPlacement.Default
-                     ? this.AppLovinSetting.DefaultRewardedAdId.Id
-                     : this.FindIdForPlacement(this.AppLovinSetting.CustomRewardedAdIds, placement);
+            if (placement != AdPlacement.Default)
+                id = this.FindIdForPlacement(this.AppLovinSetting.CustomRewardedAdIds, placement);
+            
+            if(string.IsNullOrEmpty(id))
+                id = this.AppLovinSetting.DefaultRewardedAdId.Id;
 
             return !string.IsNullOrEmpty(id);
         }

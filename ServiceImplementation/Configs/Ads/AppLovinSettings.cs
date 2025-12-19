@@ -20,24 +20,24 @@
     public class AppLovinSettings : AdNetworkSettings
     {
 #if UNITY_EDITOR
-        public static async void DownloadApplovin()
-        {
-            var downloadURL     = "https://artifacts.applovin.com/unity/com/applovin/applovin-sdk/AppLovin-MAX-Unity-Plugin-6.5.2-Android-12.5.0-iOS-12.5.0.unitypackage";
-            var path            = Path.Combine(Application.temporaryCachePath, "MaxSDK.unitypackage");
-            var downloadHandler = new DownloadHandlerFile(path);
-            var webRequest      = new UnityWebRequest(downloadURL) { method = UnityWebRequest.kHttpVerbGET, downloadHandler = downloadHandler };
-
-            var operation =  webRequest.SendWebRequest();
-
-            await operation;
-
-            if (webRequest.result == UnityWebRequest.Result.Success)
-            {
-                AssetDatabase.ImportPackage(path, false);
-            }
-
-            webRequest.Dispose();
-        }
+        // public static async void DownloadApplovin()
+        // {
+        //     var downloadURL     = "https://artifacts.applovin.com/unity/com/applovin/applovin-sdk/AppLovin-MAX-Unity-Plugin-6.5.2-Android-12.5.0-iOS-12.5.0.unitypackage";
+        //     var path            = Path.Combine(Application.temporaryCachePath, "MaxSDK.unitypackage");
+        //     var downloadHandler = new DownloadHandlerFile(path);
+        //     var webRequest      = new UnityWebRequest(downloadURL) { method = UnityWebRequest.kHttpVerbGET, downloadHandler = downloadHandler };
+        //
+        //     var operation =  webRequest.SendWebRequest();
+        //
+        //     await operation;
+        //
+        //     if (webRequest.result == UnityWebRequest.Result.Success)
+        //     {
+        //         AssetDatabase.ImportPackage(path, false);
+        //     }
+        //
+        //     webRequest.Dispose();
+        // }
 #endif
         
         /// <summary>

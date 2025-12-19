@@ -115,7 +115,7 @@
             EditorUtils.SetDefineSymbol(AppLovinSymbol, this.enableAppLovin);
             if (this.enableAppLovin)
             {
-                AppLovinSettings.DownloadApplovin();
+                // AppLovinSettings.DownloadApplovin();
             }
             else
             {
