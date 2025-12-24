@@ -1,17 +1,16 @@
 ﻿namespace ServiceImplementation.IAPServices
 {
-    using System;
     using System.Collections.Generic;
+    using Cysharp.Threading.Tasks;
+    using UnityEngine.Purchasing;
 
     public interface IIapServices
     {
-        bool   IsInitialized { get; }
-        void   InitIapServices(Dictionary<string, IAPModel> iapPack, string environment = "production");
-        void   BuyProductID(string productId, Action<string> onComplete = null, Action<string> onFailed = null);
-        string GetPriceById(string productId, string defaultPrice);
-        void   RestorePurchases(Action onComplete);
-        bool   IsProductOwned(string productId);
-        bool   IsProductAvailable(string productId);
-        ProductData GetProductData(string productId);
+        UniTask          Initialize(Dictionary<string, ProductType> iapPacks, string environment = "production");
+        UniTask          PurchaseProduct(string productId);
+        Product          FindProduct(string productId);
+        UniTask<Product> FetchProduct(string productId);
+        string           GetLocalizedPriceString(string productId, string defaultValue = "");
+        bool             IsProductAvailable(string productId);
     }
 }

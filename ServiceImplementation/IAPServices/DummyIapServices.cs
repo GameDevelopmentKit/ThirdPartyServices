@@ -1,21 +1,40 @@
 namespace ServiceImplementation.IAPServices
 {
-    using System;
     using System.Collections.Generic;
-    using Core.AdsServices;
-    using Zenject;
+    using Cysharp.Threading.Tasks;
+    using UnityEngine.Purchasing;
 
     public class DummyIapServices : IIapServices
     {
-        public bool IsInitialized { get; } = true;
-        public void InitIapServices(Dictionary<string, IAPModel> iapPack, string environment = "production") { }
 
-        public void BuyProductID(string productId, Action<string> onComplete = null, Action<string> onFailed = null) { onComplete?.Invoke(productId); }
-
-        public string      GetPriceById(string productId, string defaultPrice) { return $"$2.99"; }
-        public void        RestorePurchases(Action onComplete)                 { onComplete?.Invoke(); }
-        public bool        IsProductOwned(string productId)                    { return true; }
-        public bool        IsProductAvailable(string productId)                {return true; }
-        public ProductData GetProductData(string productId)                    { return new ProductData(); }
+        public UniTask Initialize(Dictionary<string, ProductType> iapPacks, string environment = "production")
+        {
+            return UniTask.CompletedTask;
+        }
+        
+        public UniTask PurchaseProduct(string productId)
+        {
+            return UniTask.CompletedTask;
+        }
+        
+        public Product FindProduct(string productId)
+        {
+            return null;
+        }
+        
+        public UniTask<Product> FetchProduct(string productId)
+        {
+            return UniTask.FromResult<Product>(null);
+        }
+        
+        public string GetLocalizedPriceString(string productId, string defaultValue = "")
+        {
+            return defaultValue;
+        }
+        
+        public bool IsProductAvailable(string productId)
+        {
+            return true;
+        }
     }
 }

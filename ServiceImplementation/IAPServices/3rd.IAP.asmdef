@@ -4,15 +4,12 @@
     "references": [
         "Unity.Services.Core",
         "Unity.Services.Core.Environments",
-        "GameFoundation.Utilities",
-        "3rdCore.Ads",
-        "Zenject",
-        "Zenject-Signals",
-        "Zenject-Source",
         "Unity.Purchasing",
         "Unity.Purchasing.Stores",
-        "Unity.Purchasing.SecurityCore",
-        "Unity.Purchasing.SecurityStub"
+        "Zenject-Source",
+        "Zenject-Signals",
+        "GameFoundation.Utilities",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
