@@ -58,4 +58,9 @@ namespace Core.AdsServices
         bool IsAdsInitialized();
         bool IsRemoveAds();
     }
+    
+    public interface ITemporarySkipAd
+    {
+        bool IsInSkipAdPeriod();
+    }
 }

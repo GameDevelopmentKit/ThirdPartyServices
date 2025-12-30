@@ -3,6 +3,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Core.AdsServices;
     using Core.AdsServices.Signals;
     using Cysharp.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         private readonly ILogService logService;
         private readonly SignalBus   signalBus;
-
+        private readonly DiContainer diContainer;
         #endregion
 
         #region Cache
@@ -35,14 +36,17 @@ namespace ServiceImplementation.AdsServices.AppLovin
         private bool         isInit;
         private event Action RewardedAdCompletedOneTimeAction;
         private event Action RewardedAdFailed;
+        
+        private List<ITemporarySkipAd> temporarySkipAds;
 
         #endregion
 
         public AppLovinAdsWrapper(ILogService logService, SignalBus signalBus,
-            ThirdPartiesConfig thirdPartiesConfig)
+            ThirdPartiesConfig thirdPartiesConfig, DiContainer diContainer)
         {
             this.logService      = logService;
             this.signalBus       = signalBus;
+            this.diContainer     = diContainer;
             this.AppLovinSetting = thirdPartiesConfig.AdSettings.AppLovin;
         }
 
@@ -65,6 +69,8 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InitAOAAds();
 
             if (this.AppLovinSetting.MediationDebugger) MaxSdk.ShowMediationDebugger();
+            
+            this.temporarySkipAds = diContainer.ResolveAll<ITemporarySkipAd>();
 
             this.isInit = true;
 
@@ -533,6 +539,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsRewardedAdReady(string place)
         {
+            if (this.IsRemoveAds()) return true;
             var isPlacementReady = this.TryGetRewardedAdsId(place, out var id);
 
             return isPlacementReady && MaxSdk.IsRewardedAdReady(id);
@@ -540,6 +547,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void ShowRewardedAd(string place, Action onCompleted, Action onFailed)
         {
+            if (this.IsRemoveAds())
+            {
+                onCompleted?.Invoke();
+                return;
+            }
             var placement = AdPlacement.PlacementWithName(place);
             this.RewardedAdCompletedOneTimeAction = onCompleted;
             this.RewardedAdFailed                 = onFailed;
@@ -644,8 +656,15 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public bool IsAdsInitialized() { return this.isInit; }
 
-        public bool IsRemoveAds() { return PlayerPrefs.HasKey("EM_REMOVE_ADS"); }
+        public bool IsRemoveAds() { return PlayerPrefs.HasKey("EM_REMOVE_ADS") || IsInSkipAdPeriod(); }
 
+        private bool IsInSkipAdPeriod()
+        {
+            if (this.temporarySkipAds == null || this.temporarySkipAds.Count == 0) return false;
+            return this.temporarySkipAds.Any(temporarySkipAd => temporarySkipAd.IsInSkipAdPeriod());
+
+        }
+        
         #region Load Ads
 
         public void LoadRewardAds(string place) { this.InternalLoadRewarded(AdPlacement.PlacementWithName(place)); }

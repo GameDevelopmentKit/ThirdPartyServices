@@ -12,7 +12,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
     using Zenject;
     using Debug = UnityEngine.Debug;
 
-    public class PreloadAdService : IInitializable, IDisposable, ITickable
+    public class PreloadAdService : IInitializable, IDisposable/*, ITickable*/
     {
         #region inject
 
@@ -70,7 +70,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
             if (!adLoadService.IsInterstitialAdReady(placement))
             {
                 adLoadService.LoadInterstitialAd(placement);
-                this.interstitialAdStopwatch.TryAdd((adLoadService, placement), this.unScaleInGameStopWatchManager.StartNew());
+                // this.interstitialAdStopwatch.TryAdd((adLoadService, placement), this.unScaleInGameStopWatchManager.StartNew());
             }
         }
 
@@ -108,7 +108,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
             if (!adLoadService.IsRewardedAdReady(placement))
             {
                 adLoadService.LoadRewardAds(placement);
-                this.rewardAdStopwatch.TryAdd((adLoadService, placement), this.unScaleInGameStopWatchManager.StartNew());
+                // this.rewardAdStopwatch.TryAdd((adLoadService, placement), this.unScaleInGameStopWatchManager.StartNew());
             }
         }
 
@@ -147,54 +147,55 @@ namespace ServiceImplementation.AdsServices.PreloadService
             this.signalBus.TryUnsubscribe<RewardedSkippedSignal>(this.LoadRewardAdsAfterSkip);
         }
         
-        public void Tick()
-        {
-            // check interstitial ads
-            if (this.interstitialAdStopwatch.Count > 0)
-            {
-                foreach (var ((adLoadService, placement), stopwatch) in this.interstitialAdStopwatch.ToList())
-                {
-                    if (adLoadService.IsInterstitialAdReady(placement))
-                    {
-                        this.analyticServices.Track(new PreLoadInter(placement, this.unScaleInGameStopWatchManager.Stop(stopwatch), adLoadService.GetType().Name));
-                        this.interstitialAdStopwatch.Remove((adLoadService, placement));
-                    }
-                }
-            }
-
-            // check reward ads
-            if (this.rewardAdStopwatch.Count > 0)
-            {
-                foreach (var ((adLoadService, placement), stopwatch) in this.rewardAdStopwatch.ToList())
-                {
-                    if (adLoadService.IsRewardedAdReady(placement))
-                    {
-                        this.analyticServices.Track(new PreLoadReward(placement, this.unScaleInGameStopWatchManager.Stop(stopwatch), adLoadService.GetType().Name));
-                        this.rewardAdStopwatch.Remove((adLoadService, placement));
-                    }
-                } 
-            }
-            
-            // check  AOA ads
-            foreach (var aOaAdService in aOaAdServices)
-            {
-                if (!aOaAdService.IsAOAReady())
-                {
-                    // Record the start time when the service starts loading
-                    if (!this.aoaAdStartTime.ContainsKey(aOaAdService))
-                    {
-                        this.aoaAdStartTime.Add(aOaAdService, this.unScaleInGameStopWatchManager.StartNew());
-                    }
-                }
-                else
-                {
-                    // Calculate the elapsed time when the service is ready
-                    if (this.aoaAdStartTime.Remove(aOaAdService, out var watch))
-                    {
-                        this.analyticServices.Track(new PreLoadAOA(string.Empty, this.unScaleInGameStopWatchManager.Stop(watch), aOaAdService.GetType().Name));
-                    }
-                }
-            }
-        }
+        // temporarily disable tick function, refactor later
+        // public void Tick()
+        // {
+        //     // check interstitial ads
+        //     if (this.interstitialAdStopwatch.Count > 0)
+        //     {
+        //         foreach (var ((adLoadService, placement), stopwatch) in this.interstitialAdStopwatch.ToList())
+        //         {
+        //             if (adLoadService.IsInterstitialAdReady(placement))
+        //             {
+        //                 this.analyticServices.Track(new PreLoadInter(placement, this.unScaleInGameStopWatchManager.Stop(stopwatch), adLoadService.GetType().Name));
+        //                 this.interstitialAdStopwatch.Remove((adLoadService, placement));
+        //             }
+        //         }
+        //     }
+        //
+        //     // check reward ads
+        //     if (this.rewardAdStopwatch.Count > 0)
+        //     {
+        //         foreach (var ((adLoadService, placement), stopwatch) in this.rewardAdStopwatch.ToList())
+        //         {
+        //             if (adLoadService.IsRewardedAdReady(placement))
+        //             {
+        //                 this.analyticServices.Track(new PreLoadReward(placement, this.unScaleInGameStopWatchManager.Stop(stopwatch), adLoadService.GetType().Name));
+        //                 this.rewardAdStopwatch.Remove((adLoadService, placement));
+        //             }
+        //         } 
+        //     }
+        //     
+        //     // check  AOA ads
+        //     foreach (var aOaAdService in aOaAdServices)
+        //     {
+        //         if (!aOaAdService.IsAOAReady())
+        //         {
+        //             // Record the start time when the service starts loading
+        //             if (!this.aoaAdStartTime.ContainsKey(aOaAdService))
+        //             {
+        //                 this.aoaAdStartTime.Add(aOaAdService, this.unScaleInGameStopWatchManager.StartNew());
+        //             }
+        //         }
+        //         else
+        //         {
+        //             // Calculate the elapsed time when the service is ready
+        //             if (this.aoaAdStartTime.Remove(aOaAdService, out var watch))
+        //             {
+        //                 this.analyticServices.Track(new PreLoadAOA(string.Empty, this.unScaleInGameStopWatchManager.Stop(watch), aOaAdService.GetType().Name));
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
