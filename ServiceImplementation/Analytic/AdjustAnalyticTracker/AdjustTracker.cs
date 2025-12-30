@@ -80,6 +80,10 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
         protected override void OnEvent(string eventToken, Dictionary<string, object> data)
         {
+            if (!this.analyticsEventCustomizationConfig.AllowFireEvents)
+            {
+                return;
+            }
             // Dont fire event that haven't defined token yet
             if (!this.eventTokens.Contains(eventToken)) return;
 
@@ -181,6 +185,10 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
         private void TrackIAP(IEvent trackedevent, Dictionary<string, object> data)
         {
+            if (!this.analyticsEventCustomizationConfig.AllowFireEvents)
+            {
+                return;
+            }
             if (trackedevent is not IapTransactionDidSucceed iapTransaction)
             {
                 this.logger.Error("trackedEvent in TrackIAP is not of correct type");
@@ -196,6 +204,10 @@ namespace ServiceImplementation.AdjustAnalyticTracker
 
         private void TrackAdsRevenue(IEvent trackedEvent, Dictionary<string, object> data)
         {
+            if (!this.analyticsEventCustomizationConfig.AllowFireEvents)
+            {
+                return;
+            }
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
                 this.logger.Error("trackedEvent in AdsRevenue is not of correct type");

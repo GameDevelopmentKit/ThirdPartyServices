@@ -78,8 +78,8 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                     FirebaseRemoteConfig.DefaultInstance.ActivateAsync().ContinueWithOnMainThread(task =>
                     {
                         this.logger.Log($"FirebaseRemoteConfig Remote data loaded and ready (last fetch time {info.FetchTime}).");
-                        this.IsConfigFetchedSucceed = true;
                         this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal(this));
+                        this.IsConfigFetchedSucceed = true;
                     });
 
                     break;

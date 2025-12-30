@@ -127,6 +127,10 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
+            if (!this.customizationConfig.AllowFireEvents)
+            {
+                return;
+            }
             Debug.Log($"Appsflyer: On Event {name}");
             var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             AppsFlyer.sendEvent(name, convertedData);
@@ -139,7 +143,10 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 #if AF_DISABLE_TRACK_IAP
             return;
 #endif
-
+            if (!this.customizationConfig.AllowFireEvents)
+            {
+                return;
+            }
             if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
             {
                 Debug.LogError("trackedEvent in TrackIAP is not of correct type");
@@ -161,6 +168,10 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         private void TrackAdsRevenue(IEvent trackedEvent, Dictionary<string, object> data)
         {
+            if (!this.customizationConfig.AllowFireEvents)
+            {
+                return;
+            }
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
                 Debug.LogError("trackedEvent in AdsRevenue is not of correct type");

@@ -9,18 +9,21 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
     using Cysharp.Threading.Tasks;
+    using DG.Tweening;
     using GameFoundation.Scripts.Utilities.LogService;
     using Newtonsoft.Json;
     using ServiceImplementation.FireBaseRemoteConfig;
     using UnityEngine;
     using Zenject;
 
-    public class FirebaseAnalyticTracker : BaseTracker
+    public class FirebaseAnalyticTracker : BaseTracker, IDisposable
     {
-        private readonly   IRemoteConfig                     remoteConfig;
+        private readonly   ISignalBus                        signalBus;
         private readonly   ILogService                       logger;
         private readonly   AnalyticsEventCustomizationConfig customizationConfig;
-        protected override TaskCompletionSource<bool>        TrackerReady         { get; } = new TaskCompletionSource<bool>();
+        protected override TaskCompletionSource<bool>        TrackerReady        { get; } = new TaskCompletionSource<bool>();
+        private            bool                              IsRemoteConfigReady { get; set; }
+
         protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
         {
             { typeof(IapTransactionDidSucceed), this.TrackIAP },
@@ -28,6 +31,11 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
 
         private void TrackIAP(IEvent trackedEvent, Dictionary<string, object> data)
         {
+            if (!this.customizationConfig.AllowFireEvents)
+            {
+                return;
+            }
+
             if (trackedEvent is not IapTransactionDidSucceed iapTransactionDidSucceed)
             {
                 return;
@@ -36,10 +44,10 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
             FirebaseAnalytics.LogEventPurchase(iapTransactionDidSucceed);
         }
 
-        public FirebaseAnalyticTracker(ISignalBus signalBus, IRemoteConfig remoteConfig, ILogService logger, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) :
+        public FirebaseAnalyticTracker(ISignalBus signalBus, ILogService logger, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) :
             base(signalBus, analyticConfig)
         {
-            this.remoteConfig        = remoteConfig;
+            this.signalBus           = signalBus;
             this.logger              = logger;
             this.customizationConfig = customizationConfig;
         }
@@ -57,15 +65,47 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
             return this.TrackerReady.Task;
         }
 
+        protected override void Init()
+        {
+            FirebaseAnalytics.SetAnalyticsCollectionEnabled(false);
+            base.Init();
+            this.signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetched);
+        }
+
+        public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetched); }
+
+        private void OnRemoteConfigFetched(RemoteConfigFetchedSucceededSignal obj)
+        {
+            DOVirtual.DelayedCall(0.5f, () =>
+            {
+                FirebaseAnalytics.SetAnalyticsCollectionEnabled(this.customizationConfig.AllowFireEvents);
+                this.IsRemoteConfigReady = true;
+            });
+        }
+
         protected override async void SetUserId(string userId)
         {
-            await UniTask.WaitUntil(() => this.remoteConfig.IsConfigFetchedSucceed);
+            if (!this.IsRemoteConfigReady)
+            {
+                await UniTask.WaitUntil(() => this.IsRemoteConfigReady);
+            }
+            if (!this.customizationConfig.AllowFireEvents)
+            {
+                return;
+            }
             FirebaseAnalytics.SetUserId(userId);
         }
 
         protected override async void OnChangedProps(Dictionary<string, object> changedProps)
         {
-            await UniTask.WaitUntil(() => this.remoteConfig.IsConfigFetchedSucceed);
+            if (!this.IsRemoteConfigReady)
+            {
+                await UniTask.WaitUntil(() => this.IsRemoteConfigReady);
+            }
+            if (!this.customizationConfig.AllowFireEvents)
+            {
+                return;
+            }
             FirebaseAnalytics.SetUserProperty(changedProps);
         }
 
@@ -73,18 +113,26 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
         {
             if (name.Length > 40)
             {
-                this.logger.LogWithColor($"Event Name too long {name} " ,Color.red);
+                this.logger.LogWithColor($"Event Name too long {name} ", Color.red);
                 name = name.Substring(0, 40);
             }
 
             if (!name.IsNameValid().Equals("Valid"))
             {
-                this.logger.LogWithColor($"Firebase: Event name error: {name} {name.IsNameValid()}",Color.red);
+                this.logger.LogWithColor($"Firebase: Event name error: {name} {name.IsNameValid()}", Color.red);
 
                 return;
             }
 
-            await UniTask.WaitUntil(() => this.remoteConfig.IsConfigFetchedSucceed);
+            if (!this.IsRemoteConfigReady)
+            {
+                await UniTask.WaitUntil(() => this.IsRemoteConfigReady);
+            }
+
+            if (!this.customizationConfig.AllowFireEvents)
+            {
+                return;
+            }
 
             if (data == null)
             {
@@ -150,14 +198,14 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
             {
                 if (!entry.Key.IsNameValid().Equals("Valid"))
                 {
-                    this.logger.LogWithColor($"Parameter name error: {entry} {entry.Key.IsNameValid()}",Color.red);
+                    this.logger.LogWithColor($"Parameter name error: {entry} {entry.Key.IsNameValid()}", Color.red);
 
                     return false;
                 }
 
                 if (!entry.Value.IsParameterValueValid().Equals("Valid"))
                 {
-                    this.logger.LogWithColor($"Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}",Color.red);
+                    this.logger.LogWithColor($"Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}", Color.red);
 
                     return false;
                 }

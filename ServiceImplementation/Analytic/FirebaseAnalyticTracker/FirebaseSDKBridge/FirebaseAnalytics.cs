@@ -65,6 +65,11 @@ namespace ServiceImplementation.FirebaseAnalyticTracker
                 new Parameter("amount", data.Amount)
             });
         }
+
+        public static void SetAnalyticsCollectionEnabled(bool b)
+        {
+            Firebase.Analytics.FirebaseAnalytics.SetAnalyticsCollectionEnabled(b);
+        }
     }
 }
 #endif

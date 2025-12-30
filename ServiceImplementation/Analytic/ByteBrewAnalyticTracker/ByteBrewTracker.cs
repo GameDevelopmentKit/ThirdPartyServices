@@ -45,6 +45,10 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
         private void TrackIAP(IEvent trackedEvent, Dictionary<string, object> data)
         {
+            if (!this.analyticsEventCustomizationConfig.AllowFireEvents)
+            {
+                return;
+            }
             if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
             {
                 this.logger.Error("ByteBrew: trackedEvent in TrackIAP is not of correct type");
@@ -61,6 +65,10 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
         private void TrackAdsRevenue(IEvent trackedEvent, Dictionary<string, object> data)
         {
+            if (!this.analyticsEventCustomizationConfig.AllowFireEvents)
+            {
+                return;
+            }
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent) return;
 
             switch (adsRevenueEvent.AdFormat)
@@ -111,6 +119,10 @@ namespace ServiceImplementation.ByteBrewAnalyticTracker
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
+            if (!this.analyticsEventCustomizationConfig.AllowFireEvents)
+            {
+                return;
+            }
             if (data == null)
             {
                 ByteBrew.NewCustomEvent(name);
