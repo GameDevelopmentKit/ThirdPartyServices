@@ -6,12 +6,12 @@
     using System.Reflection;
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
-#if UNITY_EDITOR
-    using UnityEditor;
-#endif
     using UnityEngine;
     using UnityEngine.Events;
     using UnityEngine.Serialization;
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
 
     [Serializable]
     public class AdMobSettings : AdNetworkSettings
@@ -154,7 +154,7 @@
             this.mOptimizeInitialization = (bool)settingType.GetField("optimizeInitialization", bindingFlags).GetValue(googleMobileAdsSettings);
             this.mOptimizeAdLoading = (bool)settingType.GetField("optimizeAdLoading", bindingFlags).GetValue(googleMobileAdsSettings);
             this.mDelayAppMeasurementInit = (bool)settingType.GetField("delayAppMeasurementInit", bindingFlags).GetValue(googleMobileAdsSettings);
-            this.mValidateGradleDependencies            = (bool)settingType.GetField("validateGradleDependencies", bindingFlags).GetValue(googleMobileAdsSettings);
+            this.mValidateGradleDependencies = (bool)settingType.GetField("validateGradleDependencies", bindingFlags).GetValue(googleMobileAdsSettings);
 #endif
             this.enableKotlinXCoroutinesPackagingOption = (bool)settingType.GetField("enableKotlinXCoroutinesPackagingOption", bindingFlags).GetValue(googleMobileAdsSettings);
             this.mUserTrackingUsageDescription          = settingType.GetField("userTrackingUsageDescription", bindingFlags).GetValue(googleMobileAdsSettings) as string;
@@ -261,5 +261,45 @@
 
         [SerializeField] [LabelText("Is Adaptive Banner")] [BoxGroup("Admob Settings")]
         private bool mIsAdaptiveBannerEnabled = true;
+
+        public void Validate()
+        {
+            this.DefaultBannerAdId.ValidateAdIdFormat();
+            this.CollapsibleBannerAdId.ValidateAdIdFormat();
+            this.DefaultInterstitialAdId.ValidateAdIdFormat();
+            this.DefaultRewardedAdId.ValidateAdIdFormat();
+            this.DefaultRewardedInterstitialAdId.ValidateAdIdFormat();
+            this.AOAAdId.ValidateAdIdFormat();
+
+            foreach (var adId in this.NativeAdIds)
+            {
+                adId.ValidateAdIdFormat();
+            }
+
+            foreach (var adId in this.MRECAdIds.Values)
+            {
+                adId.ValidateAdIdFormat();
+            }
+
+            foreach (var adId in this.CustomBannerAdIds.Values)
+            {
+                adId.ValidateAdIdFormat();
+            }
+
+            foreach (var adId in this.CustomInterstitialAdIds.Values)
+            {
+                adId.ValidateAdIdFormat();
+            }
+
+            foreach (var adId in this.CustomRewardedAdIds.Values)
+            {
+                adId.ValidateAdIdFormat();
+            }
+
+            foreach (var adId in this.CustomRewardedInterstitialAdIds.Values)
+            {
+                adId.ValidateAdIdFormat();
+            }
+        }
     }
 }

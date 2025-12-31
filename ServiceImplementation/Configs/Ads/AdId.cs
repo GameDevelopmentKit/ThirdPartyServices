@@ -25,5 +25,11 @@
             : base(iOSId, androidId)
         {
         }
+
+        public void ValidateAdIdFormat()
+        {
+            this.mIosId     = Util.AutoTrimId(this.mIosId);
+            this.mAndroidId = Util.AutoTrimId(this.mAndroidId);
+        }
     }
 }

@@ -13,5 +13,15 @@ namespace ServiceImplementation.Configs
 
         [SerializeField] [LabelText("Advertising Setting")]
         private AdSettings mAdvertisingSettings = null;
+
+#if UNITY_EDITOR
+
+        [Button, PropertyOrder(-100)]
+        public void ValidateData()
+        {
+            this.AdSettings.AdMob.Validate();
+            this.AdSettings.AppLovin.Validate();
+        }
+#endif
     }
 }

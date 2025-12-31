@@ -1,6 +1,7 @@
 ﻿namespace ServiceImplementation.Configs.Common
 {
     using System;
+    using System.Text.RegularExpressions;
 
     internal static class Util
     {
@@ -90,12 +91,17 @@
         /// </summary>
         /// <returns>The trimmed identifier.</returns>
         /// <param name="id">Identifier.</param>
-        public static string AutoTrimId(string id)
+        public static string AutoTrimId( string id)
         {
             if (string.IsNullOrEmpty(id))
                 return string.Empty;
 
-            return id.Trim();
+            id= id.Trim();
+
+            id = CleanId(id);
+            return id;
         }
+        
+        public static string CleanId(string input) { return Regex.Replace(input, @"[^a-zA-Z0-9_/-]", ""); }
     }
 }

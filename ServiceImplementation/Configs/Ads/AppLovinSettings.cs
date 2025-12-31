@@ -1,12 +1,12 @@
 ﻿namespace ServiceImplementation.Configs.Ads
 {
+#if APS_ENABLE
+    using AmazonAds;
+#endif
     using System;
     using System.Collections.Generic;
     using System.IO;
     using Cysharp.Threading.Tasks;
-#if APS_ENABLE
-    using AmazonAds;
-#endif
     using ServiceImplementation.Configs.Common;
     using Sirenix.OdinInspector;
     using UnityEngine;
@@ -76,6 +76,25 @@
             }
         }
 
+        public void Validate()
+        {
+            this.mSDKKey            = Util.CleanId(this.mSDKKey);
+            appLovinSettings.SdkKey = this.mSDKKey;
+            this.DefaultBannerAdId.ValidateAdIdFormat();
+            this.DefaultInterstitialAdId.ValidateAdIdFormat();
+            this.DefaultRewardedAdId.ValidateAdIdFormat();
+            this.DefaultAOAAdId.ValidateAdIdFormat();
+
+            foreach (var item in this.mRECAdIds)
+            {
+                item.Value.ValidateAdIdFormat();
+            }
+
+            this.LoadApplovinSetting();
+            EditorUtility.SetDirty(appLovinSettings);
+            AssetDatabase.SaveAssets();
+        }
+
         private static global::AppLovinSettings appLovinSettings => global::AppLovinSettings.Instance;
 
         public static void UpdateGoogleAdsId(string androidAppId, string iosAppId)
@@ -86,6 +105,7 @@
             EditorUtility.SetDirty(appLovinSettings);
             AssetDatabase.SaveAssets();
         }
+
 #endif
 
         public bool IsAdaptiveBanner => this.isAdaptiveBanner;
