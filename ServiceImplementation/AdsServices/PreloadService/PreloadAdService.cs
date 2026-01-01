@@ -40,26 +40,31 @@ namespace ServiceImplementation.AdsServices.PreloadService
         }
         public void Initialize()
         {
-            this.LoadAdsInterval();
-            
             this.signalBus.Subscribe<RewardedAdCompletedSignal>(this.LoadRewardAdsAfterShow);
             this.signalBus.Subscribe<RewardedSkippedSignal>(this.LoadRewardAdsAfterSkip);
             this.signalBus.Subscribe<InterstitialAdClosedSignal>(this.LoadInterAdsAfterShow);
             this.aoaAdStartTime = this.aOaAdServices.ToDictionary(aOaAdService => aOaAdService, _ => this.unScaleInGameStopWatchManager.StartNew());
         }
 
-        private async void LoadAdsInterval()
+        public async void StartLoadAds()
         {
-            Debug.Log("load ads interval");
-            this.adLoadServices.ForEach(this.LoadAdsOneTime);
-            await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.IntervalLoadAds));
-            this.LoadAdsInterval();
+            try
+            {
+                Debug.Log("load ads interval");
+                this.adLoadServices.ForEach(this.LoadAdsOneTime);
+                await UniTask.Delay(TimeSpan.FromSeconds(this.adServicesConfig.IntervalLoadAds));
+                this.StartLoadAds();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         private void LoadAdsOneTime(IAdLoadService loadService)
         {
             if (loadService.IsRemoveAds()) return;
-            this.LoadAllInterAds(loadService);
+            // this.LoadAllInterAds(loadService);
             this.LoadAllRewardAds(loadService);
         }
 

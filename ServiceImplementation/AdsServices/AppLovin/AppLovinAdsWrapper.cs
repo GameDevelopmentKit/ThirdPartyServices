@@ -62,11 +62,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
             MaxSdkCallbacks.OnSdkInitializedEvent += this.OnSDKInitializedHandler;
 
             await UniTask.WaitUntil(MaxSdk.IsInitialized);
-            this.InitBannerAds();
-            this.InitMRECAds();
-            this.InitInterstitialAds();
+            //todo: enable ads types later
+            // this.InitBannerAds();
+            // this.InitMRECAds();
+            // this.InitInterstitialAds();
             this.InitRewardedAds();
-            this.InitAOAAds();
+            // this.InitAOAAds();
 
             if (this.AppLovinSetting.MediationDebugger) MaxSdk.ShowMediationDebugger();
             
@@ -87,11 +88,11 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
         public void Dispose()
         {
-            this.DisposeBannerAds();
-            this.DisposeInterstitialAds();
+            // this.DisposeBannerAds();
+            // this.DisposeInterstitialAds();
             this.DisposeRewardedAds();
-            this.DisposeMRECAds();
-            this.DisposeAOAAds();
+            // this.DisposeMRECAds();
+            // this.DisposeAOAAds();
         }
 
         #region Extension
