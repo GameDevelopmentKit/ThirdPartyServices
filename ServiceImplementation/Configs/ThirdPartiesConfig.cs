@@ -19,8 +19,12 @@ namespace ServiceImplementation.Configs
         [Button, PropertyOrder(-100)]
         public void ValidateData()
         {
+#if ADMOB
             this.AdSettings.AdMob.Validate();
+#endif
+#if APPLOVIN
             this.AdSettings.AppLovin.Validate();
+#endif
         }
 #endif
     }
