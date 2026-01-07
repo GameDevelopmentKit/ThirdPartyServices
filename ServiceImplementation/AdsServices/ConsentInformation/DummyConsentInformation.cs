@@ -1,8 +1,9 @@
 namespace ServiceImplementation.AdsServices.ConsentInformation
 {
     using GameFoundation.Scripts.Utilities.LogService;
+    using Zenject;
 
-    public class DummyConsentInformation : IConsentInformation
+    public class DummyConsentInformation : IConsentInformation, IInitializable
     {
         #region Inject
 
@@ -17,6 +18,8 @@ namespace ServiceImplementation.AdsServices.ConsentInformation
             this.logService.Log("Request consent information");
             this.IsComplete = true;
         }
-        public bool IsComplete { get; set; }
+
+        public bool IsComplete   { get; set; }
+        public void Initialize() { this.Request(); }
     }
 }
