@@ -31,7 +31,12 @@ namespace ServiceImplementation.IAPServices
         {
             return defaultValue;
         }
-        
+
+        public decimal GetLocalizedPrice(string productId, decimal defaultValue = 0)
+        {
+            return defaultValue;
+        }
+
         public bool IsProductAvailable(string productId)
         {
             return true;
