@@ -76,7 +76,7 @@ namespace Core.AnalyticServices.CommonEvents
     /// An event automatically fired when Unity reports a focus in.
     /// todo - acquire reporting from native and not unity
     /// </summary>
-    internal sealed class FocusIn : IEvent
+    public sealed class FocusIn : IEvent
     {
     }
 
@@ -84,14 +84,14 @@ namespace Core.AnalyticServices.CommonEvents
     /// An event automatically fired when Unity reports a focus out.
     /// todo - acquire reporting from native and not unity
     /// </summary>
-    internal sealed class FocusOut : IEvent
+    public sealed class FocusOut : IEvent
     {
     }
 
     /// <summary>
     /// An event automatically fired every 30 seconds (default)
     /// </summary>
-    internal sealed class Heartbeat : IEvent
+    public sealed class Heartbeat : IEvent
     {
     }
 
