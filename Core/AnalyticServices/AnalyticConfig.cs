@@ -8,8 +8,7 @@ namespace Core.AnalyticServices
     /// Contains all the constants, the configuration of Analytic service
     /// </summary>
     [Serializable]
-    public partial class AnalyticConfig : ScriptableObject, IGameConfig
+    public partial class AnalyticConfig : BaseGameConfigSO, IGameConfig
     {
-
     }
 }
