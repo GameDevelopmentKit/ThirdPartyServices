@@ -214,6 +214,12 @@
             var product = this.FindProduct(productId);
             return product != null ? product.metadata.localizedPriceString : defaultValue;
         }
+        
+        public decimal GetLocalizedPrice(string productId, decimal defaultValue = 0)
+        {
+            var product = this.FindProduct(productId);
+            return product != null ? product.metadata.localizedPrice : defaultValue;
+        }
 
         public void LogWithColor(string logContent, string c = null, string header = "[Unity IAP]")
         {

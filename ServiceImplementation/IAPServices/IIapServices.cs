@@ -11,6 +11,7 @@
         Product          FindProduct(string productId);
         UniTask<Product> FetchProduct(string productId);
         string           GetLocalizedPriceString(string productId, string defaultValue = "");
+        decimal          GetLocalizedPrice(string productId, decimal defaultValue = 0);
         bool             IsProductAvailable(string productId);
     }
 }
