@@ -78,8 +78,8 @@ namespace ServiceImplementation.FireBaseRemoteConfig
                     FirebaseRemoteConfig.DefaultInstance.ActivateAsync().ContinueWithOnMainThread(task =>
                     {
                         this.logger.Log($"FirebaseRemoteConfig Remote data loaded and ready (last fetch time {info.FetchTime}).");
-                        this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal(this));
                         this.IsConfigFetchedSucceed = true;
+                        this.signalBus.Fire(new RemoteConfigFetchedSucceededSignal(this));
                     });
 
                     break;
@@ -116,7 +116,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public bool GetRemoteConfigBoolValue(string key, bool defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed)
+            if (!this.HasKey(key))
             {
                 return defaultValue;
             }
@@ -128,7 +128,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public long GetRemoteConfigLongValue(string key, long defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed)
+            if (!this.HasKey(key))
             {
                 return defaultValue;
             }
@@ -140,7 +140,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public double GetRemoteConfigDoubleValue(string key, double defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed)
+            if (!this.HasKey(key))
             {
                 return defaultValue;
             }
@@ -152,7 +152,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public int GetRemoteConfigIntValue(string key, int defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed)
+            if (!this.HasKey(key))
             {
                 return defaultValue;
             }
@@ -164,7 +164,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public float GetRemoteConfigFloatValue(string key, float defaultValue)
         {
-            if (!this.HasKey(key) || !this.IsConfigFetchedSucceed)
+            if (!this.HasKey(key) )
             {
                 return defaultValue;
             }
