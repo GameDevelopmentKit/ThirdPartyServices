@@ -40,25 +40,27 @@
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
-            if (!name.IsNameValid().Equals("Valid"))
+            if (!name.IsNameValid(out var error))
             {
-                Debug.LogError($"Firebase: Event name error: {name} {name.IsNameValid()}");
+                Debug.LogError($"Firebase: Event name error: {name} {error}");
 
-                return;
+                if (this.analyticConfig.firebaseStrictMode) return;
             }
 
             if (data == null)
             {
                 FirebaseAnalytics.LogEvent(name);
-                Debug.Log($"Firebase: OnEvent - {name}");
+                if (this.analyticConfig.debugMode) Debug.Log($"Firebase: OnEvent - {name}");
 
                 return;
             }
 
             if (!this.CheckConventions(data))
-                return;
+            {
+                if (this.analyticConfig.firebaseStrictMode) return;
+            }
 
-            Debug.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
+            if (this.analyticConfig.debugMode) Debug.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
             switch (data.Count)
             {
                 case > 1:
@@ -108,16 +110,16 @@
         {
             foreach (KeyValuePair<string, object> entry in data)
             {
-                if (!entry.Key.IsNameValid().Equals("Valid"))
+                if (!entry.Key.IsNameValid(out var error))
                 {
-                    Debug.LogError($"Parameter name error: {entry} {entry.Key.IsNameValid()}");
+                    Debug.LogError($"Parameter name error: {entry.Key} {error}");
 
                     return false;
                 }
 
-                if (!entry.Value.IsParameterValueValid().Equals("Valid"))
+                if (!entry.Value.IsParameterValueValid(out error))
                 {
-                    Debug.LogError($"Parameter value error: {entry.Value} {entry.Value.IsParameterValueValid()}");
+                    Debug.LogError($"Parameter {entry.Key} value error: {entry.Value} {error}");
 
                     return false;
                 }

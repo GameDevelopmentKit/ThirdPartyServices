@@ -12,5 +12,7 @@ namespace Core.AnalyticServices
     public partial class AnalyticConfig : ScriptableObject, IGameConfig
     {
         [BoxGroup("General")] [SerializeField] private bool autoImportPackages = false;
+
+        [BoxGroup("General")] public bool debugMode = false;
     }
 }
