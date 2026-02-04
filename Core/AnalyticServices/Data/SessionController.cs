@@ -14,7 +14,7 @@ namespace Core.AnalyticServices.Data
     internal sealed class SessionController : MonoBehaviour
     {
         private IAnalyticServices analyticServices;
-        private DeviceInfo       deviceInfo;
+        private DeviceInfo        deviceInfo;
 
         /// <summary>
         /// 
@@ -25,11 +25,23 @@ namespace Core.AnalyticServices.Data
         private const double SessionTimeout    = 600000; //  10 min, todo - make config controllable
         private       double focusOutTime      = double.NaN;
 
+        private WaitForSecondsRealtime waitForSecondsRealtime;
+        private Heartbeat              heartbeatEvent;
+        private FocusOut               focusOutEvent;
+        private FocusIn                focusInEvent;
+
         [Inject]
         public void Init(IAnalyticServices analyticServicesParam, DeviceInfo deviceInfoParam)
         {
-            this.analyticServices = analyticServicesParam;
-            this.deviceInfo       = deviceInfoParam;
+            this.analyticServices  = analyticServicesParam;
+            this.deviceInfo        = deviceInfoParam;
+            waitForSecondsRealtime = new WaitForSecondsRealtime(HeartbeatInterval);
+            heartbeatEvent         = new Heartbeat();
+            focusInEvent           = new FocusIn();
+            focusOutEvent          = new FocusOut();
+
+
+
         }
         private void Start()
         {
@@ -46,10 +58,11 @@ namespace Core.AnalyticServices.Data
 
         private IEnumerator Heartbeat()
         {
+
             while (true)
             {
-                yield return new WaitForSecondsRealtime(HeartbeatInterval);
-                this.analyticServices.Track(new Heartbeat());
+                yield return waitForSecondsRealtime;
+                this.analyticServices.Track(heartbeatEvent);
             }
         }
 
@@ -71,13 +84,13 @@ namespace Core.AnalyticServices.Data
                 }
                 else
                 {
-                    this.analyticServices.Track(new FocusIn());
+                    this.analyticServices.Track(focusInEvent);
                 }
             }
             else
             {
                 this.focusOutTime = focusTime;
-                this.analyticServices.Track(new FocusOut());
+                this.analyticServices.Track(focusOutEvent);
             }
         }
     }
