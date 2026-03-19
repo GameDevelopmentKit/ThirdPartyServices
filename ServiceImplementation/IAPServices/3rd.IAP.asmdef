@@ -9,7 +9,10 @@
         "Zenject-Source",
         "Zenject-Signals",
         "GameFoundation.Utilities",
-        "UniTask"
+        "UniTask",
+        "Unity.Purchasing.Security",
+        "Unity.Purchasing.SecurityCore",
+        "Unity.Purchasing.SecurityStub"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,12 +1,13 @@
 ﻿namespace ServiceImplementation.IAPServices
 {
+    using System;
     using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
     using UnityEngine.Purchasing;
 
     public interface IIapServices
     {
-        UniTask          Initialize(Dictionary<string, ProductType> iapPacks, string environment = "production");
+        UniTask          Initialize(Dictionary<string, ProductType> iapPacks, string environment = "production", Func<byte[]> getGooglePublicKey = null, Func<byte[]> getAppleRootCert = null);
         UniTask          PurchaseProduct(string productId);
         Product          FindProduct(string productId);
         UniTask<Product> FetchProduct(string productId);

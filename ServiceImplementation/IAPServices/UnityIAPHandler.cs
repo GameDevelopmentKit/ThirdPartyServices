@@ -10,19 +10,26 @@
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
+    using UnityEngine.Purchasing.Security;
 
 
     public class UnityIAPHandler : IIapServices
     {
-        private StoreController                                    storeController;
-        private Dictionary<string, Queue<UniTaskCompletionSource>> pendingPurchaseTask = new Dictionary<string, Queue<UniTaskCompletionSource>>();
-        private UniTaskCompletionSource<bool>                      initializeProductsSource;
-        private UniTask<bool>                                      initializeProductsTask;
-#region Initialization
-        public async UniTask Initialize(Dictionary<string, ProductType> iapPacks, string environment = "production")
+        private StoreController storeController;
+
+        private Dictionary<string, Queue<UniTaskCompletionSource>> pendingPurchaseTask =
+            new Dictionary<string, Queue<UniTaskCompletionSource>>();
+
+        private UniTaskCompletionSource<bool> initializeProductsSource;
+        private UniTask<bool> initializeProductsTask;
+
+        #region Initialization
+
+        public async UniTask Initialize(Dictionary<string, ProductType> iapPacks, string environment = "production", Func<byte[]> getGooglePublicKey = null, Func<byte[]> getAppleRootCert = null)
         {
             await InitializeUnityServices(environment);
             await InitializeUnityIAP(iapPacks);
+            InitializeValidator(getGooglePublicKey, getAppleRootCert);
         }
 
         private async UniTask InitializeUnityServices(string environment = "production")
@@ -32,7 +39,6 @@
                 var options = new InitializationOptions().SetEnvironmentName(environment);
 
                 await UnityServices.InitializeAsync(options);
-
             }
             catch (Exception exception)
             {
@@ -44,24 +50,27 @@
         {
             storeController = UnityIAPServices.StoreController();
 
-            storeController.OnProductsFetched     += OnInitialProductsFetched;
+            storeController.OnProductsFetched += OnInitialProductsFetched;
             storeController.OnProductsFetchFailed += OnInitialProductsFetchFailed;
 
-            storeController.OnPurchasePending   += OnPurchasePending;
+            storeController.OnPurchasePending += OnPurchasePending;
             storeController.OnPurchaseConfirmed += OnPurchaseConfirmed;
-            storeController.OnPurchaseFailed    += OnPurchaseFailed;
+            storeController.OnPurchaseFailed += OnPurchaseFailed;
+            storeController.OnPurchaseDeferred += OnPurchaseDeferred;
 
             await storeController.Connect();
 
             InitializeProducts(iapPacks);
         }
-#endregion
 
-#region Product Fetching
+        #endregion
+
+        #region Product Fetching
+
         void InitializeProducts(Dictionary<string, ProductType> iapPacks)
         {
             initializeProductsSource = new UniTaskCompletionSource<bool>();
-            initializeProductsTask   = initializeProductsSource.Task.Preserve();
+            initializeProductsTask = initializeProductsSource.Task.Preserve();
 
             var initialProductsToFetch = iapPacks.Select(kvp =>
             {
@@ -84,8 +93,10 @@
             LogWithColor("Initial products fetched:", "green");
             foreach (var product in products)
             {
-                LogWithColor($"Product ID: {product.definition.id}, Type: {product.definition.type}, Price: {product.metadata.localizedPriceString}");
+                LogWithColor(
+                    $"Product ID: {product.definition.id}, Type: {product.definition.type}, Price: {product.metadata.localizedPriceString}");
             }
+
             initializeProductsSource.TrySetResult(true);
         }
 
@@ -94,34 +105,54 @@
             LogWithColor($"Initial products fetch failed: {failure.FailureReason}", "red");
             initializeProductsSource.TrySetResult(false);
         }
-#endregion
 
-#region Purchase Handling
+        #endregion
+
+        #region Purchase Handling
+
         public UniTask PurchaseProduct(string productId)
         {
-            var tcs     = new UniTaskCompletionSource();
+            var tcs = new UniTaskCompletionSource();
             var product = this.FindProduct(productId);
 
             if (product != null)
             {
                 if (!pendingPurchaseTask.TryGetValue(productId, out var queue))
                 {
-                    queue                          = new Queue<UniTaskCompletionSource>();
+                    queue = new Queue<UniTaskCompletionSource>();
                     pendingPurchaseTask[productId] = queue;
                 }
+
                 queue.Enqueue(tcs);
                 storeController?.PurchaseProduct(product);
             }
             else
             {
-                tcs.TrySetException(new IAPPurchaseFailedException($"The product service has no product with the ID {productId}"));
+                tcs.TrySetException(
+                    new IAPPurchaseFailedException($"The product service has no product with the ID {productId}"));
             }
+
             return tcs.Task;
         }
 
         void OnPurchasePending(PendingOrder order)
         {
-            // Add your validations here before confirming the purchase.
+            if (!ValidateReceipt(order))
+            {
+                foreach (var cartItem in order.CartOrdered.Items())
+                {
+                    var product = cartItem.Product;
+                    if (pendingPurchaseTask.TryGetValue(product.definition.id, out var queue) && queue.Count > 0)
+                    {
+                        var tcs = queue.Dequeue();
+                        tcs.TrySetException(new IAPPurchaseFailedException(
+                            $"Receipt validation failed for product '{product.definition.id}'"));
+                    }
+                }
+
+                return;
+            }
+
             bool hasPendingOrderValid = false;
             foreach (var cartItem in order.CartOrdered.Items())
             {
@@ -142,9 +173,11 @@
 
             if (!hasPendingOrderValid)
             {
-                LogWithColor($"No pending purchase task found for the order. Order ID: {order.Info.TransactionID}", "red");
+                LogWithColor($"No pending purchase task found for the order. Order ID: {order.Info.TransactionID}",
+                    "red");
                 return;
             }
+
             storeController.ConfirmPurchase(order);
         }
 
@@ -153,7 +186,8 @@
             switch (order)
             {
                 case FailedOrder failedOrder:
-                    LogWithColor($"Purchase confirmation failed: {failedOrder.CartOrdered.Items().First().Product.definition.id}, {failedOrder.FailureReason.ToString()}, {failedOrder.Details}");
+                    LogWithColor(
+                        $"Purchase confirmation failed: {failedOrder.CartOrdered.Items().First().Product.definition.id}, {failedOrder.FailureReason.ToString()}, {failedOrder.Details}");
                     break;
                 case ConfirmedOrder:
                     LogWithColor($"Purchase completed:  {order.CartOrdered.Items().First().Product.definition.id}");
@@ -173,13 +207,23 @@
                 if (pendingPurchaseTask.TryGetValue(product.definition.id, out var queue) && queue.Count > 0)
                 {
                     var tcs = queue.Dequeue();
-                    tcs.TrySetException(new IAPPurchaseFailedException($"Purchase failed for product ID {product.definition.id} with reason {failedOrder.FailureReason.ToString()}"));
+                    tcs.TrySetException(new IAPPurchaseFailedException(
+                        $"Purchase failed for product ID {product.definition.id} with reason {failedOrder.FailureReason.ToString()}"));
                 }
             }
         }
-#endregion
+        
+        void OnPurchaseDeferred(DeferredOrder order)
+        {
+            var product = order.CartOrdered.Items().FirstOrDefault()?.Product;
+            LogWithColor($"Purchase deferred for: {product?.definition.id ?? "unknown"}. " +
+                         "Waiting for parental approval.", "yellow");
+        }
 
-#region Utilities
+        #endregion
+
+        #region Utilities
+
         public bool IsProductAvailable(string productId)
         {
             if (this.storeController == null)
@@ -208,13 +252,13 @@
 
             return product ?? throw new Exception($"Product with ID {productId} not found after initialization.");
         }
-        
+
         public string GetLocalizedPriceString(string productId, string defaultValue = "")
         {
             var product = this.FindProduct(productId);
             return product != null ? product.metadata.localizedPriceString : defaultValue;
         }
-        
+
         public decimal GetLocalizedPrice(string productId, decimal defaultValue = 0)
         {
             var product = this.FindProduct(productId);
@@ -226,6 +270,64 @@
             var color = string.IsNullOrEmpty(c) ? "white" : c;
             Debug.Log($"<color={color}>{header} {logContent}</color>");
         }
-#endregion
+        
+        #endregion
+
+        #region Receipt Validation
+        private CrossPlatformValidator validator;
+        void InitializeValidator(Func<byte[]> getGooglePublicKey, Func<byte[]> getAppleRootCert)
+        {
+            try
+            {
+                validator = getAppleRootCert != null ? 
+                    new CrossPlatformValidator(getGooglePublicKey(), getAppleRootCert(), Application.identifier) : 
+                    new CrossPlatformValidator(getGooglePublicKey(), Application.identifier);
+                LogWithColor("CrossPlatformValidator initialized successfully.", "green");
+            }
+            catch (Exception ex)
+            {
+                LogWithColor($"CrossPlatformValidator initialization failed: {ex.Message}. " +
+                             "Ensure GooglePlayTangle and AppleTangle classes are generated " +
+                             "(Services > In-App Purchasing > Receipt Validation Obfuscator).", "yellow");
+                validator = null;
+            }
+        }
+
+        bool ValidateReceipt(PendingOrder order)
+        {
+            if (validator == null)
+            {
+                LogWithColor("No validator available — skipping receipt validation.", "yellow");
+                return true;
+            }
+
+            try
+            {
+                var result = validator.Validate(order.Info.Receipt);
+                foreach (var receipt in result)
+                {
+                    LogWithColor($"Receipt validated: ProductId={receipt.productID}, " +
+                                 $"TransactionId={receipt.transactionID}", "green");
+
+                    if (receipt is GooglePlayReceipt googleReceipt)
+                    {
+                        LogWithColor($"  GooglePlay: OrderId={googleReceipt.orderID}, purchaseState={googleReceipt.purchaseState}, " +
+                                     $"purchaseToken={googleReceipt.purchaseToken}", "cyan");
+                    }
+                    else if (receipt is AppleInAppPurchaseReceipt appleReceipt)
+                    {
+                        LogWithColor($"  AppleAppStore: transactionId={appleReceipt.transactionID}", "cyan");
+                    }
+                }
+                return true;
+            }
+            catch (IAPSecurityException ex)
+            {
+                LogWithColor($"RECEIPT VALIDATION FAILED: {ex.Message}", "red");
+                return false;
+            }
+        }
+
+        #endregion
     }
 }
