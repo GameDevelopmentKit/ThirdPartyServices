@@ -50,18 +50,25 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.AppLovinSetting = thirdPartiesConfig.AdSettings.AppLovin;
         }
 
-        public virtual async void Initialize()
+        public virtual void Initialize()
         {
+            this.logService.Log("Applovin is trying to initialize!");
+            MaxSdkCallbacks.OnSdkInitializedEvent += OnSDKInitializedHandler;
+
+            MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
+            MaxSdk.SetUserId(SystemInfo.deviceUniqueIdentifier);
+            
 #if ADS_DEBUG
             MaxSdk.SetCreativeDebuggerEnabled(true);
 #else
-            MaxSdk.SetCreativeDebuggerEnabled(this.AppLovinSetting.CreativeDebugger);
+            if(this.AppLovinSetting.CreativeDebugger) MaxSdk.SetCreativeDebuggerEnabled(this.AppLovinSetting.CreativeDebugger);
 #endif
-            MaxSdk.SetSdkKey(this.AppLovinSetting.SDKKey);
+            // if(this.ApplovinSettings.AgeRestrictMode) MaxSdk.SetIsAgeRestrictedUser(adsSettings.ApplovinSettings.AgeRestrictMode);
             MaxSdk.InitializeSdk();
-            MaxSdkCallbacks.OnSdkInitializedEvent += this.OnSDKInitializedHandler;
+        }
 
-            await UniTask.WaitUntil(MaxSdk.IsInitialized);
+        private void OnSDKInitializedHandler(MaxSdkBase.SdkConfiguration obj)
+        {
             //todo: enable ads types later
             // this.InitBannerAds();
             // this.InitMRECAds();
@@ -69,7 +76,12 @@ namespace ServiceImplementation.AdsServices.AppLovin
             this.InitRewardedAds();
             // this.InitAOAAds();
 
+#if ADS_DEBUG
+            // Show Mediation Debugger
+            MaxSdk.ShowMediationDebugger();
+#else
             if (this.AppLovinSetting.MediationDebugger) MaxSdk.ShowMediationDebugger();
+#endif
             
             this.temporarySkipAds = diContainer.ResolveAll<ITemporarySkipAd>();
 
@@ -77,15 +89,7 @@ namespace ServiceImplementation.AdsServices.AppLovin
 
             this.logService.Log("AppLovin Ads Services has been initialized!");
         }
-
-        private void OnSDKInitializedHandler(MaxSdkBase.SdkConfiguration obj)
-        {
-#if ADS_DEBUG
-            // Show Mediation Debugger
-            MaxSdk.ShowMediationDebugger();
-#endif
-        }
-
+        
         public void Dispose()
         {
             // this.DisposeBannerAds();
