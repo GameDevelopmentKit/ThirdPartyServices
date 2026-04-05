@@ -29,6 +29,8 @@ namespace ServiceImplementation.AdsServices.PreloadService
         private Dictionary<(IAdLoadService, string), UnScaleInGameStopWatch> rewardAdStopwatch       = new();
         private Dictionary<IAOAAdService, UnScaleInGameStopWatch>            aoaAdStartTime          = new();
         
+        private bool isLoadingAds = false;
+        
         public PreloadAdService(List<IAdLoadService> adLoadServices, AdServicesConfig adServicesConfig, SignalBus signalBus, IAnalyticServices analyticServices, List<IAOAAdService> aOAAdServices, UnScaleInGameStopWatchManager unScaleInGameStopWatchManager)
         {
             this.adLoadServices            = adLoadServices;
@@ -48,6 +50,8 @@ namespace ServiceImplementation.AdsServices.PreloadService
 
         public async void StartLoadAds()
         {
+            if (this.isLoadingAds) return;
+            isLoadingAds = true;
             try
             {
                 Debug.Log("load ads interval");
