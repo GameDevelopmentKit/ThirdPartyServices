@@ -6,7 +6,6 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using ServiceImplementation.FireBaseRemoteConfig;
-    using ServiceImplementation.RemoteConfig;
     using Zenject;
 
     internal class ByteBrewRemoteConfig : IRemoteConfig, IInitializable

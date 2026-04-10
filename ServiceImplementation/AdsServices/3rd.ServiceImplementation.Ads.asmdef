@@ -18,7 +18,8 @@
         "Amazon.Scripts",
         "Unity.Advertisement.IosSupport",
         "Unity.LevelPlay",
-        "Zenject-Source"
+        "Zenject-Source",
+        "Meta.Transactions"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

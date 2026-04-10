@@ -21,12 +21,6 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "com.unity.purchasing",
-            "expression": "",
-            "define": "UNITY_IAP"
-        }
-    ],
+    "versionDefines": [],
     "noEngineReferences": false
 }
