@@ -15,9 +15,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine;
     using Zenject;
-#if THEONE_IAP
-    using AppsFlyerConnector;
-#endif
 
     public class AppsflyerTracker : BaseTracker
     {
@@ -55,11 +52,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             var apiId  = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
 
-            if (string.IsNullOrEmpty(apiId))
-            {
-                throw new Exception("Appsflyer can't be initialized, Appsflyer AppId not found");
-            }
-
             if (string.IsNullOrEmpty(devKey))
             {
                 throw new Exception("Appsflyer can't be initialized, Appsflyer DevKey not found");
@@ -79,20 +71,10 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 #endif
             AppsFlyer.setIsDebug(this.analyticConfig.AppsflyerIsDebug);
 
-            //IAP Revenue connector
-#if THEONE_IAP
-            AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
-            AppsFlyerPurchaseConnector.setIsSandbox(this.analyticConfig.AppsflyerIsDebug);
-            AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions, AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
-            AppsFlyerPurchaseConnector.build();
-            AppsFlyerPurchaseConnector.startObservingTransactions();
-#endif
+            this.ConfigurePurchaseConnector();
 
             //Start SDK
             AppsFlyer.startSDK();
-
-            //Ads Revenue connector
-            AppsFlyerAdRevenue.start();
 
             this.TrackerReady.SetResult(true);
 
@@ -130,11 +112,11 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             var eventValues = new Dictionary<string, string>
             {
+                { AFInAppEvents.CONTENT_ID, iapTransaction.OfferSku },
                 { AFInAppEvents.CURRENCY, iapTransaction.CurrencyCode },
                 { AFInAppEvents.PRICE, iapTransaction.Price.ToString(CultureInfo.InvariantCulture) },
-                { AFInAppEvents.PURCHASE, iapTransaction.Price.ToString(CultureInfo.InvariantCulture) },
-                { AFInAppEvents.REVENUE, iapTransaction.Price.ToString(CultureInfo.InvariantCulture) },
-                { AFInAppEvents.CONTENT_ID, iapTransaction.OfferSku }
+                { AFInAppEvents.QUANTITY, iapTransaction.Quantity.ToString() },
+                { AFInAppEvents.REVENUE, iapTransaction.Revenue.ToString(CultureInfo.InvariantCulture) },
             };
 
             AppsFlyer.sendEvent(AFInAppEvents.PURCHASE, eventValues);
@@ -148,22 +130,48 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
                 return;
             }
-
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add(AFAdRevenueEvent.AD_UNIT, adsRevenueEvent.AdUnit);
-            dic.Add(AFAdRevenueEvent.AD_TYPE, adsRevenueEvent.AdFormat);
-            dic.Add(AFAdRevenueEvent.PLACEMENT, adsRevenueEvent.Placement);
-            dic.Add("af_quantity", "1");
-            AppsFlyerAdRevenueMediationNetworkType mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
+            
+            MediationNetwork mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
             {
-                AdRevenueConstants.ARSourceAppLovinMAX => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax,
-                AdRevenueConstants.ARSourceIronSource  => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeIronSource,
-                AdRevenueConstants.ARSourceAdMob       => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob,
-                AdRevenueConstants.ARSourceUnity       => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeUnity,
-                _                                      => AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeCustomMediation
+                AdRevenueConstants.ARSourceAppLovinMAX => MediationNetwork.ApplovinMax,
+                AdRevenueConstants.ARSourceIronSource => MediationNetwork.IronSource,
+                AdRevenueConstants.ARSourceAdMob => MediationNetwork.GoogleAdMob,
+                AdRevenueConstants.ARSourceUnity => MediationNetwork.Unity,
+                _ => MediationNetwork.Custom
             };
 
-            AppsFlyerAdRevenue.logAdRevenue(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Revenue, adsRevenueEvent.Currency, dic);
+            Dictionary<string, string> additionalParams = new Dictionary<string, string>();
+            additionalParams.Add(AdRevenueScheme.AD_UNIT,  adsRevenueEvent.AdUnit);
+            additionalParams.Add(AdRevenueScheme.AD_TYPE,  adsRevenueEvent.AdFormat);
+            additionalParams.Add(AdRevenueScheme.PLACEMENT, adsRevenueEvent.Placement);
+            var logRevenue = new AFAdRevenueData(adsRevenueEvent.AdNetwork, mediationNetworkType,  adsRevenueEvent.Currency,  adsRevenueEvent.Revenue);
+            AppsFlyer.logAdRevenue(logRevenue, additionalParams);
+        }
+
+        private void ConfigurePurchaseConnector()
+        {
+            if (!analyticConfig.AppsflyerIsEnableRoi360) return;
+            // Remove the default IAP event delegate to prevent duplicate tracking
+            this.CustomEventDelegates.Remove(typeof(IapTransactionDidSucceed));
+
+            //IAP Revenue connector
+            AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
+
+
+            // Set sandbox mode for testing
+            AppsFlyerPurchaseConnector.setIsSandbox(this.analyticConfig.AppsflyerIsDebug);
+
+            // Configure StoreKit version (iOS only) - SK1 is the default
+            AppsFlyerPurchaseConnector.setStoreKitVersion(StoreKitVersion.SK2);
+
+            // Enable automatic logging for subscriptions and in-app purchases
+            AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(
+                AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions,
+                AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases
+            );
+            
+            AppsFlyerPurchaseConnector.build();
+            AppsFlyerPurchaseConnector.startObservingTransactions();
         }
     }
 }

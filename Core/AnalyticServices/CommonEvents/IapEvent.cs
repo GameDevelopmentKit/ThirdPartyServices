@@ -92,6 +92,8 @@ namespace Core.AnalyticServices.CommonEvents
         /// If the purchase was made against a sandbox environment
         /// </summary>
         public bool IsTest;
+        public float Revenue;
+        public int   Quantity;
     }
 
     /// <summary>

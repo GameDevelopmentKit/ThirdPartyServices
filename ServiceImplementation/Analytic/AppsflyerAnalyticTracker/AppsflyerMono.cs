@@ -13,10 +13,10 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         public static AppsflyerMono Create()
         {
-            var IAPGameObject = new GameObject();
-            DontDestroyOnLoad(IAPGameObject);
-            IAPGameObject.name = "AppsflyerMono";
-            return IAPGameObject.AddComponent<AppsflyerMono>();
+            var appsflyerMono = new GameObject();
+            DontDestroyOnLoad(appsflyerMono);
+            appsflyerMono.name = "AppsflyerMono";
+            return appsflyerMono.AddComponent<AppsflyerMono>();
         }
     }
 }

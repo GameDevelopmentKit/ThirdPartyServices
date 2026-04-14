@@ -69,9 +69,11 @@ namespace Core.AnalyticServices
             => string.Empty;
 #endif
 
-        public bool AppsflyerIsDebug           => this.appsflyerIsDebug;
+        public bool AppsflyerIsDebug => this.appsflyerIsDebug;
 
-        [Header("DevKey")][BoxGroup("Appsflyer")]
+        public bool AppsflyerIsEnableRoi360 => this.appsflyerIsEnableROI360;
+
+        [Header("DevKey")] [BoxGroup("Appsflyer")]
         [SerializeField] private string appsflyerDevKeyIos;
         [BoxGroup("Appsflyer")]
         [SerializeField] private string appsflyerDevKeyAndroid;
@@ -82,6 +84,9 @@ namespace Core.AnalyticServices
         [SerializeField] private string appsflyerAppIdIos;
         [BoxGroup("Appsflyer")]
         [SerializeField] private bool appsflyerIsDebug;
+
+        [BoxGroup("Appsflyer")]
+        [SerializeField] private bool appsflyerIsEnableROI360;
 
         private bool ValidateAppIdIos(string value) { return string.IsNullOrEmpty(value) || this.appsflyerAppIdIos.StartsWith("id"); }
 #endif
