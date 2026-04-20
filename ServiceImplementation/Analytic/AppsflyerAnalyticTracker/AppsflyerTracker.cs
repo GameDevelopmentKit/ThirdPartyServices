@@ -18,19 +18,28 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
     public class AppsflyerTracker : BaseTracker
     {
-        private readonly   ILogService                       logger;
-        private readonly   AnalyticsEventCustomizationConfig customizationConfig;
-        protected override TaskCompletionSource<bool>        TrackerReady { get; } = new();
+        private readonly          ILogService                       logger;
+        private readonly          AnalyticsEventCustomizationConfig customizationConfig;
+        protected override        TaskCompletionSource<bool>        TrackerReady         { get; } = new();
+        protected sealed override Dictionary<Type, EventDelegate>   CustomEventDelegates { get; }
+        protected override        HashSet<Type>                     IgnoreEvents         => this.customizationConfig.IgnoreEvents;
+        protected override        HashSet<string>                   IncludeEvents        => this.customizationConfig.IncludeEvents;
+        protected override        Dictionary<string, string>        CustomEventKeys      => this.customizationConfig.CustomEventKeys;
 
-        protected override Dictionary<Type, EventDelegate> CustomEventDelegates => new()
-        {
-            { typeof(IapTransactionDidSucceed), this.TrackIAP },
-            { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
-        };
 
         public AppsflyerTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
-            this.logger              = logger;
+            this.logger = logger;
+            CustomEventDelegates = new Dictionary<Type, EventDelegate>
+            {
+                { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
+            };
+
+            if (!analyticConfig.AppsflyerIsEnableRoi360)
+            {
+                CustomEventDelegates.Add( typeof(IapTransactionDidSucceed), this.TrackIAP );
+            }
+            
             this.customizationConfig = customizationConfig;
 
             if (customizationConfig.CustomEventKeys.Count == 0)
@@ -38,10 +47,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 this.logger.Error($"CustomEventKeys is empty, please Init in your ProjectInstaller");
             }
         }
-
-        protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
-        protected override HashSet<string>            IncludeEvents   => this.customizationConfig.IncludeEvents;
-        protected override Dictionary<string, string> CustomEventKeys => this.customizationConfig.CustomEventKeys;
 
         protected override Task TrackerSetup()
         {
@@ -130,7 +135,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
                 return;
             }
-            
+
             MediationNetwork mediationNetworkType = adsRevenueEvent.AdsRevenueSourceId switch
             {
                 AdRevenueConstants.ARSourceAppLovinMAX => MediationNetwork.ApplovinMax,
@@ -141,18 +146,16 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             };
 
             Dictionary<string, string> additionalParams = new Dictionary<string, string>();
-            additionalParams.Add(AdRevenueScheme.AD_UNIT,  adsRevenueEvent.AdUnit);
-            additionalParams.Add(AdRevenueScheme.AD_TYPE,  adsRevenueEvent.AdFormat);
+            additionalParams.Add(AdRevenueScheme.AD_UNIT, adsRevenueEvent.AdUnit);
+            additionalParams.Add(AdRevenueScheme.AD_TYPE, adsRevenueEvent.AdFormat);
             additionalParams.Add(AdRevenueScheme.PLACEMENT, adsRevenueEvent.Placement);
-            var logRevenue = new AFAdRevenueData(adsRevenueEvent.AdNetwork, mediationNetworkType,  adsRevenueEvent.Currency,  adsRevenueEvent.Revenue);
+            var logRevenue = new AFAdRevenueData(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Currency, adsRevenueEvent.Revenue);
             AppsFlyer.logAdRevenue(logRevenue, additionalParams);
         }
 
         private void ConfigurePurchaseConnector()
         {
             if (!analyticConfig.AppsflyerIsEnableRoi360) return;
-            // Remove the default IAP event delegate to prevent duplicate tracking
-            this.CustomEventDelegates.Remove(typeof(IapTransactionDidSucceed));
 
             //IAP Revenue connector
             AppsFlyerPurchaseConnector.init(AppsflyerMono.Create(), Store.GOOGLE);
@@ -169,7 +172,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions,
                 AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases
             );
-            
+
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();
         }
