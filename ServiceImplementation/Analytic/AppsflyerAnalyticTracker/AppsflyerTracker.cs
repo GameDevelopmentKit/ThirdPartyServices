@@ -52,7 +52,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            Debug.Log($"setting up appsflyer tracker");
+            if (this.analyticConfig.debugMode) Debug.Log($"setting up appsflyer tracker");
 
             var apiId  = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
@@ -99,7 +99,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
-            Debug.Log($"Appsflyer: On Event {name}");
             var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             AppsFlyer.sendEvent(name, convertedData);
         }
