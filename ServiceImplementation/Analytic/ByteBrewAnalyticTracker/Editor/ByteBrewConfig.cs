@@ -20,7 +20,7 @@ namespace Core.AnalyticServices
 
         [BoxGroup("ByteBrew")] [LabelText("Enable", SdfIconType.Youtube)] [OnValueChanged("OnChangeByteBrewEnabled")] [SerializeField] private bool isByteBrewEnabled = true;
 
-        [OnInspectorInit]
+        // [OnInspectorInit]
         private void OnChangeByteBrewEnabled()
         {
             #if UNITY_EDITOR
