@@ -14,6 +14,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         private const string FireBaseRemoteConfigSymbol = "FIREBASE_REMOTE_CONFIG";
         private const string ByteBrewRemoteConfigSymbol = "BYTEBREW_REMOTE_CONFIG";
         private const string ByteBrewSymbol             = "BYTEBREW";
+        private const string UGSRemoteConfigSymbol      = "UGS_REMOTE_CONFIG";
 
         public static string ResourcePath = $"GameConfigs/{nameof(RemoteConfigSetting)}";
 
@@ -119,6 +120,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         {
             EditorUtils.SetDefineSymbol(FireBaseRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.FireBase);
             EditorUtils.SetDefineSymbol(ByteBrewRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew);
+            EditorUtils.SetDefineSymbol(UGSRemoteConfigSymbol, this.RemoteConfigProviderType == RemoteConfigProviderType.UGS);
             if (this.RemoteConfigProviderType == RemoteConfigProviderType.ByteBrew)
             {
                 EditorUtils.SetDefineSymbol(ByteBrewSymbol, true);

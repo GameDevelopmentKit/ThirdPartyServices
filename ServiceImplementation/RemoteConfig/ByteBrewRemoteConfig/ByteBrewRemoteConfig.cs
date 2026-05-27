@@ -9,7 +9,7 @@ namespace ServiceImplementation.ByteBrewRemoteConfig
     using ServiceImplementation.RemoteConfig;
     using Zenject;
 
-    internal class ByteBrewRemoteConfig : IRemoteConfig, IInitializable
+    internal class ByteBrewRemoteConfig : IRemoteConfig
     {
         #region Inject
 

@@ -5,8 +5,11 @@
         "UniTask",
         "ByteBrewSDK",
         "GameFoundation.Utilities",
+        "GameFoundation.Auth",
         "Zenject-Signals",
-        "Zenject-Source"
+        "Zenject-Source",
+        "Unity.Services.Core",
+        "Unity.Services.RemoteConfig"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
