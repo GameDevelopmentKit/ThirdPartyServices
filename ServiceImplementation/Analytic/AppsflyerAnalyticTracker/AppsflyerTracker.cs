@@ -34,11 +34,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             {
                 { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
             };
-
-            if (!analyticConfig.AppsflyerIsEnableRoi360)
-            {
-                CustomEventDelegates.Add( typeof(IapTransactionDidSucceed), this.TrackIAP );
-            }
             
             this.customizationConfig = customizationConfig;
 
@@ -53,6 +48,11 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
             if (this.analyticConfig.debugMode) Debug.Log($"setting up appsflyer tracker");
+            
+            if (!analyticConfig.AppsflyerIsEnableRoi360)
+            {
+                CustomEventDelegates.Add( typeof(IapTransactionDidSucceed), this.TrackIAP );
+            }
 
             var apiId  = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
