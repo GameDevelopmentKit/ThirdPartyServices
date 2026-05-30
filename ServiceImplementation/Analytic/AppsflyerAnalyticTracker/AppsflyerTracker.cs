@@ -13,6 +13,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using Core.AnalyticServices.Data;
     using GameFoundation.Scripts.Utilities.Extension;
     using GameFoundation.Scripts.Utilities.LogService;
+    using Newtonsoft.Json;
     using UnityEngine;
     using Zenject;
 
@@ -88,18 +89,28 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override void SetUserId(string userId)
         {
+            if (this.analyticConfig.debugMode) Debug.Log($"Appsflyer: SetUserId - {userId}");
             AppsFlyer.setCustomerUserId(userId);
         }
 
         protected override void OnChangedProps(Dictionary<string, object> changedProps)
         {
             var convertedData = changedProps.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
+            if (this.analyticConfig.debugMode) Debug.Log($"Appsflyer: OnChangedProps - {JsonConvert.SerializeObject(convertedData)}");
             AppsFlyer.setAdditionalData(convertedData);
         }
 
         protected override void OnEvent(string name, Dictionary<string, object> data)
         {
             var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
+
+            if (this.analyticConfig.debugMode)
+            {
+                Debug.Log(data == null
+                              ? $"Appsflyer: OnEvent - {name}"
+                              : $"Appsflyer: OnEvent - {name} - {JsonConvert.SerializeObject(convertedData)}");
+            }
+
             AppsFlyer.sendEvent(name, convertedData);
         }
 
@@ -122,6 +133,8 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 { AFInAppEvents.QUANTITY, iapTransaction.Quantity.ToString() },
                 { AFInAppEvents.REVENUE, iapTransaction.Revenue.ToString(CultureInfo.InvariantCulture) },
             };
+
+            if (this.analyticConfig.debugMode) Debug.Log($"Appsflyer: TrackIAP - {AFInAppEvents.PURCHASE} - {JsonConvert.SerializeObject(eventValues)}");
 
             AppsFlyer.sendEvent(AFInAppEvents.PURCHASE, eventValues);
         }
@@ -149,6 +162,9 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             additionalParams.Add(AdRevenueScheme.AD_TYPE, adsRevenueEvent.AdFormat);
             additionalParams.Add(AdRevenueScheme.PLACEMENT, adsRevenueEvent.Placement);
             var logRevenue = new AFAdRevenueData(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Currency, adsRevenueEvent.Revenue);
+
+            if (this.analyticConfig.debugMode) Debug.Log($"Appsflyer: TrackAdsRevenue - network:{adsRevenueEvent.AdNetwork} mediation:{mediationNetworkType} currency:{adsRevenueEvent.Currency} revenue:{adsRevenueEvent.Revenue} - {JsonConvert.SerializeObject(additionalParams)}");
+
             AppsFlyer.logAdRevenue(logRevenue, additionalParams);
         }
 
