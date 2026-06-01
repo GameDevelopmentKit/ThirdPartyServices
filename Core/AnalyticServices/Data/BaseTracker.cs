@@ -71,6 +71,7 @@ namespace Core.AnalyticServices.Data
         /// </summary>
         public BaseTracker(SignalBus signalBus, AnalyticConfig analyticConfig)
         {
+            Debug.Log($"[BaseTracker] Constructor entered for {this.GetType().Name}");
             this.analyticConfig = analyticConfig;
             signalBus.Subscribe<EventTrackedSignal>(this.EventTracked);
             signalBus.Subscribe<SetUserIdSignal>(signal => this.SetUserId(signal.UserId));
@@ -79,6 +80,7 @@ namespace Core.AnalyticServices.Data
 
         private async void Init()
         {
+            Debug.Log($"[BaseTracker] Init entered for {this.GetType().Name}");
             try
             {
                 await this.TrackerSetup();

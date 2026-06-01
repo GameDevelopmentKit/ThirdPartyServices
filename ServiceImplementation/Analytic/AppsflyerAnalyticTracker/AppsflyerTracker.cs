@@ -30,6 +30,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         public AppsflyerTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
+            Debug.Log($"[AppsflyerTracker] Constructor entered");
             this.logger = logger;
             CustomEventDelegates = new Dictionary<Type, EventDelegate>
             {
@@ -50,7 +51,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             //todo comment for testing
             // if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            if (this.analyticConfig.debugMode) Debug.Log($"setting up appsflyer tracker");
+            if (this.analyticConfig.debugMode) Debug.Log($"Setting up appsflyer tracker");
             
             if (!analyticConfig.AppsflyerIsEnableRoi360)
             {
