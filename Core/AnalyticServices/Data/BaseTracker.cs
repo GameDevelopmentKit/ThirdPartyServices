@@ -79,7 +79,14 @@ namespace Core.AnalyticServices.Data
 
         private async void Init()
         {
-            await this.TrackerSetup();
+            try
+            {
+                await this.TrackerSetup();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[BaseTracker] TrackerSetup failed for {this.GetType().Name}: {e}");
+            }
         }
 
         private async void EventTracked(EventTrackedSignal trackedData)

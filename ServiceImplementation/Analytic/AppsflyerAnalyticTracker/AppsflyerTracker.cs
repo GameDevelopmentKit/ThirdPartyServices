@@ -46,7 +46,9 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         protected override Task TrackerSetup()
         {
-            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
+            Debug.Log($"[AppsflyerTracker] TrackerSetup entered, TrackerReady status: {this.TrackerReady.Task.Status}");
+            //todo comment for testing
+            // if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
             if (this.analyticConfig.debugMode) Debug.Log($"setting up appsflyer tracker");
             
