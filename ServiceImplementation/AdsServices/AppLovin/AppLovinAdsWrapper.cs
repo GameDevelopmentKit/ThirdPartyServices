@@ -503,14 +503,14 @@ namespace ServiceImplementation.AdsServices.AppLovin
                 {
                     this.OnRewardCompleted(this.currentShowingRewarded, adInfo);
 
-                    this.signalBus.Fire(new RewardedAdClosedSignal(this.currentShowingRewarded.Name, adInfo));
+                    this.signalBus.Fire(new RewardedAdClosedSignal(this.currentShowingRewarded.Name, adInfo,true));
 
                     return;
                 }
             }
 
             this.OnRewardedSkipped(this.currentShowingRewarded, adInfo);
-            this.signalBus.Fire(new RewardedAdClosedSignal(this.currentShowingRewarded.Name, adInfo));
+            this.signalBus.Fire(new RewardedAdClosedSignal(this.currentShowingRewarded.Name, adInfo,false));
         }
 
         private void OnRewardedAdDisplayFailedEventHandler(string arg1, MaxSdkBase.ErrorInfo arg2, MaxSdkBase.AdInfo arg3)

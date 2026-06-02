@@ -98,6 +98,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
             {
                 this.LoadInterstitial(loadService, key.Name);
             }
+            this.signalBus.Fire(new InterstitialAdCallLoadSignal());
         }
 
         private void LoadInterAdsAfterShow(InterstitialAdClosedSignal signal) { this.LoadInterAdWithPlace(signal.Placement); }
@@ -138,6 +139,7 @@ namespace ServiceImplementation.AdsServices.PreloadService
             {
                 this.LoadReward(loadService, key.Name);
             }
+            this.signalBus.Fire(new RewardCallLoadSignal());
         }
 
         private void LoadRewardAdsAfterShow(RewardedAdCompletedSignal signal) { this.LoadRewardAdWithPlace(signal.Placement); }

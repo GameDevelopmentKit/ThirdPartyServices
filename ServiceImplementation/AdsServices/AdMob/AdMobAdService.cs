@@ -256,7 +256,7 @@ namespace ServiceImplementation.AdsServices.AdMob
             this.rewardedAd.Show(_ =>
             {
                 this.signalBus.Fire(new RewardedAdCompletedSignal(place, adInfo));
-                this.signalBus.Fire(new RewardedAdClosedSignal(place, adInfo));
+                this.signalBus.Fire(new RewardedAdClosedSignal(place, adInfo,true));
                 onCompleted?.Invoke();
             });
 

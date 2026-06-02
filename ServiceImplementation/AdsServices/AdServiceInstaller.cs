@@ -91,6 +91,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<MRecAdDisplayedSignal>();
             this.Container.DeclareSignal<MRecAdDismissedSignal>();
 
+            this.Container.DeclareSignal<InterstitialAdCallLoadSignal>();
             this.Container.DeclareSignal<InterstitialAdLoadedSignal>();
             this.Container.DeclareSignal<InterstitialAdLoadFailedSignal>();
             this.Container.DeclareSignal<InterstitialAdPassCappingTimeSignal>();
@@ -101,6 +102,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<InterstitialAdCalledSignal>();
             this.Container.DeclareSignal<InterstitialAdEligibleSignal>();
 
+            this.Container.DeclareSignal<RewardCallLoadSignal>();
             this.Container.DeclareSignal<RewardedInterstitialAdCompletedSignal>();
             this.Container.DeclareSignal<RewardInterstitialAdSkippedSignal>();
             this.Container.DeclareSignal<RewardInterstitialAdCalledSignal>();

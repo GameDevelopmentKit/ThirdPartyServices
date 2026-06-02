@@ -1,5 +1,10 @@
 ﻿namespace Core.AdsServices.Signals
 {
+    public class InterstitialAdCallLoadSignal
+    {
+      
+    }
+
     public class InterstitialAdCalledSignal : BaseAdsSignal
     {
         public InterstitialAdCalledSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
@@ -7,7 +12,7 @@
 
     public class InterstitialAdLoadedSignal : BaseAdsSignal
     {
-        public long            LoadingMilis;
+        public long LoadingMilis;
         public InterstitialAdLoadedSignal(string placement, long loadingMilis, AdInfo adInfo) : base(placement, adInfo) { this.LoadingMilis = loadingMilis; }
     }
 
@@ -15,7 +20,7 @@
     {
         public InterstitialAdEligibleSignal(string placement) : base(placement) { }
     }
-    
+
     public class InterstitialAdPassCappingTimeSignal : BaseAdsSignal
     {
         public InterstitialAdPassCappingTimeSignal(string placement) : base(placement) { }

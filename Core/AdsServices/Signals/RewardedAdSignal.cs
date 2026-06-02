@@ -1,18 +1,20 @@
 ﻿namespace Core.AdsServices.Signals
 {
+    public class RewardCallLoadSignal
+    {
+    }
+
     public class RewardedAdLoadedSignal : BaseAdsSignal
     {
         public long LoadingTime;
-        public RewardedAdLoadedSignal(string placement, long loadingTime, AdInfo adInfo) : base(placement, adInfo)
-        {
-            this.LoadingTime = loadingTime;
-        }
+        public RewardedAdLoadedSignal(string placement, long loadingTime, AdInfo adInfo) : base(placement, adInfo) { this.LoadingTime = loadingTime; }
     }
 
     public class RewardedAdLoadFailedSignal : BaseAdsSignal
     {
-        public float LoadingTime;
+        public float  LoadingTime;
         public string Message;
+
         public RewardedAdLoadFailedSignal(string placement, string message, float loadingTime) : base(placement)
         {
             this.Message     = message;
@@ -32,9 +34,7 @@
 
     public class RewardedAdCompletedSignal : BaseAdsSignal
     {
-        public RewardedAdCompletedSignal(string placement, AdInfo adInfo) : base(placement, adInfo)
-        {
-        }
+        public RewardedAdCompletedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
     }
 
     public class RewardedSkippedSignal : BaseAdsSignal
@@ -59,7 +59,8 @@
 
     public class RewardedAdClosedSignal : BaseAdsSignal
     {
-        public RewardedAdClosedSignal(string placement, AdInfo adInfo) : base(placement, adInfo) { }
+        public bool complete;
+        public RewardedAdClosedSignal(string placement, AdInfo adInfo, bool complete) : base(placement, adInfo) { this.complete = complete; }
     }
 
     public class RewardedAdShowFailedSignal : BaseAdsSignal

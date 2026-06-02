@@ -47,7 +47,7 @@ namespace Core.AdsServices
         {
             onCompleted?.Invoke();
             this.logService.Log($"Dummy show Reward ad at {place} then do {onCompleted}");
-            this.signalBus.Fire(new RewardedAdClosedSignal(place, null));
+            this.signalBus.Fire(new RewardedAdClosedSignal(place, null,true));
         }
 
         public bool IsRewardedInterstitialAdReady()                              { return true; }
