@@ -30,7 +30,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
         public AppsflyerTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
-            Debug.Log($"[AppsflyerTracker] Constructor entered");
             this.logger = logger;
             CustomEventDelegates = new Dictionary<Type, EventDelegate>
             {
@@ -48,8 +47,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         protected override Task TrackerSetup()
         {
             Debug.Log($"[AppsflyerTracker] TrackerSetup entered, TrackerReady status: {this.TrackerReady.Task.Status}");
-            //todo comment for testing
-            // if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
+            if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
             if (this.analyticConfig.debugMode) Debug.Log($"Setting up appsflyer tracker");
             

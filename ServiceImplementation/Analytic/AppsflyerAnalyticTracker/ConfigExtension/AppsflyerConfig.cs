@@ -80,7 +80,7 @@ namespace Core.AnalyticServices
 
         [Header("App Id")]
         [BoxGroup("Appsflyer")]
-        [ValidateInput("ValidateAppIdIos", "Appsflyer App Id must start with 'id'", InfoMessageType.Error)]
+        [ValidateInput("ValidateAppIdIos", "Appsflyer App Id must not start with 'id'", InfoMessageType.Error)]
         [SerializeField] private string appsflyerAppIdIos;
         [BoxGroup("Appsflyer")]
         [SerializeField] private bool appsflyerIsDebug;
@@ -88,7 +88,7 @@ namespace Core.AnalyticServices
         [BoxGroup("Appsflyer")]
         [SerializeField] private bool appsflyerIsEnableROI360;
 
-        private bool ValidateAppIdIos(string value) { return string.IsNullOrEmpty(value) || this.appsflyerAppIdIos.StartsWith("id"); }
+        private bool ValidateAppIdIos(string value) { return string.IsNullOrEmpty(value) || !this.appsflyerAppIdIos.StartsWith("id"); }
 #endif
     }
 }
