@@ -11,6 +11,7 @@ namespace ServiceImplementation.AdsServices.PubScale
     using GameFoundation.Scripts.Utilities.LogService;
     using global::PubScale.SdkOne.NativeAds;
     using GoogleMobileAds.Api;
+    using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs;
     using UnityEngine;
     using Zenject;
@@ -20,7 +21,7 @@ namespace ServiceImplementation.AdsServices.PubScale
 #region Inject
 
         private readonly IScreenManager     screenManager;
-        private readonly SignalBus          signalBus;
+        private readonly ISignalBus          signalBus;
         private readonly IAnalyticServices  analyticServices;
         private readonly ILogService        logService;
         private readonly ThirdPartiesConfig thirdPartiesConfig;
@@ -33,7 +34,7 @@ namespace ServiceImplementation.AdsServices.PubScale
         public PubScaleWrapper
         (
             IScreenManager     screenManager,
-            SignalBus          signalBus,
+            ISignalBus          signalBus,
             IAnalyticServices  analyticServices,
             ILogService        logService,
             ThirdPartiesConfig thirdPartiesConfig
@@ -80,11 +81,14 @@ namespace ServiceImplementation.AdsServices.PubScale
         private void OnAdImpression(object arg1, EventArgs arg2)
         {
             this.logService.Log($"Immersive Ads Impression: {arg1}\n{arg2}");
+            
+            this.signalBus.Fire(new NativeAdsShowSignal());
         }
 
-        private void OnAdFailed(object arg1, AdFailedToLoadEventArgs arg2)
+        private void OnAdFailed(object arg1, LoadAdError arg2)
         {
-            this.logService.Log($"Immersive Ads Failed: {arg1}\nError: {arg2.LoadAdError.GetResponseInfo()}");
+            this.logService.Log($"Immersive Ads Failed: {arg1}\nError: {arg2.GetResponseInfo()}");
+            this.signalBus.Fire(new NativeAdsLoadFailedSignal());
         }
 
         private void OnAdLoaded(object arg1, NativeAdEventArgs arg2)
@@ -95,11 +99,13 @@ namespace ServiceImplementation.AdsServices.PubScale
                 return;
             }
             this.logService.Log($"Immersive Ads Loaded: {arg1}\nNative Ads: {arg2.nativeAd}");
+            this.signalBus.Fire(new NativeAdsLoadedSignal());
         }
 
         private void OnAdRequest()
         {
             this.logService.Log("Immersive Ads Request");
+            this.signalBus.Fire(new NativeAdsRequestSignal());
         }
 
         private void OnAdPaid(AdValue obj)

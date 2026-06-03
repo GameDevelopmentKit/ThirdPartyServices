@@ -3,7 +3,9 @@ namespace ServiceImplementation.Configs.Ads
     using System;
     using UnityEngine;
     using Sirenix.OdinInspector;
+    using UnityEngine.Networking;
 #if UNITY_EDITOR
+    using System.IO;
     using UnityEditor;
     using System.Reflection;
 #endif
@@ -11,7 +13,16 @@ namespace ServiceImplementation.Configs.Ads
     [Serializable]
     public class ImmersiveAdsSetting
     {
-        [Header("PubScale Setting")] [SerializeField, LabelText("Test Mode", SdfIconType.CheckSquare), OnValueChanged("SavePubScaleSetting")]
+        [Header("PubScale Setting")] 
+        [SerializeField, LabelText("UrlPubScaleDownload")]
+        private string urlPubScaleDownload = "https://github.com/GreedyGame/immersive-ads-unity/releases/download/";
+
+        [SerializeField, LabelText("Version")] private string version = "1.6.0";
+
+        [SerializeField, LabelText("PubScaleDownLoad"), OnValueChanged("DownLoadPubScaleSDK")]
+        private bool downLoadPubScaleSdk;
+
+        [SerializeField, LabelText("Test Mode", SdfIconType.CheckSquare), OnValueChanged("SavePubScaleSetting")]
         private bool userTestMode;
 
         [SerializeField, LabelText("Fallback Native ID", SdfIconType.Google), OnValueChanged("SavePubScaleSetting")]
@@ -53,6 +64,25 @@ namespace ServiceImplementation.Configs.Ads
 #endif
         }
 
+        private async void DownLoadPubScaleSDK()
+        {
+#if UNITY_EDITOR
+
+            var url = $"https://github.com/GreedyGame/immersive-ads-unity/releases/download/v{this.version}/PubscaleSDK.v{this.version}.unitypackage";
+
+            var path            = Path.Combine(Application.temporaryCachePath, "PubScaleSdk.unitypackage");
+            var downloadHandler = new DownloadHandlerFile(path);
+            var webRequest      = new UnityWebRequest(url) { method = UnityWebRequest.kHttpVerbGET, downloadHandler = downloadHandler };
+            var operation       = webRequest.SendWebRequest();
+            await operation;
+
+            if (webRequest.result == UnityWebRequest.Result.Success) AssetDatabase.ImportPackage(path, true);
+
+            webRequest.Dispose();
+            this.downLoadPubScaleSdk = false;
+#endif
+        }
+
         [OnInspectorInit]
         private void LoadPubScaleSetting()
         {
@@ -60,15 +90,15 @@ namespace ServiceImplementation.Configs.Ads
             var pubScaleSetting = Resources.Load<ScriptableObject>("PubScaleSettings");
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
-            var settingType  = pubScaleSetting.GetType();
+            var settingType = pubScaleSetting.GetType();
             this.userTestMode = (bool)settingType.GetField("UseTestMode", bindingFlags).GetValue(pubScaleSetting);
 
             this.fallbackNativeAdIdAndroid = settingType.GetField("Fallback_NativeAdID_Android", bindingFlags).GetValue(pubScaleSetting) as string;
-            this.fallbackNativeAdIdIos     = settingType.GetField("Fallback_NativeAdID_IOS",     bindingFlags).GetValue(pubScaleSetting) as string;
+            this.fallbackNativeAdIdIos = settingType.GetField("Fallback_NativeAdID_IOS",     bindingFlags).GetValue(pubScaleSetting) as string;
 
             this.appIdAndroid = settingType.GetField("AppID_Android", bindingFlags).GetValue(pubScaleSetting) as string;
-            this.appIdIos     = settingType.GetField("AppID_IOS",     bindingFlags).GetValue(pubScaleSetting) as string;
-            this.appId        = settingType.GetField("AppID",         bindingFlags).GetValue(pubScaleSetting) as string;
+            this.appIdIos = settingType.GetField("AppID_IOS",     bindingFlags).GetValue(pubScaleSetting) as string;
+            this.appId = settingType.GetField("AppID",         bindingFlags).GetValue(pubScaleSetting) as string;
 #endif
         }
 
@@ -78,7 +108,7 @@ namespace ServiceImplementation.Configs.Ads
             var pubScaleSetting = Resources.Load<ScriptableObject>("PubScaleSettings");
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
-            var settingType  = pubScaleSetting.GetType();
+            var settingType = pubScaleSetting.GetType();
             settingType.GetField("UseTestMode",                 bindingFlags).SetValue(pubScaleSetting, this.userTestMode);
             settingType.GetField("Fallback_NativeAdID_Android", bindingFlags).SetValue(pubScaleSetting, this.fallbackNativeAdIdAndroid);
             settingType.GetField("Fallback_NativeAdID_IOS",     bindingFlags).SetValue(pubScaleSetting, this.fallbackNativeAdIdIos);

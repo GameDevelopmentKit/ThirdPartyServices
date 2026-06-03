@@ -12,6 +12,7 @@ namespace Core.AdsServices.ImmersiveAds
     using R3;
     using UnityEngine;
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
+    using System.Collections;
     using System.Threading;
     using Cysharp.Threading.Tasks;
     using PubScale.SdkOne.NativeAds;
@@ -35,13 +36,10 @@ namespace Core.AdsServices.ImmersiveAds
         private CancellationTokenSource source;
         private IDisposable             changeScreenDisposable;
         private IScreenManager          screenManager;
-        private SignalBus               signalBus;
+        private ISignalBus              signalBus;
         private IScreenPresenter        visibleScreen;
 
-        private void OnValidate()
-        {
-            this.ValidateField();
-        }
+        private void OnValidate() { this.ValidateField(); }
 
         private void ValidateField()
         {
@@ -49,16 +47,27 @@ namespace Core.AdsServices.ImmersiveAds
             this.nativeAdStatusVisualiser ??= this.GetComponentInChildren<NativeAdStatusVisualiser>();
         }
 
-        private void Awake()
+        private IEnumerator Start()
         {
             this.ValidateField();
-            this.screenManager          = this.GetCurrentContainer().Resolve<IScreenManager>();
-            this.signalBus              = this.GetCurrentContainer().Resolve<SignalBus>();
-            this.changeScreenDisposable = this.screenManager.CurrentActiveScreen.Subscribe(this.OnChangeScreen);
+
+            while (this.GetCurrentContainer() == null)
+            {
+                yield return null;
+            }
+
+            var container = this.GetCurrentContainer();
+
+            this.screenManager = container.Resolve<IScreenManager>();
+            this.signalBus     = container.Resolve<ISignalBus>();
+
+            this.changeScreenDisposable = this.screenManager.CurrentActiveScreen
+                .Subscribe(this.OnChangeScreen);
+
             this.signalBus.Subscribe<ScreenShowSignal>(this.OnScreenShow);
             this.signalBus.Subscribe<ScreenCloseSignal>(this.OnScreenClose);
 
-            this.nativeAdHolder.AutoFetch =   false;
+            this.nativeAdHolder.AutoFetch = false;
             this.nativeAdHolder.DisableAd(true);
             this.nativeAdHolder.Event_AdLoaded += this.OnAdLoaded;
             this.nativeAdHolder.Event_AdFailed += this.OnAdFailed;
@@ -70,7 +79,7 @@ namespace Core.AdsServices.ImmersiveAds
             this.nativeAdHolder.DisableAd(false);
         }
 
-        private void OnAdFailed(object arg1, AdFailedToLoadEventArgs arg2)
+        private void OnAdFailed(object arg1, LoadAdError arg2)
         {
             this.nativeAdHolder.DisableAd(true);
             this.isAdLoaded = false;
@@ -117,6 +126,7 @@ namespace Core.AdsServices.ImmersiveAds
             this.nativeAdHolder.FetchAd();
             this.source = new CancellationTokenSource();
             Debug.Log($"Refresh Immersive Ads: {this.nativeAdHolder.adTag}");
+
             try
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(refreshAdTime), DelayType.DeltaTime, cancellationToken: this.source.Token);
@@ -135,10 +145,7 @@ namespace Core.AdsServices.ImmersiveAds
             this.nativeAdHolder.DisableAd(this.visibleScreen != screenPresenter);
         }
 
-        public void BindVisibleScreen(IScreenPresenter screenPresenter)
-        {
-            this.visibleScreen = screenPresenter;
-        }
+        public void BindVisibleScreen(IScreenPresenter screenPresenter) { this.visibleScreen = screenPresenter; }
 #endif
     }
 }

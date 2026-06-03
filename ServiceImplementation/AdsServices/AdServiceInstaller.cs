@@ -136,6 +136,10 @@ namespace ServiceImplementation.AdsServices
             this.Container.DeclareSignal<AttClosedSignal>();
             this.Container.DeclareSignal<NativeAdClickSignal>();
             this.Container.DeclareSignal<NativeAdCloseSignal>();
+            this.Container.DeclareSignal<NativeAdsRequestSignal>();
+            this.Container.DeclareSignal<NativeAdsLoadedSignal>();
+            this.Container.DeclareSignal<NativeAdsLoadFailedSignal>();
+            this.Container.DeclareSignal<NativeAdsShowSignal>();
 
             #endregion
         }
