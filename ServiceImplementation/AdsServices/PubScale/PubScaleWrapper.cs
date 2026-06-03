@@ -7,6 +7,7 @@ namespace ServiceImplementation.AdsServices.PubScale
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.Utilities.LogService;
     using global::PubScale.SdkOne.NativeAds;
@@ -18,25 +19,25 @@ namespace ServiceImplementation.AdsServices.PubScale
 
     public class PubScaleWrapper : IImmersiveAdsService
     {
-#region Inject
+        #region Inject
 
         private readonly IScreenManager     screenManager;
-        private readonly ISignalBus          signalBus;
+        private readonly ISignalBus         signalBus;
         private readonly IAnalyticServices  analyticServices;
         private readonly ILogService        logService;
         private readonly ThirdPartiesConfig thirdPartiesConfig;
 
-#endregion
+        #endregion
 
         private readonly HashSet<NativeAdHolder> cacheNativeAdHolder = new();
         private          Canvas                  cacheCanvas;
 
         public PubScaleWrapper
         (
-            IScreenManager     screenManager,
-            ISignalBus          signalBus,
-            IAnalyticServices  analyticServices,
-            ILogService        logService,
+            IScreenManager screenManager,
+            ISignalBus signalBus,
+            IAnalyticServices analyticServices,
+            ILogService logService,
             ThirdPartiesConfig thirdPartiesConfig
         )
         {
@@ -47,11 +48,13 @@ namespace ServiceImplementation.AdsServices.PubScale
             this.thirdPartiesConfig = thirdPartiesConfig;
         }
 
-#region Immersive Ads
+        #region Immersive Ads
 
-        public void InitNativeAdHolder(ImmersiveAdsView immersiveAdsView, string placement, bool worldSpace = false)
+        public async void InitNativeAdHolder(ImmersiveAdsView immersiveAdsView, string placement, bool worldSpace = false)
         {
+            await UniTask.WaitUntil(() => immersiveAdsView.isAwake);
             var nativeAdHolder = immersiveAdsView.NativeAdHolder;
+
             if (!worldSpace)
             {
                 var canvas = this.cacheCanvas ?? this.screenManager.RootUICanvas.GetComponentInChildren<Canvas>();
@@ -60,6 +63,7 @@ namespace ServiceImplementation.AdsServices.PubScale
             }
 
             immersiveAdsView.NativeAdStatusVisualiser.gameObject.SetActive(this.thirdPartiesConfig.AdSettings.ImmersiveAds.UserTestMode);
+
             if (this.thirdPartiesConfig.AdSettings.ImmersiveAds.UserTestMode)
             {
                 immersiveAdsView.NativeAdStatusVisualiser.AdTagDisplay.text = placement;
@@ -68,6 +72,7 @@ namespace ServiceImplementation.AdsServices.PubScale
             nativeAdHolder.adTag = placement;
             nativeAdHolder.StopRefresh();
             nativeAdHolder.FetchAd();
+
             if (this.cacheNativeAdHolder.TryGetValue(nativeAdHolder, out _)) return;
 
             this.cacheNativeAdHolder.Add(nativeAdHolder);
@@ -81,7 +86,7 @@ namespace ServiceImplementation.AdsServices.PubScale
         private void OnAdImpression(object arg1, EventArgs arg2)
         {
             this.logService.Log($"Immersive Ads Impression: {arg1}\n{arg2}");
-            
+
             this.signalBus.Fire(new NativeAdsShowSignal());
         }
 
@@ -96,8 +101,10 @@ namespace ServiceImplementation.AdsServices.PubScale
             if (arg2?.nativeAd == null || arg1 == null)
             {
                 this.logService.Log($"Immersive Ads Loaded: {arg1}\nNative Ads: NULL");
+
                 return;
             }
+
             this.logService.Log($"Immersive Ads Loaded: {arg1}\nNative Ads: {arg2.nativeAd}");
             this.signalBus.Fire(new NativeAdsLoadedSignal());
         }
@@ -111,19 +118,19 @@ namespace ServiceImplementation.AdsServices.PubScale
         private void OnAdPaid(AdValue obj)
         {
             var adsRevenueEvent = new AdsRevenueEvent
-                                  {
-                                      AdsRevenueSourceId = AdRevenueConstants.ARSourceImmersiveAds,
-                                      Revenue            = obj.Value / 1e6,
-                                      Currency           = "USD",
-                                      Placement          = "ImmersiveAds",
-                                      AdNetwork          = "AdMob"
-                                  };
+            {
+                AdsRevenueSourceId = AdRevenueConstants.ARSourceImmersiveAds,
+                Revenue            = obj.Value / 1e6,
+                Currency           = "USD",
+                Placement          = "ImmersiveAds",
+                AdNetwork          = "AdMob"
+            };
 
             this.analyticServices.Track(adsRevenueEvent);
             this.signalBus.Fire(new AdRevenueSignal(adsRevenueEvent));
         }
 
-#endregion
+        #endregion
     }
 }
 #endif

@@ -38,8 +38,8 @@ namespace Core.AdsServices.ImmersiveAds
         private IScreenManager          screenManager;
         private ISignalBus              signalBus;
         private IScreenPresenter        visibleScreen;
-
-        private void OnValidate() { this.ValidateField(); }
+        public  bool                    isAwake;
+        private void                    OnValidate() { this.ValidateField(); }
 
         private void ValidateField()
         {
@@ -47,10 +47,14 @@ namespace Core.AdsServices.ImmersiveAds
             this.nativeAdStatusVisualiser ??= this.GetComponentInChildren<NativeAdStatusVisualiser>();
         }
 
-        private IEnumerator Start()
+        private void Awake()
         {
             this.ValidateField();
+            this.StartCoroutine(this.Initialize());
+        }
 
+        private IEnumerator Initialize()
+        {
             while (this.GetCurrentContainer() == null)
             {
                 yield return null;
@@ -71,6 +75,7 @@ namespace Core.AdsServices.ImmersiveAds
             this.nativeAdHolder.DisableAd(true);
             this.nativeAdHolder.Event_AdLoaded += this.OnAdLoaded;
             this.nativeAdHolder.Event_AdFailed += this.OnAdFailed;
+            this.isAwake                       =  true;
         }
 
         private void OnAdLoaded(object arg1, NativeAdEventArgs arg2)
@@ -89,7 +94,8 @@ namespace Core.AdsServices.ImmersiveAds
         {
             this.StopRefreshAd();
             this.changeScreenDisposable?.Dispose();
-            this.signalBus.Unsubscribe<ScreenCloseSignal>(this.OnScreenClose);
+            this.signalBus.TrySubscribe<ScreenShowSignal>(this.OnScreenShow);
+            this.signalBus.TrySubscribe<ScreenCloseSignal>(this.OnScreenClose);
         }
 
         private void OnScreenShow(ScreenShowSignal obj)
