@@ -112,6 +112,11 @@ namespace Core.AdsServices.ImmersiveAds
             if (this.visibleScreen == null) return;
             if (this.visibleScreen != obj.ScreenPresenter) return;
             this.StopRefreshAd();
+
+            if (this.IsRemoveAds())
+            {
+                this.nativeAdHolder.DisableAd(true);
+            }
         }
 
         private void StartRefreshAd()
@@ -128,6 +133,13 @@ namespace Core.AdsServices.ImmersiveAds
 
         private async void RefreshAd()
         {
+            if (this.IsRemoveAds())
+            {
+                this.nativeAdHolder.DisableAd(true);
+
+                return;
+            }
+
             const float refreshAdTime = 15f;
 
             if (!this.autoRefreshAd) return;
@@ -148,12 +160,20 @@ namespace Core.AdsServices.ImmersiveAds
 
         private void OnChangeScreen(IScreenPresenter screenPresenter)
         {
+            if (this.IsRemoveAds())
+            {
+                this.nativeAdHolder.DisableAd(true);
+
+                return;
+            }
+
             if (this.visibleScreen == null) return;
             if (!this.isAdLoaded) return;
             this.nativeAdHolder.DisableAd(this.visibleScreen != screenPresenter);
         }
 
-        public void BindVisibleScreen(IScreenPresenter screenPresenter) { this.visibleScreen = screenPresenter; }
+        private bool IsRemoveAds()                                       { return PlayerPrefs.HasKey("ADMOB_REMOVE_ADS"); }
+        public  void BindVisibleScreen(IScreenPresenter screenPresenter) { this.visibleScreen = screenPresenter; }
 #endif
     }
 }

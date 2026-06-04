@@ -50,9 +50,17 @@ namespace ServiceImplementation.AdsServices.PubScale
 
         #region Immersive Ads
 
+        private bool IsRemoveAds() { return PlayerPrefs.HasKey("ADMOB_REMOVE_ADS"); }
+
         public async void InitNativeAdHolder(ImmersiveAdsView immersiveAdsView, string placement, bool worldSpace = false)
         {
             await UniTask.WaitUntil(() => immersiveAdsView.isAwake);
+
+            if (this.IsRemoveAds())
+            {
+                return;
+            }
+
             var nativeAdHolder = immersiveAdsView.NativeAdHolder;
 
             if (!worldSpace)
