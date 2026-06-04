@@ -14,6 +14,7 @@ namespace ServiceImplementation.AdsServices.PubScale
     using GoogleMobileAds.Api;
     using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs;
+    using ServiceImplementation.FireBaseRemoteConfig;
     using UnityEngine;
     using Zenject;
 
@@ -31,6 +32,7 @@ namespace ServiceImplementation.AdsServices.PubScale
 
         private readonly HashSet<NativeAdHolder> cacheNativeAdHolder = new();
         private          Canvas                  cacheCanvas;
+        private          bool                    allowImmersiveAds = true;
 
         public PubScaleWrapper
         (
@@ -46,6 +48,15 @@ namespace ServiceImplementation.AdsServices.PubScale
             this.analyticServices   = analyticServices;
             this.logService         = logService;
             this.thirdPartiesConfig = thirdPartiesConfig;
+            signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetched);
+        }
+
+        private void OnRemoteConfigFetched(RemoteConfigFetchedSucceededSignal obj)
+        {
+            var isAdsEnable          = obj.RemoteConfig.GetRemoteConfigBoolValue(RemoteConfigKey.EnableAds, true);
+            var isImmersiveAdsEnable = obj.RemoteConfig.GetRemoteConfigBoolValue(RemoteConfigKey.EnableImmersiveAds, true);
+
+            this.allowImmersiveAds = isAdsEnable && isImmersiveAdsEnable;
         }
 
         #region Immersive Ads
@@ -56,7 +67,7 @@ namespace ServiceImplementation.AdsServices.PubScale
         {
             await UniTask.WaitUntil(() => immersiveAdsView.isAwake);
 
-            if (this.IsRemoveAds())
+            if (this.IsRemoveAds() || this.allowImmersiveAds)
             {
                 return;
             }

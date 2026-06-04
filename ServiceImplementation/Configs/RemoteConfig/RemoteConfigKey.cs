@@ -58,5 +58,6 @@
 
         public const  string NativeAdCount        = "native_ad_count";
         public static string NativeAdLoadInterval = "native_ad_load_interval";
+        public static string EnableImmersiveAds { get; set; } = "immersive_ads_enable";
     }
 }
