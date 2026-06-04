@@ -16,6 +16,7 @@ namespace Core.AdsServices.ImmersiveAds
     using System.Threading;
     using Cysharp.Threading.Tasks;
     using PubScale.SdkOne.NativeAds;
+    using TMPro;
 #endif
     using Zenject;
 
@@ -25,11 +26,12 @@ namespace Core.AdsServices.ImmersiveAds
     public class ImmersiveAdsView : MonoBehaviour
     {
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
-        [SerializeField] private NativeAdHolder           nativeAdHolder;
-        [SerializeField] private NativeAdStatusVisualiser nativeAdStatusVisualiser;
+        [SerializeField] private NativeAdHolder nativeAdHolder;
+        [SerializeField] private GameObject     nativeAdStatusVisualiser;
 
-        public NativeAdStatusVisualiser NativeAdStatusVisualiser => this.nativeAdStatusVisualiser;
-        public NativeAdHolder           NativeAdHolder           => this.nativeAdHolder;
+        public GameObject      NativeAdStatusVisualiser => this.nativeAdStatusVisualiser;
+        public NativeAdHolder  NativeAdHolder           => this.nativeAdHolder;
+        public TextMeshProUGUI AdTagDisplay;
 
         private bool                    isAdLoaded;
         private bool                    autoRefreshAd;
@@ -43,8 +45,8 @@ namespace Core.AdsServices.ImmersiveAds
 
         private void ValidateField()
         {
-            this.nativeAdHolder           ??= this.GetComponent<NativeAdHolder>();
-            this.nativeAdStatusVisualiser ??= this.GetComponentInChildren<NativeAdStatusVisualiser>();
+            this.nativeAdHolder ??= this.GetComponent<NativeAdHolder>();
+            // this.nativeAdStatusVisualiser ??= this.GetComponentInChildren<NativeAdStatusVisualiser>();
         }
 
         private void Awake()

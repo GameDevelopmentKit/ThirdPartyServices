@@ -66,7 +66,7 @@ namespace ServiceImplementation.AdsServices.PubScale
 
             if (this.thirdPartiesConfig.AdSettings.ImmersiveAds.UserTestMode)
             {
-                immersiveAdsView.NativeAdStatusVisualiser.AdTagDisplay.text = placement;
+                immersiveAdsView.AdTagDisplay.text = placement;
             }
 
             nativeAdHolder.adTag = placement;
