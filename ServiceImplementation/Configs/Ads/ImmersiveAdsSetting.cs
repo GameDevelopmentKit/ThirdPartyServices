@@ -13,8 +13,7 @@ namespace ServiceImplementation.Configs.Ads
     [Serializable]
     public class ImmersiveAdsSetting
     {
-        [Header("PubScale Setting")] 
-        [SerializeField, LabelText("UrlPubScaleDownload")]
+        [Header("PubScale Setting")] [SerializeField, LabelText("UrlPubScaleDownload")]
         private string urlPubScaleDownload = "https://github.com/GreedyGame/immersive-ads-unity/releases/download/";
 
         [SerializeField, LabelText("Version")] private string version = "1.6.0";
@@ -41,6 +40,8 @@ namespace ServiceImplementation.Configs.Ads
         private string appId;
 
         public bool UserTestMode => this.userTestMode;
+
+        public void SetTestMode(bool status) { this.userTestMode = status; }
 
         public string FallbackNativeAdId
         {
@@ -90,15 +91,15 @@ namespace ServiceImplementation.Configs.Ads
             var pubScaleSetting = Resources.Load<ScriptableObject>("PubScaleSettings");
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
-            var settingType = pubScaleSetting.GetType();
+            var settingType  = pubScaleSetting.GetType();
             this.userTestMode = (bool)settingType.GetField("UseTestMode", bindingFlags).GetValue(pubScaleSetting);
 
             this.fallbackNativeAdIdAndroid = settingType.GetField("Fallback_NativeAdID_Android", bindingFlags).GetValue(pubScaleSetting) as string;
-            this.fallbackNativeAdIdIos = settingType.GetField("Fallback_NativeAdID_IOS",     bindingFlags).GetValue(pubScaleSetting) as string;
+            this.fallbackNativeAdIdIos     = settingType.GetField("Fallback_NativeAdID_IOS", bindingFlags).GetValue(pubScaleSetting) as string;
 
             this.appIdAndroid = settingType.GetField("AppID_Android", bindingFlags).GetValue(pubScaleSetting) as string;
-            this.appIdIos = settingType.GetField("AppID_IOS",     bindingFlags).GetValue(pubScaleSetting) as string;
-            this.appId = settingType.GetField("AppID",         bindingFlags).GetValue(pubScaleSetting) as string;
+            this.appIdIos     = settingType.GetField("AppID_IOS", bindingFlags).GetValue(pubScaleSetting) as string;
+            this.appId        = settingType.GetField("AppID", bindingFlags).GetValue(pubScaleSetting) as string;
 #endif
         }
 
@@ -108,13 +109,13 @@ namespace ServiceImplementation.Configs.Ads
             var pubScaleSetting = Resources.Load<ScriptableObject>("PubScaleSettings");
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
-            var settingType = pubScaleSetting.GetType();
-            settingType.GetField("UseTestMode",                 bindingFlags).SetValue(pubScaleSetting, this.userTestMode);
+            var settingType  = pubScaleSetting.GetType();
+            settingType.GetField("UseTestMode", bindingFlags).SetValue(pubScaleSetting, this.userTestMode);
             settingType.GetField("Fallback_NativeAdID_Android", bindingFlags).SetValue(pubScaleSetting, this.fallbackNativeAdIdAndroid);
-            settingType.GetField("Fallback_NativeAdID_IOS",     bindingFlags).SetValue(pubScaleSetting, this.fallbackNativeAdIdIos);
-            settingType.GetField("AppID_Android",               bindingFlags).SetValue(pubScaleSetting, this.appIdAndroid);
-            settingType.GetField("AppID_IOS",                   bindingFlags).SetValue(pubScaleSetting, this.appIdIos);
-            settingType.GetField("AppID",                       bindingFlags).SetValue(pubScaleSetting, this.appId);
+            settingType.GetField("Fallback_NativeAdID_IOS", bindingFlags).SetValue(pubScaleSetting, this.fallbackNativeAdIdIos);
+            settingType.GetField("AppID_Android", bindingFlags).SetValue(pubScaleSetting, this.appIdAndroid);
+            settingType.GetField("AppID_IOS", bindingFlags).SetValue(pubScaleSetting, this.appIdIos);
+            settingType.GetField("AppID", bindingFlags).SetValue(pubScaleSetting, this.appId);
 
             EditorUtility.SetDirty(pubScaleSetting);
             AssetDatabase.SaveAssets();

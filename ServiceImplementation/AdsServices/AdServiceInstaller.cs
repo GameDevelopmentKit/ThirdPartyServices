@@ -38,7 +38,10 @@ namespace ServiceImplementation.AdsServices
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
             this.Container.Bind<PubScaleManager>().FromNewComponentOnNewGameObject().WithGameObjectName("PubScaleManager").AsSingle().NonLazy();
             this.Container.BindInterfacesTo<PubScaleWrapper>().AsCached();
+#else
+            this.Container.BindInterfacesTo<DummyPubScaleWrapper>().AsCached();
 #endif
+
 #if APPLOVIN
             ApplovinAdsInstaller.Install(this.Container);
 #endif

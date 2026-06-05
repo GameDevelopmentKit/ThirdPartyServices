@@ -3,6 +3,7 @@ namespace ServiceImplementation.AdsServices.PubScale
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using Core.AdsServices.ImmersiveAds;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
@@ -49,6 +50,19 @@ namespace ServiceImplementation.AdsServices.PubScale
             this.logService         = logService;
             this.thirdPartiesConfig = thirdPartiesConfig;
             signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetched);
+
+            this.CheckAdsDebug();
+        }
+
+        private void CheckAdsDebug()
+        {
+#if ADS_DEBUG
+            this.thirdPartiesConfig.AdSettings.ImmersiveAds.SetTestMode(true);
+            var pubScaleSetting = Resources.Load<ScriptableObject>("PubScaleSettings");
+            var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
+            var settingType  = pubScaleSetting.GetType();
+            settingType.GetField("UseTestMode", bindingFlags).SetValue(pubScaleSetting, true);
+#endif
         }
 
         private void OnRemoteConfigFetched(RemoteConfigFetchedSucceededSignal obj)
@@ -57,6 +71,8 @@ namespace ServiceImplementation.AdsServices.PubScale
             var isImmersiveAdsEnable = obj.RemoteConfig.GetRemoteConfigBoolValue(RemoteConfigKey.EnableImmersiveAds, true);
 
             this.allowImmersiveAds = isAdsEnable && isImmersiveAdsEnable;
+#if ADS_DEBUG
+#endif
         }
 
         #region Immersive Ads
@@ -71,7 +87,7 @@ namespace ServiceImplementation.AdsServices.PubScale
 #endif
             await UniTask.WaitUntil(() => immersiveAdsView.isAwake);
 
-            if (this.IsRemoveAds() || this.allowImmersiveAds)
+            if (this.IsRemoveAds() || !this.allowImmersiveAds)
             {
                 return;
             }
