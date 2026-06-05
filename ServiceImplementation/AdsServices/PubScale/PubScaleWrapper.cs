@@ -65,6 +65,10 @@ namespace ServiceImplementation.AdsServices.PubScale
 
         public async void InitNativeAdHolder(ImmersiveAdsView immersiveAdsView, string placement, bool worldSpace = false)
         {
+#if CREATIVE
+            immersiveAdsView.gameObject.SetActive(false);
+            return;
+#endif
             await UniTask.WaitUntil(() => immersiveAdsView.isAwake);
 
             if (this.IsRemoveAds() || this.allowImmersiveAds)
