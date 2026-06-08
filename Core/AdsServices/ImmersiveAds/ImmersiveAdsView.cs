@@ -30,7 +30,7 @@ namespace Core.AdsServices.ImmersiveAds
         [SerializeField] private GameObject     nativeAdStatusVisualiser;
 
         public GameObject      NativeAdStatusVisualiser => this.nativeAdStatusVisualiser;
-        public NativeAdHolder  NativeAdHolder           => this.nativeAdHolder;
+        public NativeAdHolder  NativeAdHolder           => this.nativeAdHolder ??= this.GetComponent<NativeAdHolder>();
         public TextMeshProUGUI AdTagDisplay;
 
         private bool                    isAdLoaded;
@@ -41,19 +41,8 @@ namespace Core.AdsServices.ImmersiveAds
         private ISignalBus              signalBus;
         private IScreenPresenter        visibleScreen;
         public  bool                    isAwake;
-        private void                    OnValidate() { this.ValidateField(); }
 
-        private void ValidateField()
-        {
-            this.nativeAdHolder ??= this.GetComponent<NativeAdHolder>();
-            // this.nativeAdStatusVisualiser ??= this.GetComponentInChildren<NativeAdStatusVisualiser>();
-        }
-
-        private void Awake()
-        {
-            this.ValidateField();
-            this.StartCoroutine(this.Initialize());
-        }
+        private void Awake() { this.StartCoroutine(this.Initialize()); }
 
         private IEnumerator Initialize()
         {
@@ -61,7 +50,7 @@ namespace Core.AdsServices.ImmersiveAds
             {
                 yield return null;
             }
-            this.ValidateField();
+
             var container = this.GetCurrentContainer();
 
             this.screenManager = container.Resolve<IScreenManager>();
@@ -69,9 +58,9 @@ namespace Core.AdsServices.ImmersiveAds
 
             this.changeScreenDisposable = this.screenManager.CurrentActiveScreen
                 .Subscribe(this.OnChangeScreen);
-
-            this.signalBus.Subscribe<ScreenShowSignal>(this.OnScreenShow);
-            this.signalBus.Subscribe<ScreenCloseSignal>(this.OnScreenClose);
+            //
+            // this.signalBus.Subscribe<ScreenShowSignal>(this.OnScreenShow);
+            // this.signalBus.Subscribe<ScreenCloseSignal>(this.OnScreenClose);
 
             this.nativeAdHolder.AutoFetch = false;
             this.nativeAdHolder.DisableAd(true);
@@ -96,8 +85,8 @@ namespace Core.AdsServices.ImmersiveAds
         {
             this.StopRefreshAd();
             this.changeScreenDisposable?.Dispose();
-            this.signalBus.TrySubscribe<ScreenShowSignal>(this.OnScreenShow);
-            this.signalBus.TrySubscribe<ScreenCloseSignal>(this.OnScreenClose);
+            // this.signalBus.TrySubscribe<ScreenShowSignal>(this.OnScreenShow);
+            // this.signalBus.TrySubscribe<ScreenCloseSignal>(this.OnScreenClose);
         }
 
         private void OnScreenShow(ScreenShowSignal obj)
@@ -127,6 +116,7 @@ namespace Core.AdsServices.ImmersiveAds
 
         private void StopRefreshAd()
         {
+            this.nativeAdHolder.StopRefresh();
             this.autoRefreshAd = false;
             this.source?.Cancel();
         }
@@ -143,6 +133,12 @@ namespace Core.AdsServices.ImmersiveAds
             const float refreshAdTime = 15f;
 
             if (!this.autoRefreshAd) return;
+
+            if (this.nativeAdHolder == null)
+            {
+                return;
+            }
+
             this.nativeAdHolder.FetchAd();
             this.source = new CancellationTokenSource();
             Debug.Log($"Refresh Immersive Ads: {this.nativeAdHolder.adTag}");
@@ -168,8 +164,17 @@ namespace Core.AdsServices.ImmersiveAds
             }
 
             if (this.visibleScreen == null) return;
-            if (!this.isAdLoaded) return;
-            this.nativeAdHolder.DisableAd(this.visibleScreen != screenPresenter);
+            // if (!this.isAdLoaded) return;
+
+            if (this.visibleScreen == screenPresenter)
+            {
+                this.StartRefreshAd();
+            }
+            else
+            {
+                this.StopRefreshAd();
+                this.nativeAdHolder.DisableAd(this.visibleScreen != screenPresenter);
+            }
         }
 
         private bool IsRemoveAds()                                       { return PlayerPrefs.HasKey("ADMOB_REMOVE_ADS"); }

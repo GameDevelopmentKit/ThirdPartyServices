@@ -81,6 +81,8 @@ namespace ServiceImplementation.AdsServices.PubScale
 
         public async void InitNativeAdHolder(ImmersiveAdsView immersiveAdsView, string placement, bool worldSpace = false)
         {
+            var nativeAdHolder = immersiveAdsView.NativeAdHolder;
+            nativeAdHolder.adTag = placement;
 #if CREATIVE
             immersiveAdsView.gameObject.SetActive(false);
             return;
@@ -92,7 +94,6 @@ namespace ServiceImplementation.AdsServices.PubScale
                 return;
             }
 
-            var nativeAdHolder = immersiveAdsView.NativeAdHolder;
 
             if (!worldSpace)
             {
@@ -107,8 +108,6 @@ namespace ServiceImplementation.AdsServices.PubScale
             {
                 immersiveAdsView.AdTagDisplay.text = placement;
             }
-
-            nativeAdHolder.adTag = placement;
             nativeAdHolder.StopRefresh();
             nativeAdHolder.FetchAd();
 
