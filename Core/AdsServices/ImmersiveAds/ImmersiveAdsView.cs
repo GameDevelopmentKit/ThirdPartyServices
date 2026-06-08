@@ -61,7 +61,7 @@ namespace Core.AdsServices.ImmersiveAds
             {
                 yield return null;
             }
-
+            this.ValidateField();
             var container = this.GetCurrentContainer();
 
             this.screenManager = container.Resolve<IScreenManager>();
