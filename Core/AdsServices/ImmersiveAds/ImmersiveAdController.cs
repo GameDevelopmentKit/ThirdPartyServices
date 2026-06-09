@@ -1,10 +1,10 @@
 ﻿namespace Core.AdsServices.ImmersiveAds
 {
     using System;
-    using System.Threading;
     using Core.AnalyticServices;
     using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Signal;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.Utilities.LogService;
@@ -15,63 +15,61 @@
     using UnityEngine;
     using Zenject;
 
+    /// <summary>
+    /// Note that GameObject must disable first before call bindScreen
+    /// </summary>
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
     [RequireComponent(typeof(NativeAdHolder))]
 #endif
     public class ImmersiveAdController : MonoBehaviour
     {
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
-        private NativeAdHolder nativeAdHolder;
 
-        public NativeAdHolder NativeAdHolder => this.nativeAdHolder ??= this.GetComponent<NativeAdHolder>();
+        private NativeAdHolder nativeAdHolder => this.GetComponent<NativeAdHolder>();
 
-        private bool                    isAdLoaded;
-        private bool                    autoRefreshAd;
-        private CancellationTokenSource source;
-        private IDisposable             changeScreenDisposable;
-        private IScreenManager          screenManager;
-        private ISignalBus              signalBus;
-        private IScreenPresenter        visibleScreen;
-        private ILogService             logService;
-        private IAnalyticServices       analyticServices;
+        private IDisposable       changeScreenDisposable;
+        private IScreenManager    screenManager;
+        private IScreenPresenter  visibleScreen;
+        private ISignalBus        signalBus        => ProjectContext.Instance.Container.Resolve<ISignalBus>();
+        private ILogService       logService       => ProjectContext.Instance.Container.Resolve<ILogService>();
+        private IAnalyticServices analyticServices => ProjectContext.Instance.Container.Resolve<IAnalyticServices>();
+        private bool              IsAdsLoaded      { get; set; }
 
         private void Awake()
         {
-            var container = ProjectContext.Instance.Container;
+            this.nativeAdHolder.Event_AdLoaded     += this.OnAdLoaded;
+            this.nativeAdHolder.Event_AdFailed     += this.OnAdFailed;
+            this.nativeAdHolder.Event_AdClicked    += this.OnAdClicked;
+            this.nativeAdHolder.Event_OnAdPaid     += this.OnAdPaid;
+            this.nativeAdHolder.Event_AdImpression += this.OnAdImpression;
+            this.nativeAdHolder.Event_AdRequest    += this.OnAdRequest;
+        }
 
-            this.screenManager = container.Resolve<IScreenManager>();
-            this.signalBus     = container.Resolve<ISignalBus>();
+        public async UniTaskVoid BindScreen(IScreenPresenter screenPresenter, string adsTag, ScreenManager screenManager, Canvas c = null)
+        {
+            await UniTask.WaitForSeconds(0.2f);
+            this.screenManager = screenManager;
+            this.visibleScreen = screenPresenter;
+
+            this.nativeAdHolder.canvas = c != null ? c : this.screenManager.RootUICanvas.GetComponentInChildren<Canvas>(true);
+            this.nativeAdHolder.adTag  = adsTag;
+
+            this.nativeAdHolder.DisableAd(false);
+            this.nativeAdHolder.AutoFetch = true;
+            this.gameObject.SetActive(true);
 
             this.changeScreenDisposable = this.screenManager.CurrentActiveScreen
                 .Subscribe(this.OnChangeScreen);
 
-            this.NativeAdHolder.Event_AdLoaded  += this.OnAdLoaded;
-            this.NativeAdHolder.Event_AdFailed  += this.OnAdFailed;
-            this.NativeAdHolder.Event_AdClicked += this.OnAdClicked;
-
-            this.NativeAdHolder.Event_OnAdPaid     += this.OnAdPaid;
-            this.NativeAdHolder.Event_AdImpression += this.OnAdImpression;
-            this.NativeAdHolder.Event_AdRequest    += this.OnAdRequest;
-
             if (this.IsRemoveAds())
             {
-                this.NativeAdHolder.StopRefresh();
-                this.NativeAdHolder.DisableAd(true);
+                this.nativeAdHolder.StopRefresh();
                 this.gameObject.SetActive(false);
+                this.nativeAdHolder.DisableAd(true);
             }
         }
 
-        public void BindScreen(IScreenPresenter screenPresenter, string adsTag, Canvas c = null)
-        {
-            this.visibleScreen        = screenPresenter;
-            this.NativeAdHolder.adTag = adsTag;
-
-            if (c == null)
-            {
-                var canvas = this.screenManager.RootUICanvas.GetComponentInChildren<Canvas>(true);
-                this.nativeAdHolder.canvas = canvas;
-            }
-        }
+        private void ShowAds(bool show) { this.nativeAdHolder.UnHideAd(); }
 
         private void OnAdImpression(object arg1, EventArgs arg2)
         {
@@ -82,6 +80,11 @@
 
         private void OnAdRequest()
         {
+            if (this.IsRemoveAds())
+            {
+                return;
+            }
+
             this.logService.Log("Immersive Ads Request");
             this.signalBus.Fire(new NativeAdsRequestSignal());
         }
@@ -105,6 +108,11 @@
 
         private void OnChangeScreen(IScreenPresenter screenPresenter)
         {
+            if (screenPresenter == null)
+            {
+                return;
+            }
+
             if (this.IsRemoveAds())
             {
                 this.nativeAdHolder.DisableAd(true);
@@ -114,13 +122,17 @@
 
             if (this.visibleScreen == null) return;
 
-            this.nativeAdHolder.DisableAd(this.visibleScreen != screenPresenter);
+            var isShow = this.visibleScreen == screenPresenter && this.IsAdsLoaded;
+
+            this.ShowAds(isShow);
         }
 
         private void OnAdFailed(object arg1, LoadAdError arg2)
         {
             this.logService.Log($"Immersive Ads Failed: {arg1}\nError: {arg2.GetResponseInfo()}");
             this.signalBus.Fire(new NativeAdsLoadFailedSignal());
+            this.ShowAds(false);
+            this.IsAdsLoaded = false;
         }
 
         private void OnAdLoaded(object arg1, NativeAdEventArgs arg2)
@@ -134,7 +146,12 @@
 
             this.logService.Log($"Immersive Ads Loaded: {arg1}\nNative Ads: {arg2.nativeAd}");
             this.signalBus.Fire(new NativeAdsLoadedSignal());
-            this.nativeAdHolder.DisableAd(false);
+            this.IsAdsLoaded = true;
+
+            if (!this.IsRemoveAds())
+            {
+                this.ShowAds(true);
+            }
         }
 
         private bool IsRemoveAds() { return PlayerPrefs.HasKey("ADMOB_REMOVE_ADS"); }
