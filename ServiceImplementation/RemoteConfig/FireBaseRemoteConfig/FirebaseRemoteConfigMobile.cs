@@ -4,6 +4,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Cysharp.Threading.Tasks;
     using Firebase;
     using Firebase.Extensions;
     using Firebase.RemoteConfig;
@@ -14,21 +15,20 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     /// <summary>
     /// We need to use MonoBehaviour to use Firebase Remote Config
     /// </summary>
-    internal class FirebaseRemoteConfigMobile : MonoBehaviour, IRemoteConfig, IInitializable
+    internal class FirebaseRemoteConfigMobile : MonoBehaviour, IRemoteConfig
     {
         [Inject] private readonly ILogService logger;
         [Inject] private readonly ISignalBus  signalBus;
         public                    bool        IsConfigFetchedSucceed { get; private set; }
 
-        private void Start() { this.InitFirebase(); }
+        private void Start() { this.InitFirebase().Forget(); }
 
-        public void Initialize() { }
-
-        private void InitFirebase()
+        private async UniTaskVoid InitFirebase()
         {
+            await UniTask.DelayFrame(1);
             this.logger.Log($"FirebaseRemoteConfig InitFirebase");
 
-            FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
+            await FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
             {
                 var dependencyStatus = task.Result;
 
@@ -164,7 +164,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         public float GetRemoteConfigFloatValue(string key, float defaultValue)
         {
-            if (!this.HasKey(key) )
+            if (!this.HasKey(key))
             {
                 return defaultValue;
             }
@@ -176,7 +176,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
 
         private bool HasKey(string key)
         {
-            if (!this.IsConfigFetchedSucceed||FirebaseRemoteConfig.DefaultInstance == null)
+            if (!this.IsConfigFetchedSucceed || FirebaseRemoteConfig.DefaultInstance == null)
             {
                 return false;
             }
