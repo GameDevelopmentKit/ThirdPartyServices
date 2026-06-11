@@ -32,6 +32,7 @@ namespace ServiceImplementation.AdsServices
         public override void InstallBindings()
         {
             //config
+            this.Container.BindInitializableExecutionOrder<AdServicesConfig>(-1000);
             this.Container.BindInterfacesAndSelfTo<AdServicesConfig>().AsCached();
             this.Container.BindInterfacesAndSelfTo<MiscConfig>().AsCached();
 
@@ -53,6 +54,7 @@ namespace ServiceImplementation.AdsServices
 #endif
 #if ADMOB
             this.Container.BindInterfacesTo<AdMobAdService>().AsCached();
+            this.Container.BindInitializableExecutionOrder<AdMobWrapper>(-2000);
             this.Container.BindInterfacesTo<AdMobWrapper>().AsCached().NonLazy();
 #endif
 #if !APPLOVIN && (!IRONSOURCE || UNITY_EDITOR) && (!YANDEX || UNITY_EDITOR) && !ADMOB

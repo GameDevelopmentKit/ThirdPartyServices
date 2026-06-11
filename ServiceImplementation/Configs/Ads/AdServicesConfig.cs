@@ -25,12 +25,18 @@ namespace ServiceImplementation.Configs.Ads
 
         public void Initialize()
         {
-            this.signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.FetchRemoteConfig);
+            this.signalBus.Subscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetched);
 
             this.FetchRemoteConfig(); // Init default value
         }
 
-        public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.FetchRemoteConfig); }
+        private void OnRemoteConfigFetched(RemoteConfigFetchedSucceededSignal obj)
+        {
+            this.FetchRemoteConfig();
+            this.IsRemoteConfigLoaded = true;
+        }
+
+        public void Dispose() { this.signalBus.Unsubscribe<RemoteConfigFetchedSucceededSignal>(this.OnRemoteConfigFetched); }
 
         #region General
 
@@ -44,6 +50,7 @@ namespace ServiceImplementation.Configs.Ads
         public bool EnableCollapsibleBanner      { get; private set; }
         public int  IntervalLoadAds              { get; private set; }
         public bool EnableAds                    { get; private set; }
+        public bool IsRemoteConfigLoaded         { get; private set; }
 
         #endregion
 
@@ -135,7 +142,7 @@ namespace ServiceImplementation.Configs.Ads
         /// </summary>
         public bool CollapsibleBannerExpandOnRefreshEnabled { get; private set; }
 
-        public int    NativeAdCount        { get; set; }
+        public int   NativeAdCount        { get; set; }
         public float NativeAdLoadInterval { get; set; }
 
         #endregion
