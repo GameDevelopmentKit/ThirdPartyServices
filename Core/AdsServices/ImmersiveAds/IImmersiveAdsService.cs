@@ -1,4 +1,3 @@
-#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
 namespace Core.AdsServices.ImmersiveAds
 {
 
@@ -7,4 +6,3 @@ namespace Core.AdsServices.ImmersiveAds
         void InitNativeAdHolder(ImmersiveAdsView immersiveAdsView, string placement, bool worldSpace = false);
     }
 }
-#endif

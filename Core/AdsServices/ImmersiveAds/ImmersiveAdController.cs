@@ -9,7 +9,9 @@
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.Utilities.LogService;
     using GoogleMobileAds.Api;
+#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
     using PubScale.SdkOne.NativeAds;
+#endif
     using R3;
     using ServiceImplementation.AdsServices.Signal;
     using UnityEngine;

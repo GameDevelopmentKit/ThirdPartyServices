@@ -9,6 +9,7 @@ namespace ServiceImplementation.AdsServices
     using ServiceImplementation.AdsServices.ConsentInformation;
     using ServiceImplementation.AdsServices.EasyMobile;
     using ServiceImplementation.AdsServices.PreloadService;
+    using ServiceImplementation.AdsServices.PubScale;
     using ServiceImplementation.AdsServices.Signal;
     using ServiceImplementation.Configs.Ads;
     using Zenject;
