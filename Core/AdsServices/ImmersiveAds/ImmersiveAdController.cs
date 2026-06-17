@@ -22,11 +22,8 @@
     /// </summary>
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
     [RequireComponent(typeof(NativeAdHolder))]
-#endif
     public class ImmersiveAdController : MonoBehaviour
     {
-#if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
-
         private NativeAdHolder nativeAdHolder => this.GetComponent<NativeAdHolder>();
 
         private IDisposable       changeScreenDisposable;
@@ -39,22 +36,26 @@
 
         private void Awake()
         {
-            this.nativeAdHolder.Event_AdLoaded     += this.OnAdLoaded;
-            this.nativeAdHolder.Event_AdFailed     += this.OnAdFailed;
-            this.nativeAdHolder.Event_AdClicked    += this.OnAdClicked;
-            this.nativeAdHolder.Event_OnAdPaid     += this.OnAdPaid;
+            this.nativeAdHolder.Event_AdLoaded += this.OnAdLoaded;
+            this.nativeAdHolder.Event_AdFailed += this.OnAdFailed;
+            this.nativeAdHolder.Event_AdClicked += this.OnAdClicked;
+            this.nativeAdHolder.Event_OnAdPaid += this.OnAdPaid;
             this.nativeAdHolder.Event_AdImpression += this.OnAdImpression;
-            this.nativeAdHolder.Event_AdRequest    += this.OnAdRequest;
+            this.nativeAdHolder.Event_AdRequest += this.OnAdRequest;
         }
 
         public async UniTaskVoid BindScreen(IScreenPresenter screenPresenter, string adsTag, ScreenManager screenManager, Canvas c = null)
         {
+#if CREATIVE ||DISABLE_IMMERSIVE
+            this.gameObject.SetActive(false);
+            return;
+#endif
             await UniTask.WaitForSeconds(0.2f);
             this.screenManager = screenManager;
             this.visibleScreen = screenPresenter;
 
             this.nativeAdHolder.canvas = c != null ? c : this.screenManager.RootUICanvas.GetComponentInChildren<Canvas>(true);
-            this.nativeAdHolder.adTag  = adsTag;
+            this.nativeAdHolder.adTag = adsTag;
 
             this.nativeAdHolder.DisableAd(false);
             this.nativeAdHolder.AutoFetch = true;
@@ -96,10 +97,10 @@
             var adsRevenueEvent = new AdsRevenueEvent
             {
                 AdsRevenueSourceId = AdRevenueConstants.ARSourceImmersiveAds,
-                Revenue            = obj.Value / 1e6,
-                Currency           = "USD",
-                Placement          = "ImmersiveAds",
-                AdNetwork          = "AdMob"
+                Revenue = obj.Value / 1e6,
+                Currency = "USD",
+                Placement = "ImmersiveAds",
+                AdNetwork = "AdMob"
             };
 
             this.analyticServices.Track(adsRevenueEvent);
@@ -159,6 +160,11 @@
         private bool IsRemoveAds() { return PlayerPrefs.HasKey("ADMOB_REMOVE_ADS"); }
 
         private void OnDestroy() { this.changeScreenDisposable?.Dispose(); }
-#endif
     }
+#else
+    public class ImmersiveAdController : MonoBehaviour
+    {
+        public async UniTaskVoid BindScreen(IScreenPresenter screenPresenter, string adsTag, ScreenManager screenManager, Canvas c = null) { this.gameObject.SetActive(false); }
+    }
+#endif
 }
