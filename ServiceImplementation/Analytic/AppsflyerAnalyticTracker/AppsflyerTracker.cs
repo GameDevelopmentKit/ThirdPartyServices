@@ -60,7 +60,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         {
             if (this.TrackerReady.Task.Status == TaskStatus.RanToCompletion) return Task.CompletedTask;
 
-            Debug.Log($"setting up appsflyer tracker");
+            this.logger.Log($"setting up appsflyer tracker");
 
             var apiId  = this.analyticConfig.AppsflyerAppId;
             var devKey = this.analyticConfig.AppsflyerDevKey;
@@ -80,7 +80,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 #if UNITY_IOS || UNITY_STANDALONE_OSX
             if (string.IsNullOrEmpty(apiId))
             {
-                Debug.LogError("Appsflyer can't be initialized, Appsflyer ApiKey not found");
+                this.logger.Error("Appsflyer can't be initialized, Appsflyer ApiKey not found");
                 this.TrackerReady.SetResult(false);
                 return this.TrackerReady.Task;
             }
@@ -131,7 +131,8 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             {
                 return;
             }
-            Debug.Log($"Appsflyer: On Event {name}");
+
+            this.logger.Log($"Appsflyer: On Event {name}");
             var convertedData = data == null ? new Dictionary<string, string>() : data.ToDictionary(pair => pair.Key, pair => pair.Value?.ToString());
             AppsFlyer.sendEvent(name, convertedData);
         }
@@ -147,9 +148,10 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             {
                 return;
             }
+
             if (trackedEvent is not IapTransactionDidSucceed iapTransaction)
             {
-                Debug.LogError("trackedEvent in TrackIAP is not of correct type");
+                this.logger.Error("trackedEvent in TrackIAP is not of correct type");
 
                 return;
             }
@@ -172,9 +174,10 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             {
                 return;
             }
+
             if (trackedEvent is not AdsRevenueEvent adsRevenueEvent)
             {
-                Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
+                this.logger.Error("trackedEvent in AdsRevenue is not of correct type");
 
                 return;
             }
@@ -200,7 +203,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
             var logRevenue = new AFAdRevenueData(adsRevenueEvent.AdNetwork, mediationNetworkType, adsRevenueEvent.Currency, adsRevenueEvent.Revenue);
             AppsFlyer.logAdRevenue(logRevenue, parameters);
-            Debug.Log($"AppsFlyer logAdRevenue: {logRevenue.ToJson()} {parameters.ToJson()}");
+            this.logger.Log($"AppsFlyer logAdRevenue: {logRevenue.ToJson()} {parameters.ToJson()}");
         }
     }
 }
