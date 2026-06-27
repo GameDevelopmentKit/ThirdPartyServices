@@ -17,18 +17,28 @@ namespace GameBusiness.Transactions.PaymentService
             this.adServices = adServices;
         }
 
-        public bool Available(string assetId) { return adServices.IsAdsInitialized() && adServices.IsRewardedAdReady(assetId); }
-
-        public bool VerifyCost(string assetId, float value) { return adServices.IsRewardedAdReady(assetId); }
-
-        public UniTask<float> MakePayment(string assetId, float value)
+        public bool Available(string assetId, string location = null)
         {
+            var placementId = string.IsNullOrEmpty(location) ? assetId : location;
+            return adServices.IsAdsInitialized() && adServices.IsRewardedAdReady(placementId);
+        }
+
+        public bool VerifyCost(string assetId, float value, string location = null)
+        {
+            var placementId = string.IsNullOrEmpty(location) ? assetId : location;
+            return adServices.IsRewardedAdReady(placementId);
+        }
+
+        public UniTask<float> MakePayment(string assetId, float value, string location = null)
+        {
+            var placementId = string.IsNullOrEmpty(location) ? assetId : location;
+
 #if UNiTY_EDITOR
             Time.timeScale = 0f;
 #endif
             //convert callback to async
             var tcs = new UniTaskCompletionSource<float>();
-            this.adServices.ShowRewardedAd(assetId, () =>
+            this.adServices.ShowRewardedAd(placementId, () =>
             {
 #if UNiTY_EDITOR
             Time.timeScale = 0f;
