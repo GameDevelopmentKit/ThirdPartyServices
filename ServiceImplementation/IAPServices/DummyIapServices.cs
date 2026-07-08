@@ -15,7 +15,12 @@ namespace ServiceImplementation.IAPServices
         
         public UniTask PurchaseProduct(string productId)
         {
+#if UNITY_EDITOR || DEBUG_MODULE
             return UniTask.CompletedTask;
+#else
+            return UniTask.FromException(new InvalidOperationException(
+                $"IAP purchase '{productId}' was rejected because Unity IAP is not available in this build."));
+#endif
         }
         
         public Product FindProduct(string productId)
@@ -40,7 +45,11 @@ namespace ServiceImplementation.IAPServices
 
         public bool IsProductAvailable(string productId)
         {
+#if UNITY_EDITOR || DEBUG_MODULE
             return true;
+#else
+            return false;
+#endif
         }
     }
 }

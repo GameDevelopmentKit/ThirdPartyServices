@@ -274,7 +274,21 @@
         #endregion
 
         #region Receipt Validation
+        private const string FakeStoreName      = "fake";
+        private const string GooglePlayStoreName = "GooglePlay";
+        private const string AppleAppStoreName   = "AppleAppStore";
+        private const string MacAppStoreName     = "MacAppStore";
+
         private CrossPlatformValidator validator;
+
+        [Serializable]
+        private class UnityReceiptEnvelope
+        {
+            public string Store;
+            public string TransactionID;
+            public string Payload;
+        }
+
         void InitializeValidator(Func<byte[]> getGooglePublicKey, Func<byte[]> getAppleRootCert)
         {
             try
@@ -295,15 +309,34 @@
 
         bool ValidateReceipt(PendingOrder order)
         {
+            if (order?.Info == null || string.IsNullOrWhiteSpace(order.Info.Receipt))
+            {
+                LogWithColor("Receipt validation failed: empty receipt.", "red");
+                return false;
+            }
+
+            if (!ValidateReceiptStore(order.Info.Receipt, out var receiptHandledByStoreValidation))
+                return false;
+
+            if (receiptHandledByStoreValidation)
+                return true;
+
             if (validator == null)
             {
-                LogWithColor("No validator available — skipping receipt validation.", "yellow");
-                return true;
+                LogWithColor("Receipt validation failed: no validator available.", "red");
+                return false;
             }
 
             try
             {
                 var result = validator.Validate(order.Info.Receipt);
+
+                if (!HasValidatedReceiptForEveryCartItem(order, result))
+                {
+                    LogWithColor("Receipt validation failed: receipt product does not match order cart.", "red");
+                    return false;
+                }
+
                 foreach (var receipt in result)
                 {
                     LogWithColor($"Receipt validated: ProductId={receipt.productID}, " +
@@ -318,6 +351,10 @@
                     {
                         LogWithColor($"  AppleAppStore: transactionId={appleReceipt.transactionID}", "cyan");
                     }
+                    else
+                    {
+                        LogWithColor($"  Unknown receipt type: {receipt.GetType().Name}", "yellow");
+                    }
                 }
                 return true;
             }
@@ -326,6 +363,91 @@
                 LogWithColor($"RECEIPT VALIDATION FAILED: {ex.Message}", "red");
                 return false;
             }
+        }
+
+        private bool ValidateReceiptStore(string receipt, out bool receiptHandledByStoreValidation)
+        {
+            receiptHandledByStoreValidation = false;
+
+            UnityReceiptEnvelope receiptEnvelope;
+            try
+            {
+                receiptEnvelope = JsonUtility.FromJson<UnityReceiptEnvelope>(receipt);
+            }
+            catch (Exception ex)
+            {
+                LogWithColor($"Receipt envelope parse failed: {ex.Message}", "red");
+                return false;
+            }
+
+            if (receiptEnvelope == null ||
+                string.IsNullOrWhiteSpace(receiptEnvelope.Store) ||
+                string.IsNullOrWhiteSpace(receiptEnvelope.TransactionID) ||
+                string.IsNullOrWhiteSpace(receiptEnvelope.Payload))
+            {
+                LogWithColor("Receipt validation failed: malformed Unity receipt envelope.", "red");
+                return false;
+            }
+
+            if (string.Equals(receiptEnvelope.Store, FakeStoreName, StringComparison.OrdinalIgnoreCase))
+            {
+#if UNITY_EDITOR || DEBUG_MODULE
+                LogWithColor("FakeStore receipt accepted for Unity Editor testing.", "yellow");
+                receiptHandledByStoreValidation = true;
+                return true;
+#else
+                LogWithColor("Receipt validation failed: FakeStore receipt rejected.", "red");
+                return false;
+#endif
+            }
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (!string.Equals(receiptEnvelope.Store, GooglePlayStoreName, StringComparison.OrdinalIgnoreCase))
+            {
+                LogWithColor($"Receipt validation failed: unexpected Android store '{receiptEnvelope.Store}'.", "red");
+                return false;
+            }
+#elif UNITY_IOS && !UNITY_EDITOR
+            if (!string.Equals(receiptEnvelope.Store, AppleAppStoreName, StringComparison.OrdinalIgnoreCase))
+            {
+                LogWithColor($"Receipt validation failed: unexpected iOS store '{receiptEnvelope.Store}'.", "red");
+                return false;
+            }
+#elif UNITY_STANDALONE_OSX && !UNITY_EDITOR
+            if (!string.Equals(receiptEnvelope.Store, MacAppStoreName, StringComparison.OrdinalIgnoreCase))
+            {
+                LogWithColor($"Receipt validation failed: unexpected macOS store '{receiptEnvelope.Store}'.", "red");
+                return false;
+            }
+#endif
+
+            return true;
+        }
+
+        private bool HasValidatedReceiptForEveryCartItem(PendingOrder order, IEnumerable<IPurchaseReceipt> receipts)
+        {
+            var validatedProductIds = receipts
+                .Where(receipt => !string.IsNullOrWhiteSpace(receipt.productID))
+                .Select(receipt => receipt.productID)
+                .ToHashSet();
+
+            if (validatedProductIds.Count == 0)
+                return false;
+
+            foreach (var cartItem in order.CartOrdered.Items())
+            {
+                var product = cartItem.Product;
+                var productId = product.definition.id;
+                var storeSpecificId = product.definition.storeSpecificId;
+
+                if (validatedProductIds.Contains(productId) || validatedProductIds.Contains(storeSpecificId))
+                    continue;
+
+                LogWithColor($"Receipt validation failed: no validated receipt for product '{productId}'.", "red");
+                return false;
+            }
+
+            return true;
         }
 
         #endregion
