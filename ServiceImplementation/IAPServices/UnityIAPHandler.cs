@@ -375,9 +375,7 @@
             }
 
             if (receiptEnvelope == null ||
-                string.IsNullOrWhiteSpace(receiptEnvelope.Store) ||
-                string.IsNullOrWhiteSpace(receiptEnvelope.TransactionID) ||
-                string.IsNullOrWhiteSpace(receiptEnvelope.Payload))
+                string.IsNullOrWhiteSpace(receiptEnvelope.Store))
             {
                 LogWithColor("Receipt validation failed: malformed Unity receipt envelope.", "red");
                 return false;
