@@ -331,12 +331,6 @@
             {
                 var result = validator.Validate(order.Info.Receipt);
 
-                if (!HasValidatedReceiptForEveryCartItem(order, result))
-                {
-                    LogWithColor("Receipt validation failed: receipt product does not match order cart.", "red");
-                    return false;
-                }
-
                 foreach (var receipt in result)
                 {
                     LogWithColor($"Receipt validated: ProductId={receipt.productID}, " +
@@ -420,32 +414,6 @@
                 return false;
             }
 #endif
-
-            return true;
-        }
-
-        private bool HasValidatedReceiptForEveryCartItem(PendingOrder order, IEnumerable<IPurchaseReceipt> receipts)
-        {
-            var validatedProductIds = receipts
-                .Where(receipt => !string.IsNullOrWhiteSpace(receipt.productID))
-                .Select(receipt => receipt.productID)
-                .ToHashSet();
-
-            if (validatedProductIds.Count == 0)
-                return false;
-
-            foreach (var cartItem in order.CartOrdered.Items())
-            {
-                var product = cartItem.Product;
-                var productId = product.definition.id;
-                var storeSpecificId = product.definition.storeSpecificId;
-
-                if (validatedProductIds.Contains(productId) || validatedProductIds.Contains(storeSpecificId))
-                    continue;
-
-                LogWithColor($"Receipt validation failed: no validated receipt for product '{productId}'.", "red");
-                return false;
-            }
 
             return true;
         }
