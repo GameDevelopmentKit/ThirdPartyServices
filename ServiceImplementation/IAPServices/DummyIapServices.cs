@@ -7,6 +7,11 @@ namespace ServiceImplementation.IAPServices
 
     public class DummyIapServices : IIapServices
     {
+        public event Action<Order> OnPurchaseConfirmed
+        {
+            add { }
+            remove { }
+        }
 
         public UniTask Initialize(Dictionary<string, ProductType> iapPacks, string environment = "production", Func<byte[]> getGooglePublicKey = null, Func<byte[]> getAppleRootCert = null)
         {

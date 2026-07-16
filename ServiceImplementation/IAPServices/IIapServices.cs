@@ -7,6 +7,8 @@
 
     public interface IIapServices
     {
+        event Action<Order> OnPurchaseConfirmed;
+
         UniTask          Initialize(Dictionary<string, ProductType> iapPacks, string environment = "production", Func<byte[]> getGooglePublicKey = null, Func<byte[]> getAppleRootCert = null);
         UniTask          PurchaseProduct(string productId);
         Product          FindProduct(string productId);

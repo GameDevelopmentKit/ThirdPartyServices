@@ -15,6 +15,8 @@
 
     public class UnityIAPHandler : IIapServices
     {
+        public event Action<Order> OnPurchaseConfirmed;
+
         private StoreController storeController;
 
         private Dictionary<string, Queue<UniTaskCompletionSource>> pendingPurchaseTask =
@@ -48,19 +50,35 @@
 
         private async UniTask InitializeUnityIAP(Dictionary<string, ProductType> iapPacks)
         {
-            storeController = UnityIAPServices.StoreController();
+            var storeName = GetUnityIAPStoreName();
+            storeController = string.IsNullOrEmpty(storeName)
+                ? UnityIAPServices.StoreController()
+                : UnityIAPServices.StoreController(storeName);
 
             storeController.OnProductsFetched += OnInitialProductsFetched;
             storeController.OnProductsFetchFailed += OnInitialProductsFetchFailed;
 
             storeController.OnPurchasePending += OnPurchasePending;
-            storeController.OnPurchaseConfirmed += OnPurchaseConfirmed;
+            storeController.OnPurchaseConfirmed += HandlePurchaseConfirmed;
             storeController.OnPurchaseFailed += OnPurchaseFailed;
             storeController.OnPurchaseDeferred += OnPurchaseDeferred;
 
             await storeController.Connect();
 
             InitializeProducts(iapPacks);
+        }
+
+        private string GetUnityIAPStoreName()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            return GooglePlayStoreName;
+#elif UNITY_IOS && !UNITY_EDITOR
+            return AppleAppStoreName;
+#elif UNITY_STANDALONE_OSX && !UNITY_EDITOR
+            return MacAppStoreName;
+#else
+            return null;
+#endif
         }
 
         #endregion
@@ -181,7 +199,7 @@
             storeController.ConfirmPurchase(order);
         }
 
-        void OnPurchaseConfirmed(Order order)
+        void HandlePurchaseConfirmed(Order order)
         {
             switch (order)
             {
@@ -193,6 +211,8 @@
                     LogWithColor($"Purchase completed:  {order.CartOrdered.Items().First().Product.definition.id}");
                     break;
             }
+
+            OnPurchaseConfirmed?.Invoke(order);
         }
 
         void OnPurchaseFailed(FailedOrder failedOrder)
