@@ -8,8 +8,8 @@
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.Utilities.LogService;
-    using GoogleMobileAds.Api;
 #if ADMOB_NATIVE_ADS && IMMERSIVE_ADS
+    using GoogleMobileAds.Api;
     using PubScale.SdkOne.NativeAds;
 #endif
     using R3;
