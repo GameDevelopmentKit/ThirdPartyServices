@@ -13,7 +13,7 @@ namespace ServiceImplementation.IAPServices
             remove { }
         }
 
-        public UniTask Initialize(Dictionary<string, ProductType> iapPacks, string environment = "production", Func<byte[]> getGooglePublicKey = null, Func<byte[]> getAppleRootCert = null)
+        public UniTask Initialize(Dictionary<string, ProductType> iapPacks, Func<byte[]> getGooglePublicKey = null, Func<byte[]> getAppleRootCert = null)
         {
             return UniTask.CompletedTask;
         }

@@ -27,9 +27,9 @@
 
         #region Initialization
 
-        public async UniTask Initialize(Dictionary<string, ProductType> iapPacks, string environment = "production", Func<byte[]> getGooglePublicKey = null, Func<byte[]> getAppleRootCert = null)
+        public async UniTask Initialize(Dictionary<string, ProductType> iapPacks, Func<byte[]> getGooglePublicKey = null, Func<byte[]> getAppleRootCert = null)
         {
-            await InitializeUnityServices(environment);
+            await InitializeUnityServices();
             await InitializeUnityIAP(iapPacks);
             InitializeValidator(getGooglePublicKey, getAppleRootCert);
         }
@@ -38,9 +38,12 @@
         {
             try
             {
-                var options = new InitializationOptions().SetEnvironmentName(environment);
+                if (UnityServices.State != ServicesInitializationState.Initialized)
+                {
+                    var options = new InitializationOptions().SetEnvironmentName(environment);
 
-                await UnityServices.InitializeAsync(options);
+                    await UnityServices.InitializeAsync(options);
+                }
             }
             catch (Exception exception)
             {
