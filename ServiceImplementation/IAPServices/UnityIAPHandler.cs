@@ -13,7 +13,7 @@
     using UnityEngine.Purchasing.Security;
 
 
-    public class UnityIAPHandler : IIapServices
+    public class UnityIAPHandler : IIapServices, IDisposable
     {
         public event Action<Order> OnPurchaseConfirmed;
 
@@ -69,6 +69,19 @@
             await storeController.Connect();
 
             InitializeProducts(iapPacks);
+        }
+        
+        public void Dispose()
+        {
+            if (storeController == null)
+                return;
+            storeController.OnProductsFetched     -= OnInitialProductsFetched;
+            storeController.OnProductsFetchFailed -= OnInitialProductsFetchFailed;
+
+            storeController.OnPurchasePending   -= OnPurchasePending;
+            storeController.OnPurchaseConfirmed -= HandlePurchaseConfirmed;
+            storeController.OnPurchaseFailed    -= OnPurchaseFailed;
+            storeController.OnPurchaseDeferred  -= OnPurchaseDeferred;
         }
 
         private string GetUnityIAPStoreName()
