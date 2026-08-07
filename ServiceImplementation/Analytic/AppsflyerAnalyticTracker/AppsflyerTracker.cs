@@ -28,9 +28,12 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
         protected override        Dictionary<string, string>        CustomEventKeys      => this.customizationConfig.CustomEventKeys;
 
 
-        public AppsflyerTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
+        public AppsflyerTracker(ILogService logger, SignalBus signalBus, AnalyticConfig analyticConfig,
+            AnalyticsEventCustomizationConfig customizationConfig,
+            AppsflyerPurchaseConnectorReceiptValidator receiptValidator) : base(signalBus, analyticConfig)
         {
             this.logger = logger;
+            _ = receiptValidator; // Resolving this dependency subscribes the ROI360 callback bridge before SDK setup.
             CustomEventDelegates = new Dictionary<Type, EventDelegate>
             {
                 { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
@@ -178,7 +181,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
 
 
             // Set sandbox mode for testing
-            AppsFlyerPurchaseConnector.setIsSandbox(this.analyticConfig.AppsflyerIsDebug);
+            AppsFlyerPurchaseConnector.setIsSandbox(this.analyticConfig.AppsflyerIapSandbox);
 
             // Configure StoreKit version (iOS only) - SK1 is the default
             AppsFlyerPurchaseConnector.setStoreKitVersion(StoreKitVersion.SK2);
@@ -188,6 +191,8 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions,
                 AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases
             );
+
+            AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
 
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();

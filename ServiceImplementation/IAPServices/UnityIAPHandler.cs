@@ -10,12 +10,17 @@
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
-    using UnityEngine.Purchasing.Security;
 
 
     public class UnityIAPHandler : IIapServices, IDisposable
     {
+        private const string GooglePlayStoreName = "GooglePlay";
+        private const string AppleAppStoreName   = "AppleAppStore";
+        private const string MacAppStoreName     = "MacAppStore";
+
         public event Action<Order> OnPurchaseConfirmed;
+
+        private readonly IIapReceiptValidationService receiptValidationService;
 
         private StoreController storeController;
 
@@ -25,13 +30,17 @@
         private UniTaskCompletionSource<bool> initializeProductsSource;
         private UniTask<bool> initializeProductsTask;
 
+        public UnityIAPHandler(IIapReceiptValidationService receiptValidationService)
+        {
+            this.receiptValidationService = receiptValidationService;
+        }
+
         #region Initialization
 
-        public async UniTask Initialize(Dictionary<string, ProductType> iapPacks, Func<byte[]> getGooglePublicKey = null, Func<byte[]> getAppleRootCert = null)
+        public async UniTask Initialize(Dictionary<string, ProductType> iapPacks)
         {
             await InitializeUnityServices();
             await InitializeUnityIAP(iapPacks);
-            InitializeValidator(getGooglePublicKey, getAppleRootCert);
         }
 
         private async UniTask InitializeUnityServices(string environment = "production")
@@ -171,19 +180,28 @@
 
         void OnPurchasePending(PendingOrder order)
         {
-            if (!ValidateReceipt(order))
-            {
-                foreach (var cartItem in order.CartOrdered.Items())
-                {
-                    var product = cartItem.Product;
-                    if (pendingPurchaseTask.TryGetValue(product.definition.id, out var queue) && queue.Count > 0)
-                    {
-                        var tcs = queue.Dequeue();
-                        tcs.TrySetException(new IAPPurchaseFailedException(
-                            $"Receipt validation failed for product '{product.definition.id}'"));
-                    }
-                }
+            this.HandlePurchasePending(order).Forget();
+        }
 
+        private async UniTask HandlePurchasePending(PendingOrder order)
+        {
+            IapReceiptValidationResult validationResult;
+            try
+            {
+                var validationRequest = this.CreateValidationRequest(order);
+                validationResult = await this.receiptValidationService.ValidateAsync(validationRequest);
+            }
+            catch (Exception exception)
+            {
+                this.FailPendingPurchaseTasks(order, $"Receipt validation failed unexpectedly: {exception.Message}");
+                Debug.LogException(exception);
+                return;
+            }
+
+            if (!validationResult.IsValid)
+            {
+                this.FailPendingPurchaseTasks(order,
+                    $"Receipt validation {validationResult.Status} via '{validationResult.ProviderId}': {validationResult.Error}");
                 return;
             }
 
@@ -194,7 +212,7 @@
 
                 LogWithColor($"Purchased Product: '{product.definition.id}' \n" +
                              $"Product transaction id: {order.Info.TransactionID}. \n" +
-                             $"Product receipt length: {order.Info.Receipt}.\n" +
+                             $"Product receipt length: {order.Info.Receipt?.Length ?? 0}.\n" +
                              $"Product Type: '{product.definition.type}'");
 
                 if (pendingPurchaseTask.TryGetValue(product.definition.id, out var queue) && queue.Count > 0)
@@ -213,6 +231,35 @@
             }
 
             storeController.ConfirmPurchase(order);
+        }
+
+        private IapReceiptValidationRequest CreateValidationRequest(PendingOrder order)
+        {
+            var products = order.CartOrdered.Items().Select(cartItem =>
+            {
+                var productType = cartItem.Product.definition.type switch
+                {
+                    UnityEngine.Purchasing.ProductType.NonConsumable => ProductType.NonConsumable,
+                    UnityEngine.Purchasing.ProductType.Subscription => ProductType.Subscription,
+                    _ => ProductType.Consumable
+                };
+
+                return new IapReceiptProduct(cartItem.Product.definition.id, productType, cartItem.Quantity);
+            }).ToList();
+
+            return new IapReceiptValidationRequest(order.Info?.TransactionID, order.Info?.Receipt, products);
+        }
+
+        private void FailPendingPurchaseTasks(PendingOrder order, string error)
+        {
+            foreach (var cartItem in order.CartOrdered.Items())
+            {
+                var product = cartItem.Product;
+                if (pendingPurchaseTask.TryGetValue(product.definition.id, out var queue) && queue.Count > 0)
+                {
+                    queue.Dequeue().TrySetException(new IAPPurchaseFailedException(error));
+                }
+            }
         }
 
         void HandlePurchaseConfirmed(Order order)
@@ -309,149 +356,5 @@
         
         #endregion
 
-        #region Receipt Validation
-        private const string FakeStoreName      = "fake";
-        private const string GooglePlayStoreName = "GooglePlay";
-        private const string AppleAppStoreName   = "AppleAppStore";
-        private const string MacAppStoreName     = "MacAppStore";
-
-        private CrossPlatformValidator validator;
-
-        [Serializable]
-        private class UnityReceiptEnvelope
-        {
-            public string Store;
-            public string TransactionID;
-            public string Payload;
-        }
-
-        void InitializeValidator(Func<byte[]> getGooglePublicKey, Func<byte[]> getAppleRootCert)
-        {
-            try
-            {
-                validator = getAppleRootCert != null ? 
-                    new CrossPlatformValidator(getGooglePublicKey(), getAppleRootCert(), Application.identifier) : 
-                    new CrossPlatformValidator(getGooglePublicKey(), Application.identifier);
-                LogWithColor("CrossPlatformValidator initialized successfully.", "green");
-            }
-            catch (Exception ex)
-            {
-                LogWithColor($"CrossPlatformValidator initialization failed: {ex.Message}. " +
-                             "Ensure GooglePlayTangle and AppleTangle classes are generated " +
-                             "(Services > In-App Purchasing > Receipt Validation Obfuscator).", "yellow");
-                validator = null;
-            }
-        }
-
-        bool ValidateReceipt(PendingOrder order)
-        {
-            if (order?.Info == null || string.IsNullOrWhiteSpace(order.Info.Receipt))
-            {
-                LogWithColor("Receipt validation failed: empty receipt.", "red");
-                return false;
-            }
-
-            if (!ValidateReceiptStore(order.Info.Receipt, out var receiptHandledByStoreValidation))
-                return false;
-
-            if (receiptHandledByStoreValidation)
-                return true;
-
-            if (validator == null)
-            {
-                LogWithColor("Receipt validation failed: no validator available.", "red");
-                return false;
-            }
-
-            try
-            {
-                var result = validator.Validate(order.Info.Receipt);
-
-                foreach (var receipt in result)
-                {
-                    LogWithColor($"Receipt validated: ProductId={receipt.productID}, " +
-                                 $"TransactionId={receipt.transactionID}", "green");
-
-                    if (receipt is GooglePlayReceipt googleReceipt)
-                    {
-                        LogWithColor($"  GooglePlay: OrderId={googleReceipt.orderID}, purchaseState={googleReceipt.purchaseState}, " +
-                                     $"purchaseToken={googleReceipt.purchaseToken}", "cyan");
-                    }
-                    else if (receipt is AppleInAppPurchaseReceipt appleReceipt)
-                    {
-                        LogWithColor($"  AppleAppStore: transactionId={appleReceipt.transactionID}", "cyan");
-                    }
-                    else
-                    {
-                        LogWithColor($"  Unknown receipt type: {receipt.GetType().Name}", "yellow");
-                    }
-                }
-                return true;
-            }
-            catch (IAPSecurityException ex)
-            {
-                LogWithColor($"RECEIPT VALIDATION FAILED: {ex.Message}", "red");
-                return false;
-            }
-        }
-
-        private bool ValidateReceiptStore(string receipt, out bool receiptHandledByStoreValidation)
-        {
-            receiptHandledByStoreValidation = false;
-
-            UnityReceiptEnvelope receiptEnvelope;
-            try
-            {
-                receiptEnvelope = JsonUtility.FromJson<UnityReceiptEnvelope>(receipt);
-            }
-            catch (Exception ex)
-            {
-                LogWithColor($"Receipt envelope parse failed: {ex.Message}", "red");
-                return false;
-            }
-
-            if (receiptEnvelope == null ||
-                string.IsNullOrWhiteSpace(receiptEnvelope.Store))
-            {
-                LogWithColor("Receipt validation failed: malformed Unity receipt envelope.", "red");
-                return false;
-            }
-
-            if (string.Equals(receiptEnvelope.Store, FakeStoreName, StringComparison.OrdinalIgnoreCase))
-            {
-#if UNITY_EDITOR || DEBUG_MODULE
-                LogWithColor("FakeStore receipt accepted for Unity Editor testing.", "yellow");
-                receiptHandledByStoreValidation = true;
-                return true;
-#else
-                LogWithColor("Receipt validation failed: FakeStore receipt rejected.", "red");
-                return false;
-#endif
-            }
-
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if (!string.Equals(receiptEnvelope.Store, GooglePlayStoreName, StringComparison.OrdinalIgnoreCase))
-            {
-                LogWithColor($"Receipt validation failed: unexpected Android store '{receiptEnvelope.Store}'.", "red");
-                return false;
-            }
-#elif UNITY_IOS && !UNITY_EDITOR
-            if (!string.Equals(receiptEnvelope.Store, AppleAppStoreName, StringComparison.OrdinalIgnoreCase))
-            {
-                LogWithColor($"Receipt validation failed: unexpected iOS store '{receiptEnvelope.Store}'.", "red");
-                return false;
-            }
-#elif UNITY_STANDALONE_OSX && !UNITY_EDITOR
-            if (!string.Equals(receiptEnvelope.Store, MacAppStoreName, StringComparison.OrdinalIgnoreCase))
-            {
-                LogWithColor($"Receipt validation failed: unexpected macOS store '{receiptEnvelope.Store}'.", "red");
-                return false;
-            }
-#endif
-
-            return true;
-        }
-
-        #endregion
     }
 }

@@ -3,9 +3,11 @@
     "rootNamespace": "",
     "references": [
         "3rdCore.Analytic",
+        "3rd.IAP",
         "Zenject-Signals",
         "AppsFlyer",
-        "GameFoundation.Utilities"
+        "GameFoundation.Utilities",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
