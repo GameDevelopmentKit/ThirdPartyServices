@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Core.AnalyticServices;
+    using Core.AnalyticServices.CommonEvents;
     using Core.AnalyticServices.Data;
     using Newtonsoft.Json;
     using UnityEngine;
@@ -19,6 +20,10 @@
         public FirebaseAnalyticTracker(SignalBus signalBus, AnalyticConfig analyticConfig, AnalyticsEventCustomizationConfig customizationConfig) : base(signalBus, analyticConfig)
         {
             this.customizationConfig = customizationConfig;
+            this.CustomEventDelegates = new Dictionary<Type, EventDelegate>
+            {
+                { typeof(AdsRevenueEvent), this.TrackAdsRevenue }
+            };
         }
 
         protected override HashSet<Type>              IgnoreEvents    => this.customizationConfig.IgnoreEvents;
@@ -32,6 +37,29 @@
             this.TrackerReady.SetResult(true);
 
             return this.TrackerReady.Task;
+        }
+
+        private void TrackAdsRevenue(IEvent trackedEvent, Dictionary<string, object> data)
+        {
+            if (trackedEvent is not AdsRevenueEvent adRevenue)
+            {
+                Debug.LogError("trackedEvent in AdsRevenue is not of correct type");
+
+                return;
+            }
+
+            var parameters = new Dictionary<string, object>
+            {
+                ["ad_platform"]  = adRevenue.AdsRevenueSourceId,
+                ["ad_source"]    = adRevenue.AdNetwork,
+                ["ad_unit_name"] = adRevenue.AdUnit,
+                ["ad_format"]    = adRevenue.AdFormat,
+                ["placement"]    = adRevenue.Placement,
+                ["value"]        = adRevenue.Revenue,
+                ["currency"]     = string.IsNullOrEmpty(adRevenue.Currency) ? "USD" : adRevenue.Currency
+            };
+            
+            FirebaseAnalytics.LogEvent("ad_impression", parameters);
         }
 
         protected override void SetUserId(string userId) { FirebaseAnalytics.SetUserId(userId); }
