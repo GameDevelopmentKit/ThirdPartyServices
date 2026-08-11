@@ -30,7 +30,7 @@
 #elif UNITY_IOS
                 return IosId;
 #else
-                return string.Empty;
+                return this.AndroidId;
 #endif
             }
         }
