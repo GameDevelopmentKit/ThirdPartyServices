@@ -3,7 +3,7 @@
     public class DummyRemoteConfig : IRemoteConfig
     {
         public bool   IsConfigFetchedSucceed                                     => true;
-        public string GetRemoteConfigStringValue(string key,string defaultValue) { return ""; }
+        public string GetRemoteConfigStringValue(string key,string defaultValue) { return defaultValue; }
 
         public bool GetRemoteConfigBoolValue(string key, bool defaultValue) { return defaultValue; }
 
