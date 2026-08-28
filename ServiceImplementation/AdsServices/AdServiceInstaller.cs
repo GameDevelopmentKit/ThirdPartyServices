@@ -58,7 +58,7 @@ namespace ServiceImplementation.AdsServices
             this.Container.BindInitializableExecutionOrder<AdMobWrapper>(-2000);
             this.Container.BindInterfacesTo<AdMobWrapper>().AsCached().NonLazy();
 #endif
-#if !APPLOVIN && (!IRONSOURCE || UNITY_EDITOR) && (!YANDEX || UNITY_EDITOR) && !ADMOB
+#if !APPLOVIN && (!IRONSOURCE || UNITY_EDITOR) && (!YANDEX || UNITY_EDITOR) && !ADMOB &&!DISABLE_DUMMY_ADS
             this.Container.BindInterfacesTo<DummyAdServiceIml>().AsCached();
 #endif
 
