@@ -4,22 +4,32 @@ namespace ServiceImplementation.FireBaseRemoteConfig
     using System.Runtime.InteropServices;
     using Zenject;
 
-    internal class FirebaseWebGlRemoteConfig : IInitializable, IRemoteConfig
+    public class FirebaseWebGlRemoteConfig : IInitializable, IRemoteConfig
     {
         private bool isFirebaseReady = false;
         public FirebaseWebGlRemoteConfig() { }
 
         public void Initialize() { this.InitRemoteConfig(); }
 
-        private void InitRemoteConfig() { FetchRemoteConfig(FirebaseWebGlEventHandler.CallBackObject, nameof(this.OnFetchRemoteConfigComplete)); }
+        private void InitRemoteConfig()
+        {
+#if !UNITY_EDITOR
+             FetchRemoteConfig(FirebaseWebGlEventHandler.CallBackObject, nameof(this.OnFetchRemoteConfigComplete));
+#else
+            this.isFirebaseReady = true;
+#endif
+        }
 
         public void OnFetchRemoteConfigComplete() { this.isFirebaseReady = true; }
 
         public string GetValue(string key)
         {
+#if !UNITY_EDITOR
             var value = GetRemoteConfigValue(key);
-
             return value;
+
+#endif
+            return string.Empty;
         }
 
         [DllImport("__Internal")]
