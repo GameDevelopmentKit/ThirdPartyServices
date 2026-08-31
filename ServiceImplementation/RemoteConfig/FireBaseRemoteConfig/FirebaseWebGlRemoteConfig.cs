@@ -26,6 +26,7 @@ namespace ServiceImplementation.FireBaseRemoteConfig
         {
 #if !UNITY_EDITOR
             var value = GetRemoteConfigValue(key);
+
             return value;
 
 #endif
