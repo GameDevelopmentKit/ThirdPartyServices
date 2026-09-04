@@ -9,30 +9,31 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
 
     public class IAPPaywallCallbacks
     {
-        private          Iap5OrNewerServices iap5OrNewerServices;
+        private readonly Iap5OrNewerServices iapServices;
         private readonly IapLogWrapped       iapLogWrapped;
         private readonly ISignalBus          signalBus;
 
-        public IAPPaywallCallbacks(Iap5OrNewerServices paywallManager, IapLogWrapped iapLogWrapped, ISignalBus signalBus)
+        public IAPPaywallCallbacks(Iap5OrNewerServices iapServices, IapLogWrapped iapLogWrapped, ISignalBus signalBus)
         {
-            this.iap5OrNewerServices = paywallManager;
-            this.iapLogWrapped       = iapLogWrapped;
-            this.signalBus           = signalBus;
+            this.iapServices   = iapServices;
+            this.iapLogWrapped = iapLogWrapped;
+            this.signalBus     = signalBus;
         }
+
+        #region Fetch
 
         public void OnInitialProductsFetched(List<Product> products)
         {
             this.iapLogWrapped.LogConsole("===========");
             this.iapLogWrapped.LogConsole("OnInitialProductsFetched:");
             this.iapLogWrapped.LogFetchedProducts(products);
-            this.iap5OrNewerServices.FetchExistingPurchases();
+            this.iapServices.FetchExistingPurchases();
         }
 
         public void OnInitialProductsFetchFailed(ProductFetchFailed failure)
         {
             this.iapLogWrapped.LogConsole("===========");
-            this.iapLogWrapped.LogConsole("OnInitialProductsFetchFailed:");
-            this.iapLogWrapped.LogConsole(failure.FailureReason);
+            this.iapLogWrapped.LogConsole($"OnInitialProductsFetchFailed: {failure.FailureReason}");
         }
 
         public void OnExistingPurchasesFetched(Orders existingOrders)
@@ -40,51 +41,83 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
             this.iapLogWrapped.LogConsole("===========");
             this.iapLogWrapped.LogConsole("OnExistingPurchasesFetched:");
 
-            this.iapLogWrapped.LogConsole(this.iap5OrNewerServices.IsReceiptAvailable(existingOrders)
-                ? "Success - Found Existing Orders with receipts"
-                : "Notice: - No Existing Orders with receipts");
+            // Bản cũ gọi IsReceiptAvailable() 2 lần (hàm đó có side-effect ghi ownedProducts)
+            // và log trùng 2 dòng. Giờ tách rõ: cache là cache, query là query.
+            this.iapServices.CacheOrders(existingOrders);
 
-            if (this.iap5OrNewerServices.IsReceiptAvailable(existingOrders))
-            {
-                this.iapLogWrapped.LogConsole("Success - Found Existing Orders with receipts");
-
-                foreach (var order in existingOrders.ConfirmedOrders)
-                {
-                    foreach (var item in order.Info.PurchasedProductInfo)
-                    {
-                        this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(item.productId));
-                        this.iap5OrNewerServices.CachedOrders[item.productId] = order.Info;
-                    }
-                }
-            }
-            else
+            if (!this.iapServices.IsReceiptAvailable(existingOrders))
             {
                 this.iapLogWrapped.LogConsole("Notice: - No Existing Orders with receipts");
+
+                return;
+            }
+
+            this.iapLogWrapped.LogConsole("Success - Found Existing Orders with receipts");
+
+            foreach (var order in existingOrders.ConfirmedOrders)
+            {
+                foreach (var item in order.Info.PurchasedProductInfo)
+                {
+                    this.signalBus.Fire(new OnRestorePurchaseCompleteSignal(item.productId));
+                }
             }
         }
 
         public void OnExistingPurchasesFetchFailed(PurchasesFetchFailureDescription failure)
         {
             this.iapLogWrapped.LogConsole("===========");
-            this.iapLogWrapped.LogConsole("OnExistingPurchasesFetchFailed:");
-            this.iapLogWrapped.LogConsole(failure.Message);
+            this.iapLogWrapped.LogConsole($"OnExistingPurchasesFetchFailed: {failure.Message}");
         }
+
+        #endregion
+
+        #region Purchase
 
         public void OnPurchasePending(PendingOrder order)
         {
             foreach (var cartItem in order.CartOrdered.Items())
             {
-                var product = cartItem.Product;
-                this.iap5OrNewerServices.OnCompletePurchase?.Invoke(product.definition.id);
-                this.iap5OrNewerServices.OnCompletePurchase = null;
-                this.iapLogWrapped.LogCompletedPurchase(product, order.Info);
-                this.iap5OrNewerServices.ValidatePurchaseIfPossible(order.Info);
+                this.iapLogWrapped.LogCompletedPurchase(cartItem.Product, order.Info);
             }
 
-            this.iap5OrNewerServices.ConfirmOrderIfAutomatic(order);
+            // Bản cũ chỉ log kết quả validate rồi grant content bất chấp.
+            // Giờ receipt sai = KHÔNG grant, không confirm.
+            if (!this.iapServices.IsReceiptValid(order.Info))
+            {
+                this.iapLogWrapped.LogConsole("[IAP] Receipt invalid - NOT granting content.");
+                this.iapServices.ClearCompletePurchase();
+
+                foreach (var cartItem in order.CartOrdered.Items())
+                {
+                    this.signalBus.Fire(new OnIAPPurchaseFailedSignal(cartItem.Product.definition.storeSpecificId, "InvalidReceipt"));
+                }
+
+                return;
+            }
+
+            this.iapServices.CacheOrder(order.Info);
+
+            foreach (var cartItem in order.CartOrdered.Items())
+            {
+                var productId = cartItem.Product.definition.id;
+
+                // Signal thành công — bản cũ KHÔNG có signal này, success chỉ đi qua
+                // Action<string> nên mọi listener trên signal bus không nhận được gì.
+                this.signalBus.Fire(new OnIAPPurchaseSuccessSignal()
+                {
+                    ProductId        = productId,
+                    PurchasedProduct = cartItem.Product,
+                });
+
+                this.iapServices.InvokeCompletePurchase(productId);
+            }
+
+            this.iapServices.ConfirmOrderIfAutomatic(order);
         }
 
-        public void OnPurchaseConfirmed(Order order)
+        // Đổi tên: bản cũ có 2 overload cùng tên OnPurchaseConfirmed(Order)/(ConfirmedOrder),
+        // bind vào event qua overload resolution -> silent rebind nếu Unity đổi delegate.
+        public void OnOrderConfirmed(Order order)
         {
             switch (order)
             {
@@ -93,9 +126,20 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
 
                     break;
                 case ConfirmedOrder confirmedOrder:
-                    this.OnPurchaseConfirmed(confirmedOrder);
+                    this.OnOrderConfirmedSuccess(confirmedOrder);
 
                     break;
+            }
+        }
+
+        private void OnOrderConfirmedSuccess(ConfirmedOrder order)
+        {
+            this.iapServices.CacheOrder(order.Info);
+
+            foreach (var cartItem in order.CartOrdered.Items())
+            {
+                this.iapLogWrapped.LogConfirmedOrder(cartItem.Product, order.Info);
+                this.iapServices.InvokeCompletePurchase(cartItem.Product.definition.id);
             }
         }
 
@@ -103,34 +147,22 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
         {
             var reason = failedOrder.FailureReason;
 
+            this.iapServices.ClearCompletePurchase();
+
             foreach (var cartItem in failedOrder.CartOrdered.Items())
             {
                 this.iapLogWrapped.LogFailedConfirmation(cartItem.Product, reason);
-            }
-        }
-
-        public void OnPurchaseConfirmed(ConfirmedOrder order)
-        {
-            foreach (var cartItem in order.CartOrdered.Items())
-            {
-                var product = cartItem.Product;
-                this.iap5OrNewerServices.OnCompletePurchase?.Invoke(product.definition.id);
-                this.iap5OrNewerServices.OnCompletePurchase = null;
-                this.iapLogWrapped.LogConfirmedOrder(product, order.Info);
-            }
-
-            var orderInfo = order.Info;
-
-            foreach (var purchased in orderInfo.PurchasedProductInfo)
-            {
-                this.iap5OrNewerServices.CachedOrders[purchased.productId] = orderInfo;
-                this.iapLogWrapped.LogConsole($"[IAP] Cached order for {purchased.productId}");
+                this.signalBus.Fire(new OnIAPPurchaseFailedSignal(cartItem.Product.definition.storeSpecificId, reason.ToString()));
             }
         }
 
         public void OnPurchaseFailed(FailedOrder failedOrder)
         {
             var reason = failedOrder.FailureReason;
+
+            // Bản cũ không clear callback khi fail -> callback cũ có thể bị gọi
+            // cho lần mua sau, với sai product.
+            this.iapServices.ClearCompletePurchase();
 
             foreach (var cartItem in failedOrder.CartOrdered.Items())
             {
@@ -146,6 +178,8 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
                 this.iapLogWrapped.LogDeferredPurchase(cartItem.Product);
             }
         }
+
+        #endregion
     }
 }
 #endif

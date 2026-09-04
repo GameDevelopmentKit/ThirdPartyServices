@@ -1,12 +1,19 @@
 ﻿#if IAP_5_OR_NEWER
 
+// Cùng gate như Iap5OrNewerServices.cs — file này cũng chạm
+// UnityEngine.Purchasing.Security, nên nó là CS0246 tiếp theo nếu không guard.
+#if IAP_LOCAL_VALIDATION && UNITY_ANDROID && !UNITY_EDITOR
+#define IAP_GOOGLE_RECEIPT_VALIDATION
+#endif
 
 namespace ServiceImplementation.IAPServices.IAP5orNewer
 {
     using System.Collections.Generic;
     using GameFoundation.Scripts.Utilities.LogService;
     using UnityEngine.Purchasing;
+#if IAP_GOOGLE_RECEIPT_VALIDATION
     using UnityEngine.Purchasing.Security;
+#endif
 
     public class IapLogWrapped
     {
@@ -14,79 +21,46 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
 
         public IapLogWrapped(ILogService logger) { this.logger = logger; }
 
+        public void LogConsole(string msg) { this.logger.Log($"IAP {msg}"); }
+
         public void LogFetchedProducts(List<Product> products)
         {
-            if (products.Count > 0)
-            {
-                foreach (var product in products)
-                {
-                    this.LogConsole($"Fetched {product.definition.id}");
-                }
-            }
-            else
+            if (products == null || products.Count == 0)
             {
                 this.LogConsole("No Products Fetched.");
+
+                return;
+            }
+
+            foreach (var product in products)
+            {
+                this.LogConsole($"Fetched {product.definition.id} - {product.metadata?.localizedPriceString}");
             }
         }
 
-        public void LogConfirmedOrder(Product product, IOrderInfo orderInfo)
+        public void LogCompletedPurchase(Product product, IOrderInfo orderInfo) { this.LogOrder("Purchased Product", product, orderInfo); }
+
+        public void LogConfirmedOrder(Product product, IOrderInfo orderInfo) { this.LogOrder("Confirmed Product", product, orderInfo); }
+
+        private void LogOrder(string label, Product product, IOrderInfo orderInfo)
         {
             this.LogConsole("===========");
-            this.LogConsole($"Confirmed Product: '{product.definition.id}'");
-            this.LogConsole($"Product transaction id: {orderInfo.TransactionID}.");
-            this.LogConsole($"Product receipt length: {orderInfo.Receipt?.Length}.");
+            this.LogConsole($"{label}: '{product.definition.id}'");
+            this.LogConsole($"Transaction id: {orderInfo.TransactionID}");
+            this.LogConsole($"Receipt length: {orderInfo.Receipt?.Length}");
             this.LogConsole($"Product Type: '{product.definition.type}'");
         }
 
-        public void LogReceiptValidation(IPurchaseReceipt productReceipt)
-        {
-            this.LogConsole($"Product ID: '{productReceipt.productID}', Date: '{productReceipt.purchaseDate}', Transaction ID: '{productReceipt.transactionID}'");
-            this.LogGooglePlayReceiptValidationInfo(productReceipt);
-            this.LogAppleReceiptValidationInfo(productReceipt);
-        }
+        public void LogFailedConfirmation(Product product, PurchaseFailureReason reason) { this.LogFailure("Purchase Confirmation Failed", product, reason); }
 
-        public void LogGooglePlayReceiptValidationInfo(IPurchaseReceipt productReceipt)
-        {
-            GooglePlayReceipt googleReceipt = productReceipt as GooglePlayReceipt;
+        public void LogFailedPurchase(Product product, PurchaseFailureReason reason) { this.LogFailure("PurchaseFailed", product, reason); }
 
-            if (googleReceipt != null)
-            {
-                this.LogConsole($"GooglePlay - State: '{googleReceipt.purchaseState}', Token: '{googleReceipt.purchaseToken}'");
-            }
-        }
-
-        public void LogAppleReceiptValidationInfo(IPurchaseReceipt productReceipt)
-        {
-            if (productReceipt is AppleInAppPurchaseReceipt appleReceipt)
-            {
-                this.LogConsole(
-                    $"Apple - Original Transaction: '{appleReceipt.originalTransactionIdentifier}', Expiration Date : '{appleReceipt.subscriptionExpirationDate}', Cancellation Date : '{appleReceipt.cancellationDate}', Quandtity : '{appleReceipt.quantity}'");
-            }
-        }
-
-        public void LogCompletedPurchase(Product product, IOrderInfo orderInfo)
+        private void LogFailure(string label, Product product, PurchaseFailureReason reason)
         {
             this.LogConsole("===========");
-            this.LogConsole($"Purchased Product: '{product.definition.id}'");
-            this.LogConsole($"Product transaction id: {orderInfo.TransactionID}.");
-            this.LogConsole($"Product receipt length: {orderInfo.Receipt?.Length}.");
-            this.LogConsole($"Product Type: '{product.definition.type}'");
-        }
-
-        public void LogFailedConfirmation(Product product, PurchaseFailureReason reason)
-        {
-            this.LogConsole("===========");
-            this.LogConsole("Purchase Confirmation Failed");
+            this.LogConsole(label);
             this.LogConsole($"Product: '{product.definition.storeSpecificId}'");
-            this.LogConsole($"FailureReason: {reason.ToString()}.");
-        }
-
-        public void LogFailedPurchase(Product product, PurchaseFailureReason reason)
-        {
-            this.LogConsole("===========");
-            this.LogConsole("PurchaseFailed");
-            this.LogConsole($"Product: '{product.definition.storeSpecificId}'");
-            this.LogConsole($"FailureReason: {reason.ToString()}.");
+            this.LogConsole($"FailureReason: {reason}");
         }
 
         public void LogDeferredPurchase(Product product)
@@ -96,7 +70,20 @@ namespace ServiceImplementation.IAPServices.IAP5orNewer
             this.LogConsole($"Product: '{product.definition.storeSpecificId}'");
         }
 
-        public void LogConsole(string msg) { this.logger.Log($"IAP {msg}"); }
+#if IAP_GOOGLE_RECEIPT_VALIDATION
+        public void LogReceiptValidation(IPurchaseReceipt receipt)
+        {
+            this.LogConsole($"Product ID: '{receipt.productID}', Date: '{receipt.purchaseDate}', Transaction ID: '{receipt.transactionID}'");
+
+            if (receipt is GooglePlayReceipt googleReceipt)
+            {
+                this.LogConsole($"GooglePlay - State: '{googleReceipt.purchaseState}', Token: '{googleReceipt.purchaseToken}'");
+            }
+        }
+
+        // LogAppleReceiptValidationInfo đã xoá: IAP v5 deprecate Apple receipt validation,
+        // AppleInAppPurchaseReceipt không bao giờ xuất hiện trên đường Google-only nữa.
+#endif
     }
 }
 #endif
