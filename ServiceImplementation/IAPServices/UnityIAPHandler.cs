@@ -1,15 +1,17 @@
-﻿namespace ServiceImplementation.IAPServices
+namespace ServiceImplementation.IAPServices
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Threading;
     using Cysharp.Threading.Tasks;
     using Transactions.Exceptions;
     using Unity.Services.Core;
     using Unity.Services.Core.Environments;
     using UnityEngine;
     using UnityEngine.Purchasing;
+    using Zenject;
 
 
     public class UnityIAPHandler : IIapServices, IDisposable
@@ -18,21 +20,41 @@
         private const string AppleAppStoreName   = "AppleAppStore";
         private const string MacAppStoreName     = "MacAppStore";
 
+        // Backoff for parked orders (validation/fulfilment/confirmation retries). The last value repeats.
+        private static readonly int[] RetryDelaysSeconds = { 5, 15, 30, 60, 120, 300 };
+
         public event Action<Order> OnPurchaseConfirmed;
 
-        private readonly IIapReceiptValidationService receiptValidationService;
+        private readonly IIapPurchaseFulfiller purchaseFulfiller;
+        private readonly IapOrderProcessor     orderProcessor;
 
         private StoreController storeController;
-
-        private Dictionary<string, Queue<UniTaskCompletionSource>> pendingPurchaseTask =
-            new Dictionary<string, Queue<UniTaskCompletionSource>>();
 
         private UniTaskCompletionSource<bool> initializeProductsSource;
         private UniTask<bool> initializeProductsTask;
 
-        public UnityIAPHandler(IIapReceiptValidationService receiptValidationService)
+        private string                  lastRequestedProductId;
+        private CancellationTokenSource retryLoopCts;
+        private bool                    isDisposed;
+
+        public UnityIAPHandler(IIapReceiptValidationService receiptValidationService,
+            [InjectOptional] IIapPurchaseFulfiller purchaseFulfiller = null)
         {
-            this.receiptValidationService = receiptValidationService;
+            this.purchaseFulfiller = purchaseFulfiller;
+            this.orderProcessor = new IapOrderProcessor(
+                receiptValidationService,
+                purchaseFulfiller,
+                this.ConfirmOrder,
+                message => LogWithColor(message, "cyan"),
+                message => LogWithColor(message, "yellow"));
+
+            this.orderProcessor.OrderParked += this.StartRetryLoop;
+            Application.focusChanged         += this.OnApplicationFocusChanged;
+
+            if (this.purchaseFulfiller != null)
+            {
+                this.purchaseFulfiller.ReadyChanged += this.OnFulfillerReadyChanged;
+            }
         }
 
         #region Initialization
@@ -74,23 +96,37 @@
             storeController.OnPurchaseConfirmed += HandlePurchaseConfirmed;
             storeController.OnPurchaseFailed += OnPurchaseFailed;
             storeController.OnPurchaseDeferred += OnPurchaseDeferred;
+            storeController.OnPurchasesFetched += OnPurchasesFetched;
+            storeController.OnPurchasesFetchFailed += OnPurchasesFetchFailed;
 
             await storeController.Connect();
 
             InitializeProducts(iapPacks);
         }
-        
+
         public void Dispose()
         {
+            this.isDisposed = true;
+            this.StopRetryLoop();
+            Application.focusChanged -= this.OnApplicationFocusChanged;
+            this.orderProcessor.OrderParked -= this.StartRetryLoop;
+
+            if (this.purchaseFulfiller != null)
+            {
+                this.purchaseFulfiller.ReadyChanged -= this.OnFulfillerReadyChanged;
+            }
+
             if (storeController == null)
                 return;
             storeController.OnProductsFetched     -= OnInitialProductsFetched;
             storeController.OnProductsFetchFailed -= OnInitialProductsFetchFailed;
 
-            storeController.OnPurchasePending   -= OnPurchasePending;
-            storeController.OnPurchaseConfirmed -= HandlePurchaseConfirmed;
-            storeController.OnPurchaseFailed    -= OnPurchaseFailed;
-            storeController.OnPurchaseDeferred  -= OnPurchaseDeferred;
+            storeController.OnPurchasePending      -= OnPurchasePending;
+            storeController.OnPurchaseConfirmed    -= HandlePurchaseConfirmed;
+            storeController.OnPurchaseFailed       -= OnPurchaseFailed;
+            storeController.OnPurchaseDeferred     -= OnPurchaseDeferred;
+            storeController.OnPurchasesFetched     -= OnPurchasesFetched;
+            storeController.OnPurchasesFetchFailed -= OnPurchasesFetchFailed;
         }
 
         private string GetUnityIAPStoreName()
@@ -141,6 +177,9 @@
             }
 
             initializeProductsSource.TrySetResult(true);
+
+            // Unfinished orders from previous sessions are otherwise only re-delivered on the next focus change.
+            this.FetchUnfinishedPurchases();
         }
 
         void OnInitialProductsFetchFailed(ProductFetchFailed failure)
@@ -151,89 +190,60 @@
 
         #endregion
 
+        #region Purchase Fetching
+
+        private void FetchUnfinishedPurchases()
+        {
+            if (storeController == null) return;
+
+            try
+            {
+                storeController.FetchPurchases();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+            }
+        }
+
+        void OnPurchasesFetched(Orders orders)
+        {
+            // Pending orders among the fetched ones are delivered through OnPurchasePending by Unity IAP.
+            LogWithColor("Purchases fetched.", "green");
+        }
+
+        void OnPurchasesFetchFailed(PurchasesFetchFailureDescription failure)
+        {
+            LogWithColor($"Purchases fetch failed: {failure.FailureReason} {failure.Message}", "yellow");
+        }
+
+        #endregion
+
         #region Purchase Handling
 
         public UniTask PurchaseProduct(string productId)
         {
-            var tcs = new UniTaskCompletionSource();
             var product = this.FindProduct(productId);
 
-            if (product != null)
+            if (product == null)
             {
-                if (!pendingPurchaseTask.TryGetValue(productId, out var queue))
-                {
-                    queue = new Queue<UniTaskCompletionSource>();
-                    pendingPurchaseTask[productId] = queue;
-                }
-
-                queue.Enqueue(tcs);
-                storeController?.PurchaseProduct(product);
-            }
-            else
-            {
-                tcs.TrySetException(
+                return UniTask.FromException(
                     new IAPPurchaseFailedException($"The product service has no product with the ID {productId}"));
             }
 
-            return tcs.Task;
+            var task = this.orderProcessor.RegisterPurchaseRequest(productId);
+            this.lastRequestedProductId = productId;
+            storeController?.PurchaseProduct(product);
+
+            return task;
         }
 
         void OnPurchasePending(PendingOrder order)
         {
-            this.HandlePurchasePending(order).Forget();
+            this.orderProcessor.ProcessAsync(this.ToIapOrder(order)).Forget(Debug.LogException);
         }
 
-        private async UniTask HandlePurchasePending(PendingOrder order)
-        {
-            IapReceiptValidationResult validationResult;
-            try
-            {
-                var validationRequest = this.CreateValidationRequest(order);
-                validationResult = await this.receiptValidationService.ValidateAsync(validationRequest);
-            }
-            catch (Exception exception)
-            {
-                this.FailPendingPurchaseTasks(order, $"Receipt validation failed unexpectedly: {exception.Message}");
-                Debug.LogException(exception);
-                return;
-            }
-
-            if (!validationResult.IsValid)
-            {
-                this.FailPendingPurchaseTasks(order,
-                    $"Receipt validation {validationResult.Status} via '{validationResult.ProviderId}': {validationResult.Error}");
-                return;
-            }
-
-            bool hasPendingOrderValid = false;
-            foreach (var cartItem in order.CartOrdered.Items())
-            {
-                var product = cartItem.Product;
-
-                LogWithColor($"Purchased Product: '{product.definition.id}' \n" +
-                             $"Product transaction id: {order.Info.TransactionID}. \n" +
-                             $"Product receipt length: {order.Info.Receipt?.Length ?? 0}.\n" +
-                             $"Product Type: '{product.definition.type}'");
-
-                if (pendingPurchaseTask.TryGetValue(product.definition.id, out var queue) && queue.Count > 0)
-                {
-                    var tcs = queue.Dequeue();
-                    tcs.TrySetResult();
-                    hasPendingOrderValid = true;
-                }
-            }
-
-            if (!hasPendingOrderValid)
-            {
-                LogWithColor($"No pending purchase task found for the order. Order ID: {order.Info.TransactionID}",
-                    "red");
-                return;
-            }
-
-            storeController.ConfirmPurchase(order);
-        }
-
-        private IapReceiptValidationRequest CreateValidationRequest(PendingOrder order)
+        private IapOrder ToIapOrder(PendingOrder order)
         {
             var products = order.CartOrdered.Items().Select(cartItem =>
             {
@@ -244,22 +254,26 @@
                     _ => ProductType.Consumable
                 };
 
+                LogWithColor($"Pending Product: '{cartItem.Product.definition.id}' \n" +
+                             $"Product transaction id: {order.Info?.TransactionID}. \n" +
+                             $"Product receipt length: {order.Info?.Receipt?.Length ?? 0}.\n" +
+                             $"Product Type: '{cartItem.Product.definition.type}'");
+
                 return new IapReceiptProduct(cartItem.Product.definition.id, productType, cartItem.Quantity);
             }).ToList();
 
-            return new IapReceiptValidationRequest(order.Info?.TransactionID, order.Info?.Receipt, products);
+            return new IapOrder(order.Info?.TransactionID, order.Info?.Receipt, products, order);
         }
 
-        private void FailPendingPurchaseTasks(PendingOrder order, string error)
+        private void ConfirmOrder(IapOrder order)
         {
-            foreach (var cartItem in order.CartOrdered.Items())
+            if (storeController == null || order.Handle is not PendingOrder pendingOrder)
             {
-                var product = cartItem.Product;
-                if (pendingPurchaseTask.TryGetValue(product.definition.id, out var queue) && queue.Count > 0)
-                {
-                    queue.Dequeue().TrySetException(new IAPPurchaseFailedException(error));
-                }
+                this.orderProcessor.OnConfirmResult(order.TransactionId, false);
+                return;
             }
+
+            storeController.ConfirmPurchase(pendingOrder);
         }
 
         void HandlePurchaseConfirmed(Order order)
@@ -268,10 +282,12 @@
             {
                 case FailedOrder failedOrder:
                     LogWithColor(
-                        $"Purchase confirmation failed: {failedOrder.CartOrdered.Items().First().Product.definition.id}, {failedOrder.FailureReason.ToString()}, {failedOrder.Details}");
+                        $"Purchase confirmation failed: {failedOrder.CartOrdered.Items().FirstOrDefault()?.Product.definition.id}, {failedOrder.FailureReason.ToString()}, {failedOrder.Details}", "red");
+                    this.orderProcessor.OnConfirmResult(order.Info?.TransactionID, false);
                     break;
                 case ConfirmedOrder:
-                    LogWithColor($"Purchase completed:  {order.CartOrdered.Items().First().Product.definition.id}");
+                    LogWithColor($"Purchase completed:  {order.CartOrdered.Items().FirstOrDefault()?.Product.definition.id}");
+                    this.orderProcessor.OnConfirmResult(order.Info?.TransactionID, true);
                     break;
             }
 
@@ -282,25 +298,112 @@
         {
             foreach (var cartItem in failedOrder.CartOrdered.Items())
             {
-                var product = cartItem.Product;
+                var productId = cartItem.Product.definition.id;
 
-                LogWithColor($"Purchase Failed for Product: '{product.definition.id}' \n" +
-                             $"FailureReason: {failedOrder.FailureReason.ToString()}.");
+                LogWithColor($"Purchase Failed for Product: '{productId}' \n" +
+                             $"FailureReason: {failedOrder.FailureReason.ToString()}. {failedOrder.Details}", "red");
 
-                if (pendingPurchaseTask.TryGetValue(product.definition.id, out var queue) && queue.Count > 0)
+                // Synchronous failures for an invalid cart report a placeholder product that the store does not know;
+                // fall back to the product that was just requested so its purchase request does not hang. A failure
+                // for a real product without a request (e.g. a cancelled deferred order) must not fail another purchase.
+                if (!this.orderProcessor.HasPurchaseRequest(productId) && this.FindProduct(productId) == null)
                 {
-                    var tcs = queue.Dequeue();
-                    tcs.TrySetException(new IAPPurchaseFailedException(
-                        $"Purchase failed for product ID {product.definition.id} with reason {failedOrder.FailureReason.ToString()}"));
+                    productId = this.lastRequestedProductId;
                 }
+
+                Exception exception = failedOrder.FailureReason == PurchaseFailureReason.DuplicateTransaction
+                    ? new IAPDuplicatePurchaseException(
+                        $"Product {productId} has an unfinished earlier purchase: {failedOrder.Details}")
+                    : new IAPPurchaseFailedException(
+                        $"Purchase failed for product ID {productId} with reason {failedOrder.FailureReason.ToString()}");
+
+                this.orderProcessor.FailPurchaseRequest(productId, exception);
+            }
+
+            if (failedOrder.FailureReason == PurchaseFailureReason.DuplicateTransaction)
+            {
+                // Google: the product is still owned by an unconsumed order. Fetch it so it gets granted and consumed.
+                this.FetchUnfinishedPurchases();
             }
         }
-        
+
         void OnPurchaseDeferred(DeferredOrder order)
         {
-            var product = order.CartOrdered.Items().FirstOrDefault()?.Product;
-            LogWithColor($"Purchase deferred for: {product?.definition.id ?? "unknown"}. " +
-                         "Waiting for parental approval.", "yellow");
+            foreach (var cartItem in order.CartOrdered.Items())
+            {
+                var productId = cartItem.Product.definition.id;
+                LogWithColor($"Purchase deferred for: {productId}. Waiting for payment/approval.", "yellow");
+
+                // The completed order arrives later through OnPurchasePending and is granted by the fulfiller.
+                this.orderProcessor.FailPurchaseRequest(productId,
+                    new IAPPurchaseDeferredException($"Purchase of {productId} is pending payment approval."));
+            }
+        }
+
+        #endregion
+
+        #region Retry
+
+        private void OnApplicationFocusChanged(bool hasFocus)
+        {
+            if (hasFocus && this.orderProcessor.HasParkedOrders)
+            {
+                this.orderProcessor.RetryParkedOrdersAsync().Forget(Debug.LogException);
+            }
+        }
+
+        private void OnFulfillerReadyChanged()
+        {
+            if (this.purchaseFulfiller.IsReady && this.orderProcessor.HasParkedOrders)
+            {
+                this.orderProcessor.RetryParkedOrdersAsync().Forget(Debug.LogException);
+            }
+        }
+
+        private void StartRetryLoop()
+        {
+            if (this.isDisposed || this.retryLoopCts != null) return;
+
+            this.retryLoopCts = new CancellationTokenSource();
+            this.RetryLoopAsync(this.retryLoopCts.Token).Forget(Debug.LogException);
+        }
+
+        private void StopRetryLoop()
+        {
+            this.retryLoopCts?.Cancel();
+            this.retryLoopCts?.Dispose();
+            this.retryLoopCts = null;
+        }
+
+        private async UniTask RetryLoopAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var attempt = 0;
+                while (this.orderProcessor.HasParkedOrders && !cancellationToken.IsCancellationRequested)
+                {
+                    var delaySeconds = RetryDelaysSeconds[Math.Min(attempt, RetryDelaysSeconds.Length - 1)];
+                    await UniTask.Delay(TimeSpan.FromSeconds(delaySeconds), DelayType.Realtime,
+                        cancellationToken: cancellationToken);
+
+                    await this.orderProcessor.RetryParkedOrdersAsync();
+                    attempt++;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            finally
+            {
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    this.retryLoopCts?.Dispose();
+                    this.retryLoopCts = null;
+
+                    // An order may have been parked after the loop condition was last checked.
+                    if (this.orderProcessor.HasParkedOrders) this.StartRetryLoop();
+                }
+            }
         }
 
         #endregion
@@ -353,7 +456,7 @@
             var color = string.IsNullOrEmpty(c) ? "white" : c;
             Debug.Log($"<color={color}>{header} {logContent}</color>");
         }
-        
+
         #endregion
 
     }
