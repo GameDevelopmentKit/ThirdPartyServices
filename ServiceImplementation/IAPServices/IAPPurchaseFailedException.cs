@@ -1,4 +1,4 @@
-﻿namespace Transactions.Exceptions
+﻿namespace GameBusiness.Transactions.Exceptions
 {
     using System;
     public class IAPPurchaseFailedException : Exception
