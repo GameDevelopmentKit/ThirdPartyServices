@@ -72,7 +72,9 @@
             {
                 Debug.LogError($"Firebase: Event name error: {name} {error}");
 
+#if FIREBASE_SDK_EXISTS
                 if (this.analyticConfig.firebaseStrictMode) return;
+#endif
             }
 
             if (data == null)
@@ -83,10 +85,12 @@
                 return;
             }
 
+#if FIREBASE_SDK_EXISTS
             if (!this.CheckConventions(data))
             {
                 if (this.analyticConfig.firebaseStrictMode) return;
             }
+#endif
 
             if (this.analyticConfig.debugMode) Debug.Log($"Firebase: OnEvent - {name} - {JsonConvert.SerializeObject(data)}");
             switch (data.Count)
