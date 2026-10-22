@@ -4,7 +4,7 @@ namespace ServiceImplementation.IAPServices
     using System.Collections.Generic;
     using System.Linq;
     using Cysharp.Threading.Tasks;
-    using Transactions.Exceptions;
+    using GameBusiness.Transactions.Exceptions;
 
     /// <summary>Store-agnostic snapshot of a pending store order.</summary>
     public sealed class IapOrder

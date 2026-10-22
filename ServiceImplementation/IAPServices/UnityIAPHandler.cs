@@ -6,7 +6,7 @@ namespace ServiceImplementation.IAPServices
     using System.Linq;
     using System.Threading;
     using Cysharp.Threading.Tasks;
-    using Transactions.Exceptions;
+    using GameBusiness.Transactions.Exceptions;
     using Unity.Services.Core;
     using Unity.Services.Core.Environments;
     using UnityEngine;
