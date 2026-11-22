@@ -9,6 +9,9 @@
     {
         event Action<Order> OnPurchaseConfirmed;
 
+        /// <summary>Each step of a purchase (click, store result, delivery, confirmation, audit), for analytics.</summary>
+        event Action<IapFlowEvent> OnPurchaseFlow;
+
         UniTask          Initialize(Dictionary<string, ProductType> iapPacks);
         UniTask          PurchaseProduct(string productId);
         Product          FindProduct(string productId);

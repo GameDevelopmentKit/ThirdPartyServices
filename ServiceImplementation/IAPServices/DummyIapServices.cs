@@ -13,6 +13,12 @@ namespace ServiceImplementation.IAPServices
             remove { }
         }
 
+        public event Action<IapFlowEvent> OnPurchaseFlow
+        {
+            add { }
+            remove { }
+        }
+
         public UniTask Initialize(Dictionary<string, ProductType> iapPacks)
         {
             return UniTask.CompletedTask;

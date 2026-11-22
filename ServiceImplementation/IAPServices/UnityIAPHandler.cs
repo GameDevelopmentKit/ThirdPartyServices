@@ -23,7 +23,12 @@ namespace ServiceImplementation.IAPServices
         // Backoff for parked orders (validation/fulfilment/confirmation retries). The last value repeats.
         private static readonly int[] RetryDelaysSeconds = { 5, 15, 30, 60, 120, 300 };
 
-        public event Action<Order> OnPurchaseConfirmed;
+        // A granted order waits at most this long for its background audit before it is confirmed (finished at the store).
+        // AppsFlyer ROI360 looks up StoreKit 2 consumables in Transaction.all, which no longer lists finished ones.
+        private static readonly TimeSpan ConfirmWaitForAudit = TimeSpan.FromSeconds(5);
+
+        public event Action<Order>        OnPurchaseConfirmed;
+        public event Action<IapFlowEvent> OnPurchaseFlow;
 
         private readonly IIapPurchaseFulfiller purchaseFulfiller;
         private readonly IapOrderProcessor     orderProcessor;
@@ -48,8 +53,10 @@ namespace ServiceImplementation.IAPServices
                 message => LogWithColor(message, "cyan"),
                 message => LogWithColor(message, "yellow"));
 
-            this.orderProcessor.OrderParked += this.StartRetryLoop;
-            Application.focusChanged         += this.OnApplicationFocusChanged;
+            this.orderProcessor.ConfirmWaitForAudit =  ConfirmWaitForAudit;
+            this.orderProcessor.OrderParked         += this.StartRetryLoop;
+            this.orderProcessor.Flow                += this.RaisePurchaseFlow;
+            Application.focusChanged                += this.OnApplicationFocusChanged;
 
             if (this.purchaseFulfiller != null)
             {
@@ -110,6 +117,7 @@ namespace ServiceImplementation.IAPServices
             this.StopRetryLoop();
             Application.focusChanged -= this.OnApplicationFocusChanged;
             this.orderProcessor.OrderParked -= this.StartRetryLoop;
+            this.orderProcessor.Flow        -= this.RaisePurchaseFlow;
 
             if (this.purchaseFulfiller != null)
             {
@@ -233,6 +241,7 @@ namespace ServiceImplementation.IAPServices
 
             var task = this.orderProcessor.RegisterPurchaseRequest(productId);
             this.lastRequestedProductId = productId;
+            this.RaisePurchaseFlow(new IapFlowEvent(IapFlowStep.Click, productId, null, null, false));
             storeController?.PurchaseProduct(product);
 
             return task;
@@ -311,6 +320,10 @@ namespace ServiceImplementation.IAPServices
                     productId = this.lastRequestedProductId;
                 }
 
+                this.RaisePurchaseFlow(new IapFlowEvent(
+                    failedOrder.FailureReason == PurchaseFailureReason.UserCancelled ? IapFlowStep.Cancel : IapFlowStep.StoreFail,
+                    productId, failedOrder.Info?.TransactionID, null, false, failedOrder.FailureReason.ToString()));
+
                 Exception exception = failedOrder.FailureReason == PurchaseFailureReason.DuplicateTransaction
                     ? new IAPDuplicatePurchaseException(
                         $"Product {productId} has an unfinished earlier purchase: {failedOrder.Details}")
@@ -333,6 +346,7 @@ namespace ServiceImplementation.IAPServices
             {
                 var productId = cartItem.Product.definition.id;
                 LogWithColor($"Purchase deferred for: {productId}. Waiting for payment/approval.", "yellow");
+                this.RaisePurchaseFlow(new IapFlowEvent(IapFlowStep.Pending, productId, order.Info?.TransactionID, null, false, "deferred"));
 
                 // The completed order arrives later through OnPurchasePending and is granted by the fulfiller.
                 this.orderProcessor.FailPurchaseRequest(productId,
@@ -409,6 +423,18 @@ namespace ServiceImplementation.IAPServices
         #endregion
 
         #region Utilities
+
+        private void RaisePurchaseFlow(IapFlowEvent flowEvent)
+        {
+            try
+            {
+                this.OnPurchaseFlow?.Invoke(flowEvent);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+            }
+        }
 
         public bool IsProductAvailable(string productId)
         {

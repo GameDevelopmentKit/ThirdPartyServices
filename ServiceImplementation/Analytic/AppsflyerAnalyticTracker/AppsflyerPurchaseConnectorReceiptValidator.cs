@@ -10,7 +10,11 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using Cysharp.Threading.Tasks;
     using ServiceImplementation.IAPServices;
 
-    public sealed class AppsflyerPurchaseConnectorReceiptValidator : IIapReceiptValidator, IDisposable
+    /// <summary>
+    /// Background audit through AppsFlyer ROI360. It never decides delivery: its callback can be late or missing (e.g. a
+    /// StoreKit 2 consumable AppsFlyer never saw), and gating orders on it left paid iOS orders undelivered.
+    /// </summary>
+    public sealed class AppsflyerPurchaseConnectorReceiptValidator : IIapReceiptAuditValidator, IDisposable
     {
         private const int ValidationTimeoutSeconds = 30;
         private const int CachedResultSeconds      = 60;
@@ -100,6 +104,9 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 this.pendingValidations.Add(pendingValidation);
             }
 
+            // After registering the pending validation so that its callback can be matched.
+            LogStoreKit2Consumable(request);
+
             try
             {
                 var timeout = UniTask.Delay(TimeSpan.FromSeconds(ValidationTimeoutSeconds), DelayType.Realtime);
@@ -116,6 +123,28 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                     this.pendingValidations.Remove(pendingValidation);
                 }
             }
+        }
+
+        /// <summary>
+        /// With StoreKit 2, AppsFlyer does not observe consumables bought in the app: they must be handed over by transaction id
+        /// while still unfinished (the plugin looks them up in <c>Transaction.all</c>). Without it no validation callback arrives.
+        /// No-op on other platforms.
+        /// </summary>
+        private static void LogStoreKit2Consumable(IapReceiptValidationRequest request)
+        {
+#if UNITY_IOS && !UNITY_EDITOR
+            if (string.IsNullOrEmpty(request.TransactionId) || request.Products == null) return;
+            if (!request.Products.Any(product => product.ProductType == ProductType.Consumable)) return;
+
+            try
+            {
+                AppsFlyerPurchaseConnector.logConsumableTransaction(request.TransactionId);
+            }
+            catch (Exception exception)
+            {
+                UnityEngine.Debug.LogWarning($"[IAP] AppsFlyer logConsumableTransaction failed for {request.TransactionId}: {exception.Message}");
+            }
+#endif
         }
 
         public void HandleValidationInfo(string validationInfo)
