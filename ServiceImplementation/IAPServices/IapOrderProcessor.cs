@@ -3,6 +3,7 @@ namespace ServiceImplementation.IAPServices
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using Cysharp.Threading.Tasks;
     using GameBusiness.Transactions.Exceptions;
 
@@ -53,7 +54,8 @@ namespace ServiceImplementation.IAPServices
         /// <summary>Store receipt, when known. Not meant to be tracked as is (e.g. to extract the Google order id).</summary>
         public string Receipt { get; }
 
-        /// <summary>The order is processed without a purchase started by the player in this session.</summary>
+        /// <summary>The order was first seen in this session without a purchase started by the player. Fixed per transaction
+        /// for the session, so every step of one order reports the same value.</summary>
         public bool IsDelayed { get; }
 
         /// <summary>Reason, failure code or validation status; empty on success.</summary>
@@ -133,10 +135,11 @@ namespace ServiceImplementation.IAPServices
         private readonly Dictionary<string, IapOrder>                       awaitingConfirm  = new();
         private readonly Dictionary<string, int>                            confirmAttempts  = new();
 
-        // Per session: audits started (one per transaction), orders already reported, last reported pending reason.
-        private readonly Dictionary<string, UniTask> audits               = new();
-        private readonly HashSet<string>             reportedTransactions = new();
-        private readonly Dictionary<string, string>  reportedPending      = new();
+        // Per session: audits started (one per transaction), is_delayed of each order reported (fixed when first seen),
+        // last reported pending reason.
+        private readonly Dictionary<string, UniTask> audits            = new();
+        private readonly Dictionary<string, bool>    delayedByOrder    = new();
+        private readonly Dictionary<string, string>  reportedPending   = new();
 
         public IapOrderProcessor(
             IIapReceiptValidationService validationService,
@@ -164,8 +167,8 @@ namespace ServiceImplementation.IAPServices
 
         /// <summary>
         /// How long a granted order waits for its audit before it is confirmed. Some audit services can only see a transaction
-        /// that is not finished yet (e.g. AppsFlyer with StoreKit 2 consumables). The content is granted before this wait.
-        /// Zero (default) confirms immediately.
+        /// that is not finished yet (e.g. AppsFlyer with StoreKit 2 consumables, so the IAP handler sets it on iOS only).
+        /// The content is granted before this wait. Zero (default) confirms immediately.
         /// </summary>
         public TimeSpan ConfirmWaitForAudit { get; set; } = TimeSpan.Zero;
 
@@ -300,18 +303,18 @@ namespace ServiceImplementation.IAPServices
             // Captured before awaiting: a request registered while an unattended order is being processed belongs to
             // a new purchase and must not be completed or failed by this order.
             var isUserInitiated = this.HasRequestForAny(order);
-            var isDelayed       = !isUserInitiated;
 
-            if (this.reportedTransactions.Add(transactionId))
+            if (!this.delayedByOrder.ContainsKey(transactionId))
             {
-                this.Report(IapFlowStep.StoreSuccess, order, isDelayed);
+                this.delayedByOrder[transactionId] = !isUserInitiated;
+                this.Report(IapFlowStep.StoreSuccess, order);
             }
 
             var request = new IapReceiptValidationRequest(transactionId, order.Receipt, order.Products);
 
             // Audits run in the background and never decide delivery. Started before granting/confirming because some audit
             // services can only see a transaction that is not finished yet.
-            this.StartAudit(order, request, isDelayed);
+            this.StartAudit(order, request);
 
             IapReceiptValidationResult validation;
             try
@@ -327,7 +330,7 @@ namespace ServiceImplementation.IAPServices
             {
                 case IapReceiptValidationStatus.Invalid:
                     this.logWarning($"[IAP] Order {transactionId} rejected by '{validation.ProviderId}': {validation.Error}");
-                    this.Report(IapFlowStep.ValidateFail, order, isDelayed, $"{validation.ProviderId}: {validation.Error}");
+                    this.Report(IapFlowStep.ValidateFail, order, $"{validation.ProviderId}: {validation.Error}");
                     this.FailRequests(order, isUserInitiated, () => new IAPPurchaseFailedException(
                         $"Receipt validation {validation.Status} via '{validation.ProviderId}': {validation.Error}"));
                     return;
@@ -336,7 +339,7 @@ namespace ServiceImplementation.IAPServices
                     this.logWarning($"[IAP] Order {transactionId} validation will be retried: {validation.Error}");
                     this.FailRequests(order, isUserInitiated, () => new IAPPurchasePendingFulfillmentException(
                         $"Receipt validation pending: {validation.Error}"));
-                    this.Park(order, ParkReason.ValidationRetry, isDelayed, $"{validation.ProviderId}: {validation.Error}");
+                    this.Park(order, ParkReason.ValidationRetry, $"{validation.ProviderId}: {validation.Error}");
                     return;
             }
 
@@ -358,7 +361,7 @@ namespace ServiceImplementation.IAPServices
             if (this.fulfiller.IsFulfilled(transactionId))
             {
                 this.logInfo($"[IAP] Order {transactionId} already fulfilled, confirming.");
-                this.Report(IapFlowStep.Redelivered, order, isDelayed);
+                this.Report(IapFlowStep.Redelivered, order);
                 await this.ConfirmAfterAuditAsync(order);
                 return;
             }
@@ -366,7 +369,7 @@ namespace ServiceImplementation.IAPServices
             if (!this.fulfiller.IsReady)
             {
                 this.logInfo($"[IAP] Fulfiller not ready, holding order {transactionId}.");
-                this.Park(order, ParkReason.FulfillerNotReady, isDelayed);
+                this.Park(order, ParkReason.FulfillerNotReady);
                 return;
             }
 
@@ -386,7 +389,7 @@ namespace ServiceImplementation.IAPServices
                 case IapFulfillmentStatus.Granted:
                 case IapFulfillmentStatus.AlreadyGranted:
                     if (isUserInitiated) this.CompleteRequests(order);
-                    this.Report(result.Status == IapFulfillmentStatus.Granted ? IapFlowStep.Delivered : IapFlowStep.Redelivered, order, isDelayed);
+                    this.Report(result.Status == IapFulfillmentStatus.Granted ? IapFlowStep.Delivered : IapFlowStep.Redelivered, order);
                     await this.ConfirmAfterAuditAsync(order);
                     break;
 
@@ -394,18 +397,18 @@ namespace ServiceImplementation.IAPServices
                     this.logWarning($"[IAP] Fulfilment of {transactionId} will be retried: {result.Error}");
                     this.FailRequests(order, isUserInitiated, () => new IAPPurchasePendingFulfillmentException(
                         $"Fulfilment pending: {result.Error}"));
-                    this.Park(order, ParkReason.FulfillmentRetry, isDelayed, result.Error);
+                    this.Park(order, ParkReason.FulfillmentRetry, result.Error);
                     break;
 
                 default:
                     this.logWarning($"[IAP] Fulfilment of {transactionId} rejected: {result.Error}; left unconfirmed.");
-                    this.Report(IapFlowStep.DeliverFail, order, isDelayed, result.Error);
+                    this.Report(IapFlowStep.DeliverFail, order, result.Error);
                     this.FailRequests(order, isUserInitiated, () => new IAPPurchaseFailedException($"Fulfilment rejected: {result.Error}"));
                     break;
             }
         }
 
-        private void Park(IapOrder order, ParkReason reason, bool isDelayed, string detail = null, bool report = true)
+        private void Park(IapOrder order, ParkReason reason, string detail = null, bool report = true)
         {
             this.parkedOrders[order.TransactionId] = new ParkedOrder { Order = order, Reason = reason };
 
@@ -414,7 +417,7 @@ namespace ServiceImplementation.IAPServices
             if (report && (!this.reportedPending.TryGetValue(order.TransactionId, out var reported) || reported != reasonName))
             {
                 this.reportedPending[order.TransactionId] = reasonName;
-                this.Report(IapFlowStep.Pending, order, isDelayed, string.IsNullOrEmpty(detail) ? reasonName : $"{reasonName}: {detail}");
+                this.Report(IapFlowStep.Pending, order, string.IsNullOrEmpty(detail) ? reasonName : $"{reasonName}: {detail}");
             }
 
             this.OrderParked?.Invoke();
@@ -436,17 +439,16 @@ namespace ServiceImplementation.IAPServices
 
         #region Audit
 
-        private void StartAudit(IapOrder order, IapReceiptValidationRequest request, bool isDelayed)
+        private void StartAudit(IapOrder order, IapReceiptValidationRequest request)
         {
             if (this.audits.ContainsKey(order.TransactionId)) return;
 
             var done = new UniTaskCompletionSource();
             this.audits[order.TransactionId] = done.Task;
-            this.TrackAuditAsync(order, request, isDelayed, done).Forget();
+            this.TrackAuditAsync(order, request, done).Forget();
         }
 
-        private async UniTaskVoid TrackAuditAsync(IapOrder order, IapReceiptValidationRequest request, bool isDelayed,
-            UniTaskCompletionSource done)
+        private async UniTaskVoid TrackAuditAsync(IapOrder order, IapReceiptValidationRequest request, UniTaskCompletionSource done)
         {
             try
             {
@@ -473,7 +475,7 @@ namespace ServiceImplementation.IAPServices
                     }
 
                     var errorCode = string.IsNullOrEmpty(result.Error) ? $"{status}|{result.ProviderId}" : $"{status}|{result.ProviderId}|{result.Error}";
-                    this.Report(IapFlowStep.Audit, order, isDelayed, errorCode, audit.LatencyMs);
+                    this.Report(IapFlowStep.Audit, order, errorCode, audit.LatencyMs);
                 }
             }
             catch (Exception exception)
@@ -493,13 +495,19 @@ namespace ServiceImplementation.IAPServices
                 && this.audits.TryGetValue(order.TransactionId, out var audit)
                 && audit.Status == UniTaskStatus.Pending)
             {
+                using var stopTimeout = new CancellationTokenSource();
                 try
                 {
-                    await UniTask.WhenAny(audit, UniTask.Delay(this.ConfirmWaitForAudit, DelayType.Realtime));
+                    await UniTask.WhenAny(audit, UniTask.Delay(this.ConfirmWaitForAudit, DelayType.Realtime, cancellationToken: stopTimeout.Token));
                 }
                 catch (Exception exception)
                 {
                     this.logWarning($"[IAP] Waiting for the audit of {order.TransactionId} failed: {exception.Message}");
+                }
+                finally
+                {
+                    // The audit finished first: stop the timeout instead of leaving it running.
+                    stopTimeout.Cancel();
                 }
             }
 
@@ -510,9 +518,11 @@ namespace ServiceImplementation.IAPServices
 
         #region Flow reporting
 
-        private void Report(IapFlowStep step, IapOrder order, bool isDelayed, string errorCode = null, long latencyMs = -1)
+        private void Report(IapFlowStep step, IapOrder order, string errorCode = null, long latencyMs = -1)
         {
             if (this.Flow == null) return;
+
+            var isDelayed = this.delayedByOrder.TryGetValue(order.TransactionId, out var delayed) && delayed;
 
             foreach (var product in order.Products)
             {
@@ -587,7 +597,7 @@ namespace ServiceImplementation.IAPServices
 
             if (attempts == 1)
             {
-                this.Report(IapFlowStep.ConfirmFail, order, false);
+                this.Report(IapFlowStep.ConfirmFail, order);
             }
 
             if (attempts >= MaxConfirmAttempts)
@@ -597,7 +607,7 @@ namespace ServiceImplementation.IAPServices
                 return;
             }
 
-            this.Park(order, ParkReason.ConfirmFailed, false, report: false);
+            this.Park(order, ParkReason.ConfirmFailed, report: false);
         }
 
         #endregion

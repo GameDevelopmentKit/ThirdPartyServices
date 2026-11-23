@@ -24,8 +24,13 @@ namespace ServiceImplementation.IAPServices
         private static readonly int[] RetryDelaysSeconds = { 5, 15, 30, 60, 120, 300 };
 
         // A granted order waits at most this long for its background audit before it is confirmed (finished at the store).
-        // AppsFlyer ROI360 looks up StoreKit 2 consumables in Transaction.all, which no longer lists finished ones.
+        // iOS only: AppsFlyer ROI360 looks up StoreKit 2 consumables in Transaction.all, which no longer lists finished ones.
+        // Android audits do not need the order open, so it is confirmed right after the grant.
+#if UNITY_IOS
         private static readonly TimeSpan ConfirmWaitForAudit = TimeSpan.FromSeconds(5);
+#else
+        private static readonly TimeSpan ConfirmWaitForAudit = TimeSpan.Zero;
+#endif
 
         public event Action<Order>        OnPurchaseConfirmed;
         public event Action<IapFlowEvent> OnPurchaseFlow;
