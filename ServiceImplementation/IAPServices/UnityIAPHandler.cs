@@ -23,14 +23,6 @@ namespace ServiceImplementation.IAPServices
         // Backoff for parked orders (validation/fulfilment/confirmation retries). The last value repeats.
         private static readonly int[] RetryDelaysSeconds = { 5, 15, 30, 60, 120, 300 };
 
-        // Delay between granting an order and confirming (finishing) it. iOS only: an IIapOrderObserver (AppsFlyer ROI360) looks
-        // StoreKit 2 consumables up asynchronously in Transaction.all, which no longer lists finished ones.
-#if UNITY_IOS
-        private static readonly TimeSpan ConfirmDelay = TimeSpan.FromSeconds(2);
-#else
-        private static readonly TimeSpan ConfirmDelay = TimeSpan.Zero;
-#endif
-
         public event Action<Order>        OnPurchaseConfirmed;
         public event Action<IapFlowEvent> OnPurchaseFlow;
 
@@ -61,7 +53,6 @@ namespace ServiceImplementation.IAPServices
                 message => LogWithColor(message, "yellow"),
                 this.NotifyOrderObservers);
 
-            this.orderProcessor.ConfirmDelay        =  ConfirmDelay;
             this.orderProcessor.OrderParked         += this.StartRetryLoop;
             this.orderProcessor.Flow                += this.RaisePurchaseFlow;
             Application.focusChanged                += this.OnApplicationFocusChanged;

@@ -161,13 +161,6 @@ namespace ServiceImplementation.IAPServices
         /// <summary>Raised for each step of an order (analytics). Repeated retries do not report the same step twice.</summary>
         public event Action<IapFlowEvent> Flow;
 
-        /// <summary>
-        /// Delay between granting an order and confirming it. Lets an SDK that was handed the order in <c>onOrderReceived</c>
-        /// read it while it is still unfinished (AppsFlyer with StoreKit 2 consumables, so the IAP handler sets it on iOS only).
-        /// The content is granted before this delay. Zero (default) confirms immediately.
-        /// </summary>
-        public TimeSpan ConfirmDelay { get; set; } = TimeSpan.Zero;
-
         #region Purchase requests
 
         /// <summary>Registers a player-initiated purchase. Completes when the order is granted (or, without a
@@ -355,7 +348,7 @@ namespace ServiceImplementation.IAPServices
             {
                 this.logInfo($"[IAP] Order {transactionId} already fulfilled, confirming.");
                 this.Report(IapFlowStep.Redelivered, order);
-                await this.ConfirmGrantedAsync(order);
+                this.Confirm(order);
                 return;
             }
 
@@ -383,7 +376,7 @@ namespace ServiceImplementation.IAPServices
                 case IapFulfillmentStatus.AlreadyGranted:
                     if (isUserInitiated) this.CompleteRequests(order);
                     this.Report(result.Status == IapFulfillmentStatus.Granted ? IapFlowStep.Delivered : IapFlowStep.Redelivered, order);
-                    await this.ConfirmGrantedAsync(order);
+                    this.Confirm(order);
                     break;
 
                 case IapFulfillmentStatus.RetryLater:
@@ -499,17 +492,6 @@ namespace ServiceImplementation.IAPServices
         #endregion
 
         #region Confirmation
-
-        /// <summary>Confirms a granted order, after <see cref="ConfirmDelay"/>.</summary>
-        private async UniTask ConfirmGrantedAsync(IapOrder order)
-        {
-            if (this.ConfirmDelay > TimeSpan.Zero)
-            {
-                await UniTask.Delay(this.ConfirmDelay, DelayType.Realtime);
-            }
-
-            this.Confirm(order);
-        }
 
         private void Confirm(IapOrder order)
         {
