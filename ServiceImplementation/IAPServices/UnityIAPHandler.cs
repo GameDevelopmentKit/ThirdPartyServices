@@ -23,20 +23,20 @@ namespace ServiceImplementation.IAPServices
         // Backoff for parked orders (validation/fulfilment/confirmation retries). The last value repeats.
         private static readonly int[] RetryDelaysSeconds = { 5, 15, 30, 60, 120, 300 };
 
-        // A granted order waits at most this long for its background audit before it is confirmed (finished at the store).
-        // iOS only: AppsFlyer ROI360 looks up StoreKit 2 consumables in Transaction.all, which no longer lists finished ones.
-        // Android audits do not need the order open, so it is confirmed right after the grant.
+        // Delay between granting an order and confirming (finishing) it. iOS only: an IIapOrderObserver (AppsFlyer ROI360) looks
+        // StoreKit 2 consumables up asynchronously in Transaction.all, which no longer lists finished ones.
 #if UNITY_IOS
-        private static readonly TimeSpan ConfirmWaitForAudit = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan ConfirmDelay = TimeSpan.FromSeconds(2);
 #else
-        private static readonly TimeSpan ConfirmWaitForAudit = TimeSpan.Zero;
+        private static readonly TimeSpan ConfirmDelay = TimeSpan.Zero;
 #endif
 
         public event Action<Order>        OnPurchaseConfirmed;
         public event Action<IapFlowEvent> OnPurchaseFlow;
 
-        private readonly IIapPurchaseFulfiller purchaseFulfiller;
-        private readonly IapOrderProcessor     orderProcessor;
+        private readonly IIapPurchaseFulfiller    purchaseFulfiller;
+        private readonly IapOrderProcessor        orderProcessor;
+        private readonly List<IIapOrderObserver> orderObservers;
 
         private StoreController storeController;
 
@@ -48,17 +48,20 @@ namespace ServiceImplementation.IAPServices
         private bool                    isDisposed;
 
         public UnityIAPHandler(IIapReceiptValidationService receiptValidationService,
-            [InjectOptional] IIapPurchaseFulfiller purchaseFulfiller = null)
+            [InjectOptional] IIapPurchaseFulfiller purchaseFulfiller = null,
+            [InjectOptional] List<IIapOrderObserver> orderObservers = null)
         {
             this.purchaseFulfiller = purchaseFulfiller;
+            this.orderObservers    = orderObservers ?? new List<IIapOrderObserver>();
             this.orderProcessor = new IapOrderProcessor(
                 receiptValidationService,
                 purchaseFulfiller,
                 this.ConfirmOrder,
                 message => LogWithColor(message, "cyan"),
-                message => LogWithColor(message, "yellow"));
+                message => LogWithColor(message, "yellow"),
+                this.NotifyOrderObservers);
 
-            this.orderProcessor.ConfirmWaitForAudit =  ConfirmWaitForAudit;
+            this.orderProcessor.ConfirmDelay        =  ConfirmDelay;
             this.orderProcessor.OrderParked         += this.StartRetryLoop;
             this.orderProcessor.Flow                += this.RaisePurchaseFlow;
             Application.focusChanged                += this.OnApplicationFocusChanged;
@@ -438,6 +441,21 @@ namespace ServiceImplementation.IAPServices
             catch (Exception exception)
             {
                 Debug.LogException(exception);
+            }
+        }
+
+        private void NotifyOrderObservers(IapOrder order)
+        {
+            foreach (var observer in this.orderObservers)
+            {
+                try
+                {
+                    observer.OnOrderReceived(order);
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogException(exception);
+                }
             }
         }
 

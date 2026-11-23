@@ -12,38 +12,13 @@ namespace ServiceImplementation.IAPServices
         UniTask<IapReceiptValidationResult> ValidateAsync(IapReceiptValidationRequest request);
     }
 
-    /// <summary>
-    /// A validator that never decides whether an order is delivered. It runs in the background next to the gate validators
-    /// (e.g. a third-party revenue/fraud service whose answer can be late or missing) and its result is only reported.
-    /// </summary>
-    public interface IIapReceiptAuditValidator : IIapReceiptValidator
-    {
-    }
-
     public interface IIapReceiptValidationService
     {
         /// <summary>
-        /// Decides whether an order can be delivered. Gate validators (every available validator that is not an
-        /// <see cref="IIapReceiptAuditValidator"/>) run by priority; a <see cref="IapReceiptValidationStatus.RetryableFailure"/>
-        /// falls back to the next one.
+        /// Decides whether an order can be delivered. Available validators run by priority; a
+        /// <see cref="IapReceiptValidationStatus.RetryableFailure"/> (or an exception) falls back to the next one.
         /// </summary>
         UniTask<IapReceiptValidationResult> ValidateAsync(IapReceiptValidationRequest request);
-
-        /// <summary>Runs every available <see cref="IIapReceiptAuditValidator"/>. Completes when all of them finished; never throws.</summary>
-        UniTask<IReadOnlyList<IapReceiptAuditResult>> AuditAsync(IapReceiptValidationRequest request);
-    }
-
-    /// <summary>Result of one audit validator for one order.</summary>
-    public sealed class IapReceiptAuditResult
-    {
-        public IapReceiptValidationResult Result    { get; }
-        public long                       LatencyMs { get; }
-
-        public IapReceiptAuditResult(IapReceiptValidationResult result, long latencyMs)
-        {
-            this.Result    = result;
-            this.LatencyMs = latencyMs;
-        }
     }
 
     public enum IapReceiptValidationStatus

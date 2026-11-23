@@ -11,11 +11,17 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using ServiceImplementation.IAPServices;
 
     /// <summary>
-    /// Background audit through AppsFlyer ROI360. It never decides delivery: its callback can be late or missing (e.g. a
-    /// StoreKit 2 consumable AppsFlyer never saw), and gating orders on it left paid iOS orders undelivered.
+    /// Receipt validation through the AppsFlyer ROI360 validation callback. <b>Not used</b> (see <see cref="IsEnabled"/>): the
+    /// callback can be late or missing, and gating orders on it left paid iOS orders undelivered, so orders are validated
+    /// locally only. AppsFlyer revenue does not depend on it: StoreKit 2 consumables are handed over by
+    /// <see cref="AppsflyerConsumableLogger"/>.
     /// </summary>
-    public sealed class AppsflyerPurchaseConnectorReceiptValidator : IIapReceiptAuditValidator, IDisposable
+    public sealed class AppsflyerPurchaseConnectorReceiptValidator : IIapReceiptValidator, IDisposable
     {
+        /// <summary>Set to true to add it back to the validator list (it then runs first, priority 100, before the local
+        /// validator, and an Invalid result rejects the order).</summary>
+        private static readonly bool IsEnabled = false;
+
         private const int ValidationTimeoutSeconds = 30;
         private const int CachedResultSeconds      = 60;
         private const string StrongIdentifierPrefix = "id:";
@@ -53,7 +59,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             get
             {
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-                return this.analyticConfig.AppsflyerIsEnableRoi360;
+                return IsEnabled && this.analyticConfig.AppsflyerIsEnableRoi360;
 #else
                 return false;
 #endif
@@ -104,9 +110,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                 this.pendingValidations.Add(pendingValidation);
             }
 
-            // After registering the pending validation so that its callback can be matched.
-            LogStoreKit2Consumable(request);
-
             try
             {
                 var timeout = UniTask.Delay(TimeSpan.FromSeconds(ValidationTimeoutSeconds), DelayType.Realtime);
@@ -123,28 +126,6 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
                     this.pendingValidations.Remove(pendingValidation);
                 }
             }
-        }
-
-        /// <summary>
-        /// With StoreKit 2, AppsFlyer does not observe consumables bought in the app: they must be handed over by transaction id
-        /// while still unfinished (the plugin looks them up in <c>Transaction.all</c>). Without it no validation callback arrives.
-        /// No-op on other platforms.
-        /// </summary>
-        private static void LogStoreKit2Consumable(IapReceiptValidationRequest request)
-        {
-#if UNITY_IOS && !UNITY_EDITOR
-            if (string.IsNullOrEmpty(request.TransactionId) || request.Products == null) return;
-            if (!request.Products.Any(product => product.ProductType == ProductType.Consumable)) return;
-
-            try
-            {
-                AppsFlyerPurchaseConnector.logConsumableTransaction(request.TransactionId);
-            }
-            catch (Exception exception)
-            {
-                UnityEngine.Debug.LogWarning($"[IAP] AppsFlyer logConsumableTransaction failed for {request.TransactionId}: {exception.Message}");
-            }
-#endif
         }
 
         public void HandleValidationInfo(string validationInfo)
