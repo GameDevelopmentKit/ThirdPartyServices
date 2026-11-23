@@ -13,6 +13,7 @@
             }
 
             this.Container.BindInterfacesAndSelfToAllTypeDriveFrom<IIapReceiptValidator>();
+            this.Container.BindInterfacesAndSelfToAllTypeDriveFrom<IIapOrderObserver>();
             this.Container.Bind<IIapReceiptValidationService>().To<IapReceiptValidationService>().AsCached();
 
 #if UNITY_IAP

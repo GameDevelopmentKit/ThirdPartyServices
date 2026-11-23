@@ -10,8 +10,18 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
     using Cysharp.Threading.Tasks;
     using ServiceImplementation.IAPServices;
 
+    /// <summary>
+    /// Receipt validation through the AppsFlyer ROI360 validation callback. <b>Not used</b> (see <see cref="IsEnabled"/>): the
+    /// callback can be late or missing, and gating orders on it left paid iOS orders undelivered, so orders are validated
+    /// locally only. AppsFlyer revenue does not depend on it: StoreKit 2 consumables are handed over by
+    /// <see cref="AppsflyerConsumableLogger"/>.
+    /// </summary>
     public sealed class AppsflyerPurchaseConnectorReceiptValidator : IIapReceiptValidator, IDisposable
     {
+        /// <summary>Set to true to add it back to the validator list (it then runs first, priority 100, before the local
+        /// validator, and an Invalid result rejects the order).</summary>
+        private static readonly bool IsEnabled = false;
+
         private const int ValidationTimeoutSeconds = 30;
         private const int CachedResultSeconds      = 60;
         private const string StrongIdentifierPrefix = "id:";
@@ -49,7 +59,7 @@ namespace ServiceImplementation.AppsflyerAnalyticTracker
             get
             {
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-                return this.analyticConfig.AppsflyerIsEnableRoi360;
+                return IsEnabled && this.analyticConfig.AppsflyerIsEnableRoi360;
 #else
                 return false;
 #endif

@@ -23,10 +23,12 @@ namespace ServiceImplementation.IAPServices
         // Backoff for parked orders (validation/fulfilment/confirmation retries). The last value repeats.
         private static readonly int[] RetryDelaysSeconds = { 5, 15, 30, 60, 120, 300 };
 
-        public event Action<Order> OnPurchaseConfirmed;
+        public event Action<Order>        OnPurchaseConfirmed;
+        public event Action<IapFlowEvent> OnPurchaseFlow;
 
-        private readonly IIapPurchaseFulfiller purchaseFulfiller;
-        private readonly IapOrderProcessor     orderProcessor;
+        private readonly IIapPurchaseFulfiller    purchaseFulfiller;
+        private readonly IapOrderProcessor        orderProcessor;
+        private readonly List<IIapOrderObserver> orderObservers;
 
         private StoreController storeController;
 
@@ -38,18 +40,22 @@ namespace ServiceImplementation.IAPServices
         private bool                    isDisposed;
 
         public UnityIAPHandler(IIapReceiptValidationService receiptValidationService,
-            [InjectOptional] IIapPurchaseFulfiller purchaseFulfiller = null)
+            [InjectOptional] IIapPurchaseFulfiller purchaseFulfiller = null,
+            [InjectOptional] List<IIapOrderObserver> orderObservers = null)
         {
             this.purchaseFulfiller = purchaseFulfiller;
+            this.orderObservers    = orderObservers ?? new List<IIapOrderObserver>();
             this.orderProcessor = new IapOrderProcessor(
                 receiptValidationService,
                 purchaseFulfiller,
                 this.ConfirmOrder,
                 message => LogWithColor(message, "cyan"),
-                message => LogWithColor(message, "yellow"));
+                message => LogWithColor(message, "yellow"),
+                this.NotifyOrderObservers);
 
-            this.orderProcessor.OrderParked += this.StartRetryLoop;
-            Application.focusChanged         += this.OnApplicationFocusChanged;
+            this.orderProcessor.OrderParked         += this.StartRetryLoop;
+            this.orderProcessor.Flow                += this.RaisePurchaseFlow;
+            Application.focusChanged                += this.OnApplicationFocusChanged;
 
             if (this.purchaseFulfiller != null)
             {
@@ -110,6 +116,7 @@ namespace ServiceImplementation.IAPServices
             this.StopRetryLoop();
             Application.focusChanged -= this.OnApplicationFocusChanged;
             this.orderProcessor.OrderParked -= this.StartRetryLoop;
+            this.orderProcessor.Flow        -= this.RaisePurchaseFlow;
 
             if (this.purchaseFulfiller != null)
             {
@@ -233,6 +240,7 @@ namespace ServiceImplementation.IAPServices
 
             var task = this.orderProcessor.RegisterPurchaseRequest(productId);
             this.lastRequestedProductId = productId;
+            this.RaisePurchaseFlow(new IapFlowEvent(IapFlowStep.Click, productId, null, null, false));
             storeController?.PurchaseProduct(product);
 
             return task;
@@ -311,6 +319,10 @@ namespace ServiceImplementation.IAPServices
                     productId = this.lastRequestedProductId;
                 }
 
+                this.RaisePurchaseFlow(new IapFlowEvent(
+                    failedOrder.FailureReason == PurchaseFailureReason.UserCancelled ? IapFlowStep.Cancel : IapFlowStep.StoreFail,
+                    productId, failedOrder.Info?.TransactionID, null, false, failedOrder.FailureReason.ToString()));
+
                 Exception exception = failedOrder.FailureReason == PurchaseFailureReason.DuplicateTransaction
                     ? new IAPDuplicatePurchaseException(
                         $"Product {productId} has an unfinished earlier purchase: {failedOrder.Details}")
@@ -333,6 +345,7 @@ namespace ServiceImplementation.IAPServices
             {
                 var productId = cartItem.Product.definition.id;
                 LogWithColor($"Purchase deferred for: {productId}. Waiting for payment/approval.", "yellow");
+                this.RaisePurchaseFlow(new IapFlowEvent(IapFlowStep.Pending, productId, order.Info?.TransactionID, null, false, "deferred"));
 
                 // The completed order arrives later through OnPurchasePending and is granted by the fulfiller.
                 this.orderProcessor.FailPurchaseRequest(productId,
@@ -409,6 +422,33 @@ namespace ServiceImplementation.IAPServices
         #endregion
 
         #region Utilities
+
+        private void RaisePurchaseFlow(IapFlowEvent flowEvent)
+        {
+            try
+            {
+                this.OnPurchaseFlow?.Invoke(flowEvent);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+            }
+        }
+
+        private void NotifyOrderObservers(IapOrder order)
+        {
+            foreach (var observer in this.orderObservers)
+            {
+                try
+                {
+                    observer.OnOrderReceived(order);
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogException(exception);
+                }
+            }
+        }
 
         public bool IsProductAvailable(string productId)
         {

@@ -14,6 +14,10 @@ namespace ServiceImplementation.IAPServices
 
     public interface IIapReceiptValidationService
     {
+        /// <summary>
+        /// Decides whether an order can be delivered. Available validators run by priority; a
+        /// <see cref="IapReceiptValidationStatus.RetryableFailure"/> (or an exception) falls back to the next one.
+        /// </summary>
         UniTask<IapReceiptValidationResult> ValidateAsync(IapReceiptValidationRequest request);
     }
 
