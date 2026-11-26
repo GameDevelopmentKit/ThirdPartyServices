@@ -26,7 +26,7 @@ namespace ServiceImplementation.IAPServices
         
         public UniTask PurchaseProduct(string productId)
         {
-#if UNITY_EDITOR || DEBUG_MODULE
+#if UNITY_EDITOR || ENABLE_DEBUG
             return UniTask.CompletedTask;
 #else
             return UniTask.FromException(new InvalidOperationException(
@@ -56,7 +56,7 @@ namespace ServiceImplementation.IAPServices
 
         public bool IsProductAvailable(string productId)
         {
-#if UNITY_EDITOR || DEBUG_MODULE
+#if UNITY_EDITOR || ENABLE_DEBUG
             return true;
 #else
             return false;
