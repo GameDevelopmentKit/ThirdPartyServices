@@ -121,7 +121,7 @@ namespace ServiceImplementation.IAPServices
 
             if (string.Equals(receiptEnvelope.Store, FakeStoreName, StringComparison.OrdinalIgnoreCase))
             {
-#if UNITY_EDITOR || DEBUG_MODULE
+#if UNITY_EDITOR || ENABLE_DEBUG
                 handledByStoreValidation = true;
                 return true;
 #else
